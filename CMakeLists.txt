@@ -6,7 +6,7 @@ endif()
 
 project(UplinkDecompiled)
 
-add_library(UplinkDecompiled SHARED UplinkDecompiled.cpp)
+add_library(UplinkDecompiled SHARED UplinkDecompiled.cpp Util.cpp)
 target_compile_options(UplinkDecompiled PRIVATE -m32)
 target_link_options(UplinkDecompiled PRIVATE -m32)
 

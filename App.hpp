@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdio>
 #include "UplinkObject.hpp"
+#include "DArray.hpp"
 #include "UplinkDecompiledTempDefs.hpp"
 
 constexpr size_t APP_PATH_MAX = 256;
@@ -48,7 +49,7 @@ private:
 	Network* GetNetwork();
 	Options* GetOptions();
 	void Initialise();
-	/*DArray<char*>**/ void* ListExistingGames();
+	DArray<char*>* ListExistingGames();
 	void LoadGame(const char* username);
 	void LoadGame();
 	void RegisterPhoneDialler(PhoneDialler* phoneDialler);
