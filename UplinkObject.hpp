@@ -4,8 +4,10 @@
 
 class UplinkObject
 {
+public:
 	UplinkObject();
 	virtual ~UplinkObject();
+private:
 	virtual bool Load(FILE* file);
 	virtual void Save(FILE* file);
 	virtual void Print();

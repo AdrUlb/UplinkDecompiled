@@ -41,7 +41,29 @@ char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const
 		NullWrite();
 	}
 
-	auto ret = strncpy(destination, source, num);
+	return strncpy(destination, source, num);
+}
+
+template<typename... Args>
+int UplinkSnprintfImpl(char* destination, size_t num, const char* format, const char* location, int line, Args... args)
+{
+	auto ret = snprintf(destination, num, format, args...);
+	
+	if (ret > num)
+	{
+		printf(
+			"\n"
+			"An Uplink snprintf Failure has occured\n"
+			"======================================\n"
+			" Location    : %s, line %d\n"
+			" Buffer size : %d\n Format      : %s\n"
+			" Buffer      : %s\n",
+			
+			location, line, num, format, destination
+		);
+
+		NullWrite();
+	}
 
 	return ret;
 }

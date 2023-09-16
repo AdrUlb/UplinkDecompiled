@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "Util.hpp"
 #include "App.hpp"
+#include "DArray.hpp"
 
 uintptr_t PAGESIZE = 0;
 
@@ -19,11 +20,11 @@ void Write8(uintptr_t address, uint8_t value)
 
 	const auto page = GetPageFromAddress(address);
 
-	mprotect((void*)page, PAGESIZE, PROT_WRITE);
+	mprotect((void*)page, PAGESIZE, PROT_EXEC | PROT_READ | PROT_WRITE);
 
 	*ptr = value;
 
-	mprotect((void*)page, PAGESIZE, PROT_EXEC | PROT_READ);
+	//mprotect((void*)page, PAGESIZE, PROT_EXEC | PROT_READ);
 }
 
 void Write16(uintptr_t address, uint16_t value)
@@ -80,12 +81,9 @@ void WriteJump(uintptr_t instr, uintptr_t target)
 __attribute__((constructor))
 static void Init()
 {
+	assert(sizeof(App) == 0x5C4);
+	assert(sizeof(DArray<char*>) == 0x10);
+
 	PAGESIZE = sysconf(_SC_PAGE_SIZE);
 	WriteJump(0x080508E0, (uint32_t)GetFilePath);
-}
-
-__attribute__((destructor))
-static void Fini()
-{
-
 }

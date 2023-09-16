@@ -10,4 +10,5 @@ add_library(UplinkDecompiled SHARED UplinkDecompiled.cpp Util.cpp)
 target_compile_options(UplinkDecompiled PRIVATE -m32)
 target_link_options(UplinkDecompiled PRIVATE -m32)
 
-add_custom_target(run COMMAND LD_PRELOAD=$<TARGET_FILE:UplinkDecompiled> '$ENV{UPLINK_DIR}/uplink.bin.x86')
+add_custom_target(run
+    COMMAND LD_PRELOAD=$<TARGET_FILE:UplinkDecompiled> '$ENV{UPLINK_DIR}/uplink.bin.x86')
