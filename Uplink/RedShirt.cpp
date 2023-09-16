@@ -58,7 +58,7 @@ static bool filterStream(FILE* file, FILE* tempFile, FilterCallback filterCallba
 		if (bytesRead == 0)
 			return true;
 
-		(*filterCallback)(buffer, bytesRead);
+		filterCallback(buffer, bytesRead);
 
 		bytesWritten = fwrite(buffer, 1, bytesRead, tempFile);
 	} while (bytesWritten >= bytesRead);
@@ -77,7 +77,7 @@ static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback pr
 	if (!file)
 		return false;
 
-	if (!(*prepareReadCallback)(file))
+	if (!prepareReadCallback(file))
 	{
 		puts("redshirt: failed to read header!");
 		fclose(file);
@@ -91,7 +91,7 @@ static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback pr
 		return false;
 	}
 
-	if (!(*prepareWriteCallback)(tempFile))
+	if (!prepareWriteCallback(tempFile))
 	{
 		puts("redshirt: failed to write header!");
 		fclose(file);
@@ -109,7 +109,7 @@ static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback pr
 		return false;
 	}
 
-	temp = (*finishCallback)(tempFile);
+	temp = finishCallback(tempFile);
 	if (!temp)
 	{
 		puts("redshirt: failed to write checksum!");
