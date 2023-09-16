@@ -3,9 +3,10 @@
 #include <cstdint>
 #include <sys/mman.h>
 #include <unistd.h>
-#include "Util.hpp"
-#include "App.hpp"
-#include "DArray.hpp"
+#include "Uplink/Util.hpp"
+#include "Uplink/App.hpp"
+#include "Uplink/DArray.hpp"
+#include "Uplink/RedShirt.hpp"
 
 uintptr_t PAGESIZE = 0;
 
@@ -86,4 +87,8 @@ static void Init()
 
 	PAGESIZE = sysconf(_SC_PAGE_SIZE);
 	WriteJump(0x080508E0, (uint32_t)GetFilePath);
+	WriteJump(0x08050710, (uint32_t)MakeDirectory);
+	WriteJump(0x08050550, (uint32_t)EmptyDirectory);
+	//WriteJump(0x0817CF70, (uint32_t)RsInitialise);
+	//WriteJump(0x0817CF70, (uint32_t)RsInitialise);
 }

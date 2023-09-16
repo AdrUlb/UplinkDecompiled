@@ -6,7 +6,8 @@ endif()
 
 project(UplinkDecompiled)
 
-add_library(UplinkDecompiled SHARED UplinkDecompiled.cpp Util.cpp)
+set(UPLINK_SOURCES Uplink/Util.cpp Uplink/RedShirt.cpp)
+add_library(UplinkDecompiled SHARED UplinkDecompiled.cpp ${UPLINK_SOURCES})
 target_compile_options(UplinkDecompiled PRIVATE -m32)
 target_link_options(UplinkDecompiled PRIVATE -m32)
 
