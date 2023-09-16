@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+#include <cstdio>
 #include "UplinkObject.hpp"
 #include "UplinkDecompiledTempDefs.hpp"
 
