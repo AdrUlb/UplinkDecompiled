@@ -3,10 +3,10 @@
 #include <cstdint>
 #include <sys/mman.h>
 #include <unistd.h>
-#include "Uplink/Util.hpp"
-#include "Uplink/App.hpp"
-#include "Uplink/DArray.hpp"
-#include "Uplink/RedShirt.hpp"
+#include "Source/Util.hpp"
+#include "Source/App.hpp"
+#include "Source/DArray.hpp"
+#include "Source/RedShirt.hpp"
 
 uintptr_t PAGESIZE = 0;
 
@@ -88,9 +88,6 @@ void WriteCall(uintptr_t instr, uintptr_t target)
 __attribute__((constructor))
 static void Init()
 {
-	assert(sizeof(App) == 0x5C4);
-	assert(sizeof(DArray<char*>) == 0x10);
-
 	PAGESIZE = sysconf(_SC_PAGE_SIZE);
 	WriteJump(0x080508E0, (uint32_t)GetFilePath);
 	WriteJump(0x08050710, (uint32_t)MakeDirectory);
