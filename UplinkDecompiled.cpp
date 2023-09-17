@@ -21,11 +21,11 @@ void Write8(uintptr_t address, uint8_t value)
 
 	const auto page = GetPageFromAddress(address);
 
-	mprotect((void*)page, PAGESIZE, PROT_EXEC | PROT_READ | PROT_WRITE);
+	mprotect((void*)page, PAGESIZE, PROT_WRITE);
 
 	*ptr = value;
 
-	//mprotect((void*)page, PAGESIZE, PROT_EXEC | PROT_READ);
+	mprotect((void*)page, PAGESIZE, PROT_EXEC | PROT_READ);
 }
 
 void Write16(uintptr_t address, uint16_t value)
@@ -79,6 +79,12 @@ void WriteJump(uintptr_t instr, uintptr_t target)
 	Write32(instr + 1, target - instr - 5);
 }
 
+void WriteCall(uintptr_t instr, uintptr_t target)
+{
+	Write8(instr, 0xE8);
+	Write32(instr + 1, target - instr - 5);
+}
+
 __attribute__((constructor))
 static void Init()
 {
@@ -89,6 +95,6 @@ static void Init()
 	WriteJump(0x080508E0, (uint32_t)GetFilePath);
 	WriteJump(0x08050710, (uint32_t)MakeDirectory);
 	WriteJump(0x08050550, (uint32_t)EmptyDirectory);
-	//WriteJump(0x0817CF70, (uint32_t)RsInitialise);
-	//WriteJump(0x0817CF70, (uint32_t)RsInitialise);
+	WriteJump(0x0817CF70, (uint32_t)RsInitialise);
+	WriteJump(0x0817D9B0, (uint32_t)RsLoadArchive);
 }

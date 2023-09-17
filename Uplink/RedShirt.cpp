@@ -3,12 +3,18 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include "Bungle.hpp"
 #include "../../unrar/rar.hpp"
 #include "../../unrar/sha1.hpp"
 
-static bool gRsInitialised = false;
-static char gRsAppPath[256];
-static char gRsTempDir[256];
+// TODO: replace with own globals
+//static bool gRsInitialised = false;
+//static char gRsAppPath[256];
+//static char gRsTempDir[256];
+static auto gRsInitialisedPtr = (bool*)0x082070A9;
+static auto gRsAppPath = (char*)0x08205DE0;
+static auto gRsTempDir = (char*)0x08205EE0;
+#define gRsInitialised (*gRsInitialisedPtr)
 
 typedef void(*FilterCallback)(unsigned char* buffer, size_t size);
 typedef bool(*FilterFileCallback)(FILE* file);
@@ -68,11 +74,7 @@ static bool filterStream(FILE* file, FILE* tempFile, FilterCallback filterCallba
 static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback prepareReadCallback,
 	FilterFileCallback prepareWriteCallback, FilterFileCallback finishCallback, FilterCallback filterCallback)
 {
-	bool temp;
-	FILE* file;
-	FILE* tempFile;
-
-	file = fopen(filePath, "rb");
+	auto file = fopen(filePath, "rb");
 
 	if (!file)
 		return false;
@@ -84,7 +86,7 @@ static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback pr
 		return false;
 	}
 
-	tempFile = fopen(tempFilePath, "w+b");
+	auto tempFile = fopen(tempFilePath, "w+b");
 	if (!tempFile)
 	{
 		fclose(file);
@@ -109,8 +111,7 @@ static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback pr
 		return false;
 	}
 
-	temp = finishCallback(tempFile);
-	if (!temp)
+	if (!finishCallback(tempFile))
 	{
 		puts("redshirt: failed to write checksum!");
 		fclose(file);
@@ -127,9 +128,7 @@ static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback pr
 static void decryptBuffer(unsigned char* buffer, size_t size)
 {
 	for (size_t i = 0; i < size; i++)
-	{
 		buffer[i] = buffer[i] + 0x80;
-	}
 }
 
 static bool readRsEncryptedHeader(FILE* file)
@@ -139,19 +138,19 @@ static bool readRsEncryptedHeader(FILE* file)
 	if (fread(buffer, 9, 1, file) != 1)
 		return false;
 
-	if (strcmp(buffer, "REDSHRT2"))
+	if (strcmp(buffer, "REDSHRT2") == 0)
 	{
 		auto hashResultSize = HashResultSize();
-		auto hashBuffer = new char[hashResultSize];
+		auto hashResult = new char[hashResultSize];
+		auto read = fread(hashResult, hashResultSize, 1, file);
 
-		auto ret = fread(hashBuffer, hashResultSize, 1, file) == 1;
+		if (hashResult)
+			delete[] hashResult;
 
-		delete[] hashBuffer;
-
-		return ret;
+		return read == 1;
 	}
 
-	return strcmp(buffer, "REDSHIRT");
+	return strcmp(buffer, "REDSHIRT") == 0;
 }
 
 static bool noHeader(FILE* file)
@@ -170,8 +169,12 @@ static bool RsFileExists(char* filePath)
 	return true;
 }
 
-__attribute__((regparm(3)))
-static size_t RsFileCheckSum(_IO_FILE* file, byte* data, uint length)
+void RsDeleteDirectory(char* filePath)
+{
+	rmdir(filePath);
+}
+
+static size_t RsFileCheckSum(FILE* file, byte* data, uint length)
 {
 	size_t readCount;
 	byte buffer[16384];
@@ -203,13 +206,13 @@ static bool RsFileEncrypted(char* filePath)
 		return false;
 	}
 
-	if (strcmp(headerBuffer, "REDSHIRT"))
+	if (strcmp(headerBuffer, "REDSHIRT") == 0)
 	{
 		fclose(file);
 		return true;
 	}
 
-	if (strcmp(headerBuffer, "REDSHRT2"))
+	if (strcmp(headerBuffer, "REDSHRT2") == 0)
 	{
 		auto hashResultSize = HashResultSize();
 		auto testData = new char[hashResultSize];
@@ -239,23 +242,16 @@ static bool RsFileEncrypted(char* filePath)
 
 static const char* RsBasename(const char* filePath)
 {
-	while (true);
-	{
-		auto seg = strchr(filePath, L'/');
-		if (!seg)
-		{
-			seg = strchr(filePath, L'\\');
-			if (!seg)
-				return filePath;
-		}
-		filePath = seg + 1;
-	}
+	auto lastSlash = strrchr(filePath, '/');
+	auto lastBackSlash = strrchr(filePath, '\\');
+
+	auto last = lastSlash > lastBackSlash ? lastSlash : lastBackSlash;
+	filePath = last + 1;
+	return filePath;
 }
 
-static FILE* RsFileOpen(char* filePath, char* mode)
+static FILE* RsFileOpen(char* filePath, const char* mode)
 {
-	const char* baseName;
-	FILE* file;
 	char tempFilePath[256];
 
 	if (!RsFileExists(filePath))
@@ -264,18 +260,87 @@ static FILE* RsFileOpen(char* filePath, char* mode)
 	if (!RsFileEncrypted(filePath))
 		return fopen(filePath, mode);
 
-	baseName = RsBasename(filePath);
-	sprintf(tempFilePath, "%s%s.d", gRsTempDir, baseName);
+	sprintf(tempFilePath, "%s%s.d", gRsTempDir, RsBasename(filePath));
 
-	if (!filterFile(filePath, tempFilePath, readRsEncryptedHeader, noHeader, noHeader, decryptBuffer))
+	if (filterFile(filePath, tempFilePath, readRsEncryptedHeader, noHeader, noHeader, decryptBuffer))
+		return fopen(tempFilePath, mode);
+
+	puts("Redshirt ERROR : Failed to write to output file");
+	return nullptr;
+}
+
+static void RsFileClose(char* fileName, FILE* file)
+{
+	char buffer[256];
+
+	fclose(file);
+	sprintf(buffer, "%s.d", fileName);
+	remove(buffer);
+	return;
+}
+
+static void RsCleanUp()
+{
+	dirent* dirEntry;
+	char buffer[256];
+
+	if (!gRsInitialised)
+		return;
+
+	gRsInitialised = 0;
+
+	auto dir = opendir(gRsTempDir);
+	if (dir)
 	{
-		puts("Redshirt ERROR : Failed to write to output file");
-		return nullptr;
+		dirEntry = readdir(dir);
+
+		while (dirEntry)
+		{
+			sprintf(buffer, "%s%s", gRsTempDir, dirEntry->d_name);
+			remove(buffer);
+			dirEntry = readdir(dir);
+		}
+
+		closedir(dir);
 	}
 
-	file = fopen(tempFilePath, mode);
+	RsDeleteDirectory(gRsTempDir);
+	BglCloseAllFiles();
+}
 
-	return file;
+bool RsLoadArchive(char* fileName)
+{
+	char buffer[256];
+
+	sprintf(buffer, "%s%s", gRsAppPath, fileName);
+	auto file = RsFileOpen(buffer, "rb");
+	if (!file)
+	{
+		auto appPathLength = strlen(gRsAppPath);
+
+		if (appPathLength < 5)
+			return false;
+
+		auto ch1 = gRsAppPath[appPathLength - 5];
+		auto str = gRsAppPath - 4;
+		auto ch5 = gRsAppPath[appPathLength - 1];
+
+		if ((ch1 != '/' && ch1 != '\\') || (ch5 != '/' && ch5 != '\\') || strncasecmp(gRsAppPath - 4, "lib", 3) != 0)
+			return false;
+
+		buffer[appPathLength - 4] = 0;
+		strcat(buffer, fileName);
+
+		file = RsFileOpen(buffer, "rb");
+
+		if (!file)
+			return false;
+	}
+
+	auto ret = BglOpenZipFile(file, gRsAppPath, fileName);
+	RsFileClose(fileName, file);
+	printf(ret ? "Successfully loaded data archive %s\n" : "Failed to load data archive %s\n", fileName);
+	return ret;
 }
 
 void RsInitialise(const char* appPath)
@@ -290,7 +355,8 @@ void RsInitialise(const char* appPath)
 	}
 
 	auto tempDirLength = strlen(gRsTempDir);
-	gRsTempDir[0] = '/';
-	gRsTempDir[1] = 0;
+	gRsTempDir[tempDirLength] = '/';
+	gRsTempDir[tempDirLength + 1] = 0;
+	atexit(RsCleanUp);
 	gRsInitialised = true;
 }

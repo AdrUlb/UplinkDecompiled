@@ -6,7 +6,7 @@ endif()
 
 project(UplinkDecompiled)
 
-set(UPLINK_SOURCES Uplink/Util.cpp Uplink/RedShirt.cpp)
+set(UPLINK_SOURCES Uplink/Util.cpp Uplink/RedShirt.cpp Uplink/BTree.cpp Uplink/Bungle.cpp Uplink/BTree.cpp ../unrar/sha1.cpp)
 add_library(UplinkDecompiled SHARED UplinkDecompiled.cpp ${UPLINK_SOURCES})
 target_compile_options(UplinkDecompiled PRIVATE -m32)
 target_link_options(UplinkDecompiled PRIVATE -m32)
