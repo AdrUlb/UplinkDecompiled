@@ -3,7 +3,7 @@
 #include <dirent.h>
 #include <unistd.h>
 
-#define NullWrite() (*((int*)0) = 0)
+#define Crash() (*((int*)0) = 0)
 
 void UplinkAssertImpl(bool condition, const char* conditionStr, const char* location, int line)
 {
@@ -20,7 +20,7 @@ void UplinkAssertImpl(bool condition, const char* conditionStr, const char* loca
 		conditionStr, location, line
 	);
 
-	NullWrite();
+	Crash();
 }
 
 char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const char* location, int line)
@@ -41,7 +41,7 @@ char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const
 			location, line, num, sourceLength, source
 		);
 
-		NullWrite();
+		Crash();
 	}
 
 	return strncpy(destination, source, num);
@@ -65,7 +65,7 @@ int UplinkSnprintfImpl(char* destination, size_t num, const char* format, const 
 			location, line, num, format, destination
 		);
 
-		NullWrite();
+		Crash();
 	}
 
 	return ret;
@@ -130,4 +130,9 @@ void EmptyDirectory(const char* path)
 		unlink(buffer);
 	}
 	closedir(dir);
+}
+
+bool DoesFileExist(const char* path)
+{
+	return !access(path, 0);
 }

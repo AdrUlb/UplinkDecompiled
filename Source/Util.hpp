@@ -29,3 +29,4 @@ inline void MakeDirectory(const char* path)
 }
 
 void EmptyDirectory(const char* path);
+bool DoesFileExist(const char* path);

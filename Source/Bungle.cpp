@@ -3,9 +3,7 @@
 #include <cstring>
 #include "BTree.hpp"
 #include "RedShirt.hpp"
-
-static auto filesPtr = (BTree<LocalFileHeader*>*)0x082070B0;
-#define files (*filesPtr)
+#include "../UplinkDecompiledTempDefs.hpp"
 
 static void BglSlashify(char* filePath)
 {
@@ -128,7 +126,7 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 
 			sprintf(filePath, "%s%s", appPath, localFileHeader->FileName);
 			BglSlashify(filePath);
-			files.PutData(filePath, &localFileHeader);
+			gFiles.PutData(filePath, &localFileHeader);
 			continue;
 		}
 
@@ -152,5 +150,5 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 
 void BglCloseAllFiles()
 {
-	BglCloseAllFiles(&files);
+	BglCloseAllFiles(&gFiles);
 }

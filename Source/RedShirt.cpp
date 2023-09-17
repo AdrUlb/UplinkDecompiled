@@ -4,17 +4,9 @@
 #include <cstdlib>
 #include <cstdio>
 #include "Bungle.hpp"
+#include "../UplinkDecompiledTempDefs.hpp"
 #include "../../unrar/rar.hpp"
 #include "../../unrar/sha1.hpp"
-
-// TODO: replace with own globals
-//static bool gRsInitialised = false;
-//static char gRsAppPath[256];
-//static char gRsTempDir[256];
-static auto gRsInitialisedPtr = (bool*)0x082070A9;
-static auto gRsAppPath = (char*)0x08205DE0;
-static auto gRsTempDir = (char*)0x08205EE0;
-#define gRsInitialised (*gRsInitialisedPtr)
 
 typedef void(*FilterCallback)(unsigned char* buffer, size_t size);
 typedef bool(*FilterFileCallback)(FILE* file);

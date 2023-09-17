@@ -7,6 +7,7 @@
 #include "Source/App.hpp"
 #include "Source/DArray.hpp"
 #include "Source/RedShirt.hpp"
+#include "Source/Main.hpp"
 
 uintptr_t PAGESIZE = 0;
 
@@ -89,9 +90,5 @@ __attribute__((constructor))
 static void Init()
 {
 	PAGESIZE = sysconf(_SC_PAGE_SIZE);
-	WriteJump(0x080508E0, (uint32_t)GetFilePath);
-	WriteJump(0x08050710, (uint32_t)MakeDirectory);
-	WriteJump(0x08050550, (uint32_t)EmptyDirectory);
-	WriteJump(0x0817CF70, (uint32_t)RsInitialise);
-	WriteJump(0x0817D9B0, (uint32_t)RsLoadArchive);
+	WriteJump(0x080FF260, (uint32_t)main);
 }
