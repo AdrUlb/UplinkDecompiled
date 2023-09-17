@@ -161,7 +161,7 @@ static bool RsFileExists(char* filePath)
 	return true;
 }
 
-void RsDeleteDirectory(char* filePath)
+static void RsDeleteDirectory(char* filePath)
 {
 	rmdir(filePath);
 }

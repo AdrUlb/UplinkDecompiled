@@ -20,25 +20,25 @@ static bool TestRsLoadArchive(char* fileName)
 	return true;
 }
 
-void hSignalSIGSEGV(int signum)
+static void hSignalSIGSEGV(int signum)
 {
 	puts("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)");
 	RunUplinkExceptionHandling();
 }
 
-void hSignalSIGFPE(int signum)
+static void hSignalSIGFPE(int signum)
 {
 	puts("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)");
 	RunUplinkExceptionHandling();
 }
 
-void hSignalSIGPIPE(int signum)
+static void hSignalSIGPIPE(int signum)
 {
 	puts("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)");
 	RunUplinkExceptionHandling();
 }
 
-char* vmg57670648335164_br_find_exe(int* param_1)
+static char* vmg57670648335164_br_find_exe(int* param_1)
 {
 	char filePath[PATH_MAX];
 
@@ -91,8 +91,7 @@ char* vmg57670648335164_br_find_exe(int* param_1)
 	return nullptr;
 }
 
-
-void RunUplink(int argc, char** argv)
+static void RunUplink(int argc, char** argv)
 {
 	bool temp;
 	char cVar1;
