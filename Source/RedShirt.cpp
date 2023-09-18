@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include "Bungle.hpp"
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../UplinkDecompiledTempGlobals.hpp"
 #include "../../unrar/rar.hpp"
 #include "../../unrar/sha1.hpp"
 
@@ -346,7 +346,7 @@ void RsInitialise(const char* appPath)
 		abort();
 	}
 
-	auto tempDirLength = strlen(gRsTempDir);
+	const auto tempDirLength = strlen(gRsTempDir);
 	gRsTempDir[tempDirLength] = '/';
 	gRsTempDir[tempDirLength + 1] = 0;
 	atexit(RsCleanUp);

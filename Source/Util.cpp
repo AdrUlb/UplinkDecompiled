@@ -3,8 +3,6 @@
 #include <dirent.h>
 #include <unistd.h>
 
-#define Crash() (*((int*)0) = 0)
-
 void UplinkAssertImpl(bool condition, const char* conditionStr, const char* location, int line)
 {
 	if (condition)
@@ -20,7 +18,7 @@ void UplinkAssertImpl(bool condition, const char* conditionStr, const char* loca
 		conditionStr, location, line
 	);
 
-	Crash();
+	UplinkCrash();
 }
 
 char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const char* location, int line)
@@ -41,34 +39,10 @@ char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const
 			location, line, num, sourceLength, source
 		);
 
-		Crash();
+		UplinkCrash();
 	}
 
 	return strncpy(destination, source, num);
-}
-
-template<typename... Args>
-int UplinkSnprintfImpl(char* destination, size_t num, const char* format, const char* location, int line, Args... args)
-{
-	auto ret = snprintf(destination, num, format, args...);
-
-	if (ret > num)
-	{
-		printf(
-			"\n"
-			"An Uplink snprintf Failure has occured\n"
-			"======================================\n"
-			" Location    : %s, line %d\n"
-			" Buffer size : %d\n Format      : %s\n"
-			" Buffer      : %s\n",
-
-			location, line, num, format, destination
-		);
-
-		Crash();
-	}
-
-	return ret;
 }
 
 char* GetFilePath(const char* fileName)

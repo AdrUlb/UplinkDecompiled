@@ -12,8 +12,8 @@ public:
 	T value;
 
 	BTree();
-	~BTree();
 	BTree(char* name, T* valuePtr);
+	~BTree();
 	void Empty();
 	void PutData(char* name, T* valuePtr);
 	inline BTree<T>* Left()

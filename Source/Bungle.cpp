@@ -3,14 +3,11 @@
 #include <cstring>
 #include "BTree.hpp"
 #include "RedShirt.hpp"
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../UplinkDecompiledTempGlobals.hpp"
 
 static void BglSlashify(char* filePath)
 {
-	char* pcVar1;
-	char c;
-
-	for (pcVar1 = strchr(filePath, L'\\'); pcVar1 != (char*)0x0; pcVar1 = strchr(pcVar1, L'\\'))
+	for (auto pcVar1 = strchr(filePath, L'\\'); pcVar1 != (char*)0x0; pcVar1 = strchr(pcVar1, L'\\'))
 		*pcVar1 = '/';
 
 	for (auto c = *filePath;c != 0; c = *(++filePath))

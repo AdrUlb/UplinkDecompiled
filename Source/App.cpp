@@ -1,6 +1,8 @@
 #include "App.hpp"
 
+#include <cassert>
 #include "Util.hpp"
+#include "../UplinkDecompiledTempDefs.hpp"
 
 App::App()
 {
@@ -13,15 +15,31 @@ App::App()
 	strncpy(build, "Version 1.0 (RELEASE), Compiled on 01/01/97", APP_BUILD_SIZE);
 }
 
+App::~App()
+{
+	if (!Closed())
+		Close();
+}
+
+void App::Print()
+{
+	// TODO
+	assert(false);
+}
+
+void App::Update()
+{
+	// TODO
+	assert(false);
+}
+
+const char* App::GetID()
+{
+	return "APP";
+}
+
 void App::Set(const char* path, const char* version, const char* type, const char* date, const char* title)
 {
-	size_t temp;
-	uint temp6;
-	char* temp2;
-	char* temp3;
-	char* temp4;
-	char* temp5;
-
 	UplinkAssert(strlen(path) < APP_PATH_MAX);
 	UplinkAssert(strlen(version) < APP_VERSION_MAX);
 	UplinkAssert(strlen(type) < APP_TYPE_MAX);
@@ -45,8 +63,27 @@ void App::Set(const char* path, const char* version, const char* type, const cha
 	}
 	else
 	{
-		UplinkSnprintf(usersPath, APP_PATH_MAX, "%s/.uplink/", temp2);
-		UplinkSnprintf(usersTempPath, APP_PATH_MAX, "%s/.uplink/userstmp/", temp2);
-		UplinkSnprintf(usersOldPath, APP_PATH_MAX, "%s/.uplink/usersold/", temp2);
+		UplinkSnprintf(usersPath, APP_PATH_MAX, "%s/.uplink/", path);
+		UplinkSnprintf(usersTempPath, APP_PATH_MAX, "%s/.uplink/userstmp/", path);
+		UplinkSnprintf(usersOldPath, APP_PATH_MAX, "%s/.uplink/usersold/", path);
 	}
+}
+
+void App::Initialise()
+{
+	long double lVar1;
+	void* optionsVtable;
+
+	options = new Options();
+	options->Load(nullptr);
+	Options_CreateDefaultOptions(options);
+	uptime = (int)EclGetAccurateTime();
+
+
+	network = new Network();
+	Network_Network(network);
+	mainMenu = new MainMenu();
+	MainMenu_MainMenu(mainMenu);
+
+	return;
 }
