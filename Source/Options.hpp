@@ -3,7 +3,7 @@
 #include "UplinkObject.hpp"
 #include "BTree.hpp"
 #include "LList.hpp"
-#include "ColourOption.hpp"
+#include "ColorOption.hpp"
 
 #define OPTION_NAME_MAX 0x40
 #define OPTION_TOOLTIP_MAX 0x80
@@ -44,7 +44,7 @@ class Options : UplinkObject
 	char unknown[OPTIONS_UNKNOWN_MAX];
 	char themeTitle[OPTIONS_THEMETITLE_MAX];
 	char themeDescription[OPTIONS_THEMEDESCRIPTION_MAX];
-	BTree<ColourOption*> colorOptions;
+	BTree<ColorOption*> colorOptions;
 
 public:
 	Options();

@@ -21,8 +21,13 @@ static const auto Run_Game = (void(*)())0x080FDA60;
 static const auto Cleanup_Uplink = (void(*)())0x080FD9C0;
 static const auto EclGetAccurateTime = (long double(*)())0x08177BB0;
 
+static const auto Options_Options = (void(*)(Options*))0x080FB7B0;
+static const auto Options__Options = (void(*)(Options*))0x080FBFC0;
 static const auto Options_CreateDefaultOptions = (void(*)(Options*))0x080FB980;
+
 static const auto Network_Network = (void(*)(Network*))0x080F8C60;
 static const auto MainMenu_MainMenu = (void(*)(MainMenu*))0x080EC870;
+
 static const auto App_App = (void(*)(App*))0x0804ED90;
+static const auto App_Update = (void(*)(App*))0x0804DAD0;
 static const auto App_Initialise = (void(*)(App*))0x0804EBD0;

@@ -29,8 +29,7 @@ void App::Print()
 
 void App::Update()
 {
-	// TODO
-	assert(false);
+	App_Update(this);
 }
 
 const char* App::GetID()
@@ -69,21 +68,7 @@ void App::Set(const char* path, const char* version, const char* type, const cha
 	}
 }
 
-void App::Initialise()
+bool App::Closed()
 {
-	long double lVar1;
-	void* optionsVtable;
-
-	options = new Options();
-	options->Load(nullptr);
-	Options_CreateDefaultOptions(options);
-	uptime = (int)EclGetAccurateTime();
-
-
-	network = new Network();
-	Network_Network(network);
-	mainMenu = new MainMenu();
-	MainMenu_MainMenu(mainMenu);
-
-	return;
+	return closed;
 }

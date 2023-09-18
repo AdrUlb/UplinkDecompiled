@@ -6,7 +6,6 @@
 #include <ctime>
 #include "Util.hpp"
 #include "RedShirt.hpp"
-//#include "App.hpp"
 #include "../UplinkDecompiledTempDefs.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
 
@@ -118,26 +117,17 @@ static bool TestRsLoadArchive(char* fileName)
 
 void Init_App(const char* exeFilePath)
 {
-	char* path;
-	App* app;
-	uint temp;
-	int newStdout;
-	FILE* pFVar2;
-	tm* currentTimeTm;
 	char debugLogFilePath[PATH_MAX];
-	char buffer[32];
 	time_t currentTime;
 
-	path = GetFilePath(exeFilePath);
-	app = (App*)new char[0x5c4];
-	App_App(app);
-	gApp = app;
+	gApp = new App();
 
-	UplinkSnprintf(buffer, 0x20, "%s at %s", __DATE__, __TIME__);
+	char buildDateTime[0x20];
+	UplinkSnprintf(buildDateTime, 0x20, "%s at %s", __DATE__, __TIME__);
 
-	gApp->Set(path, "1.55", "RELEASE", buffer, "Uplink");
-
-	delete[] path;
+	auto gameDirPath = GetFilePath(exeFilePath);
+	gApp->Set(gameDirPath, "1.55", "RELEASE", buildDateTime, "Uplink");
+	delete[] gameDirPath;
 
 	puts("=============================");
 	puts("=                           =");
@@ -155,10 +145,11 @@ void Init_App(const char* exeFilePath)
 	MakeDirectory(gApp->usersOldPath);
 	UplinkSnprintf(debugLogFilePath, PATH_MAX, "%sdebug.log", gApp->usersPath);
 
-	gFileStdout = nullptr;
-	newStdout = dup(fileno(stdout));
+	auto newStdout = dup(fileno(stdout));
 	if (newStdout != -1)
 		gFileStdout = fdopen(newStdout, "a");
+	else
+		gFileStdout = nullptr;
 
 	if (!freopen(debugLogFilePath, "a", stdout))
 		printf("WARNING : Failed to open %s for writing stdout\n", debugLogFilePath);
@@ -167,7 +158,7 @@ void Init_App(const char* exeFilePath)
 		printf("WARNING : Failed to open %s for writing stderr\n", debugLogFilePath);
 
 	currentTime = time(nullptr);
-	currentTimeTm = localtime(&currentTime);
+	auto currentTimeTm = localtime(&currentTime);
 	puts("\n");
 	puts("===============================================");
 	printf("NEW GAME     %d:%d, %d/%d/%d\n", currentTimeTm->tm_hour, currentTimeTm->tm_min,
