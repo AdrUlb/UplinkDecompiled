@@ -171,7 +171,6 @@ void Init_App(const char* exeFilePath)
 	printf("Path : %s\n", gApp->path);
 	RsInitialise(gApp->path);
 	App_Initialise(gApp);
-	return;
 }
 
 static void RunUplink(int argc, char** argv)

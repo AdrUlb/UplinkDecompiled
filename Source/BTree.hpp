@@ -1,21 +1,27 @@
 #pragma once
 
 #include "Bungle.hpp"
+#include "DArray.hpp"
 
 template<typename T>
 class BTree
 {
 	BTree<T>* left = nullptr;
 	BTree<T>* right = nullptr;
-	char* name = nullptr;
 public:
-	T value;
+	char* Name = nullptr;
+	T Value;
 
 	BTree();
 	BTree(char* name, T* valuePtr);
 	~BTree();
+	void AppendRight(BTree<T>* value);
+	DArray<char*>* ConvertIndexToDArray();
+	DArray<T>* ConvertToDArray();
 	void Empty();
 	void PutData(char* name, T* valuePtr);
+	void RecursiveConvertIndexToDArray(DArray<char*>* arr, BTree<T>* item);
+	void RecursiveConvertToDArray(DArray<T>* arr, BTree<T>* item);
 	inline BTree<T>* Left()
 	{
 		return left;
