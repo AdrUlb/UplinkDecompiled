@@ -60,13 +60,14 @@ static bool filterStream(FILE* file, FILE* tempFile, FilterCallback filterCallba
 
 		bytesWritten = fwrite(buffer, 1, bytesRead, tempFile);
 	} while (bytesWritten >= bytesRead);
+	
 	return false;
 }
 
 static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback prepareReadCallback,
 	FilterFileCallback prepareWriteCallback, FilterFileCallback finishCallback, FilterCallback filterCallback)
 {
-	auto file = fopen(filePath, "rb");
+	const auto file = fopen(filePath, "rb");
 
 	if (!file)
 		return false;
@@ -152,7 +153,7 @@ static bool noHeader(FILE* file)
 
 static bool RsFileExists(char* filePath)
 {
-	auto file = fopen(filePath, "r");
+	const auto file = fopen(filePath, "r");
 
 	if (!file)
 		return false;
@@ -168,13 +169,12 @@ static void RsDeleteDirectory(char* filePath)
 
 static size_t RsFileCheckSum(FILE* file, byte* data, uint length)
 {
-	size_t readCount;
 	byte buffer[16384];
 
 	auto context = HashInitial();
 	while (true)
 	{
-		readCount = fread(buffer, 1, 0x4000, file);
+		const auto readCount = fread(buffer, 1, 0x4000, file);
 		if (readCount == 0)
 			break;
 		HashData(context, buffer, readCount);
@@ -187,7 +187,7 @@ static bool RsFileEncrypted(char* filePath)
 {
 	char headerBuffer[9];
 
-	auto file = fopen(filePath, "rb");
+	const auto file = fopen(filePath, "rb");
 
 	if (!file)
 		return false;
@@ -206,7 +206,7 @@ static bool RsFileEncrypted(char* filePath)
 
 	if (strcmp(headerBuffer, "REDSHRT2") == 0)
 	{
-		auto hashResultSize = HashResultSize();
+		const auto hashResultSize = HashResultSize();
 		auto testData = new char[hashResultSize];
 
 		auto hashEqual = false;
@@ -234,10 +234,14 @@ static bool RsFileEncrypted(char* filePath)
 
 static const char* RsBasename(const char* filePath)
 {
-	auto lastSlash = strrchr(filePath, '/');
-	auto lastBackSlash = strrchr(filePath, '\\');
+	const auto lastSlash = strrchr(filePath, '/');
+	const auto lastBackSlash = strrchr(filePath, '\\');
 
-	auto last = lastSlash > lastBackSlash ? lastSlash : lastBackSlash;
+	const auto last = lastSlash > lastBackSlash ? lastSlash : lastBackSlash;
+
+	if (last == nullptr)
+		return filePath;
+
 	filePath = last + 1;
 	return filePath;
 }
@@ -273,7 +277,6 @@ static void RsFileClose(char* fileName, FILE* file)
 
 static void RsCleanUp()
 {
-	dirent* dirEntry;
 	char buffer[256];
 
 	if (!gRsInitialised)
@@ -281,10 +284,10 @@ static void RsCleanUp()
 
 	gRsInitialised = 0;
 
-	auto dir = opendir(gRsTempDir);
+	const auto dir = opendir(gRsTempDir);
 	if (dir)
 	{
-		dirEntry = readdir(dir);
+		auto dirEntry = readdir(dir);
 
 		while (dirEntry)
 		{
@@ -329,7 +332,7 @@ bool RsLoadArchive(char* fileName)
 			return false;
 	}
 
-	auto ret = BglOpenZipFile(file, gRsAppPath, fileName);
+	const auto ret = BglOpenZipFile(file, gRsAppPath, fileName);
 	RsFileClose(fileName, file);
 	printf(ret ? "Successfully loaded data archive %s\n" : "Failed to load data archive %s\n", fileName);
 	return ret;

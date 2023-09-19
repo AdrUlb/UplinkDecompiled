@@ -44,7 +44,7 @@ int UplinkObject::GetOBJECTID()
 
 char* UplinkObject::GetID_END()
 {
-	auto buffer = new char[13];
+	const auto buffer = new char[13];
 	UplinkSnprintf(buffer, 13, "%s_END", GetID());
 	return buffer;
 }

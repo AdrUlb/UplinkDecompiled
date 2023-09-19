@@ -119,7 +119,17 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 		if ((localFileHeader->CompressionMethod == 0) && (localFileHeader->CompressedSize == localFileHeader->UncompressedSize))
 		{
 			if (!localFileHeader->FileName)
-				goto LAB_0817e99c;
+			{
+				if (localFileHeader->ExtraField)
+					delete[] localFileHeader->ExtraField;
+
+				if (localFileHeader->Data)
+					delete[] localFileHeader->Data;
+
+				if (localFileHeader->ZipFileName)
+					delete[] localFileHeader->ZipFileName;
+
+			}
 
 			sprintf(filePath, "%s%s", appPath, localFileHeader->FileName);
 			BglSlashify(filePath);
@@ -129,7 +139,7 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 
 		if (localFileHeader->FileName)
 			delete[] localFileHeader->FileName;
-	LAB_0817e99c:
+
 		if (localFileHeader->ExtraField)
 			delete[] localFileHeader->ExtraField;
 
