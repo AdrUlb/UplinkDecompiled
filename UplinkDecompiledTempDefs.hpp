@@ -23,8 +23,6 @@ static const auto FileReadDataInt = (bool(*)(const char*, int, void*, unsigned i
 static const auto LoadBTree = (bool(*)(BTree<Option*>*, FILE*))0x08059460;
 static const auto SaveBTree = (void(*)(BTree<Option*>*, FILE*))0x08058A70;
 
-static const auto Options_Options = (void(*)(Options*))0x080FB7B0;
-static const auto Options__Options = (void(*)(Options*))0x080FBFC0;
 static const auto Options_CreateDefaultOptions = (void(*)(Options*))0x080FB980;
 
 static const auto Network_Network = (void(*)(Network*))0x080F8C60;
