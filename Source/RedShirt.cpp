@@ -2,7 +2,6 @@
 
 #include <cstring>
 #include <cstdlib>
-#include <cstdio>
 #include "Bungle.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
 #include "../../unrar/rar.hpp"
@@ -60,11 +59,11 @@ static bool filterStream(FILE* file, FILE* tempFile, FilterCallback filterCallba
 
 		bytesWritten = fwrite(buffer, 1, bytesRead, tempFile);
 	} while (bytesWritten >= bytesRead);
-	
+
 	return false;
 }
 
-static bool filterFile(char* filePath, char* tempFilePath, FilterFileCallback prepareReadCallback,
+static bool filterFile(const char* filePath, const char* tempFilePath, FilterFileCallback prepareReadCallback,
 	FilterFileCallback prepareWriteCallback, FilterFileCallback finishCallback, FilterCallback filterCallback)
 {
 	const auto file = fopen(filePath, "rb");
@@ -151,7 +150,7 @@ static bool noHeader(FILE* file)
 	return true;
 }
 
-static bool RsFileExists(char* filePath)
+static bool RsFileExists(const char* filePath)
 {
 	const auto file = fopen(filePath, "r");
 
@@ -183,7 +182,7 @@ static size_t RsFileCheckSum(FILE* file, byte* data, uint length)
 	return HashFinal(context, data, length);
 }
 
-static bool RsFileEncrypted(char* filePath)
+bool RsFileEncrypted(const char* filePath)
 {
 	char headerBuffer[9];
 
@@ -232,6 +231,17 @@ static bool RsFileEncrypted(char* filePath)
 	return false;
 }
 
+bool RsFileEncryptedNoVerify(const char* filePath)
+{
+	const auto file = fopen(filePath, "rb");
+	if (!file)
+		return false;
+	
+	const auto ret = readRsEncryptedHeader(file);
+	fclose(file);
+	return ret;
+}
+
 static const char* RsBasename(const char* filePath)
 {
 	const auto lastSlash = strrchr(filePath, '/');
@@ -246,7 +256,7 @@ static const char* RsBasename(const char* filePath)
 	return filePath;
 }
 
-static FILE* RsFileOpen(char* filePath, const char* mode)
+FILE* RsFileOpen(const char* filePath, const char* mode)
 {
 	char tempFilePath[256];
 
@@ -265,7 +275,7 @@ static FILE* RsFileOpen(char* filePath, const char* mode)
 	return nullptr;
 }
 
-static void RsFileClose(char* fileName, FILE* file)
+void RsFileClose(const char* fileName, FILE* file)
 {
 	char buffer[256];
 
@@ -303,7 +313,7 @@ static void RsCleanUp()
 	BglCloseAllFiles();
 }
 
-bool RsLoadArchive(char* fileName)
+bool RsLoadArchive(const char* fileName)
 {
 	char buffer[256];
 

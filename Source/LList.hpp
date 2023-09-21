@@ -5,9 +5,9 @@
 template<typename T>
 class LListItem
 {
-	T Value;
-	LListItem<T>* Next = nullptr;
-	LListItem<T>* Prev = nullptr;
+	T value;
+	LListItem<T>* next = nullptr;
+	LListItem<T>* prev = nullptr;
 };
 
 template<typename T>
@@ -19,5 +19,3 @@ class LList
 	int cachedIndex = -1;
 	int size = 0;
 };
-
-template class LListItem<OptionChange*>;

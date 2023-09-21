@@ -133,17 +133,17 @@ void Init_App(const char* exeFilePath)
 	puts("=                           =");
 	puts("=        U P L I N K        =");
 	puts("=                           =");
-	printf("=        Version %-10s =\n", gApp->version);
+	printf("=        Version %-10s =\n", gApp->Version);
 	puts("=     - R E L E A S E -     =");
 	puts("=                           =");
 	puts("=============================");
 	putchar(10);
-	puts(gApp->build);
-	MakeDirectory(gApp->usersPath);
-	MakeDirectory(gApp->usersTempPath);
-	EmptyDirectory(gApp->usersTempPath);
-	MakeDirectory(gApp->usersOldPath);
-	UplinkSnprintf(debugLogFilePath, PATH_MAX, "%sdebug.log", gApp->usersPath);
+	puts(gApp->Build);
+	MakeDirectory(gApp->UsersPath);
+	MakeDirectory(gApp->UsersTempPath);
+	EmptyDirectory(gApp->UsersTempPath);
+	MakeDirectory(gApp->UsersOldPath);
+	UplinkSnprintf(debugLogFilePath, PATH_MAX, "%sdebug.log", gApp->UsersPath);
 
 	auto newStdout = dup(fileno(stdout));
 	if (newStdout != -1)
@@ -164,13 +164,13 @@ void Init_App(const char* exeFilePath)
 	printf("NEW GAME     %d:%d, %d/%d/%d\n", currentTimeTm->tm_hour, currentTimeTm->tm_min,
 		currentTimeTm->tm_mday, currentTimeTm->tm_mon + 1, currentTimeTm->tm_year + 1900);
 	puts("===============================================");
-	printf("Version : %s\n", gApp->version);
+	printf("Version : %s\n", gApp->Version);
 	puts("RELEASE");
 	puts("Linux Build");
-	puts(gApp->build);
-	printf("Path : %s\n", gApp->path);
-	RsInitialise(gApp->path);
-	App_Initialise(gApp);
+	puts(gApp->Build);
+	printf("Path : %s\n", gApp->Path);
+	RsInitialise(gApp->Path);
+	gApp->Initialise();
 }
 
 static void RunUplink(int argc, char** argv)

@@ -6,7 +6,7 @@ endif()
 
 project(UplinkDecompiled)
 
-set(UPLINK_SOURCES Source/DArray.cpp Source/BTree.cpp Source/Util.cpp Source/Main.cpp Source/RedShirt.cpp Source/BTree.cpp Source/Options.cpp Source/Bungle.cpp Source/BTree.cpp Source/App.cpp Source/UplinkObject.cpp ../unrar/sha1.cpp)
+set(UPLINK_SOURCES Source/Util.cpp Source/Main.cpp Source/RedShirt.cpp Source/Options.cpp Source/Bungle.cpp Source/App.cpp Source/UplinkObject.cpp ../unrar/sha1.cpp)
 add_library(UplinkDecompiled SHARED UplinkDecompiled.cpp ${UPLINK_SOURCES})
 target_compile_options(UplinkDecompiled PRIVATE -m32)
 target_link_options(UplinkDecompiled PRIVATE -m32)

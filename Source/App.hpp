@@ -19,15 +19,15 @@ constexpr size_t APP_BUILD_SIZE = 256;
 class App : UplinkObject
 {
 public:
-	char path[APP_PATH_MAX];
-	char usersPath[APP_PATH_MAX];
-	char usersTempPath[APP_PATH_MAX];
-	char usersOldPath[APP_PATH_MAX];
-	char version[APP_VERSION_MAX];
-	char type[APP_TYPE_MAX];
-	char date[APP_DATE_MAX];
-	char title[APP_TITLE_MAX];
-	char build[APP_BUILD_SIZE];
+	char Path[APP_PATH_MAX];
+	char UsersPath[APP_PATH_MAX];
+	char UsersTempPath[APP_PATH_MAX];
+	char UsersOldPath[APP_PATH_MAX];
+	char Version[APP_VERSION_MAX];
+	char Type[APP_TYPE_MAX];
+	char Date[APP_DATE_MAX];
+	char Title[APP_TITLE_MAX];
+	char Build[APP_BUILD_SIZE];
 
 private:
 	int uptime = 0;

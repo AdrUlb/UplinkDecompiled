@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <sys/stat.h>
+#include "BTree.hpp"
 
 #define str(s) #s
 
@@ -55,3 +56,25 @@ inline void MakeDirectory(const char* path)
 
 void EmptyDirectory(const char* path);
 bool DoesFileExist(const char* path);
+
+#include <iostream>
+
+template<typename T>
+void DeleteBTreeData(BTree<T>* tree)
+{
+	UplinkAssert(tree);
+
+	const auto arr = tree->ConvertToDArray();
+
+	for (auto i = 0; i < arr->Size(); i++)
+	{
+		if (arr->ValidIndex(i))
+		{
+			const auto data = arr->GetData(i);
+			if (data)
+				delete data;
+		}
+	}
+
+	delete arr;
+}

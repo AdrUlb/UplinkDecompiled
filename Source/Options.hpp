@@ -3,7 +3,6 @@
 #include "UplinkObject.hpp"
 #include "BTree.hpp"
 #include "LList.hpp"
-#include "ColorOption.hpp"
 
 #define OPTION_NAME_MAX 0x40
 #define OPTION_TOOLTIP_MAX 0x80
@@ -12,6 +11,13 @@
 #define OPTIONS_UNKNOWN_MAX 0x80
 #define OPTIONS_THEMETITLE_MAX 0x80
 #define OPTIONS_THEMEDESCRIPTION_MAX 0x400
+
+class ColorOption
+{
+	float unknown1;
+	float unknown2;
+	float unknown3;
+};
 
 class Option : UplinkObject
 {
@@ -22,7 +28,9 @@ class Option : UplinkObject
 	int value;
 
 	Option();
+public:
 	virtual ~Option();
+private:
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;

@@ -7,6 +7,7 @@
 #include "Source/App.hpp"
 #include "Source/DArray.hpp"
 #include "Source/RedShirt.hpp"
+#include "Source/Options.hpp"
 #include "Source/Main.hpp"
 
 uintptr_t PAGESIZE = 0;

@@ -14,6 +14,7 @@ private:
 	virtual void Update();
 	virtual const char* GetID();
 	virtual int GetOBJECTID();
+protected:
 	char* GetID_END();
 	void LoadID(FILE* file);
 	void LoadID_END(FILE* file);

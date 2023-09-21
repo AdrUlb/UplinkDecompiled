@@ -2,7 +2,6 @@
 
 #include <dirent.h>
 #include <unistd.h>
-#include "BTree.hpp"
 
 void UplinkAssertImpl(bool condition, const char* conditionStr, const char* location, int line)
 {
@@ -110,24 +109,4 @@ void EmptyDirectory(const char* path)
 bool DoesFileExist(const char* path)
 {
 	return !access(path, 0);
-}
-
-template<typename T>
-void DeleteBTreeData(BTree<T>* tree)
-{
-	UplinkAssert(tree);
-
-	const auto arr = tree->ConvertToDArray();
-
-	for (auto i = 0; i < arr->Size(); i++)
-	{
-		if (arr->ValidIndex(i))
-		{
-			const auto data = arr->GetData(i);
-			if (data)
-				delete data;
-		}
-	}
-
-	delete arr;
 }
