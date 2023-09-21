@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include "Bungle.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
+#include "../UplinkDecompiledTempDefs.hpp"
 #include "../../unrar/rar.hpp"
 #include "../../unrar/sha1.hpp"
 
@@ -42,7 +43,24 @@ static size_t HashFinal(sha1_context* context, byte* data, size_t length)
 
 	return length;
 }
-static bool filterStream(FILE* file, FILE* tempFile, FilterCallback filterCallback)
+
+static size_t RsFileCheckSum(FILE* file, byte* data, uint length)
+{
+	byte buffer[16384];
+
+	auto context = HashInitial();
+	while (true)
+	{
+		const auto readCount = fread(buffer, 1, 0x4000, file);
+		if (readCount == 0)
+			break;
+		HashData(context, buffer, readCount);
+	}
+
+	return HashFinal(context, data, length);
+}
+
+static bool filterStream(FILE* sourceFile, FILE* destFile, FilterCallback filterCallback)
 {
 	size_t bytesRead;
 	size_t bytesWritten;
@@ -50,47 +68,47 @@ static bool filterStream(FILE* file, FILE* tempFile, FilterCallback filterCallba
 
 	do
 	{
-		bytesRead = fread(buffer, 1, 0x4000, file);
+		bytesRead = fread(buffer, 1, 0x4000, sourceFile);
 
 		if (bytesRead == 0)
 			return true;
 
 		filterCallback(buffer, bytesRead);
 
-		bytesWritten = fwrite(buffer, 1, bytesRead, tempFile);
+		bytesWritten = fwrite(buffer, 1, bytesRead, destFile);
 	} while (bytesWritten >= bytesRead);
 
 	return false;
 }
 
-static bool filterFile(const char* filePath, const char* tempFilePath, FilterFileCallback prepareReadCallback,
-	FilterFileCallback prepareWriteCallback, FilterFileCallback finishCallback, FilterCallback filterCallback)
+static bool filterFile(const char* sourceFilePath, const char* destFilePath, FilterFileCallback beforeReadCallback,
+	FilterFileCallback beforeWriteCallback, FilterFileCallback afterWriteCallback, FilterCallback filterCallback)
 {
-	const auto file = fopen(filePath, "rb");
+	const auto file = fopen(sourceFilePath, "rb");
 
 	if (!file)
 		return false;
 
-	if (!prepareReadCallback(file))
+	if (!beforeReadCallback(file))
 	{
 		puts("redshirt: failed to read header!");
 		fclose(file);
 		return false;
 	}
 
-	auto tempFile = fopen(tempFilePath, "w+b");
+	auto tempFile = fopen(destFilePath, "w+b");
 	if (!tempFile)
 	{
 		fclose(file);
 		return false;
 	}
 
-	if (!prepareWriteCallback(tempFile))
+	if (!beforeWriteCallback(tempFile))
 	{
 		puts("redshirt: failed to write header!");
 		fclose(file);
 		fclose(tempFile);
-		remove(tempFilePath);
+		remove(destFilePath);
 		return false;
 	}
 
@@ -99,16 +117,16 @@ static bool filterFile(const char* filePath, const char* tempFilePath, FilterFil
 		puts("redshirt: failed to write containning bytes!");
 		fclose(file);
 		fclose(tempFile);
-		remove(tempFilePath);
+		remove(destFilePath);
 		return false;
 	}
 
-	if (!finishCallback(tempFile))
+	if (!afterWriteCallback(tempFile))
 	{
 		puts("redshirt: failed to write checksum!");
 		fclose(file);
 		fclose(tempFile);
-		remove(tempFilePath);
+		remove(destFilePath);
 		return false;
 	}
 
@@ -117,10 +135,33 @@ static bool filterFile(const char* filePath, const char* tempFilePath, FilterFil
 	return true;
 }
 
+static bool filterFileInPlace(const char* sourceFilePath, const char* destFileSuffix, FilterFileCallback beforeReadCallback,
+	FilterFileCallback beforeWriteCallback, FilterFileCallback afterWriteCallback, FilterCallback filterCallback)
+{
+	char destFilePath[256];
+
+	sprintf(destFilePath, "%s%s", sourceFilePath, destFileSuffix);
+	if (!filterFile(sourceFilePath, destFilePath, beforeReadCallback, beforeWriteCallback, afterWriteCallback, filterCallback))
+	{
+		puts("Redshirt ERROR : Failed to write output file");
+		return false;
+	}
+
+	remove(sourceFilePath);
+	rename(destFilePath, sourceFilePath);
+	return true;
+}
+
+static void encryptBuffer(unsigned char* buffer, size_t size)
+{
+	for (size_t i = 0; i < size; i++)
+		buffer[i] += 0x80;
+}
+
 static void decryptBuffer(unsigned char* buffer, size_t size)
 {
 	for (size_t i = 0; i < size; i++)
-		buffer[i] = buffer[i] + 0x80;
+		buffer[i] += 0x80;
 }
 
 static bool readRsEncryptedHeader(FILE* file)
@@ -133,16 +174,37 @@ static bool readRsEncryptedHeader(FILE* file)
 	if (strcmp(buffer, "REDSHRT2") == 0)
 	{
 		auto hashResultSize = HashResultSize();
-		auto hashResult = new char[hashResultSize];
+		char hashResult[hashResultSize];
 		auto read = fread(hashResult, hashResultSize, 1, file);
-
-		if (hashResult)
-			delete[] hashResult;
 
 		return read == 1;
 	}
 
 	return strcmp(buffer, "REDSHIRT") == 0;
+}
+
+static bool writeRsEncryptedHeader(FILE* file)
+{
+	if (fwrite("REDSHRT2", 9, 1, file) != 1)
+		return false;
+
+	const auto hashResultSize = HashResultSize();
+	char hashResult[hashResultSize];
+	memset(hashResult, 0, hashResultSize);
+	const auto ret = fwrite(hashResult, hashResultSize, 1, file) == 1;
+	return ret;
+}
+
+static bool writeRsEncryptedCheckSum(FILE* file)
+{
+	const auto hashResultSize = HashResultSize();
+	byte data[hashResultSize];
+	fseek(file, hashResultSize + 9, 0);
+	if (RsFileCheckSum(file, data, hashResultSize) != hashResultSize)
+		return false;
+	
+	fseek(file, 9, 0);
+	return fwrite(data, hashResultSize, 1, file) == 1;
 }
 
 static bool noHeader(FILE* file)
@@ -166,20 +228,46 @@ static void RsDeleteDirectory(char* filePath)
 	rmdir(filePath);
 }
 
-static size_t RsFileCheckSum(FILE* file, byte* data, uint length)
+static const char* RsBasename(const char* filePath)
 {
-	byte buffer[16384];
+	const auto lastSlash = strrchr(filePath, '/');
+	const auto lastBackSlash = strrchr(filePath, '\\');
 
-	auto context = HashInitial();
-	while (true)
+	const auto last = lastSlash > lastBackSlash ? lastSlash : lastBackSlash;
+
+	if (last == nullptr)
+		return filePath;
+
+	filePath = last + 1;
+	return filePath;
+}
+
+static void RsCleanUp()
+{
+	char buffer[256];
+
+	if (!gRsInitialised)
+		return;
+
+	gRsInitialised = 0;
+
+	const auto dir = opendir(gRsTempDir);
+	if (dir)
 	{
-		const auto readCount = fread(buffer, 1, 0x4000, file);
-		if (readCount == 0)
-			break;
-		HashData(context, buffer, readCount);
+		auto dirEntry = readdir(dir);
+
+		while (dirEntry)
+		{
+			sprintf(buffer, "%s%s", gRsTempDir, dirEntry->d_name);
+			remove(buffer);
+			dirEntry = readdir(dir);
+		}
+
+		closedir(dir);
 	}
 
-	return HashFinal(context, data, length);
+	RsDeleteDirectory(gRsTempDir);
+	BglCloseAllFiles();
 }
 
 bool RsFileEncrypted(const char* filePath)
@@ -236,24 +324,10 @@ bool RsFileEncryptedNoVerify(const char* filePath)
 	const auto file = fopen(filePath, "rb");
 	if (!file)
 		return false;
-	
+
 	const auto ret = readRsEncryptedHeader(file);
 	fclose(file);
 	return ret;
-}
-
-static const char* RsBasename(const char* filePath)
-{
-	const auto lastSlash = strrchr(filePath, '/');
-	const auto lastBackSlash = strrchr(filePath, '\\');
-
-	const auto last = lastSlash > lastBackSlash ? lastSlash : lastBackSlash;
-
-	if (last == nullptr)
-		return filePath;
-
-	filePath = last + 1;
-	return filePath;
 }
 
 FILE* RsFileOpen(const char* filePath, const char* mode)
@@ -275,6 +349,11 @@ FILE* RsFileOpen(const char* filePath, const char* mode)
 	return nullptr;
 }
 
+bool RsEncryptFile(const char* filePath)
+{
+	return filterFileInPlace(filePath, ".e", noHeader, writeRsEncryptedHeader, writeRsEncryptedCheckSum, encryptBuffer);
+}
+
 void RsFileClose(const char* fileName, FILE* file)
 {
 	char buffer[256];
@@ -283,34 +362,6 @@ void RsFileClose(const char* fileName, FILE* file)
 	sprintf(buffer, "%s.d", fileName);
 	remove(buffer);
 	return;
-}
-
-static void RsCleanUp()
-{
-	char buffer[256];
-
-	if (!gRsInitialised)
-		return;
-
-	gRsInitialised = 0;
-
-	const auto dir = opendir(gRsTempDir);
-	if (dir)
-	{
-		auto dirEntry = readdir(dir);
-
-		while (dirEntry)
-		{
-			sprintf(buffer, "%s%s", gRsTempDir, dirEntry->d_name);
-			remove(buffer);
-			dirEntry = readdir(dir);
-		}
-
-		closedir(dir);
-	}
-
-	RsDeleteDirectory(gRsTempDir);
-	BglCloseAllFiles();
 }
 
 bool RsLoadArchive(const char* fileName)

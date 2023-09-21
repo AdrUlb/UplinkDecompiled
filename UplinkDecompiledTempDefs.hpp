@@ -6,7 +6,6 @@
 #include "Source/App.hpp"
 
 static const auto RunUplinkExceptionHandling = (void(*)())0x080FEE90;
-//static const auto Init_App = (void(*)(const char *exeFilePath))0x080FEAA0;
 static const auto Init_Options = (void(*)(int argc, char** argv))0x080FE410;
 static const auto VerifyLegitAndCodeCardCheck = (bool(*)())0x080FE6A0;
 static const auto Load_Data = (bool(*)())0x080FE310;
@@ -23,7 +22,6 @@ static const auto EclGetAccurateTime = (long double(*)())0x08177BB0;
 static const auto FileReadDataInt = (bool(*)(const char*, int, void*, unsigned int, unsigned uint, FILE*))0x080568B0;
 static const auto LoadBTree = (bool(*)(BTree<Option*>*, FILE*))0x08059460;
 static const auto SaveBTree = (void(*)(BTree<Option*>*, FILE*))0x08058A70;
-static const auto RsEncryptFile = (bool(*)(char*))0x0817DC30;
 
 static const auto Options_Options = (void(*)(Options*))0x080FB7B0;
 static const auto Options__Options = (void(*)(Options*))0x080FBFC0;
