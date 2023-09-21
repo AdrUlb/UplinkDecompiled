@@ -7,7 +7,7 @@
 
 static void BglSlashify(char* filePath)
 {
-	for (auto pcVar1 = strchr(filePath, L'\\'); pcVar1 != (char*)0x0; pcVar1 = strchr(pcVar1, L'\\'))
+	for (auto pcVar1 = strchr(filePath, L'\\'); pcVar1; pcVar1 = strchr(pcVar1, L'\\'))
 		*pcVar1 = '/';
 
 	for (auto c = *filePath;c != 0; c = *(++filePath))
