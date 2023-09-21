@@ -6,7 +6,6 @@
 #include "Source/App.hpp"
 
 static const auto RunUplinkExceptionHandling = (void(*)())0x080FEE90;
-//static const auto Init_Options = (void(*)(int argc, char** argv))0x080FE410;
 static const auto VerifyLegitAndCodeCardCheck = (bool(*)())0x080FE6A0;
 static const auto Load_Data = (bool(*)())0x080FE310;
 static const auto Init_Game = (void(*)())0x080FE1D0;

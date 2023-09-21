@@ -1,7 +1,5 @@
 #pragma once
 
-#include "OptionChange.hpp"
-
 template<typename T>
 class LListItem
 {

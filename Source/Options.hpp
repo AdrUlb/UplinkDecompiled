@@ -12,6 +12,8 @@
 #define OPTIONS_THEMETITLE_MAX 0x80
 #define OPTIONS_THEMEDESCRIPTION_MAX 0x400
 
+typedef void OptionChange;
+
 class ColorOption
 {
 	float unknown1;
