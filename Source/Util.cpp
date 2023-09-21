@@ -45,6 +45,20 @@ char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const
 	return strncpy(destination, source, num);
 }
 
+void UplinkAbortImpl(const char* messsage, const char* location, int line)
+{
+	printf("\n"
+		"Uplink has been forced to Abort\n"
+		"===============================\n"
+		" Message   : %s\n"
+		" Location  : %s, line %d\n",
+
+		messsage, location, line
+	);
+	
+	UplinkCrash();
+}
+
 char* GetFilePath(const char* fileName)
 {
 	UplinkAssert(fileName);

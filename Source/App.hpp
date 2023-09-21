@@ -55,8 +55,8 @@ private:
 	void CoreDump();
 	MainMenu* GetMainMenu();
 	Network* GetNetwork();
-	Options* GetOptions();
 public:
+	Options* GetOptions();
 	void Initialise();
 private:
 	DArray<char*>* ListExistingGames();

@@ -151,3 +151,51 @@ const char* Options::GetID()
 {
 	return "OPTIONS";
 }
+
+Option* Options::GetOption(const char* name)
+{
+	const auto option = options.LookupTree(name);
+
+	if (!option)
+		return nullptr;
+
+	return option->Data;
+}
+
+int Options::GetOptionValue(const char* name)
+{
+	const auto option = GetOption(name);
+	if (!option)
+	{
+		char abortMessage[0x100];
+		UplinkSnprintf(abortMessage, 0x100, "Option %s not found", name);
+		UplinkAbort(abortMessage);
+	}
+	return option->Value;
+}
+
+
+bool Options::IsOptionEqualTo(const char* name, int value)
+{
+	bool ret;
+
+	const auto option = GetOption(name);
+	
+	if (!option)
+		return false;
+
+	return option->Value == value;
+}
+
+void Options::SetOptionValue(const char* name, int value)
+{
+	const auto option = options.LookupTree(name);
+	if (!option)
+	{
+		printf("Tried to set unrecognised option: %s\n");
+		return;
+	}
+
+	UplinkAssert(option->Data);
+	option->Data->SetValue(value);
+}

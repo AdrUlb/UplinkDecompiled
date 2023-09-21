@@ -8,7 +8,6 @@
 #include "Source/DArray.hpp"
 #include "Source/RedShirt.hpp"
 #include "Source/Options.hpp"
-#include "Source/Main.hpp"
 
 uintptr_t PAGESIZE = 0;
 
@@ -86,6 +85,8 @@ void WriteCall(uintptr_t instr, uintptr_t target)
 	Write8(instr, 0xE8);
 	Write32(instr + 1, target - instr - 5);
 }
+
+int main(int argc, char* argv[]);
 
 __attribute__((constructor))
 static void Init()

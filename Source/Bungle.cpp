@@ -28,7 +28,7 @@ static void BglCloseAllFiles(BTree<LocalFileHeader*>* filesToClose)
 	{
 		BglCloseAllFiles(filesToClose->Left());
 		BglCloseAllFiles(filesToClose->Right());
-		localFileHeader = filesToClose->Value;
+		localFileHeader = filesToClose->Data;
 		if (localFileHeader)
 		{
 			if (localFileHeader->FileName)

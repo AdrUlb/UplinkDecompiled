@@ -1,5 +1,3 @@
-#include "Main.hpp"
-
 #include <cstdio>
 #include <csignal>
 #include <climits>
@@ -115,6 +113,12 @@ static bool TestRsLoadArchive(char* fileName)
 	return true;
 }
 
+static void SetWindowScaleFactor(float x, float y)
+{
+	gWindowScaleX = x;
+	gWindowScaleY = y;
+}
+
 void Init_App(const char* exeFilePath)
 {
 	char debugLogFilePath[PATH_MAX];
@@ -151,11 +155,11 @@ void Init_App(const char* exeFilePath)
 	else
 		gFileStdout = nullptr;
 
-	if (!freopen(debugLogFilePath, "a", stdout))
+	/*if (!freopen(debugLogFilePath, "a", stdout))
 		printf("WARNING : Failed to open %s for writing stdout\n", debugLogFilePath);
 
 	if (!freopen(debugLogFilePath, "a", stderr))
-		printf("WARNING : Failed to open %s for writing stderr\n", debugLogFilePath);
+		printf("WARNING : Failed to open %s for writing stderr\n", debugLogFilePath);*/
 
 	currentTime = time(nullptr);
 	auto currentTimeTm = localtime(&currentTime);
@@ -173,7 +177,71 @@ void Init_App(const char* exeFilePath)
 	gApp->Initialise();
 }
 
-static void RunUplink(int argc, char** argv)
+void Init_Options(int argc, char* argv[])
+{
+	int iVar4;
+	int i;
+
+	const auto options = gApp->GetOptions();
+
+	for (i = 1; i < argc; i++)
+	{
+		const auto arg = argv[i];
+		const auto mode = arg[0];
+
+		if (mode == 0)
+		{
+			printf("Error parsing command line option : %s\n", arg);
+			continue;
+		}
+
+		const auto name = arg + 1;
+		switch (mode)
+		{
+		case '+':
+			options->SetOptionValue(name, 1);
+			break;
+		case '-':
+			options->SetOptionValue(name, 0);
+			break;
+		case '!':
+			if (++i >= argc)
+			{
+				printf("Error parsing command line option : %s\n", arg);
+				break;
+			}
+
+			int value;
+			sscanf(argv[i], "%d", &value);
+			options->SetOptionValue(name, value);
+			break;
+		default:
+			printf("Error parsing command line option : %s\n", arg);
+			break;
+		}
+	}
+
+	i = options->GetOptionValue("graphics_safemode");
+	if (i == 1) {
+		options->SetOptionValue("graphics_fullscreen", 0);
+		options->SetOptionValue("graphics_screenrefresh", -1);
+		options->SetOptionValue("graphics_screendepth", -1);
+		options->SetOptionValue("graphics_softwaremouse", 1);
+	}
+
+	putchar('\n');
+
+	const auto width = options->GetOptionValue("graphics_screenwidth");
+	const auto height = options->GetOptionValue("graphics_screenheight");
+	SetWindowScaleFactor(width / 640.0f, height / 480.0f);
+
+	if (options->IsOptionEqualTo("game_debugstart", 1))
+		puts("=====DEBUGGING INFORMATION ENABLED=====");
+	return;
+}
+
+
+static void RunUplink(int argc, char* argv[])
 {
 	if (argc >= 2 && argv[1][0] == '-' && argv[1][1] == 'v')
 	{

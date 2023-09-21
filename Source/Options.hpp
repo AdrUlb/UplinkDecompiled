@@ -25,10 +25,10 @@ class Option : UplinkObject
 	char tooltip[OPTION_TOOLTIP_MAX];
 	bool yesNo;
 	bool visible;
-	int value;
+public:
+	int Value;
 
 	Option();
-public:
 	virtual ~Option();
 private:
 	bool Load(FILE* file) override;
@@ -39,7 +39,9 @@ private:
 	int GetOBJECTID() override;
 	void SetName(const char* name);
 	void SetTooltip(const char* tooltip);
+public:
 	void SetValue(int value);
+private:
 	void SetVisible(bool visible);
 	void SetYesOrNo(bool value);
 };
@@ -63,4 +65,9 @@ private:
 	virtual void Print();
 	virtual void Update();
 	virtual const char* GetID();
+public:
+	Option* GetOption(const char* name);
+	int GetOptionValue(const char* name);
+	bool IsOptionEqualTo(const char* name, int value);
+	void SetOptionValue(const char* name, int value);
 };

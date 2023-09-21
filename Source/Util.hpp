@@ -20,8 +20,12 @@
 #define UplinkSnprintf(destination, num, format, ...) \
 	UplinkSnprintfImpl(destination, num, format, __FILE__, __LINE__, __VA_ARGS__)
 
+#define UplinkAbort(message) \
+	UplinkAbortImpl(message, __FILE__, __LINE__);
+
 void UplinkAssertImpl(bool condition, const char* conditionStr, const char* location, int line);
 char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const char* location, int line);
+void UplinkAbortImpl(const char* messsage, const char* location, int line);
 
 template<typename... Args>
 static int UplinkSnprintfImpl(char* destination, size_t num, const char* format, const char* location, int line, Args... args)

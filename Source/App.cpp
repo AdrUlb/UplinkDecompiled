@@ -68,6 +68,12 @@ void App::Set(const char* path, const char* version, const char* type, const cha
 	}
 }
 
+Options* App::GetOptions()
+{
+	UplinkAssert(options);
+	return options;
+}
+
 void App::Initialise()
 {
 	long double lVar1;
@@ -83,8 +89,6 @@ void App::Initialise()
 	MainMenu_MainMenu(mainMenu);
 	return;
 }
-
-#include <iostream>
 
 void App::Close()
 {

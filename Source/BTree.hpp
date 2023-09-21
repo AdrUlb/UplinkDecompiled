@@ -12,16 +12,17 @@ class BTree
 	BTree<T>* right = nullptr;
 public:
 	char* Name = nullptr;
-	T Value;
+	T Data;
 
 	BTree();
-	BTree(char* name, T* valuePtr);
+	BTree(char* name, T* dataPtr);
 	~BTree();
 	void AppendRight(BTree<T>* value);
 	DArray<char*>* ConvertIndexToDArray();
 	DArray<T>* ConvertToDArray();
 	void Empty();
-	void PutData(char* name, T* valuePtr);
+	BTree<T>* LookupTree(const char* name);
+	void PutData(char* name, T* dataPtr);
 	void RecursiveConvertIndexToDArray(DArray<char*>* arr, BTree<T>* item);
 	void RecursiveConvertToDArray(DArray<T>* arr, BTree<T>* item);
 	inline BTree<T>* Left()
@@ -42,18 +43,18 @@ BTree<T>::BTree()
 	left = nullptr;
 	right = nullptr;
 	Name = nullptr;
-	Value = nullptr;
+	Data = nullptr;
 	return;
 }
 
 template<typename T>
-BTree<T>::BTree(char* name, T* valuePtr)
+BTree<T>::BTree(char* name, T* dataPtr)
 {
 	left = nullptr;
 	right = nullptr;
 	this->Name = new char[strlen(name) + 1];
 	strcpy(this->Name, name);
-	Value = *valuePtr;
+	Data = *dataPtr;
 }
 
 template<typename T>
@@ -112,7 +113,42 @@ void BTree<T>::Empty()
 }
 
 template<typename T>
-void BTree<T>::PutData(char* name, T* valuePtr)
+BTree<T>* BTree<T>::LookupTree(const char* name)
+{
+	char* thisName;
+	int iVar1;
+	BTree<char*>* pBVar2;
+
+	auto node = this;
+
+	while (true)
+	{
+		if (!node->Name)
+			return nullptr;
+
+		iVar1 = strcmp(name, node->Name);
+		if (iVar1 == 0)
+			return node;
+
+		else if (iVar1 < 0)
+		{
+			if (!node->left)
+				return nullptr;
+
+			node = node->left;
+		}
+		else
+		{
+			if (!node->right)
+				return nullptr;
+
+			node = node->right;
+		}
+	}
+}
+
+template<typename T>
+void BTree<T>::PutData(char* name, T* dataPtr)
 {
 	auto node = this;
 
@@ -122,15 +158,15 @@ void BTree<T>::PutData(char* name, T* valuePtr)
 		{
 			node->Name = new char[strlen(name) + 1];
 			strcpy(node->Name, name);
-			node->Value = *valuePtr;
+			node->Data = *dataPtr;
 			return;
 		}
-		
-		if (strcmp(name, node->Name) < 1)
+
+		if (strcmp(name, node->Name) <= 0)
 		{
 			if (!node->left)
 			{
-				node->left = new BTree<T>(name, valuePtr);
+				node->left = new BTree<T>(name, dataPtr);
 				return;
 			}
 			node = node->left;
@@ -139,7 +175,7 @@ void BTree<T>::PutData(char* name, T* valuePtr)
 		{
 			if (!node->right)
 			{
-				node->right = new BTree<T>(name, valuePtr);
+				node->right = new BTree<T>(name, dataPtr);
 				return;
 			}
 			node = node->right;
@@ -171,8 +207,8 @@ void BTree<T>::RecursiveConvertToDArray(DArray<T>* arr, BTree<T>* item)
 	while (item)
 	{
 		if (item->Name)
-			arr->PutData(&item->Value);
-		
+			arr->PutData(&item->Data);
+
 		RecursiveConvertToDArray(arr, item->Left());
 
 		item = item->Right();
