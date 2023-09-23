@@ -38,24 +38,29 @@ Options::~Options()
 
 bool Options::Load(FILE* file)
 {
-	char optionsFilePath[APP_PATH_MAX];
-	UplinkSnprintf(optionsFilePath, APP_PATH_MAX, "%soptions", gApp->UsersPath);
+	char optionsFilePath[0x100];
+	UplinkSnprintf(optionsFilePath, 0x100, "%soptions", gApp->UsersPath);
+
 	printf("Loading uplink options from %s...", optionsFilePath);
 
-	auto fileIsRedshirt = RsFileEncryptedNoVerify(optionsFilePath);
-
 	FILE* optionsFile;
-	if (fileIsRedshirt)
+	bool optionsFileIsRedshirt;
+	if (RsFileEncryptedNoVerify(optionsFilePath))
 	{
 		if (!RsFileEncrypted(optionsFilePath))
 		{
 			puts("failed");
 			return false;
 		}
+
 		optionsFile = RsFileOpen(optionsFilePath, "rb");
+		optionsFileIsRedshirt = true;
 	}
 	else
+	{
 		optionsFile = fopen(optionsFilePath, "rb");
+		optionsFileIsRedshirt = false;
+	}
 
 	if (!optionsFile)
 	{
@@ -63,17 +68,20 @@ bool Options::Load(FILE* file)
 		return false;
 	}
 
-	char optionsFileVersion[32];
+	char optionsFileVersion[optionsFileVersionLength];
 	if (!FileReadDataInt("options/options.cpp", 430, optionsFileVersion, optionsFileVersionLength, 1, optionsFile) ||
-		strcmp(optionsFileVersion, optionsFileVersionMin) < 0 || strcmp(optionsFileVersion, optionsFileVersionCurrent) > 0)
+		optionsFileVersion[0] == 0 ||
+		strncmp(optionsFileVersion, optionsFileVersionMin, optionsFileVersionLength) < 0 ||
+		strncmp(optionsFileVersion, optionsFileVersionCurrent, optionsFileVersionLength) > 0)
 	{
 		puts("\nERROR : Could not load options due to incompatible version format");
 
-		if (fileIsRedshirt)
+		if (optionsFileIsRedshirt)
 			RsFileClose(optionsFilePath, optionsFile);
 		else
 			fclose(optionsFile);
 
+		puts("failed");
 		return false;
 	}
 
@@ -88,18 +96,21 @@ bool Options::Load(FILE* file)
 	LoadID_END(optionsFile);
 
 	size_t themeNameLength;
-	char themeName[128];
-	if (fgetc(optionsFile) == 't' && fread(&themeNameLength, 4, 1, optionsFile) == 1)
+	if (fgetc(optionsFile) == 't' && fread(&themeNameLength, 4, 1, optionsFile) == 1 && themeNameLength + 1 < 0x80)
 	{
-		if (themeNameLength + 1 < OPTIONS_THEMENAME_MAX)
-			if (fread(themeName, themeNameLength, 1, optionsFile) == 1)
-				UplinkStrncpy(this->themeName, themeName, OPTIONS_THEMENAME_MAX);
+		char buffer[0x80];
+		if (fread(buffer, themeNameLength, 1, optionsFile) == 1)
+		{
+			buffer[themeNameLength] = 0;
+			UplinkStrncpy(themeName, buffer, 0x80);
+		}
 	}
 
-	if (fileIsRedshirt)
+	if (optionsFileIsRedshirt)
+	{
 		RsFileClose(optionsFilePath, optionsFile);
-
-	return true;
+		return true;
+	}
 
 	fclose(optionsFile);
 	return true;

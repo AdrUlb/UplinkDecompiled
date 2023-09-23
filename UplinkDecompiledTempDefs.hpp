@@ -23,6 +23,7 @@ static const auto GciRestoreScreenSize = (void(*)())0x08176100;
 static const auto Options_CreateDefaultOptions = (void(*)(Options*))0x080FB980;
 static const auto Options_Print = (void(*)(Options*))0x080fabe0;
 static const auto Options_SetThemeName = (void(*)(Options*, const char*))0x080fc480;
+static const auto Options_Load = (bool(*)(Options*, FILE*))0x080fb070;
 
 static const auto Network_Network = (void(*)(Network*))0x080F8C60;
 

@@ -80,9 +80,6 @@ Options* App::GetOptionsOrNull()
 
 void App::Initialise()
 {
-	long double lVar1;
-	void* optionsVtable;
-
 	options = new Options();
 	options->Load(nullptr);
 	options->CreateDefaultOptions();
