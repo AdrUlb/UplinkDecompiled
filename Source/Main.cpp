@@ -93,7 +93,7 @@ static char* vmg57670648335164_br_find_exe(int* errorCode)
 	return nullptr;
 }
 
-static bool TestRsLoadArchive(char* fileName)
+static bool TestRsLoadArchive(const char* fileName)
 {
 	if (!RsLoadArchive(fileName))
 	{
@@ -242,34 +242,28 @@ static void Init_Options(int argc, char* argv[])
 
 static bool Load_Data()
 {
-	char debug;
-	bool bVar1;
-	Options* options;
+	const auto debugStart = gApp->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
 
-	options = gApp->GetOptions();
-	debug = options->IsOptionEqualTo("game_debugstart", 1);
-	if (debug != 0) {
+	if (debugStart != 0)
 		puts("Loading application data");
-	}
-	bVar1 = TestRsLoadArchive("data.dat");
-	if ((((((bVar1) && (bVar1 = TestRsLoadArchive("graphics.dat"), bVar1)) &&
-		(bVar1 = TestRsLoadArchive("loading.dat"), bVar1)) &&
-		((bVar1 = TestRsLoadArchive("sounds.dat"), bVar1 &&
-			(bVar1 = TestRsLoadArchive("music.dat"), bVar1)))) &&
-		((bVar1 = TestRsLoadArchive("fonts.dat"), bVar1 &&
-			((bVar1 = TestRsLoadArchive("patch.dat"), bVar1 &&
-				(bVar1 = TestRsLoadArchive("patch2.dat"), bVar1)))))) &&
-		(bVar1 = TestRsLoadArchive("patch3.dat"), bVar1)) {
-		bVar1 = true;
-		if (debug != 0) {
+
+	if (TestRsLoadArchive("data.dat") &&
+		TestRsLoadArchive("graphics.dat") &&
+		TestRsLoadArchive("loading.dat") &&
+		TestRsLoadArchive("sounds.dat") &&
+		TestRsLoadArchive("music.dat") &&
+		TestRsLoadArchive("fonts.dat") &&
+		TestRsLoadArchive("patch.dat") &&
+		TestRsLoadArchive("patch2.dat") &&
+		TestRsLoadArchive("patch3.dat"))
+	{
+		if (debugStart != 0)
 			puts("Finished loading application data");
-			bVar1 = true;
-		}
+			
+		return true;
 	}
-	else {
-		bVar1 = false;
-	}
-	return bVar1;
+
+	return false;
 }
 
 static void RunUplink(int argc, char* argv[])

@@ -109,8 +109,7 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 
 		if (fileName)
 		{
-			const auto fileNameLength = strlen(fileName);
-			localFileHeader->ZipFileName = new char[fileNameLength + 1];
+			localFileHeader->ZipFileName = new char[strlen(fileName) + 1];
 			strcpy(localFileHeader->ZipFileName, fileName);
 		}
 		else
