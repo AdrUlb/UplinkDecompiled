@@ -121,9 +121,6 @@ static void SetWindowScaleFactor(float x, float y)
 
 static void Init_App(const char* exeFilePath)
 {
-	char debugLogFilePath[PATH_MAX];
-	time_t currentTime;
-
 	gApp = new App();
 
 	char buildDateTime[0x20];
@@ -147,6 +144,8 @@ static void Init_App(const char* exeFilePath)
 	MakeDirectory(gApp->UsersTempPath);
 	EmptyDirectory(gApp->UsersTempPath);
 	MakeDirectory(gApp->UsersOldPath);
+
+	char debugLogFilePath[PATH_MAX];
 	UplinkSnprintf(debugLogFilePath, PATH_MAX, "%sdebug.log", gApp->UsersPath);
 
 	auto newStdout = dup(fileno(stdout));
@@ -161,7 +160,7 @@ static void Init_App(const char* exeFilePath)
 	if (!freopen(debugLogFilePath, "a", stderr))
 		printf("WARNING : Failed to open %s for writing stderr\n", debugLogFilePath);*/
 
-	currentTime = time(nullptr);
+	auto currentTime = time(nullptr);
 	auto currentTimeTm = localtime(&currentTime);
 	puts("\n");
 	puts("===============================================");
@@ -179,12 +178,9 @@ static void Init_App(const char* exeFilePath)
 
 static void Init_Options(int argc, char* argv[])
 {
-	int iVar4;
-	int i;
-
 	const auto options = gApp->GetOptions();
 
-	for (i = 1; i < argc; i++)
+	for (auto i = 1; i < argc; i++)
 	{
 		const auto arg = argv[i];
 		const auto mode = arg[0];
@@ -221,8 +217,8 @@ static void Init_Options(int argc, char* argv[])
 		}
 	}
 
-	i = options->GetOptionValue("graphics_safemode");
-	if (i == 1) {
+	if (options->GetOptionValue("graphics_safemode") == 1)
+	{
 		options->SetOptionValue("graphics_fullscreen", 0);
 		options->SetOptionValue("graphics_screenrefresh", -1);
 		options->SetOptionValue("graphics_screendepth", -1);
@@ -259,7 +255,7 @@ static bool Load_Data()
 	{
 		if (debugStart != 0)
 			puts("Finished loading application data");
-			
+
 		return true;
 	}
 

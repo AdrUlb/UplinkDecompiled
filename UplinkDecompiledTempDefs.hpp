@@ -4,6 +4,7 @@
 #include "Source/Network.hpp"
 #include "Source/MainMenu.hpp"
 #include "Source/App.hpp"
+#include "Source/Date.hpp"
 
 static const auto RunUplinkExceptionHandling = (void(*)())0x080FEE90;
 static const auto VerifyLegitAndCodeCardCheck = (bool(*)())0x080FE6A0;
@@ -22,6 +23,7 @@ static const auto LoadBTree = (bool(*)(BTree<Option*>*, FILE*))0x08059460;
 static const auto SaveBTree = (void(*)(BTree<Option*>*, FILE*))0x08058A70;
 
 static const auto Options_CreateDefaultOptions = (void(*)(Options*))0x080FB980;
+static const auto Options_Print = (void(*)(Options*))0x080fabe0;
 
 static const auto Network_Network = (void(*)(Network*))0x080F8C60;
 
@@ -30,3 +32,7 @@ static const auto MainMenu_MainMenu = (void(*)(MainMenu*))0x080EC870;
 static const auto App_App = (void(*)(App*))0x0804ED90;
 static const auto App_Update = (void(*)(App*))0x0804DAD0;
 static const auto App_Initialise = (void(*)(App*))0x0804EBD0;
+static const auto App_Close = (void(*)(App*))0x0804d5b0;
+static const auto App_Print = (void(*)(App*))0x0804d060;
+
+static const auto Date_Update = (void(*)(Date*))0x08121e00;

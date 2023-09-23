@@ -1,6 +1,7 @@
 #include "Bungle.hpp"
 
 #include <cstring>
+#include <climits>
 #include "BTree.hpp"
 #include "RedShirt.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
@@ -133,7 +134,7 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 			continue;
 		}
 
-		char filePath[256];
+		char filePath[PATH_MAX];
 		sprintf(filePath, "%s%s", appPath, localFileHeader->FileName);
 		BglSlashify(filePath);
 		gFiles.PutData(filePath, &localFileHeader);

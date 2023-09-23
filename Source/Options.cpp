@@ -138,12 +138,12 @@ void Options::Save(FILE* file)
 
 void Options::Print()
 {
-	assert(false);
+	Options_Print(this);
 }
 
 void Options::Update()
 {
-	assert(false);
+	
 }
 
 

@@ -23,8 +23,7 @@ App::~App()
 
 void App::Print()
 {
-	// TODO
-	assert(false);
+	App_Print(this);
 }
 
 void App::Update()
@@ -84,15 +83,12 @@ void App::Initialise()
 	Options_CreateDefaultOptions(options);
 	uptime = (int)EclGetAccurateTime();
 	network = new Network();
-	Network_Network(network);
 	mainMenu = new MainMenu();
-	MainMenu_MainMenu(mainMenu);
-	return;
 }
 
 void App::Close()
 {
-	std::cout << "BIG TODO: App::Close()" << std::endl;
+	App_Close(this);
 }
 
 bool App::Closed()

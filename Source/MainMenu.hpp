@@ -3,4 +3,7 @@
 class MainMenu
 {
 	char unknown[0xC];
+
+public:
+	MainMenu();
 };
