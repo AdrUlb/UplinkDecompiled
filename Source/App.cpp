@@ -73,6 +73,11 @@ Options* App::GetOptions()
 	return options;
 }
 
+Options* App::GetOptionsOrNull()
+{
+	return options;
+}
+
 void App::Initialise()
 {
 	long double lVar1;

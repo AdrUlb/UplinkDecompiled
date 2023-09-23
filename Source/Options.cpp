@@ -143,7 +143,7 @@ void Options::Print()
 
 void Options::Update()
 {
-	
+
 }
 
 
@@ -180,7 +180,7 @@ bool Options::IsOptionEqualTo(const char* name, int value)
 	bool ret;
 
 	const auto option = GetOption(name);
-	
+
 	if (!option)
 		return false;
 
@@ -198,4 +198,14 @@ void Options::SetOptionValue(const char* name, int value)
 
 	UplinkAssert(option->Data);
 	option->Data->SetValue(value);
+}
+
+const char* Options::GetThemeName()
+{
+	return themeName;
+}
+
+void Options::SetThemeName(const char* themeName)
+{
+	Options_SetThemeName(this, themeName);
 }

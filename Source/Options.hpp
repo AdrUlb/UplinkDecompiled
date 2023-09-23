@@ -72,4 +72,6 @@ public:
 	int GetOptionValue(const char* name);
 	bool IsOptionEqualTo(const char* name, int value);
 	void SetOptionValue(const char* name, int value);
+	const char* GetThemeName();
+	void SetThemeName(const char* themeName);
 };

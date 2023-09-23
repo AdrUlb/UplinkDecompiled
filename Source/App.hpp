@@ -9,12 +9,12 @@
 #include "MainMenu.hpp"
 #include "PhoneDialler.hpp"
 
-constexpr size_t APP_PATH_MAX = 256;
-constexpr size_t APP_VERSION_MAX = 32;
-constexpr size_t APP_TYPE_MAX = 32;
-constexpr size_t APP_DATE_MAX = 32;
-constexpr size_t APP_TITLE_MAX = 64;
-constexpr size_t APP_BUILD_SIZE = 256;
+constexpr size_t APP_PATH_MAX = 0x100;
+constexpr size_t APP_VERSION_MAX = 0x20;
+constexpr size_t APP_TYPE_MAX = 0x20;
+constexpr size_t APP_DATE_MAX = 0x20;
+constexpr size_t APP_TITLE_MAX = 0x40;
+constexpr size_t APP_BUILD_SIZE = 0x100;
 
 class App : UplinkObject
 {
@@ -48,15 +48,15 @@ private:
 	const char* GetID() override;
 public:
 	void Set(const char* path, const char* version, const char* type, const char* date, const char* title);
-private:
 	void Close();
 	bool Closed();
 	void CloseGame();
-	void CoreDump();
+	static void CoreDump();
 	MainMenu* GetMainMenu();
 	Network* GetNetwork();
 public:
 	Options* GetOptions();
+	Options* GetOptionsOrNull();
 	void Initialise();
 private:
 	DArray<char*>* ListExistingGames();

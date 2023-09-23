@@ -7,12 +7,56 @@
 #include "../UplinkDecompiledTempDefs.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
 
+static void RunUplinkExceptionHandling(void)
+{
+	if (gApp)
+	{
+		const auto options = gApp->GetOptionsOrNull();
+		if (options)
+		{
+			if (options->GetOption("crash_graphicsinit") && options->GetOptionValue("crash_graphicsinit"))
+			{
+				puts("\nAn Uplink Internal Error has occured during graphics initialization");
+				if (gFileStdout)
+				{
+					fputs("\nAn Uplink Internal Error has occured during graphics initialization\n", gFileStdout);
+					fflush(gFileStdout);
+				}
+			}
+		}
+	}
+	puts("\nAn (unrecognised) Uplink Internal Error has occured");
+	puts("===================================================");
+	App::CoreDump();
+	if (gFileStdout)
+	{
+		fputs("\nAn (unrecognised) Uplink Internal Error has occured\n", gFileStdout);
+		fputs("===================================================\n", gFileStdout);
+		if (!gApp)
+		{
+			fputs("See the debug.log file for more informations on the error\n", gFileStdout);
+		}
+		else
+		{
+			if (strcmp("c:/", gApp->UsersPath) == 0)
+				fputs("See the debug.log file for more informations on the error\n", gFileStdout);
+			else
+				fprintf(gFileStdout, "See the %sdebug.log file for more informations on the error\n", gApp->UsersPath);
+		}
+		fflush(gFileStdout);
+	}
+
+	GciRestoreScreenSize();
+	fflush(nullptr);
+	exit(0xFF);
+}
+
 static void hSignalSIGSEGV(int signum)
 {
 	puts("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)");
 	if (gFileStdout)
 	{
-		fwrite("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)\n", 1, 72, gFileStdout);
+		fputs("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)\n", gFileStdout);
 		fflush(gFileStdout);
 	}
 	RunUplinkExceptionHandling();
@@ -23,7 +67,7 @@ static void hSignalSIGFPE(int signum)
 	puts("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)");
 	if (gFileStdout)
 	{
-		fwrite("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)\n", 1, 79, gFileStdout);
+		fputs("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)\n", gFileStdout);
 		fflush(gFileStdout);
 	}
 	RunUplinkExceptionHandling();
@@ -34,7 +78,7 @@ static void hSignalSIGPIPE(int signum)
 	puts("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)");
 	if (gFileStdout)
 	{
-		fwrite("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)\n", 1, 83, gFileStdout);
+		fputs("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)\n", gFileStdout);
 		fflush(gFileStdout);
 	}
 	RunUplinkExceptionHandling();
@@ -102,9 +146,9 @@ static bool TestRsLoadArchive(const char* fileName)
 		printf("Failed loading \'%s\'\n", fileName);
 		if (gFileStdout)
 		{
-			puts("\nAn Uplink Error has occured");
-			puts("Files integrity is not verified");
-			printf("Failed loading \'%s\'\n", fileName);
+			fputs("\nAn Uplink Error has occured", gFileStdout);
+			fputs("Files integrity is not verified", gFileStdout);
+			fprintf(gFileStdout, "Failed loading \'%s\'\n", fileName);
 			return false;
 		}
 		return false;
@@ -260,6 +304,33 @@ static bool Load_Data()
 	}
 
 	return false;
+}
+
+static void Init_Game()
+{
+	const auto debug = gApp->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+
+	if (debug)
+		puts("Init_Game called...creating game object");
+
+	srand(time(nullptr));
+
+	gGame = new Game();
+
+	if (debug)
+		puts("Finished with Init_Game");
+}
+
+static void Init_Graphics()
+{
+	const auto options = gApp->GetOptions();
+	options->SetThemeName(options->GetThemeName());
+}
+
+static void Cleanup_Uplink()
+{
+	if (gApp)
+		delete gApp;
 }
 
 static void RunUplink(int argc, char* argv[])
