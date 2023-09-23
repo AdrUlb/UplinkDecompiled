@@ -2,6 +2,7 @@
 
 #include <cstdio>
 
+void RsCleanUp();
 bool RsFileEncrypted(const char* filePath);
 bool RsFileEncryptedNoVerify(const char* filePath);
 FILE* RsFileOpen(const char* filePath, const char* mode);

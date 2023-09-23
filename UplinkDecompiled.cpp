@@ -6,8 +6,9 @@
 #include "Source/Util.hpp"
 #include "Source/App.hpp"
 #include "Source/DArray.hpp"
-#include "Source/RedShirt.hpp"
 #include "Source/Options.hpp"
+#include "Source/RedShirt.hpp"
+#include "Source/Bungle.hpp"
 
 uintptr_t PAGESIZE = 0;
 
@@ -27,26 +28,6 @@ void Write8(uintptr_t address, uint8_t value)
 	*ptr = value;
 
 	mprotect((void*)page, PAGESIZE, PROT_EXEC | PROT_READ);
-}
-
-void Write16(uintptr_t address, uint16_t value)
-{
-	const auto ptr = (uint16_t*)address;
-
-	const auto page1 = GetPageFromAddress(address);
-	const auto page2 = GetPageFromAddress(address + 1);
-
-	mprotect((void*)page1, PAGESIZE, PROT_WRITE);
-
-	if (page1 != page2)
-		mprotect((void*)page2, PAGESIZE, PROT_WRITE);
-
-	*ptr = value;
-
-	mprotect((void*)page1, PAGESIZE, PROT_EXEC | PROT_READ);
-
-	if (page1 != page2)
-		mprotect((void*)page2, PAGESIZE, PROT_EXEC | PROT_READ);
 }
 
 void Write32(uintptr_t address, uint32_t value)
@@ -69,20 +50,9 @@ void Write32(uintptr_t address, uint32_t value)
 		mprotect((void*)page2, PAGESIZE, PROT_EXEC | PROT_READ);
 }
 
-void OverwriteCall(uintptr_t instr, uintptr_t target)
-{
-	Write32(instr + 1, target - instr - 5);
-}
-
 void WriteJump(uintptr_t instr, uintptr_t target)
 {
 	Write8(instr, 0xE9);
-	Write32(instr + 1, target - instr - 5);
-}
-
-void WriteCall(uintptr_t instr, uintptr_t target)
-{
-	Write8(instr, 0xE8);
 	Write32(instr + 1, target - instr - 5);
 }
 

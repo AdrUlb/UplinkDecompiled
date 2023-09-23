@@ -119,7 +119,7 @@ static void SetWindowScaleFactor(float x, float y)
 	gWindowScaleY = y;
 }
 
-void Init_App(const char* exeFilePath)
+static void Init_App(const char* exeFilePath)
 {
 	char debugLogFilePath[PATH_MAX];
 	time_t currentTime;
@@ -177,7 +177,7 @@ void Init_App(const char* exeFilePath)
 	gApp->Initialise();
 }
 
-void Init_Options(int argc, char* argv[])
+static void Init_Options(int argc, char* argv[])
 {
 	int iVar4;
 	int i;
@@ -240,6 +240,37 @@ void Init_Options(int argc, char* argv[])
 	return;
 }
 
+static bool Load_Data()
+{
+	char debug;
+	bool bVar1;
+	Options* options;
+
+	options = gApp->GetOptions();
+	debug = options->IsOptionEqualTo("game_debugstart", 1);
+	if (debug != 0) {
+		puts("Loading application data");
+	}
+	bVar1 = TestRsLoadArchive("data.dat");
+	if ((((((bVar1) && (bVar1 = TestRsLoadArchive("graphics.dat"), bVar1)) &&
+		(bVar1 = TestRsLoadArchive("loading.dat"), bVar1)) &&
+		((bVar1 = TestRsLoadArchive("sounds.dat"), bVar1 &&
+			(bVar1 = TestRsLoadArchive("music.dat"), bVar1)))) &&
+		((bVar1 = TestRsLoadArchive("fonts.dat"), bVar1 &&
+			((bVar1 = TestRsLoadArchive("patch.dat"), bVar1 &&
+				(bVar1 = TestRsLoadArchive("patch2.dat"), bVar1)))))) &&
+		(bVar1 = TestRsLoadArchive("patch3.dat"), bVar1)) {
+		bVar1 = true;
+		if (debug != 0) {
+			puts("Finished loading application data");
+			bVar1 = true;
+		}
+	}
+	else {
+		bVar1 = false;
+	}
+	return bVar1;
+}
 
 static void RunUplink(int argc, char* argv[])
 {

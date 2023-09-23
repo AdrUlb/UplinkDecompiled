@@ -7,7 +7,6 @@
 
 static const auto RunUplinkExceptionHandling = (void(*)())0x080FEE90;
 static const auto VerifyLegitAndCodeCardCheck = (bool(*)())0x080FE6A0;
-static const auto Load_Data = (bool(*)())0x080FE310;
 static const auto Init_Game = (void(*)())0x080FE1D0;
 static const auto Init_Graphics = (void(*)())0x080FDFC0;
 static const auto Init_OpenGL = (void(*)(int argc, char** argv))0x080FDC90;
@@ -25,6 +24,7 @@ static const auto SaveBTree = (void(*)(BTree<Option*>*, FILE*))0x08058A70;
 static const auto Options_CreateDefaultOptions = (void(*)(Options*))0x080FB980;
 
 static const auto Network_Network = (void(*)(Network*))0x080F8C60;
+
 static const auto MainMenu_MainMenu = (void(*)(MainMenu*))0x080EC870;
 
 static const auto App_App = (void(*)(App*))0x0804ED90;

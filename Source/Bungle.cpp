@@ -10,7 +10,7 @@ static void BglSlashify(char* filePath)
 	for (auto pcVar1 = strchr(filePath, L'\\'); pcVar1; pcVar1 = strchr(pcVar1, L'\\'))
 		*pcVar1 = '/';
 
-	for (auto c = *filePath;c != 0; c = *(++filePath))
+	for (auto c = *filePath; c != 0; c = *(++filePath))
 	{
 		if (c >= 'A' && c <= 'Z')
 			c += 'a' - 'A';
@@ -53,15 +53,15 @@ static void BglCloseAllFiles(BTree<LocalFileHeader*>* filesToClose)
 
 bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 {
-	char filePath[256];
-
 	if (!file)
 		return false;
 
 	while (!feof(file))
 	{
 		auto localFileHeader = new LocalFileHeader();
-		fread(localFileHeader, 4, 1, file);
+		memset(localFileHeader, 0, sizeof(LocalFileHeader));
+
+		fread(&localFileHeader->Signature, 4, 1, file);
 
 		if (localFileHeader->Signature[0] != 'P' || localFileHeader->Signature[1] != 'K')
 		{
@@ -85,7 +85,6 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 			localFileHeader->FileName = new char[localFileHeader->FileNameLength + 1];
 			fread(localFileHeader->FileName, localFileHeader->FileNameLength, 1, file);
 			localFileHeader->FileName[localFileHeader->FileNameLength] = 0;
-
 		}
 		else
 			localFileHeader->FileName = nullptr;
@@ -110,46 +109,35 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 
 		if (fileName)
 		{
-			localFileHeader->ZipFileName = new char[strlen(fileName) + 1];
+			const auto fileNameLength = strlen(fileName);
+			localFileHeader->ZipFileName = new char[fileNameLength + 1];
 			strcpy(localFileHeader->ZipFileName, fileName);
 		}
 		else
 			localFileHeader->ZipFileName = nullptr;
 
-		if ((localFileHeader->CompressionMethod == 0) && (localFileHeader->CompressedSize == localFileHeader->UncompressedSize))
+		if (!localFileHeader->FileName || localFileHeader->CompressionMethod != 0 || localFileHeader->CompressedSize != localFileHeader->UncompressedSize)
 		{
-			if (!localFileHeader->FileName)
-			{
-				if (localFileHeader->ExtraField)
-					delete[] localFileHeader->ExtraField;
+			if (localFileHeader->FileName)
+				delete[] localFileHeader->FileName;
 
-				if (localFileHeader->Data)
-					delete[] localFileHeader->Data;
+			if (localFileHeader->ExtraField)
+				delete[] localFileHeader->ExtraField;
 
-				if (localFileHeader->ZipFileName)
-					delete[] localFileHeader->ZipFileName;
+			if (localFileHeader->Data)
+				delete[] localFileHeader->Data;
 
-			}
+			if (localFileHeader->ZipFileName)
+				delete[] localFileHeader->ZipFileName;
 
-			sprintf(filePath, "%s%s", appPath, localFileHeader->FileName);
-			BglSlashify(filePath);
-			gFiles.PutData(filePath, &localFileHeader);
+			delete localFileHeader;
 			continue;
 		}
 
-		if (localFileHeader->FileName)
-			delete[] localFileHeader->FileName;
-
-		if (localFileHeader->ExtraField)
-			delete[] localFileHeader->ExtraField;
-
-		if (localFileHeader->Data)
-			delete[] localFileHeader->Data;
-
-		if (localFileHeader->ZipFileName)
-			delete[] localFileHeader->ZipFileName;
-
-		delete localFileHeader;
+		char filePath[256];
+		sprintf(filePath, "%s%s", appPath, localFileHeader->FileName);
+		BglSlashify(filePath);
+		gFiles.PutData(filePath, &localFileHeader);
 	}
 
 	return true;

@@ -242,7 +242,7 @@ static const char* RsBasename(const char* filePath)
 	return filePath;
 }
 
-static void RsCleanUp()
+void RsCleanUp()
 {
 	char buffer[256];
 
@@ -356,12 +356,11 @@ bool RsEncryptFile(const char* filePath)
 
 void RsFileClose(const char* fileName, FILE* file)
 {
-	char buffer[256];
+	char buffer[0x100];
 
 	fclose(file);
 	sprintf(buffer, "%s.d", fileName);
 	remove(buffer);
-	return;
 }
 
 bool RsLoadArchive(const char* fileName)
