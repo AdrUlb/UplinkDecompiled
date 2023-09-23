@@ -68,6 +68,7 @@ private:
 	virtual void Update();
 	virtual const char* GetID();
 public:
+	void CreateDefaultOptions();
 	Option* GetOption(const char* name);
 	int GetOptionValue(const char* name);
 	bool IsOptionEqualTo(const char* name, int value);

@@ -4,6 +4,7 @@
 #include <ctime>
 #include "Util.hpp"
 #include "RedShirt.hpp"
+#include "Sound.hpp"
 #include "../UplinkDecompiledTempDefs.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
 
@@ -325,6 +326,22 @@ static void Init_Graphics()
 {
 	const auto options = gApp->GetOptions();
 	options->SetThemeName(options->GetThemeName());
+}
+
+static void Init_Sound()
+{
+	char cVar1;
+	Options* options;
+
+	options = gApp->GetOptions();
+	cVar1 = options->IsOptionEqualTo("game_debugstart", 1);
+	if (cVar1)
+		puts("Init_Sound called...setting up sound system");
+
+	SgInitialise();
+
+	if (cVar1)
+		puts("Finished with Init_Sound");
 }
 
 static void Cleanup_Uplink()

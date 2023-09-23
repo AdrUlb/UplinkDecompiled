@@ -152,6 +152,11 @@ const char* Options::GetID()
 	return "OPTIONS";
 }
 
+void Options::CreateDefaultOptions()
+{
+	Options_CreateDefaultOptions(this);
+}
+
 Option* Options::GetOption(const char* name)
 {
 	const auto option = options.LookupTree(name);

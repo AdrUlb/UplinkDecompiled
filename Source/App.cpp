@@ -85,7 +85,7 @@ void App::Initialise()
 
 	options = new Options();
 	options->Load(nullptr);
-	Options_CreateDefaultOptions(options);
+	options->CreateDefaultOptions();
 	uptime = (int)EclGetAccurateTime();
 	network = new Network();
 	mainMenu = new MainMenu();

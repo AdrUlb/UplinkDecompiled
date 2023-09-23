@@ -16,6 +16,8 @@ static const auto gFileStdoutPtr = (FILE**)0x08206A24;
 static const auto gWindowScaleXPtr = (float*)0x08204948;
 static const auto gWindowScaleYPtr = (float*)0x08204944;
 
+static const auto gSgInitialisedPtr = (bool*)0x08206f74;
+
 #define gFiles (*gFilesPtr)
 #define gRsInitialised (*gRsInitialisedPtr)
 #define gApp (*gAppPtr)
@@ -23,3 +25,4 @@ static const auto gWindowScaleYPtr = (float*)0x08204944;
 #define gFileStdout (*gFileStdoutPtr)
 #define gWindowScaleX (*gWindowScaleXPtr)
 #define gWindowScaleY (*gWindowScaleYPtr)
+#define gSgInitialised (*gSgInitialisedPtr)
