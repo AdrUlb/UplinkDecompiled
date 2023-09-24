@@ -22,14 +22,11 @@ static void BglSlashify(char* filePath)
 
 static void BglCloseAllFiles(BTree<LocalFileHeader*>* filesToClose)
 {
-	BTree<LocalFileHeader*>* tree;
-	LocalFileHeader* localFileHeader;
-
 	if (filesToClose)
 	{
 		BglCloseAllFiles(filesToClose->Left());
 		BglCloseAllFiles(filesToClose->Right());
-		localFileHeader = filesToClose->Data;
+		const auto localFileHeader = filesToClose->Data;
 		if (localFileHeader)
 		{
 			if (localFileHeader->FileName)
@@ -60,7 +57,6 @@ bool BglOpenZipFile(FILE* file, const char* appPath, const char* fileName)
 	while (!feof(file))
 	{
 		auto localFileHeader = new LocalFileHeader();
-		memset(localFileHeader, 0, sizeof(LocalFileHeader));
 
 		fread(&localFileHeader->Signature, 4, 1, file);
 

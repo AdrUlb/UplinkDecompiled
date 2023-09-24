@@ -2,6 +2,7 @@
 #include <csignal>
 #include <climits>
 #include <ctime>
+#include <cstring>
 #include "Util.hpp"
 #include "RedShirt.hpp"
 #include "Sound.hpp"
@@ -52,34 +53,14 @@ static void RunUplinkExceptionHandling(void)
 	exit(0xFF);
 }
 
-static void hSignalSIGSEGV(int signum)
+static void SignalHandler(int signum)
 {
-	puts("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)");
+	const auto sigstr = sigdescr_np(signum);
+	const auto sigabbrev = sigabbrev_np(signum);
+	printf("\nAn Uplink Internal Error has occured: %s (%s)", sigstr, sigabbrev);
 	if (gFileStdout)
 	{
-		fputs("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)\n", gFileStdout);
-		fflush(gFileStdout);
-	}
-	RunUplinkExceptionHandling();
-}
-
-static void hSignalSIGFPE(int signum)
-{
-	puts("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)");
-	if (gFileStdout)
-	{
-		fputs("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)\n", gFileStdout);
-		fflush(gFileStdout);
-	}
-	RunUplinkExceptionHandling();
-}
-
-static void hSignalSIGPIPE(int signum)
-{
-	puts("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)");
-	if (gFileStdout)
-	{
-		fputs("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)\n", gFileStdout);
+		fprintf(gFileStdout, "\nAn Uplink Internal Error has occured: %s (%s)\n", sigstr, sigabbrev);
 		fflush(gFileStdout);
 	}
 	RunUplinkExceptionHandling();
@@ -385,9 +366,9 @@ static void RunUplink(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-	signal(SIGSEGV, hSignalSIGSEGV);
-	signal(SIGFPE, hSignalSIGFPE);
-	signal(SIGPIPE, hSignalSIGPIPE);
+	signal(SIGSEGV, SignalHandler);
+	signal(SIGFPE, SignalHandler);
+	signal(SIGPIPE, SignalHandler);
 	RunUplink(argc, argv);
 	return 0;
 }

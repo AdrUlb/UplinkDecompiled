@@ -34,6 +34,7 @@ static const auto App_Update = (void(*)(App*))0x0804DAD0;
 static const auto App_Initialise = (void(*)(App*))0x0804EBD0;
 static const auto App_Close = (void(*)(App*))0x0804d5b0;
 static const auto App_Print = (void(*)(App*))0x0804d060;
+static const auto App_CoreDump = (void(*)())0x0804D130;
 
 static const auto Date_Update = (void(*)(Date*))0x08121e00;
 

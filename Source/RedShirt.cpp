@@ -11,7 +11,7 @@
 typedef void(*FilterCallback)(unsigned char* buffer, size_t size);
 typedef bool(*FilterFileCallback)(FILE* file);
 
-static inline int HashResultSize()
+static inline size_t HashResultSize()
 {
 	return 0x14;
 }
@@ -209,6 +209,7 @@ static bool writeRsEncryptedCheckSum(FILE* file)
 
 static bool noHeader(FILE* file)
 {
+	(void)file;
 	return true;
 }
 
@@ -380,7 +381,7 @@ bool RsLoadArchive(const char* fileName)
 		auto str = gRsAppPath - 4;
 		auto ch5 = gRsAppPath[appPathLength - 1];
 
-		if ((ch1 != '/' && ch1 != '\\') || (ch5 != '/' && ch5 != '\\') || strncasecmp(gRsAppPath - 4, "lib", 3) != 0)
+		if ((ch1 != '/' && ch1 != '\\') || (ch5 != '/' && ch5 != '\\') || strncasecmp(str, "lib", 3) != 0)
 			return false;
 
 		buffer[appPathLength - 4] = 0;

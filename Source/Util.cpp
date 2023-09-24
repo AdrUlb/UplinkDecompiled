@@ -1,5 +1,6 @@
 #include "Util.hpp"
 
+#include <cerrno>
 #include <dirent.h>
 #include <unistd.h>
 
@@ -55,7 +56,7 @@ void UplinkAbortImpl(const char* messsage, const char* location, int line)
 
 		messsage, location, line
 	);
-	
+
 	UplinkCrash();
 }
 
@@ -123,4 +124,16 @@ void EmptyDirectory(const char* path)
 bool DoesFileExist(const char* path)
 {
 	return !access(path, 0);
+}
+
+bool FileReadDataIntImpl(const char* location, int line, void* buffer, uint size, uint n, FILE* file)
+{
+	const auto readCount = fread(buffer, size, n, file);
+	if (n != readCount)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: FileReadDataInt, request read count is different then the readed count, request =%d, readed=%d, errno=%d, %s:%d\n",
+			n, readCount, errno, location, line);
+	}
+	return n == readCount;
 }

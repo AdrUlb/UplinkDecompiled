@@ -115,10 +115,6 @@ void BTree<T>::Empty()
 template<typename T>
 BTree<T>* BTree<T>::LookupTree(const char* name)
 {
-	char* thisName;
-	int iVar1;
-	BTree<char*>* pBVar2;
-
 	auto node = this;
 
 	while (true)
@@ -126,11 +122,11 @@ BTree<T>* BTree<T>::LookupTree(const char* name)
 		if (!node->Name)
 			return nullptr;
 
-		iVar1 = strcmp(name, node->Name);
-		if (iVar1 == 0)
+		const auto cmp = strcmp(name, node->Name);
+		if (cmp == 0)
 			return node;
 
-		else if (iVar1 < 0)
+		else if (cmp < 0)
 		{
 			if (!node->left)
 				return nullptr;

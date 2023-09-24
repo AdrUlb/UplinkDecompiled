@@ -5,7 +5,7 @@
 
 struct LocalFileHeader
 {
-	char Signature[4];
+	char Signature[4] = { 0, 0, 0, 0 };
 	uint16_t Version = 0;
 	uint16_t Flags = 0;
 	uint16_t CompressionMethod = 0;

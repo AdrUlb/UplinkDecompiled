@@ -21,16 +21,19 @@
 	UplinkSnprintfImpl(destination, num, format, __FILE__, __LINE__, __VA_ARGS__)
 
 #define UplinkAbort(message) \
-	UplinkAbortImpl(message, __FILE__, __LINE__);
+	UplinkAbortImpl(message, __FILE__, __LINE__)
+
+#define FileReadDataInt(location, line, buffer, size, n, file) \
+	FileReadDataIntImpl(__FILE__, __LINE__, buffer, size, n, file)
 
 void UplinkAssertImpl(bool condition, const char* conditionStr, const char* location, int line);
 char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const char* location, int line);
 void UplinkAbortImpl(const char* messsage, const char* location, int line);
 
 template<typename... Args>
-static int UplinkSnprintfImpl(char* destination, size_t num, const char* format, const char* location, int line, Args... args)
+static inline int UplinkSnprintfImpl(char* destination, size_t num, const char* format, const char* location, int line, Args... args)
 {
-	auto ret = snprintf(destination, num, format, args...);
+	const auto ret = (size_t)snprintf(destination, num, format, args...);
 
 	if (ret > num)
 	{
@@ -59,9 +62,8 @@ inline void MakeDirectory(const char* path)
 }
 
 void EmptyDirectory(const char* path);
-bool DoesFileExist(const char* path);
 
-#include <iostream>
+bool DoesFileExist(const char* path);
 
 template<typename T>
 void DeleteBTreeData(BTree<T>* tree)
@@ -82,3 +84,5 @@ void DeleteBTreeData(BTree<T>* tree)
 
 	delete arr;
 }
+
+bool FileReadDataIntImpl(const char* location, int line, void* buffer, uint size, uint n, FILE* file);

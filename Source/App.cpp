@@ -97,3 +97,8 @@ bool App::Closed()
 {
 	return closed;
 }
+
+void App::CoreDump()
+{
+	App_CoreDump();
+}

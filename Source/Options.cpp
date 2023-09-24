@@ -38,6 +38,8 @@ Options::~Options()
 
 bool Options::Load(FILE* file)
 {
+	(void)file;
+
 	char optionsFilePath[0x100];
 	UplinkSnprintf(optionsFilePath, 0x100, "%soptions", gApp->UsersPath);
 
@@ -118,11 +120,12 @@ bool Options::Load(FILE* file)
 
 void Options::Save(FILE* file)
 {
+	(void)file;
 	char optionsFilePath[APP_PATH_MAX];
 
 	MakeDirectory(gApp->UsersPath);
 	UplinkSnprintf(optionsFilePath, 0x100, "%soptions", gApp->UsersPath);
-	printf("Saving uplink options to %s...", optionsFilePath, "%soptions", gApp->UsersPath);
+	printf("Saving uplink options to %s...", optionsFilePath);
 
 	const auto optionsFile = fopen(optionsFilePath, "wb");
 
@@ -193,8 +196,6 @@ int Options::GetOptionValue(const char* name)
 
 bool Options::IsOptionEqualTo(const char* name, int value)
 {
-	bool ret;
-
 	const auto option = GetOption(name);
 
 	if (!option)
@@ -208,7 +209,7 @@ void Options::SetOptionValue(const char* name, int value)
 	const auto option = options.LookupTree(name);
 	if (!option)
 	{
-		printf("Tried to set unrecognised option: %s\n");
+		printf("Tried to set unrecognised option: %s\n", name);
 		return;
 	}
 
