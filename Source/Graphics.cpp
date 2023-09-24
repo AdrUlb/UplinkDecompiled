@@ -47,7 +47,7 @@ static char* GciInitGraphicsLibrary(uint flags)
 	return nullptr;
 }
 
-char* GciInitGraphics(const char* title, int flags, int width, int height, int bpp, int refresh, int argc, char* argv[])
+static char* GciInitGraphics(const char* title, int flags, int width, int height, int bpp, int refresh, int argc, char* argv[])
 {
 	(void)refresh;
 	(void)argc;
@@ -138,16 +138,15 @@ char* GciInitGraphics(const char* title, int flags, int width, int height, int b
 		printf("SDL is now changing the window caption and diverse settings ...");
 	}
 
-	SDL_WM_SetCaption(title, 0);
-	SDL_EnableUNICODE(1);
-	SDL_EnableKeyRepeat(500, 0x1e);
+	SDL_WM_SetCaption(title, nullptr);
+	SDL_EnableUNICODE(true);
+	SDL_EnableKeyRepeat(500, 30);
 
 	if (flags & GCI_FLAGS_DEBUG)
 		printf("done\n ");
 
 	return nullptr;
 }
-
 
 static GciScreenMode* GciGetClosestScreenMode(int width, int height)
 {
