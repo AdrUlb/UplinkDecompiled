@@ -186,6 +186,40 @@ GciScreenMode* GciGetCurrentScreenMode()
 	return new GciScreenMode(surface->w, surface->h);
 }
 
+static void EclReset(int width, int height)
+{
+	(void)width;
+	(void)height;
+	
+	if (gCurrentHighlight)
+		delete[] gCurrentHighlight;
+
+	if (gCurrentClick)
+		delete[] gCurrentClick;
+
+	gCurrentHighlight = nullptr;
+	gCurrentClick = nullptr;
+
+	while (gButtons.ValidIndex(0))
+		EclRemoveButton(gButtons.GetData(0)->Name);
+
+	while (const auto b = gEditableButtons.GetData(0))
+	{
+		if (!b)
+			break;
+
+		gEditableButtons.RemoveData(0);
+
+		if (b)
+			delete[] b;
+	}
+	gButtons.Empty();
+	gEditableButtons.Empty();
+	gSuperhighlightBorderWidth = 0;
+	EclDirtyClear();
+	return;
+}
+
 void opengl_initialise(int argc, char* argv[])
 {
 	const auto options = gApp->GetOptions();

@@ -9,6 +9,7 @@
 #include "Source/Options.hpp"
 #include "Source/RedShirt.hpp"
 #include "Source/Bungle.hpp"
+#include "Source/Button.hpp"
 
 uintptr_t PAGESIZE = 0;
 
@@ -61,6 +62,7 @@ int main(int argc, char* argv[]);
 __attribute__((constructor))
 static void Init()
 {
+	assert(sizeof(Button) == 0x44);
 	PAGESIZE = sysconf(_SC_PAGE_SIZE);
 	WriteJump(0x080FF260, (uint32_t)main);
 }
