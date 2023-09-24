@@ -145,8 +145,8 @@ bool Options::Load(FILE* file)
 {
 	(void)file;
 
-	char optionsFilePath[0x100];
-	UplinkSnprintf(optionsFilePath, 0x100, "%soptions", gApp->UsersPath);
+	char optionsFilePath[APP_PATH_MAX];
+	UplinkSnprintf(optionsFilePath, APP_PATH_MAX, "%soptions", gApp->UsersPath);
 
 	printf("Loading uplink options from %s...", optionsFilePath);
 
@@ -203,23 +203,21 @@ bool Options::Load(FILE* file)
 	LoadID_END(optionsFile);
 
 	size_t themeNameLength;
-	if (fgetc(optionsFile) == 't' && fread(&themeNameLength, 4, 1, optionsFile) == 1 && themeNameLength + 1 < 0x80)
+	if (fgetc(optionsFile) == 't' && fread(&themeNameLength, 4, 1, optionsFile) == 1 && themeNameLength + 1 < OPTIONS_THEMENAME_MAX)
 	{
-		char buffer[0x80];
-		if (fread(buffer, themeNameLength, 1, optionsFile) == 1)
+		char themeName[OPTIONS_THEMENAME_MAX];
+		if (fread(themeName, themeNameLength, 1, optionsFile) == 1)
 		{
-			buffer[themeNameLength] = 0;
-			UplinkStrncpy(themeName, buffer, 0x80);
+			themeName[themeNameLength] = 0;
+			UplinkStrncpy(themeName, themeName, OPTIONS_THEMENAME_MAX);
 		}
 	}
 
 	if (optionsFileIsRedshirt)
-	{
 		RsFileClose(optionsFilePath, optionsFile);
-		return true;
-	}
-
-	fclose(optionsFile);
+	else
+		fclose(optionsFile);
+		
 	return true;
 }
 
@@ -229,7 +227,7 @@ void Options::Save(FILE* file)
 	char optionsFilePath[APP_PATH_MAX];
 
 	MakeDirectory(gApp->UsersPath);
-	UplinkSnprintf(optionsFilePath, 0x100, "%soptions", gApp->UsersPath);
+	UplinkSnprintf(optionsFilePath, APP_PATH_MAX, "%soptions", gApp->UsersPath);
 	printf("Saving uplink options to %s...", optionsFilePath);
 
 	const auto optionsFile = fopen(optionsFilePath, "wb");

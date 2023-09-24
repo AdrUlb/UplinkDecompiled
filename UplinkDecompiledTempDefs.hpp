@@ -7,6 +7,13 @@
 #include "Source/Date.hpp"
 #include "Source/Game.hpp"
 
+typedef void Button;
+typedef void(*ClearDrawFunc)(int, int, int, int);
+typedef void(*ButtonDrawFunc)(Button*, bool, bool);
+typedef void(*ButtonMouseUpFunc)(Button*);
+typedef void(*ButtonMouseDownFunc)(Button*);
+typedef void(*ButtonMouseMoveFunc)(Button*);
+
 static const auto VerifyLegitAndCodeCardCheck = (bool(*)())0x080FE6A0;
 //static const auto Init_OpenGL = (void(*)(int argc, char** argv))0x080FDC90;
 static const auto Init_Fonts = (void(*)())0x080FDD70;
@@ -40,4 +47,17 @@ static const auto Date_Update = (void(*)(Date*))0x08121e00;
 
 static const auto Game_Game = (void(*)(Game*))0x0805bc20;
 
-static const auto opengl_initialise = (void(*)(int, char**))0x08051970;
+static const auto GciInitGraphics = (char* (*)(const char*, int, int, int, int, int, int, char**))0x08176680;
+static const auto GciGetCurrentScreenMode = (void* (*)(void))0x08175FE0;
+static const auto EclReset = (void(*)(int, int))0x08179250;
+static const auto EclRegisterClearDrawFunction = (void(*)(ClearDrawFunc func))0x08177770;
+static const auto clear_draw = (void(*)(int, int, int, int))0x08052AE0;
+static const auto EclRegisterDefaultButtonCallbacks = (void(*)(ButtonDrawFunc, ButtonMouseUpFunc, ButtonMouseDownFunc, ButtonMouseMoveFunc))0x081776F0;
+static const auto button_draw = (void(*)(Button*, bool, bool))0x08054490;
+static const auto button_click = (void(*)(Button*))0x08053840;
+static const auto button_highlight = (void(*)(Button*))0x080538B0;
+static const auto EclRegisterSuperHighlightFunction = (void(*)(int, ButtonDrawFunc))0x08177780;
+static const auto superhighlight_draw = (void(*)(Button*, bool, bool))0x080539A0;
+static const auto EclDisableAnimations = (void(*)())0x081777C0;
+static const auto EclEnableFasterAnimations = (void(*)(double))0x081777D0;
+static const auto setcallbacks = (void(*)())0x08050BF0;

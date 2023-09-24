@@ -6,6 +6,7 @@
 #include "Util.hpp"
 #include "RedShirt.hpp"
 #include "Sound.hpp"
+#include "Graphics.hpp"
 #include "../UplinkDecompiledTempDefs.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
 
@@ -309,7 +310,7 @@ static void Init_Graphics()
 	options->SetThemeName(options->GetThemeName());
 }
 
-static void Init_OpenGL(int argc, char** argv)
+static void Init_OpenGL(int argc, char* argv[])
 {
 	const auto options = gApp->GetOptions();
 
