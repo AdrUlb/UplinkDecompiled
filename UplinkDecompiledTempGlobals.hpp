@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL/SDL.h>
 #include "Source/BTree.hpp"
 #include "Source/App.hpp"
 #include "Source/Game.hpp"
@@ -20,6 +21,8 @@ static const auto gSgInitialisedPtr = (bool*)0x08206f74;
 
 static const auto gGciIsInitGraphicsLibraryPtr = (bool*)0x08206FAC;
 
+static const auto gScreenPtr = (SDL_Surface**)0x08206FA8;
+
 #define gFiles (*gFilesPtr)
 #define gRsInitialised (*gRsInitialisedPtr)
 #define gApp (*gAppPtr)
@@ -29,3 +32,4 @@ static const auto gGciIsInitGraphicsLibraryPtr = (bool*)0x08206FAC;
 #define gWindowScaleY (*gWindowScaleYPtr)
 #define gSgInitialised (*gSgInitialisedPtr)
 #define gGciIsInitGraphicsLibrary (*gGciIsInitGraphicsLibraryPtr)
+#define gScreen (*gScreenPtr)

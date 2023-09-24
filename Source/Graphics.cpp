@@ -6,15 +6,19 @@
 #include "../UplinkDecompiledTempGlobals.hpp"
 #include "../UplinkDecompiledTempDefs.hpp"
 
-constexpr uint GCI_FLAGS_0 = 1 << 0;
+constexpr uint GCI_FLAGS_DOUBLEBUFFER = 1 << 0;
 constexpr uint GCI_FLAGS_1 = 1 << 1;
-constexpr uint GCI_FLAGS_2 = 1 << 2;
+constexpr uint GCI_FLAGS_FULLSCREEN = 1 << 2;
 constexpr uint GCI_FLAGS_DEBUG = 1 << 3;
 
 struct GciScreenMode
 {
 	int Width;
 	int Height;
+
+public:
+	inline GciScreenMode() {}
+	inline GciScreenMode(int width, int height) : Width(width), Height(height) {}
 };
 
 static char* GciInitGraphicsLibrary(uint flags)
@@ -28,10 +32,11 @@ static char* GciInitGraphicsLibrary(uint flags)
 	{
 		const auto format = "Could not initialize SDL: %s.";
 		const auto sdlError = SDL_GetError();
-		const auto formatLength = strlen(format);
-		const auto sdlErrorLen = strlen(sdlError);
-		const auto buffer = new char[sdlErrorLen + formatLength + 1];
-		snprintf(buffer, sdlErrorLen + formatLength + 1, format, sdlError);
+
+		const auto length = strlen(format) + strlen(sdlError);
+
+		const auto buffer = new char[length + 1];
+		snprintf(buffer, length, format, sdlError);
 		return buffer;
 	}
 
@@ -42,11 +47,111 @@ static char* GciInitGraphicsLibrary(uint flags)
 	return nullptr;
 }
 
+char* GciInitGraphics(const char* title, int flags, int width, int height, int bpp, int refresh, int argc, char* argv[])
+{
+	(void)refresh;
+	(void)argc;
+	(void)argv;
+	if (flags & GCI_FLAGS_DOUBLEBUFFER)
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	const auto videoInfo = SDL_GetVideoInfo();
+
+	if (bpp == -1)
+		bpp = videoInfo->vfmt->BitsPerPixel;
+
+	if (flags & GCI_FLAGS_1)
+	{
+		if (bpp == 24 || bpp == 32)
+		{
+			SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+			SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+			SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+		}
+		else
+		{
+			bpp = 16;
+			SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+			SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+			SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+		}
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+	}
+
+	Uint32 videoFlags = SDL_OPENGL;
+
+	if (flags & GCI_FLAGS_FULLSCREEN)
+		videoFlags |= SDL_FULLSCREEN;
+
+	const auto actualBpp = SDL_VideoModeOK(width, height, bpp, videoFlags);
+	if (actualBpp == 0)
+	{
+		printf("Warning, no available video mode for width: %d, height:%d, flags:%d\n", width, height, videoFlags);
+	}
+	else if (bpp != actualBpp)
+	{
+		printf("Warning, difference in depth between the video mode requested %d and the closest availab le %d for width: %d, height:%d, flags:%d\n",
+			bpp, actualBpp, width, height, videoFlags);
+
+		bpp = actualBpp;
+		if (actualBpp == 24 || (actualBpp == 32))
+		{
+			SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+			SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+			SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+		}
+		else if (actualBpp == 16)
+		{
+			SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+			SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+			SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+			bpp = 0x10;
+		}
+		else
+		{
+			const auto bitsPerChannel = actualBpp / 3;
+			SDL_GL_SetAttribute(SDL_GL_RED_SIZE, bitsPerChannel);
+			SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, bitsPerChannel);
+			SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, bitsPerChannel);
+		}
+	}
+
+	if (flags & GCI_FLAGS_DEBUG)
+		printf("SDL is now opening a %dx%d window in %d depth ...", width, height, bpp);
+
+	gScreen = SDL_SetVideoMode(width, height, bpp, videoFlags);
+	if (!gScreen)
+	{
+		const auto format = "Could not initialize SDL Video: %s.";
+		const auto sdlError = SDL_GetError();
+
+		const auto length = strlen(format) + strlen(sdlError);
+
+		const auto buffer = new char[length + 1];
+		snprintf(buffer, length, format, sdlError);
+		return buffer;
+	}
+
+	if (flags & GCI_FLAGS_DEBUG)
+	{
+		printf("done\n ");
+		printf("SDL is now changing the window caption and diverse settings ...");
+	}
+
+	SDL_WM_SetCaption(title, 0);
+	SDL_EnableUNICODE(1);
+	SDL_EnableKeyRepeat(500, 0x1e);
+
+	if (flags & GCI_FLAGS_DEBUG)
+		printf("done\n ");
+
+	return nullptr;
+}
+
+
 static GciScreenMode* GciGetClosestScreenMode(int width, int height)
 {
-	const auto screenMode = new GciScreenMode();
-	screenMode->Width = width;
-	screenMode->Height = height;
+	const auto screenMode = new GciScreenMode(width, height);
 
 	auto modes = SDL_ListModes(nullptr, SDL_FULLSCREEN | SDL_OPENGL | SDL_HWSURFACE);
 
@@ -76,6 +181,12 @@ static GciScreenMode* GciGetClosestScreenMode(int width, int height)
 	return screenMode;
 }
 
+GciScreenMode* GciGetCurrentScreenMode()
+{
+	const auto surface = SDL_GetVideoSurface();
+	return new GciScreenMode(surface->w, surface->h);
+}
+
 void opengl_initialise(int argc, char* argv[])
 {
 	const auto options = gApp->GetOptions();
@@ -87,10 +198,10 @@ void opengl_initialise(int argc, char* argv[])
 	const auto refresh = options->GetOptionValue("graphics_screenrefresh");
 	const auto safemode = options->IsOptionEqualTo("graphics_safemode", 1);
 
-	auto flags = GCI_FLAGS_0 | GCI_FLAGS_1;
+	auto flags = GCI_FLAGS_DOUBLEBUFFER | GCI_FLAGS_1;
 
 	if (fullscreen && !safemode)
-		flags |= GCI_FLAGS_2;
+		flags |= GCI_FLAGS_FULLSCREEN;
 
 	if (debug)
 		flags |= GCI_FLAGS_DEBUG;
@@ -109,7 +220,7 @@ void opengl_initialise(int argc, char* argv[])
 
 	UplinkAssert(GciInitGraphics("uplink", flags, width, height, depth, refresh, argc, argv) == nullptr);
 
-	screenMode = (GciScreenMode*)GciGetCurrentScreenMode();
+	screenMode = GciGetCurrentScreenMode();
 	if (width != screenMode->Width && height != screenMode->Height)
 	{
 		width = screenMode->Width;

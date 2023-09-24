@@ -47,8 +47,7 @@ static const auto Date_Update = (void(*)(Date*))0x08121e00;
 
 static const auto Game_Game = (void(*)(Game*))0x0805bc20;
 
-static const auto GciInitGraphics = (char* (*)(const char*, int, int, int, int, int, int, char**))0x08176680;
-static const auto GciGetCurrentScreenMode = (void* (*)(void))0x08175FE0;
+//static const auto GciInitGraphics = (char* (*)(const char*, int, int, int, int, int, int, char**))0x08176680;
 static const auto EclReset = (void(*)(int, int))0x08179250;
 static const auto EclRegisterClearDrawFunction = (void(*)(ClearDrawFunc func))0x08177770;
 static const auto clear_draw = (void(*)(int, int, int, int))0x08052AE0;
