@@ -8,7 +8,7 @@
 #include "Source/Game.hpp"
 
 static const auto VerifyLegitAndCodeCardCheck = (bool(*)())0x080FE6A0;
-static const auto Init_OpenGL = (void(*)(int argc, char** argv))0x080FDC90;
+//static const auto Init_OpenGL = (void(*)(int argc, char** argv))0x080FDC90;
 static const auto Init_Fonts = (void(*)())0x080FDD70;
 static const auto Init_Music = (void(*)())0x080FDFF0;
 static const auto Run_MainMenu = (void(*)())0x080FDA70;
@@ -39,3 +39,5 @@ static const auto App_CoreDump = (void(*)())0x0804D130;
 static const auto Date_Update = (void(*)(Date*))0x08121e00;
 
 static const auto Game_Game = (void(*)(Game*))0x0805bc20;
+
+static const auto opengl_initialise = (void(*)(int, char**))0x08051970;

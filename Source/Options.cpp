@@ -12,6 +12,111 @@ constexpr auto optionsFileVersionCurrent = "SAV62";
 constexpr auto optionsFileVersionMin = "SAV56";
 constexpr size_t optionsFileVersionLength = 6;
 
+Option::Option()
+{
+	memset(name, 0, OPTION_NAME_MAX);
+	name[OPTION_NAME_MAX - 1] = 0;
+	strncpy(tooltip, "", OPTION_TOOLTIP_MAX);
+	tooltip[OPTION_TOOLTIP_MAX - 1] = 0;
+	yesNo = false;
+	visible = true;
+	Value = 0;
+}
+
+bool Option::Load(FILE* file)
+{
+	LoadID(file);
+	if (FileReadDataInt(name, OPTION_NAME_MAX, 1, file) == 0)
+	{
+		name[0] = 0;
+		return false;
+	}
+	name[OPTION_NAME_MAX - 1] = 0;
+
+	if (FileReadDataInt(tooltip, OPTION_TOOLTIP_MAX, 1, file) == 0)
+	{
+		tooltip[0] = 0;
+		return false;
+	}
+	tooltip[OPTION_TOOLTIP_MAX - 1] = 0;
+
+	if (FileReadDataInt(&yesNo, 1, 1, file) == 0)
+		return false;
+
+	if (FileReadDataInt(&visible, 1, 1, file) == 0)
+		return false;
+
+	if (FileReadDataInt(&Value, 4, 1, file) == 0)
+		return false;
+
+	LoadID_END(file);
+	return true;
+}
+
+void Option::Save(FILE* file)
+{
+	SaveID(file);
+	fwrite(name, OPTION_NAME_MAX, 1, file);
+	fwrite(tooltip, OPTION_TOOLTIP_MAX, 1, file);
+	fwrite(&yesNo, sizeof(yesNo), 1, file);
+	fwrite(&visible, sizeof(visible), 1, file);
+	fwrite(&Value, sizeof(Value), 1, file);
+	SaveID_END(file);
+}
+
+void Option::Print()
+{
+	printf("Option : name=%s, value=%d\n", name, Value);
+	printf("\tYesOrNo=%d, Visible=%d\n", yesNo, visible);
+}
+
+void Option::Update()
+{
+
+}
+
+const char* Option::GetID()
+{
+	return "OPTION";
+}
+
+int Option::GetOBJECTID()
+{
+	return 8;
+}
+
+void Option::SetName(const char* name)
+{
+	UplinkAssert(strlen(name) < OPTION_NAME_MAX);
+	strncpy(this->name, name, OPTION_NAME_MAX);
+}
+
+void Option::SetTooltip(const char* tooltip)
+{
+	UplinkAssert(strlen(tooltip) < OPTION_TOOLTIP_MAX);
+	strncpy(this->tooltip, tooltip, OPTION_TOOLTIP_MAX);
+}
+
+void Option::SetValue(int value)
+{
+	Value = value;
+}
+
+void Option::SetVisible(bool visible)
+{
+	this->visible = visible;
+}
+
+void Option::SetYesOrNo(bool value)
+{
+	yesNo = value;
+}
+
+Option::~Option()
+{
+
+}
+
 Options::Options()
 {
 	strncpy(themeName, "graphics", OPTIONS_THEMENAME_MAX);
@@ -71,7 +176,7 @@ bool Options::Load(FILE* file)
 	}
 
 	char optionsFileVersion[optionsFileVersionLength];
-	if (!FileReadDataInt("options/options.cpp", 430, optionsFileVersion, optionsFileVersionLength, 1, optionsFile) ||
+	if (!FileReadDataInt(optionsFileVersion, optionsFileVersionLength, 1, optionsFile) ||
 		optionsFileVersion[0] == 0 ||
 		strncmp(optionsFileVersion, optionsFileVersionMin, optionsFileVersionLength) < 0 ||
 		strncmp(optionsFileVersion, optionsFileVersionCurrent, optionsFileVersionLength) > 0)
@@ -215,6 +320,29 @@ void Options::SetOptionValue(const char* name, int value)
 
 	UplinkAssert(option->Data);
 	option->Data->SetValue(value);
+}
+
+void Options::SetOptionValue(const char* name, int value, const char* tooltip, bool yesNo, bool visible)
+{
+	const auto optionNode = options.LookupTree(name);
+	if (!optionNode)
+	{
+		auto option = new Option();
+		option->SetName(name);
+		option->SetValue(value);
+		option->SetTooltip(tooltip);
+		option->SetYesOrNo(yesNo);
+		option->SetVisible(visible);
+		options.PutData(name, &option);
+		return;
+	}
+
+	UplinkAssert(optionNode->Data);
+	auto option = optionNode->Data;
+	option->SetValue(value);
+	option->SetTooltip(tooltip);
+	option->SetYesOrNo(yesNo);
+	option->SetVisible(visible);
 }
 
 const char* Options::GetThemeName()

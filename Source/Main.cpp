@@ -309,19 +309,28 @@ static void Init_Graphics()
 	options->SetThemeName(options->GetThemeName());
 }
 
+static void Init_OpenGL(int argc, char** argv)
+{
+	const auto options = gApp->GetOptions();
+
+	options->SetOptionValue("crash_graphicsinit", 1, "", true, false);
+	options->Save(nullptr);
+
+	opengl_initialise(argc, argv);
+
+	options->SetOptionValue("crash_graphicsinit", 0, "", true, false);
+	options->Save(nullptr);
+}
+
 static void Init_Sound()
 {
-	char cVar1;
-	Options* options;
-
-	options = gApp->GetOptions();
-	cVar1 = options->IsOptionEqualTo("game_debugstart", 1);
-	if (cVar1)
+	const auto debug = gApp->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+	if (debug)
 		puts("Init_Sound called...setting up sound system");
 
 	SgInitialise();
 
-	if (cVar1)
+	if (debug)
 		puts("Finished with Init_Sound");
 }
 

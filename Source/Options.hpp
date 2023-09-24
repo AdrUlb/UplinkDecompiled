@@ -39,11 +39,10 @@ private:
 	void Update() override;
 	const char* GetID() override;
 	int GetOBJECTID() override;
+public:
 	void SetName(const char* name);
 	void SetTooltip(const char* tooltip);
-public:
 	void SetValue(int value);
-private:
 	void SetVisible(bool visible);
 	void SetYesOrNo(bool value);
 };
@@ -62,8 +61,8 @@ public:
 	Options();
 	virtual ~Options();
 	virtual bool Load(FILE* file);
-private:
 	virtual void Save(FILE* file);
+private:
 	virtual void Print();
 	virtual void Update();
 	virtual const char* GetID();
@@ -73,6 +72,7 @@ public:
 	int GetOptionValue(const char* name);
 	bool IsOptionEqualTo(const char* name, int value);
 	void SetOptionValue(const char* name, int value);
+	void SetOptionValue(const char* name, int value, const char* tooltip, bool yesNo, bool visible);
 	const char* GetThemeName();
 	void SetThemeName(const char* themeName);
 };

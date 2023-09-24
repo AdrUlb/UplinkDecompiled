@@ -15,14 +15,14 @@ public:
 	T Data;
 
 	BTree();
-	BTree(char* name, T* dataPtr);
+	BTree(const char* name, T* dataPtr);
 	~BTree();
 	void AppendRight(BTree<T>* value);
 	DArray<char*>* ConvertIndexToDArray();
 	DArray<T>* ConvertToDArray();
 	void Empty();
 	BTree<T>* LookupTree(const char* name);
-	void PutData(char* name, T* dataPtr);
+	void PutData(const char* name, T* dataPtr);
 	void RecursiveConvertIndexToDArray(DArray<char*>* arr, BTree<T>* item);
 	void RecursiveConvertToDArray(DArray<T>* arr, BTree<T>* item);
 	inline BTree<T>* Left()
@@ -48,7 +48,7 @@ BTree<T>::BTree()
 }
 
 template<typename T>
-BTree<T>::BTree(char* name, T* dataPtr)
+BTree<T>::BTree(const char* name, T* dataPtr)
 {
 	left = nullptr;
 	right = nullptr;
@@ -144,7 +144,7 @@ BTree<T>* BTree<T>::LookupTree(const char* name)
 }
 
 template<typename T>
-void BTree<T>::PutData(char* name, T* dataPtr)
+void BTree<T>::PutData(const char* name, T* dataPtr)
 {
 	auto node = this;
 

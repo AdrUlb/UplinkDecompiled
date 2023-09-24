@@ -23,7 +23,7 @@
 #define UplinkAbort(message) \
 	UplinkAbortImpl(message, __FILE__, __LINE__)
 
-#define FileReadDataInt(location, line, buffer, size, n, file) \
+#define FileReadDataInt(buffer, size, n, file) \
 	FileReadDataIntImpl(__FILE__, __LINE__, buffer, size, n, file)
 
 void UplinkAssertImpl(bool condition, const char* conditionStr, const char* location, int line);
