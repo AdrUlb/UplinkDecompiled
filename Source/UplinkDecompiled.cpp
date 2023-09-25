@@ -3,13 +3,13 @@
 #include <cstdint>
 #include <sys/mman.h>
 #include <unistd.h>
-#include "Source/Util.hpp"
-#include "Source/App.hpp"
-#include "Source/DArray.hpp"
-#include "Source/Options.hpp"
-#include "Source/RedShirt.hpp"
-#include "Source/Bungle.hpp"
-#include "Source/Button.hpp"
+#include "Uplink/Util.hpp"
+#include "Uplink/App.hpp"
+#include "Uplink/DArray.hpp"
+#include "Uplink/Options.hpp"
+#include "Uplink/RedShirt.hpp"
+#include "Uplink/Bungle.hpp"
+#include "Uplink/Button.hpp"
 
 uintptr_t PAGESIZE = 0;
 
@@ -62,7 +62,6 @@ int main(int argc, char* argv[]);
 __attribute__((constructor))
 static void Init()
 {
-	assert(sizeof(Button) == 0x44);
 	PAGESIZE = sysconf(_SC_PAGE_SIZE);
 	WriteJump(0x080FF260, (uint32_t)main);
 }

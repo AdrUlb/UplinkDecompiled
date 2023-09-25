@@ -6,8 +6,8 @@ endif()
 
 project(UplinkDecompiled)
 
-set(UPLINK_SOURCES Source/Util.cpp Source/Graphics.cpp Source/Sound.cpp Source/Network.cpp Source/Game.cpp Source/MainMenu.cpp Source/Main.cpp Source/RedShirt.cpp Source/Options.cpp Source/Bungle.cpp Source/App.cpp Source/UplinkObject.cpp ../unrar/sha1.cpp)
-add_library(UplinkDecompiled SHARED UplinkDecompiled.cpp ${UPLINK_SOURCES})
+set(UPLINK_SOURCES Source/Uplink/Util.cpp Source/Uplink/Graphics.cpp Source/Uplink/Sound.cpp Source/Uplink/Network.cpp Source/Uplink/Game.cpp Source/Uplink/MainMenu.cpp Source/Uplink/Main.cpp Source/Uplink/RedShirt.cpp Source/Uplink/Options.cpp Source/Uplink/Bungle.cpp Source/Uplink/App.cpp Source/Uplink/UplinkObject.cpp ../unrar/sha1.cpp)
+add_library(UplinkDecompiled SHARED Source/UplinkDecompiled.cpp ${UPLINK_SOURCES})
 target_compile_options(UplinkDecompiled PRIVATE -m32 -Wall -Wextra)
 target_link_options(UplinkDecompiled PRIVATE -m32)
 

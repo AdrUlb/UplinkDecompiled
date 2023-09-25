@@ -3,7 +3,6 @@
 #include <cstring>
 #include <climits>
 #include "BTree.hpp"
-#include "RedShirt.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
 
 static void BglSlashify(char* filePath)

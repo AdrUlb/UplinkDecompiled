@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Source/Options.hpp"
-#include "Source/Network.hpp"
-#include "Source/MainMenu.hpp"
-#include "Source/App.hpp"
-#include "Source/Date.hpp"
-#include "Source/Game.hpp"
-#include "Source/Button.hpp"
+#include "Uplink/Options.hpp"
+#include "Uplink/Network.hpp"
+#include "Uplink/MainMenu.hpp"
+#include "Uplink/App.hpp"
+#include "Uplink/Date.hpp"
+#include "Uplink/Game.hpp"
+#include "Uplink/Button.hpp"
 
 typedef void(*ClearDrawFunc)(int, int, int, int);
 
