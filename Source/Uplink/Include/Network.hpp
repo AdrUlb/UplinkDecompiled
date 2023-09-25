@@ -4,7 +4,7 @@
 
 class Network : UplinkObject
 {
-	char unknown[0x3C];
+	char unknown[0x38];
 
 public:
 	Network();

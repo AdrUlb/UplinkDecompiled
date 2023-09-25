@@ -21,6 +21,71 @@ public:
 	inline GciScreenMode(int width, int height) : Width(width), Height(height) {}
 };
 
+static void EclReset(int width, int height)
+{
+	(void)width;
+	(void)height;
+
+	if (gCurrentHighlight)
+		delete[] gCurrentHighlight;
+
+	if (gCurrentClick)
+		delete[] gCurrentClick;
+
+	gCurrentHighlight = nullptr;
+	gCurrentClick = nullptr;
+
+	while (gButtons.ValidIndex(0))
+		EclRemoveButton(gButtons.GetData(0)->Name);
+
+	while (const auto b = gEditableButtons.GetData(0))
+	{
+		if (!b)
+			break;
+
+		gEditableButtons.RemoveData(0);
+
+		if (b)
+			delete[] b;
+	}
+	gButtons.Empty();
+	gEditableButtons.Empty();
+	gSuperhighlightBorderWidth = 0;
+	EclDirtyClear();
+	return;
+}
+
+static void EclRegisterClearDrawFunction(ClearDrawFunc func)
+{
+	gClearDrawFunc = func;
+}
+
+static void EclRegisterDefaultButtonCallbacks(ButtonDrawFunc drawFunc, ButtonMouseUpFunc mouseUpFunc,
+	ButtonMouseDownFunc mouseDownFunc, ButtonMouseMoveFunc mouseMoveFunc)
+{
+	gDefaultDrawFunc = drawFunc;
+	gDefaultMouseUpFunc = mouseUpFunc;
+	gDefaultMouseDownFunc = mouseDownFunc;
+	gDefaultMouseMoveFunc = mouseMoveFunc;
+}
+
+static void EclRegisterSuperHighlightFunction(int borderWidth, ButtonDrawFunc func)
+{
+	gSuperhighlightBorderWidth = borderWidth;
+	gSuperhighlightDrawFunc = func;
+}
+
+static void EclDisableAnimations()
+{
+	gAnimsEnabled = false;
+}
+
+static void EclEnableFasterAnimations(double speed)
+{
+	gAnimsFasterSpeed = speed;
+	gAnimsFasterEnabled = true;
+}
+
 static char* GciInitGraphicsLibrary(uint flags)
 {
 	const auto debug = flags & GCI_FLAGS_DEBUG;
@@ -186,38 +251,18 @@ GciScreenMode* GciGetCurrentScreenMode()
 	return new GciScreenMode(surface->w, surface->h);
 }
 
-static void EclReset(int width, int height)
+void GciRestoreScreenSize()
 {
-	(void)width;
-	(void)height;
-	
-	if (gCurrentHighlight)
-		delete[] gCurrentHighlight;
-
-	if (gCurrentClick)
-		delete[] gCurrentClick;
-
-	gCurrentHighlight = nullptr;
-	gCurrentClick = nullptr;
-
-	while (gButtons.ValidIndex(0))
-		EclRemoveButton(gButtons.GetData(0)->Name);
-
-	while (const auto b = gEditableButtons.GetData(0))
+	if (gGciIsInitGraphicsLibrary && SDL_WasInit(SDL_INIT_VIDEO) != 0)
 	{
-		if (!b)
-			break;
-
-		gEditableButtons.RemoveData(0);
-
-		if (b)
-			delete[] b;
+		int doubleBuffer;
+		if (SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffer) == 0 && doubleBuffer)
+			SDL_GL_SwapBuffers();
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	}
-	gButtons.Empty();
-	gEditableButtons.Empty();
-	gSuperhighlightBorderWidth = 0;
-	EclDirtyClear();
-	return;
+
+	gGciIsInitGraphicsLibrary = false;
+	gGciFinished = true;
 }
 
 void opengl_initialise(int argc, char* argv[])

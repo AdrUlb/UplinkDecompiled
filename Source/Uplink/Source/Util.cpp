@@ -3,6 +3,7 @@
 #include <cerrno>
 #include <dirent.h>
 #include <unistd.h>
+#include "../UplinkDecompiledTempDefs.hpp"
 
 void UplinkAssertImpl(bool condition, const char* conditionStr, const char* location, int line)
 {
@@ -132,8 +133,113 @@ bool FileReadDataIntImpl(const char* location, int line, void* buffer, uint size
 	if (n != readCount)
 	{
 		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
-		printf("WARNING: FileReadDataInt, request read count is different then the readed count, request =%d, readed=%d, errno=%d, %s:%d\n",
-			n, readCount, errno, location, line);
+		printf("WARNING: FileReadDataInt, request read count is different then the readed count, request =%d, readed=%d, errno=%d, %s:%d\n", n, readCount, errno, location, line);
 	}
 	return n == readCount;
+}
+
+bool LoadDynamicStringInt(char** outBuffer, FILE* file)
+{
+	char* buf;
+
+	*outBuffer = nullptr;
+	int length;
+	if (!FileReadDataInt(&length, sizeof(length), 1, file))
+		return false;
+
+	if (length == -1)
+		return false;
+
+	UplinkAssert(length <= 0x4000);
+
+	buf = new char[length + 1];
+	buf[length] = 0;
+
+	*outBuffer = buf;
+
+	if (!FileReadDataInt(buf, length, 1, file))
+		return false;
+
+	return true;
+}
+
+bool LoadBTree(BTree<char*>* tree, FILE* file)
+{
+	UplinkAssert(tree);
+
+	int count;
+	if (!FileReadDataInt(&count, 4, 1, file))
+		return false;
+
+	UplinkAssert(count <= 0x40000);
+
+	for (auto i = 0; i < count; i++)
+	{
+		char* name = nullptr;
+		if (!LoadDynamicStringInt(&name, file))
+			return false;
+
+		UplinkAssert(name != nullptr);
+
+		char* value = nullptr;
+		if (!LoadDynamicStringInt(&value, file))
+		{
+			if (name)
+			{
+				delete[] name;
+				return false;
+			}
+
+			return false;
+		}
+
+		tree->PutData(name, &value);
+
+		delete[] name;
+	}
+
+	return true;
+}
+
+bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file)
+{
+	UplinkAssert(tree);
+
+	int count;
+	if (!FileReadDataInt(&count, 4, 1, file))
+		return false;
+
+	UplinkAssert(count <= 0x40000);
+
+	for (auto i = 0; i < count; i++)
+	{
+		char* name = nullptr;
+		if (!LoadDynamicStringInt(&name, file))
+			return false;
+
+		UplinkAssert(name != nullptr);
+
+		int objectId;
+		if (!FileReadDataInt(&objectId, 4, 1, file))
+			return false;
+
+		auto obj = CreateUplinkObject(objectId);
+
+		if (!obj || !obj->Load(file))
+		{
+			if (name)
+				delete[] name;
+
+			if (obj)
+			{
+				delete obj;
+				return false;
+			}
+			return false;
+		}
+		tree->PutData(name, &obj);
+
+		delete[] name;
+	}
+	return true;
 }

@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <sys/stat.h>
 #include <BTree.hpp>
+#include <UplinkObject.hpp>
+#include <Options.hpp>
 
 #define str(s) #s
 
@@ -65,6 +67,10 @@ void EmptyDirectory(const char* path);
 
 bool DoesFileExist(const char* path);
 
+bool FileReadDataIntImpl(const char* location, int line, void* buffer, uint size, uint n, FILE* file);
+
+bool LoadDynamicStringInt(char* location, int line, char** buffer, FILE* file);
+
 template<typename T>
 void DeleteBTreeData(BTree<T>* tree)
 {
@@ -85,4 +91,10 @@ void DeleteBTreeData(BTree<T>* tree)
 	delete arr;
 }
 
-bool FileReadDataIntImpl(const char* location, int line, void* buffer, uint size, uint n, FILE* file);
+bool LoadBTree(BTree<char*>* tree, FILE* file);
+bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file);
+
+inline bool LoadBTree(BTree<Option*>* tree, FILE* file)
+{
+	return LoadBTree((BTree<UplinkObject*>*)tree, file);
+}

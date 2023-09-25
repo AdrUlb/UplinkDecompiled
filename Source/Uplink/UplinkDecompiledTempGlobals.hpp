@@ -5,6 +5,7 @@
 #include "Include/App.hpp"
 #include "Include/Game.hpp"
 #include "Include/Button.hpp"
+#include "UplinkDecompiledTempDefs.hpp"
 
 static const auto gRsAppPath = (char*)0x08205DE0;
 static const auto gRsTempDir = (char*)0x08205EE0;
@@ -23,6 +24,16 @@ static const auto gCurrentClickPtr = (char**)0x08207040;
 static const auto gEditableButtonsPtr = (LList<char*>*)0x0820702C;
 static const auto gButtonsPtr = (LList<Button*>*)0x0820702C;
 static const auto gSuperhighlightBorderWidthPtr = (int*)0x08207058;
+static const auto gClearDrawFuncPtr = (ClearDrawFunc*)0x08207060;
+static const auto gDefaultDrawFuncPtr = (ButtonDrawFunc*)0x08207064;
+static const auto gDefaultMouseUpFuncPtr = (ButtonMouseUpFunc*)0x08207068;
+static const auto gDefaultMouseDownFuncPtr = (ButtonMouseDownFunc*)0x0820706C;
+static const auto gDefaultMouseMoveFuncPtr = (ButtonMouseMoveFunc*)0x08207070;
+static const auto gSuperhighlightDrawFuncPtr = (ButtonDrawFunc*)0x0820705C;
+static const auto gAnimsEnabledPtr = (bool*)0x08205DD0;
+static const auto gAnimsFasterEnabledPtr = (bool*)0x08207048;
+static const auto gAnimsFasterSpeedPtr = (double*)0x08205DD8;
+static const auto gGciFinishedPtr = (bool*)0x08206FAD;
 
 #define gFiles (*gFilesPtr)
 #define gRsInitialised (*gRsInitialisedPtr)
@@ -39,3 +50,13 @@ static const auto gSuperhighlightBorderWidthPtr = (int*)0x08207058;
 #define gEditableButtons (*gEditableButtonsPtr)
 #define gButtons (*gButtonsPtr)
 #define gSuperhighlightBorderWidth (*gSuperhighlightBorderWidthPtr)
+#define gClearDrawFunc (*gClearDrawFuncPtr)
+#define gDefaultDrawFunc (*gDefaultDrawFuncPtr)
+#define gDefaultMouseUpFunc (*gDefaultMouseUpFuncPtr)
+#define gDefaultMouseDownFunc (*gDefaultMouseDownFuncPtr)
+#define gDefaultMouseMoveFunc (*gDefaultMouseMoveFuncPtr)
+#define gSuperhighlightDrawFunc (*gSuperhighlightDrawFuncPtr)
+#define gAnimsEnabled (*gAnimsEnabledPtr)
+#define gAnimsFasterEnabled (*gAnimsFasterEnabledPtr)
+#define gAnimsFasterSpeed (*gAnimsFasterSpeedPtr)
+#define gGciFinished (*gGciFinishedPtr)
