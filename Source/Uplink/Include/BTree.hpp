@@ -2,8 +2,8 @@
 
 #include <cstring>
 #include <cassert>
-#include "Bungle.hpp"
-#include "DArray.hpp"
+#include <Bungle.hpp>
+#include <DArray.hpp>
 
 template<typename T>
 class BTree
@@ -36,7 +36,6 @@ public:
 	}
 };
 
-
 template<typename T>
 BTree<T>::BTree()
 {
@@ -44,7 +43,6 @@ BTree<T>::BTree()
 	right = nullptr;
 	Name = nullptr;
 	Data = nullptr;
-	return;
 }
 
 template<typename T>

@@ -2,12 +2,12 @@
 
 #include <cstddef>
 #include <cstdio>
-#include "UplinkObject.hpp"
-#include "DArray.hpp"
-#include "Options.hpp"
-#include "Network.hpp"
-#include "MainMenu.hpp"
-#include "PhoneDialler.hpp"
+#include <UplinkObject.hpp>
+#include <DArray.hpp>
+#include <Options.hpp>
+#include <Network.hpp>
+#include <MainMenu.hpp>
+#include <PhoneDialler.hpp>
 
 constexpr size_t APP_PATH_MAX = 0x100;
 constexpr size_t APP_VERSION_MAX = 0x20;

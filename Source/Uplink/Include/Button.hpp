@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Image.hpp"
+#include <Image.hpp>
 
 class Button;
 

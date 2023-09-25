@@ -5,7 +5,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <sys/stat.h>
-#include "BTree.hpp"
+#include <BTree.hpp>
 
 #define str(s) #s
 

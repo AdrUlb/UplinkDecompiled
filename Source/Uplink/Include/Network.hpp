@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UplinkObject.hpp"
+#include <UplinkObject.hpp>
 
 class Network : UplinkObject
 {

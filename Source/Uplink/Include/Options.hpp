@@ -1,8 +1,8 @@
 #pragma once
 
-#include "UplinkObject.hpp"
-#include "BTree.hpp"
-#include "LList.hpp"
+#include <UplinkObject.hpp>
+#include <BTree.hpp>
+#include <LList.hpp>
 
 #define OPTION_NAME_MAX 0x40
 #define OPTION_TOOLTIP_MAX 0x80
@@ -11,15 +11,6 @@
 #define OPTIONS_UNKNOWN_MAX 0x80
 #define OPTIONS_THEMETITLE_MAX 0x80
 #define OPTIONS_THEMEDESCRIPTION_MAX 0x400
-
-typedef void OptionChange;
-
-class ColorOption
-{
-	float unknown1;
-	float unknown2;
-	float unknown3;
-};
 
 class Option : UplinkObject
 {
@@ -47,6 +38,15 @@ public:
 	void SetYesOrNo(bool value);
 };
 
+class ColorOption
+{
+	float unknown1;
+	float unknown2;
+	float unknown3;
+};
+
+typedef void OptionChange;
+
 class Options : UplinkObject
 {
 	BTree<Option*> options;
@@ -60,12 +60,12 @@ class Options : UplinkObject
 public:
 	Options();
 	virtual ~Options();
-	virtual bool Load(FILE* file);
-	virtual void Save(FILE* file);
+	bool Load(FILE* file) override;
+	void Save(FILE* file) override;
 private:
-	virtual void Print();
-	virtual void Update();
-	virtual const char* GetID();
+	void Print() override;
+	void Update() override;
+	const char* GetID() override;
 public:
 	void CreateDefaultOptions();
 	Option* GetOption(const char* name);
