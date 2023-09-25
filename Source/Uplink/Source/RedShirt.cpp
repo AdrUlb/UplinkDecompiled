@@ -1,12 +1,12 @@
-#include "RedShirt.hpp"
+#include <RedShirt.hpp>
 
 #include <cstring>
 #include <cstdlib>
-#include "Bungle.hpp"
+#include <Bungle.hpp>
 #include "../UplinkDecompiledTempGlobals.hpp"
 #include "../UplinkDecompiledTempDefs.hpp"
-#include "../../../unrar/rar.hpp"
-#include "../../../unrar/sha1.hpp"
+#include "../../../../unrar/rar.hpp"
+#include "../../../../unrar/sha1.hpp"
 
 typedef void(*FilterCallback)(unsigned char* buffer, size_t size);
 typedef bool(*FilterFileCallback)(FILE* file);

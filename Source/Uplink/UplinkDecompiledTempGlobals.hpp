@@ -1,10 +1,10 @@
 #pragma once
 
 #include <SDL/SDL.h>
-#include "Uplink/BTree.hpp"
-#include "Uplink/App.hpp"
-#include "Uplink/Game.hpp"
-#include "Uplink/Button.hpp"
+#include "Include/BTree.hpp"
+#include "Include/App.hpp"
+#include "Include/Game.hpp"
+#include "Include/Button.hpp"
 
 static const auto gRsAppPath = (char*)0x08205DE0;
 static const auto gRsTempDir = (char*)0x08205EE0;

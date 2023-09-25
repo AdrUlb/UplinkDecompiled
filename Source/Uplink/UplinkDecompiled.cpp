@@ -3,13 +3,13 @@
 #include <cstdint>
 #include <sys/mman.h>
 #include <unistd.h>
-#include "Uplink/Util.hpp"
-#include "Uplink/App.hpp"
-#include "Uplink/DArray.hpp"
-#include "Uplink/Options.hpp"
-#include "Uplink/RedShirt.hpp"
-#include "Uplink/Bungle.hpp"
-#include "Uplink/Button.hpp"
+#include "Include/Util.hpp"
+#include "Include/App.hpp"
+#include "Include/DArray.hpp"
+#include "Include/Options.hpp"
+#include "Include/RedShirt.hpp"
+#include "Include/Bungle.hpp"
+#include "Include/Button.hpp"
 
 uintptr_t PAGESIZE = 0;
 

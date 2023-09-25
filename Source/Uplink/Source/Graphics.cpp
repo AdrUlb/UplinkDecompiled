@@ -1,8 +1,8 @@
-#include "Graphics.hpp"
+#include <Graphics.hpp>
 
 #include <SDL/SDL.h>
 #include <GL/gl.h>
-#include "Util.hpp"
+#include <Util.hpp>
 #include "../UplinkDecompiledTempGlobals.hpp"
 #include "../UplinkDecompiledTempDefs.hpp"
 

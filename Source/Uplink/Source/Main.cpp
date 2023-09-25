@@ -3,10 +3,10 @@
 #include <climits>
 #include <ctime>
 #include <cstring>
-#include "Util.hpp"
-#include "RedShirt.hpp"
-#include "Sound.hpp"
-#include "Graphics.hpp"
+#include <Util.hpp>
+#include <RedShirt.hpp>
+#include <Sound.hpp>
+#include <Graphics.hpp>
 #include "../UplinkDecompiledTempDefs.hpp"
 #include "../UplinkDecompiledTempGlobals.hpp"
 

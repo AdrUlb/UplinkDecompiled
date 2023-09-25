@@ -1,4 +1,5 @@
-#include "Network.hpp"
+#include <Network.hpp>
+
 #include "../UplinkDecompiledTempDefs.hpp"
 
 Network::Network()

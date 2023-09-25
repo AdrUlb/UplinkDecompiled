@@ -1,8 +1,8 @@
-#include "Bungle.hpp"
+#include <Bungle.hpp>
 
 #include <cstring>
 #include <climits>
-#include "BTree.hpp"
+#include <BTree.hpp>
 #include "../UplinkDecompiledTempGlobals.hpp"
 
 static void BglSlashify(char* filePath)
