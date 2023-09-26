@@ -1,6 +1,6 @@
 #include <Network.hpp>
 
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../TempDefs.hpp"
 
 Network::Network()
 {

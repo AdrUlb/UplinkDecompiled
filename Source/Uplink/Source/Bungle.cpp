@@ -3,7 +3,7 @@
 #include <cstring>
 #include <climits>
 #include <BTree.hpp>
-#include "../UplinkDecompiledTempGlobals.hpp"
+#include "../TempGlobals.hpp"
 
 static void BglSlashify(char* filePath)
 {

@@ -44,7 +44,7 @@ static inline int UplinkSnprintfImpl(char* destination, size_t num, const char* 
 			"An Uplink snprintf Failure has occured\n"
 			"======================================\n"
 			" Location    : %s, line %d\n"
-			" Buffer size : %d\n Format      : %s\n"
+			" Buffer size : %zu\n Format      : %s\n"
 			" Buffer      : %s\n",
 
 			location, line, num, format, destination
@@ -67,7 +67,7 @@ void EmptyDirectory(const char* path);
 
 bool DoesFileExist(const char* path);
 
-bool FileReadDataIntImpl(const char* location, int line, void* buffer, uint size, uint n, FILE* file);
+bool FileReadDataIntImpl(const char* location, int line, void* buffer, size_t size, size_t n, FILE* file);
 
 bool LoadDynamicStringInt(char* location, int line, char** buffer, FILE* file);
 

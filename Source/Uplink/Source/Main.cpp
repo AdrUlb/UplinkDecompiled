@@ -7,8 +7,8 @@
 #include <RedShirt.hpp>
 #include <Sound.hpp>
 #include <Graphics.hpp>
-#include "../UplinkDecompiledTempDefs.hpp"
-#include "../UplinkDecompiledTempGlobals.hpp"
+#include "../TempDefs.hpp"
+#include "../TempGlobals.hpp"
 
 static void RunUplinkExceptionHandling(void)
 {

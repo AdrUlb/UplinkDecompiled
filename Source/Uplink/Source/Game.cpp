@@ -1,6 +1,6 @@
 #include <Game.hpp>
 
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../TempDefs.hpp"
 
 Game::Game()
 {

@@ -3,8 +3,8 @@
 #include <cstring>
 #include <cstdlib>
 #include <Bungle.hpp>
-#include "../UplinkDecompiledTempGlobals.hpp"
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../TempGlobals.hpp"
+#include "../TempDefs.hpp"
 #include "../../../../unrar/rar.hpp"
 #include "../../../../unrar/sha1.hpp"
 

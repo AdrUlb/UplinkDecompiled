@@ -2,7 +2,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
-#include "../UplinkDecompiledTempGlobals.hpp"
+#include "../TempGlobals.hpp"
 
 void SgInitialise()
 {

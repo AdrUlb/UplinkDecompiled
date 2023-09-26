@@ -5,8 +5,8 @@
 #include <Util.hpp>
 #include <App.hpp>
 #include <RedShirt.hpp>
-#include "../UplinkDecompiledTempGlobals.hpp"
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../TempGlobals.hpp"
+#include "../TempDefs.hpp"
 
 constexpr auto optionsFileVersionCurrent = "SAV62";
 constexpr auto optionsFileVersionMin = "SAV56";

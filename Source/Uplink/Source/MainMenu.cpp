@@ -1,6 +1,6 @@
 #include <MainMenu.hpp>
 
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../TempDefs.hpp"
 
 MainMenu::MainMenu()
 {

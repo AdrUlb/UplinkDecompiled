@@ -3,8 +3,8 @@
 #include <SDL/SDL.h>
 #include <GL/gl.h>
 #include <Util.hpp>
-#include "../UplinkDecompiledTempGlobals.hpp"
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../TempGlobals.hpp"
+#include "../TempDefs.hpp"
 
 constexpr uint GCI_FLAGS_DOUBLEBUFFER = 1 << 0;
 constexpr uint GCI_FLAGS_1 = 1 << 1;

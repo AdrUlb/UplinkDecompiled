@@ -3,7 +3,7 @@
 #include <cerrno>
 #include <dirent.h>
 #include <unistd.h>
-#include "../UplinkDecompiledTempDefs.hpp"
+#include "../TempDefs.hpp"
 
 void UplinkAssertImpl(bool condition, const char* conditionStr, const char* location, int line)
 {
@@ -34,8 +34,8 @@ char* UplinkStrncpyImpl(char* destination, const char* source, size_t num, const
 			"An Uplink strncpy Failure has occured\n"
 			"=====================================\n"
 			" Location    : %s, line %d\n"
-			" Dest. size  : %d\n"
-			" Source size : %d\n"
+			" Dest. size  : %zu\n"
+			" Source size : %zu\n"
 			" Str. Source : %s\n",
 
 			location, line, num, sourceLength, source
@@ -127,13 +127,13 @@ bool DoesFileExist(const char* path)
 	return !access(path, 0);
 }
 
-bool FileReadDataIntImpl(const char* location, int line, void* buffer, uint size, uint n, FILE* file)
+bool FileReadDataIntImpl(const char* location, int line, void* buffer, size_t size, size_t n, FILE* file)
 {
 	const auto readCount = fread(buffer, size, n, file);
 	if (n != readCount)
 	{
 		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
-		printf("WARNING: FileReadDataInt, request read count is different then the readed count, request =%d, readed=%d, errno=%d, %s:%d\n", n, readCount, errno, location, line);
+		printf("WARNING: FileReadDataInt, request read count is different then the readed count, request =%zu, readed=%zu, errno=%d, %s:%d\n", n, readCount, errno, location, line);
 	}
 	return n == readCount;
 }
