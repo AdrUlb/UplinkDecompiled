@@ -16,8 +16,6 @@ static const auto Init_Music = (void(*)())0x080FDFF0;
 static const auto Run_MainMenu = (void(*)())0x080FDA70;
 static const auto Run_Game = (void(*)())0x080FDA60;
 static const auto EclGetAccurateTime = (long double(*)())0x08177BB0;
-//static const auto LoadBTree = (bool(*)(BTree<Option*>*, FILE*))0x08059460;
-static const auto SaveBTree = (void(*)(BTree<Option*>*, FILE*))0x08058A70;
 static const auto CreateUplinkObject = (UplinkObject*(*)(int objectId))0x080572B0;
 
 static const auto Options_CreateDefaultOptions = (void(*)(Options*))0x080FB980;
@@ -29,7 +27,6 @@ static const auto Network_Network = (void(*)(Network*))0x080F8C60;
 
 static const auto MainMenu_MainMenu = (void(*)(MainMenu*))0x080EC870;
 
-static const auto App_App = (void(*)(App*))0x0804ED90;
 static const auto App_Update = (void(*)(App*))0x0804DAD0;
 static const auto App_Initialise = (void(*)(App*))0x0804EBD0;
 static const auto App_Close = (void(*)(App*))0x0804d5b0;
@@ -47,4 +44,3 @@ static const auto button_highlight = (void(*)(Button*))0x080538B0;
 static const auto superhighlight_draw = (void(*)(Button*, bool, bool))0x080539A0;
 static const auto setcallbacks = (void(*)())0x08050BF0;
 static const auto EclRemoveButton = (void(*)(char*))0x081790E0;
-static const auto EclDirtyClear = (void(*)())0x081778A0;

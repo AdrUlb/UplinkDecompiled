@@ -98,3 +98,11 @@ inline bool LoadBTree(BTree<Option*>* tree, FILE* file)
 {
 	return LoadBTree((BTree<UplinkObject*>*)tree, file);
 }
+
+void SaveBTree(BTree<char*>* tree, FILE* file);
+void SaveBTree(BTree<UplinkObject*>* tree, FILE* file);
+
+inline void SaveBTree(BTree<Option*>* tree, FILE* file)
+{
+	SaveBTree((BTree<UplinkObject*>*)tree, file);
+}

@@ -163,6 +163,50 @@ bool LoadDynamicStringInt(char** outBuffer, FILE* file)
 	return true;
 }
 
+static void SaveDynamicString(char* str, int maxLength, FILE* file)
+{
+	size_t len;
+	int lenWithNull;
+	int local_18;
+	char local_11;
+	int lenWithNull2;
+
+	if (str == (char*)0x0) {
+		lenWithNull = -1;
+		fwrite(&lenWithNull, 4, 1, file);
+	}
+	else {
+		local_18 = 0x4000;
+		if ((0 < maxLength) && (local_18 = maxLength, 0x4000 < maxLength)) {
+			local_18 = 0x4000;
+		}
+		len = strlen(str);
+		lenWithNull = len + 1;
+		if (local_18 < lenWithNull) {
+			printf("Print Abort: %s ln %d : ", "app/serialise.cpp", 0x3e5);
+			printf("WARNING: SaveDynamicString, size appears to be too long, size=%d, maxsize=%d, absolute  maxsize=%d"
+				, lenWithNull, maxLength, 0x4000);
+			putchar(L'\n');
+			fwrite(&local_18, 4, 1, file);
+			lenWithNull2 = local_18;
+		}
+		else {
+			fwrite(&lenWithNull, 4, 1, file);
+			lenWithNull2 = lenWithNull;
+		}
+		if (1 < lenWithNull2) {
+			fwrite(str, lenWithNull2 - 1, 1, file);
+		}
+		local_11 = '\0';
+		fwrite(&local_11, 1, 1, file);
+	}
+}
+
+static void SaveDynamicString(char* str, FILE* file)
+{
+	SaveDynamicString(str, -1, file);
+}
+
 bool LoadBTree(BTree<char*>* tree, FILE* file)
 {
 	UplinkAssert(tree);
@@ -237,9 +281,140 @@ bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file)
 			}
 			return false;
 		}
+
 		tree->PutData(name, &obj);
 
 		delete[] name;
 	}
+
 	return true;
+}
+
+void SaveBTree(BTree<char*>* tree, FILE* file)
+{
+	char cVar1;
+	DArray<char*>* arr1;
+	DArray<char*>* arr2;
+	int iVar2;
+	char* pcVar3;
+	int iVar4;
+	int local_14;
+
+	UplinkAssert(tree);
+	arr1 = tree->ConvertToDArray();
+	arr2 = tree->ConvertIndexToDArray();
+	iVar2 = arr1->Size();
+
+	if (iVar2 < 1)
+	{
+		const auto val = 0;
+		fwrite(&val, sizeof(val), 1, file);
+	}
+	else
+	{
+		local_14 = 0;
+		iVar4 = 0;
+		do
+		{
+			cVar1 = arr1->ValidIndex(iVar4);
+			if (cVar1 != '\0') {
+				local_14 = local_14 + 1;
+			}
+			iVar4 = iVar4 + 1;
+		} while (iVar4 != iVar2);
+		if (0x40000 < local_14)
+		{
+			printf("Print Abort: %s ln %d : ", "app/serialise.cpp", 0xe9);
+			printf("WARNING: SaveBTree, number of items appears to be too big, size=%d, maxsize=%d",
+				local_14, 0x40000);
+			putchar(10);
+			local_14 = 0x40000;
+		}
+		iVar4 = 0;
+		fwrite(&local_14, 4, 1, file);
+		local_14 = 0;
+		do {
+			cVar1 = arr1->ValidIndex(iVar4);
+			if (cVar1 != '\0')
+			{
+				cVar1 = arr2->ValidIndex(iVar4);
+				UplinkAssert(cVar1);
+				pcVar3 = arr2->GetData(iVar4);
+				SaveDynamicString(pcVar3, file);
+				pcVar3 = arr1->GetData(iVar4);
+				SaveDynamicString(pcVar3, file);
+				local_14 = local_14 + 1;
+			}
+		} while ((iVar4 + 1 != iVar2) && (iVar4 = iVar4 + 1, local_14 < 0x40000));
+	}
+
+	delete arr1;
+	delete arr2;
+}
+
+void SaveBTree(BTree<UplinkObject*>* tree, FILE* file)
+{
+	char cVar1;
+	DArray<UplinkObject*>* arr1;
+	DArray<char*>* arr2;
+	int iVar2;
+	UplinkObject* pUVar3;
+	char* pcVar4;
+	int iVar5;
+	int local_18;
+	int local_14;
+
+	UplinkAssert(tree);
+	arr1 = tree->ConvertToDArray();
+	arr2 = tree->ConvertIndexToDArray();
+	iVar2 = arr1->Size();
+
+	local_14 = 0;
+	if (iVar2 < 1)
+	{
+		fwrite(&local_14, sizeof(local_14), 1, file);
+		local_14 = 0;
+	}
+	else
+	{
+		iVar5 = 0;
+		do {
+			cVar1 = arr1->ValidIndex(iVar5);
+			if (cVar1 != '\0') {
+				local_14 = local_14 + 1;
+			}
+			iVar5 = iVar5 + 1;
+		} while (iVar5 != iVar2);
+		if (0x40000 < local_14) {
+			printf("Print Abort: %s ln %d : ", "app/serialise.cpp", 0x4f);
+			printf("WARNING: SaveBTree, number of items appears to be too big, size=%d, maxsize=%d",
+				local_14, 0x40000);
+			putchar(10);
+			local_14 = 0x40000;
+		}
+		iVar5 = 0;
+		fwrite(&local_14, 4, 1, file);
+		local_14 = 0;
+		do {
+			cVar1 = arr1->ValidIndex(iVar5);
+			if (cVar1 != '\0') {
+				cVar1 = arr2->ValidIndex(iVar5);
+				UplinkAssert(cVar1);
+				pUVar3 = arr1->GetData(iVar5);
+				UplinkAssert(pUVar3);
+				pcVar4 = arr2->GetData(iVar5);
+				SaveDynamicString(pcVar4, file);
+				pUVar3 = arr1->GetData(iVar5);
+				local_18 = pUVar3->GetOBJECTID();
+				UplinkAssert(local_18);
+				fwrite(&local_18, 4, 1, file);
+				pUVar3 = arr1->GetData(iVar5);
+				pUVar3->Save(file);
+				local_14 = local_14 + 1;
+			}
+		} while ((iVar5 + 1 != iVar2) && (iVar5 = iVar5 + 1, local_14 < 0x40000));
+	}
+
+	delete arr1;
+	delete arr2;
 }

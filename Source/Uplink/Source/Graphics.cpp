@@ -21,6 +21,19 @@ public:
 	inline GciScreenMode(int width, int height) : Width(width), Height(height) {}
 };
 
+static void EclDirtyClear()
+{
+	auto index = gButtons.Size() - 1;
+
+	while (index >= 0)
+	{
+		if (gButtons.ValidIndex(index))
+			gButtons[index]->Dirty = false;
+
+		index--;
+	}
+}
+
 static void EclReset(int width, int height)
 {
 	(void)width;

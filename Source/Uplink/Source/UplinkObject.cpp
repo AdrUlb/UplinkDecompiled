@@ -69,4 +69,3 @@ void UplinkObject::SaveID_END(FILE* file)
 {
 	(void)file;
 }
-

@@ -25,6 +25,12 @@ public:
 	T GetData(int index);
 	void RemoveData(int index);
 	bool ValidIndex(int index);
+	T operator[](int index);
+
+	inline int Size()
+	{
+		return size;
+	}
 };
 
 template<typename T>
@@ -93,4 +99,10 @@ template<typename T>
 bool LList<T>::ValidIndex(int index)
 {
 	return index >= 0 && index < size;
+}
+
+template<typename T>
+T LList<T>::operator[](int index)
+{
+	return GetData(index);
 }

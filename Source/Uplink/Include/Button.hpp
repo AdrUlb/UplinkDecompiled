@@ -21,7 +21,9 @@ public:
 private:
 	char* tooltip;
 	int style;
-	bool dirty;
+public:
+	bool Dirty;
+private:
 	Image* image1;
 	Image* image2;
 	Image* image3;

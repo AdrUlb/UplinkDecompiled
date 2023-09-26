@@ -8,11 +8,12 @@ public:
 	UplinkObject();
 	virtual ~UplinkObject();
 	virtual bool Load(FILE* file);
-private:
 	virtual void Save(FILE* file);
+private:
 	virtual void Print();
 	virtual void Update();
 	virtual const char* GetID();
+public:
 	virtual int GetOBJECTID();
 protected:
 	char* GetID_END();
