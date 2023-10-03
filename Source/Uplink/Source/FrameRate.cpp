@@ -1,5 +1,5 @@
 #include <FrameRate.hpp>
-#include <Graphics.hpp>
+#include <Ecl.hpp>
 
 FrameRate::FrameRate() : count(30), fps(0.0f) {}
 

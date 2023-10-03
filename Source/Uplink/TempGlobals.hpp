@@ -7,6 +7,8 @@
 #include "Include/Button.hpp"
 #include "TempDefs.hpp"
 
+typedef void(*ClearDrawFunc)(int, int, int, int);
+
 #if UPLINKDECOMP32
 static const auto gRsAppPath = (char*)0x08205DE0;
 static const auto gRsTempDir = (char*)0x08205EE0;

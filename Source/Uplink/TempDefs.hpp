@@ -8,8 +8,6 @@
 #include "Include/Game.hpp"
 #include "Include/Button.hpp"
 
-typedef void(*ClearDrawFunc)(int, int, int, int);
-
 #if UPLINKDECOMP32
 static const auto VerifyLegitAndCodeCardCheck = (bool(*)())0x080FE6A0;
 static const auto Init_Fonts = (void(*)())0x080FDD70;

@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <Util.hpp>
+#include <Ecl.hpp>
 #include "../TempDefs.hpp"
 
 App::App()
