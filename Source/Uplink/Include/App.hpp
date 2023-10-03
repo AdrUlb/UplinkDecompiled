@@ -8,6 +8,7 @@
 #include <Network.hpp>
 #include <MainMenu.hpp>
 #include <PhoneDialler.hpp>
+#include <Graphics.hpp>
 
 constexpr size_t APP_PATH_MAX = 0x100;
 constexpr size_t APP_VERSION_MAX = 0x20;
@@ -37,7 +38,7 @@ private:
 	MainMenu* mainMenu = nullptr;
 	PhoneDialler* phoneDialler = nullptr;
 	char* nextLoadGame = nullptr;
-	bool unknown = false;
+	bool _unknown = false;
 
 public:
 	App();

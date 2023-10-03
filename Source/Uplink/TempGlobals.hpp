@@ -50,19 +50,19 @@ static const auto gGciIsInitGraphicsLibraryPtr = (bool*)0x007B3678;
 static const auto gScreenPtr = (SDL_Surface**)0x007B3670;
 static const auto gCurrentHighlightPtr = (char**)0x007B37A0;
 static const auto gCurrentClickPtr = (char**)0x007B37C8;
-static const auto gEditableButtonsPtr = (LList<char*>*)0;
-static const auto gButtonsPtr = (LList<Button*>*)0;
-static const auto gSuperhighlightBorderWidthPtr = (int*)0;
-static const auto gClearDrawFuncPtr = (ClearDrawFunc*)0;
-static const auto gDefaultDrawFuncPtr = (ButtonDrawFunc*)0;
-static const auto gDefaultMouseUpFuncPtr = (ButtonMouseUpFunc*)0;
-static const auto gDefaultMouseDownFuncPtr = (ButtonMouseDownFunc*)0;
-static const auto gDefaultMouseMoveFuncPtr = (ButtonMouseMoveFunc*)0;
-static const auto gSuperhighlightDrawFuncPtr = (ButtonDrawFunc*)0;
-static const auto gAnimsEnabledPtr = (bool*)0;
-static const auto gAnimsFasterEnabledPtr = (bool*)0;
-static const auto gAnimsFasterSpeedPtr = (double*)0;
-static const auto gGciFinishedPtr = (bool*)0;
+static const auto gEditableButtonsPtr = (LList<char*>*)0x007b37a0;
+static const auto gButtonsPtr = (LList<Button*>*)0x007b3720;
+static const auto gSuperhighlightBorderWidthPtr = (int*)0x007b37f4;
+static const auto gClearDrawFuncPtr = (ClearDrawFunc*)0x007b3800;
+static const auto gDefaultDrawFuncPtr = (ButtonDrawFunc*)0x007b3808;
+static const auto gDefaultMouseUpFuncPtr = (ButtonMouseUpFunc*)0x007b3810;
+static const auto gDefaultMouseDownFuncPtr = (ButtonMouseDownFunc*)0x007b3818;
+static const auto gDefaultMouseMoveFuncPtr = (ButtonMouseMoveFunc*)0x007b3820;
+static const auto gSuperhighlightDrawFuncPtr = (ButtonDrawFunc*)0x007b37f8;
+static const auto gAnimsEnabledPtr = (bool*)0x007b1ff0;
+static const auto gAnimsFasterEnabledPtr = (bool*)0x007b37d0;
+static const auto gAnimsFasterSpeedPtr = (double*)0x007b1ff8;
+static const auto gGciFinishedPtr = (bool*)0x007b3679;
 #else
 #error UNKNOWN BUILD ARCHITECTURE
 #endif

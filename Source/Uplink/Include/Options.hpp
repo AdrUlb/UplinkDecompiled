@@ -40,9 +40,9 @@ public:
 
 class ColorOption
 {
-	float unknown1;
-	float unknown2;
-	float unknown3;
+	float _unknown1;
+	float _unknown2;
+	float _unknown3;
 };
 
 typedef void OptionChange;

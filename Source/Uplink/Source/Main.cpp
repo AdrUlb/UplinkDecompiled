@@ -10,7 +10,7 @@
 #include "../TempDefs.hpp"
 #include "../TempGlobals.hpp"
 
-static void RunUplinkExceptionHandling(void)
+static void RunUplinkExceptionHandling()
 {
 	if (gApp)
 	{
@@ -316,7 +316,7 @@ static void Init_OpenGL(int argc, char* argv[])
 
 	options->SetOptionValue("crash_graphicsinit", 1, "", true, false);
 	options->Save(nullptr);
-
+	
 	opengl_initialise(argc, argv);
 
 	options->SetOptionValue("crash_graphicsinit", 0, "", true, false);
@@ -352,10 +352,8 @@ static void RunUplink(int argc, char* argv[])
 	auto exeFilePath = "/opt/uk.co.introversion.uplink-full/data.dat";
 	if (!DoesFileExist(exeFilePath))
 		exeFilePath = vmg57670648335164_br_find_exe(0);
-
 	Init_App(exeFilePath);
 	Init_Options(argc, argv);
-
 	if (!VerifyLegitAndCodeCardCheck() || !Load_Data())
 	{
 		Cleanup_Uplink();

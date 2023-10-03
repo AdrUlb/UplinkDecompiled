@@ -3,6 +3,7 @@
 #include <SDL/SDL.h>
 #include <GL/gl.h>
 #include <Util.hpp>
+#include <sys/time.h>
 #include "../TempGlobals.hpp"
 #include "../TempDefs.hpp"
 
@@ -99,6 +100,25 @@ static void EclEnableFasterAnimations(double speed)
 	gAnimsFasterEnabled = true;
 }
 
+long double EclGetAccurateTime()
+{
+	static bool initted = false;
+	static timeval startTime;
+	timeval thisTime;
+
+	if (!initted)
+	{
+		initted = true;
+		gettimeofday(&startTime, nullptr);
+		startTime.tv_usec = 0;
+		return 0.0L;
+	}
+
+	gettimeofday(&thisTime, nullptr);
+	return (long double)(thisTime.tv_usec - startTime.tv_usec) / 1000.0L +
+		(long double)(thisTime.tv_sec - startTime.tv_sec) * 1000.0L;
+}
+
 static char* GciInitGraphicsLibrary(uint flags)
 {
 	const auto debug = flags & GCI_FLAGS_DEBUG;
@@ -162,6 +182,7 @@ static char* GciInitGraphics(const char* title, int flags, int width, int height
 		videoFlags |= SDL_FULLSCREEN;
 
 	const auto actualBpp = SDL_VideoModeOK(width, height, bpp, videoFlags);
+
 	if (actualBpp == 0)
 	{
 		printf("Warning, no available video mode for width: %d, height:%d, flags:%d\n", width, height, videoFlags);
@@ -198,6 +219,7 @@ static char* GciInitGraphics(const char* title, int flags, int width, int height
 		printf("SDL is now opening a %dx%d window in %d depth ...", width, height, bpp);
 
 	gScreen = SDL_SetVideoMode(width, height, bpp, videoFlags);
+
 	if (!gScreen)
 	{
 		const auto format = "Could not initialize SDL Video: %s.";
