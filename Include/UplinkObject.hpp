@@ -4,7 +4,8 @@
 
 enum class UplinkObjectId
 {
-	Unknown = 0
+	Unknown = 0,
+	Option = 8
 };
 
 class UplinkObject

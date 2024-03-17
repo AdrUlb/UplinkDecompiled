@@ -5,6 +5,7 @@ project(UplinkDecompiled)
 add_executable(UplinkDecompiled
 	Source/Main.cpp
 	Source/App.cpp
+	Source/Options.cpp
 	Source/UplinkObject.cpp
 	Source/Util.cpp
 )

@@ -96,10 +96,7 @@ int main(int argc, char* argv[])
 	signal(SIGSEGV, hSignalSIGSEGV);
 	signal(SIGFPE, hSignalSIGFPE);
 	signal(SIGPIPE, hSignalSIGPIPE);
-	RunUplink(argc, argv);
 
-	LList<int> a;
-	a.Empty();
-	a.GetData(0);
+	RunUplink(argc, argv);
 	return 0;
 }
