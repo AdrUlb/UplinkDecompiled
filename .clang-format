@@ -1,0 +1,17 @@
+---
+AccessModifierOffset: '-4'
+AlignTrailingComments: 'false'
+AllowShortFunctionsOnASingleLine: Empty
+BreakBeforeBraces: Allman
+ColumnLimit: '140'
+IndentCaseLabels: 'true'
+IndentWidth: '4'
+NamespaceIndentation: All
+PointerAlignment: Left
+SortUsingDeclarations: 'false'
+SpaceInEmptyParentheses: 'false'
+SpacesBeforeTrailingComments: '1'
+TabWidth: '4'
+UseTab: Always
+
+...
