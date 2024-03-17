@@ -5,6 +5,7 @@
 #include <cstring>
 #include <Options.hpp>
 #include <BTree.hpp>
+#include <LList.hpp>
 
 void RunUplinkExceptionHandling()
 {
@@ -96,5 +97,9 @@ int main(int argc, char* argv[])
 	signal(SIGFPE, hSignalSIGFPE);
 	signal(SIGPIPE, hSignalSIGPIPE);
 	RunUplink(argc, argv);
+
+	LList<int> a;
+	a.Empty();
+	a.GetData(0);
 	return 0;
 }
