@@ -53,12 +53,12 @@ template <class T> T LList<T>::GetData(int index)
 	return item->value;
 }
 
-template <class T> void LList<T>::PutData(T& value)
+template <class T> void LList<T>::PutData(const T& value)
 {
 	PutDataAtEnd(value);
 }
 
-template <class T> void LList<T>::PutDataAtEnd(T& value)
+template <class T> void LList<T>::PutDataAtEnd(const T& value)
 {
 	// Create the new item to be inserted at the end of the list
 	const auto item = new LListItem<T>();

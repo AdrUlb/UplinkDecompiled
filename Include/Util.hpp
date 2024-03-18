@@ -6,6 +6,7 @@
 #include <cstring>
 
 void PrintStackTrace();
+bool DoesFileExist(const char* path);
 
 template <class... Args>
 __attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n,
@@ -54,6 +55,17 @@ __attribute__((always_inline)) static inline void UplinkAssertImpl(const char* f
 	}
 }
 
+__attribute__((always_inline)) static void inline UplinkAbortImpl(const char* file, const size_t line, const char* message)
+{
+	printf("\n"
+		   "Uplink has been forced to Abort\n"
+		   "===============================\n"
+		   " Message   : %s\n Location  : %s, line %zu\n",
+		   message, file, line);
+	*(uint64_t*)0 = 0;
+}
+
 #define UplinkSnprintf(s, n, format, ...) UplinkSnprintfImpl(__FILE__, __LINE__, (s), (n), (format), __VA_ARGS__)
 #define UplinkStrncpy(dest, source, num) UplinkStrncpyImpl(__FILE__, __LINE__, (dest), (source), (num))
 #define UplinkAssert(cond) UplinkAssertImpl(__FILE__, __LINE__, #cond, (cond))
+#define UplinkAbort(message) UplinkAbortImpl(__FILE__, __LINE__, (message))

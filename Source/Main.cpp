@@ -1,11 +1,15 @@
+#include <BTree.hpp>
+#include <Gci.hpp>
 #include <Globals.hpp>
+#include <LList.hpp>
+#include <Options.hpp>
 #include <csignal>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
-#include <Options.hpp>
-#include <BTree.hpp>
-#include <LList.hpp>
+
+App* app;
+FILE* file_stdout;
 
 void RunUplinkExceptionHandling()
 {
@@ -13,10 +17,10 @@ void RunUplinkExceptionHandling()
 	{
 		const auto options = app->GetOptions();
 
-		if (options->GetOption("crash_graphicsinit") && options->GetOptionValue("crash_graphicsinit"))
+		if (options->GetOptionValueOrDefault("crash_graphicsinit", 0))
 		{
 			puts("\nAn Uplink Internal Error has occured during graphics initialization");
-			if (file_stdout != 0)
+			if (file_stdout != nullptr)
 			{
 				fputs("\nAn Uplink Internal Error has occured during graphics initialization\n", file_stdout);
 				fflush(file_stdout);
@@ -43,7 +47,7 @@ void RunUplinkExceptionHandling()
 
 		fflush(file_stdout);
 	}
-	
+
 	GciRestoreScreenSize();
 	fflush(nullptr);
 	exit(0xFF);
@@ -88,6 +92,14 @@ void hSignalSIGPIPE(int signum)
 	}
 
 	return RunUplinkExceptionHandling();
+}
+
+void RunUplink(int argc, char* argv[])
+{
+	(void)argc;
+	(void)argv;
+	puts("TODO: implement RunUplink(int, char*)");
+	abort();
 }
 
 int main(int argc, char* argv[])

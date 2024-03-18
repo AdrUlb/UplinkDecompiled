@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BTree.hpp"
+#include "DArray.hpp"
 
 template <class T> DArray<T>::DArray() : grow(1), size(0), data(nullptr), dataValid(nullptr) {}
 template <class T> DArray<T>::~DArray()
@@ -125,4 +125,17 @@ template <class T> void DArray<T>::SetSize(const int newSize)
 
 	data = newData;
 	dataValid = newDataValid;
+}
+
+template <class T> void DArray<T>::SetStepSize(const int newStepSize)
+{
+	grow = newStepSize;
+}
+
+template <class T> bool DArray<T>::ValidIndex(int index)
+{
+	if (index >= size || index < 0)
+		return false;
+
+	return dataValid[index];
 }

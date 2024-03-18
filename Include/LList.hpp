@@ -22,8 +22,8 @@ public:
 	~LList();
 
 	T GetData(int index);
-	void PutData(T& value);
-	void PutDataAtEnd(T& value);
+	void PutData(const T& value);
+	void PutDataAtEnd(const T& value);
 	void RemoveData(int index);
 	void Empty();
 };

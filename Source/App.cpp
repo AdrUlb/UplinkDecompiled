@@ -69,13 +69,13 @@ MainMenu* App::GetMainMenu()
 
 Network* App::GetNetwork()
 {
-	UplinkAssert(options != nullptr);
+	UplinkAssert(network != nullptr);
 	return network;
 }
 
 Options* App::GetOptions()
 {
-	UplinkAssert(network != nullptr);
+	UplinkAssert(options != nullptr);
 	return options;
 }
 

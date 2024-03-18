@@ -3,9 +3,21 @@
 #include <BTree.hpp>
 #include <LList.hpp>
 #include <UplinkObject.hpp>
+#include <Util.hpp>
 
-typedef void ColourOption;
-typedef void OptionChange;
+struct OptionChange
+{
+	static constexpr size_t NAME_MAX = 0x40;
+	char name[0x40];
+	int value;
+};
+
+struct ColourOption
+{
+	float red;
+	float green;
+	float blue;
+};
 
 class Option : UplinkObject
 {
@@ -17,6 +29,7 @@ class Option : UplinkObject
 	bool visible;
 	int32_t value;
 
+public:
 	Option();
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -24,11 +37,50 @@ class Option : UplinkObject
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 
-	void SetName(const char* value);
-	void SetTooltip(const char* value);
-	void SetValue(int value);
-	void SetVisible(bool visible);
-	void SetYesOrNo(bool yesOrNo);
+	inline void SetName(const char* value)
+	{
+		UplinkStrncpy(name, value, NAME_MAX);
+	}
+
+	inline void SetTooltip(const char* value)
+	{
+		UplinkStrncpy(tooltip, value, TOOLTIP_MAX);
+	}
+
+	inline void SetValue(int value)
+	{
+		this->value = value;
+	}
+
+	inline void SetVisible(bool visible)
+	{
+		this->visible = visible;
+	}
+
+	inline void SetYesOrNo(bool yesOrNo)
+	{
+		this->yesOrNo = yesOrNo;
+	}
+
+	inline const char* GetName()
+	{
+		return name;
+	}
+
+	inline int GetValue()
+	{
+		return value;
+	}
+
+	inline bool GetVisible()
+	{
+		return visible;
+	}
+
+	inline bool GetYesOrNo()
+	{
+		return yesOrNo;
+	}
 };
 
 class Options : UplinkObject
@@ -46,6 +98,7 @@ class Options : UplinkObject
 	char themeDescription[THEMEDESCRIPTION_MAX];
 	struct BTree<ColourOption*> colourOptions;
 
+public:
 	Options();
 	~Options() override;
 
@@ -56,4 +109,18 @@ class Options : UplinkObject
 
 	void ApplyShutdownChanges();
 	void CreateDefaultOptions();
+	LList<Option*>* GetAllOptions(const char* search, bool getInvisible);
+	ColourOption* GetColour(const char* name);
+	Option* GetOption(const char* name);
+	int GetOptionValue(const char* name);
+	int GetOptionValueOrDefault(const char* name, int defaultValue);
+	const char* GetThemeDescription();
+	const char* GetThemeName();
+	const char* GetThemeTitle();
+	bool IsOptionEqualTo(const char* name, int value);
+	void RequestShutdownChange(const char* name, int value);
+	void SetOptionValue(char const* name, int value);
+	void SetOptionValue(const char* name, int value, const char* tooltip, bool yesOrNo, bool visible);
+	void SetThemeName(const char* value);
+	char* ThemeFilename(const char* name);
 };

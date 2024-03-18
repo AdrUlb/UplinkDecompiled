@@ -1,15 +1,17 @@
 #pragma once
 
 #include "BTree.hpp"
+
+#include <Util.hpp>
 #include <cstring>
 
-template <class T> BTree<T>::BTree() : left(nullptr), right(nullptr), name(nullptr), value{0} {}
+template <class T> BTree<T>::BTree() : left(nullptr), right(nullptr), name(nullptr), data{0} {}
 
 template <class T> BTree<T>::BTree(const char* name, T& value) : left(nullptr), right(nullptr)
 {
 	this->name = new char[strlen(name + 1)];
 	strcpy(this->name, name);
-	this->value = value;
+	this->data = value;
 }
 
 template <class T> BTree<T>::~BTree()
@@ -21,6 +23,12 @@ template <class T> DArray<T>* BTree<T>::ConvertToDArray()
 {
 	const auto array = new DArray<T>();
 	RecursiveConvertToDArray(array, this);
+	return array;
+}
+template <class T> DArray<char*>* BTree<T>::ConvertIndexToDArray()
+{
+	const auto array = new DArray<char*>();
+	RecursiveConvertIndexToDArray(array, this);
 	return array;
 }
 
@@ -80,6 +88,16 @@ template <class T> BTree<T>* BTree<T>::LookupTree(const char* name)
 	}
 }
 
+template <class T> T BTree<T>::GetData(const char* name)
+{
+	const auto tree = LookupTree(name);
+
+	if (tree == nullptr)
+		return nullptr;
+
+	return tree->data;
+}
+
 template <class T> void BTree<T>::PutData(char const* name, T& value)
 {
 	auto tree = this;
@@ -110,18 +128,50 @@ template <class T> void BTree<T>::PutData(char const* name, T& value)
 
 	tree->name = new char[strlen(name) + 1];
 	strcpy(tree->name, name);
-	tree->value = value;
+	tree->data = value;
 }
 
-template <class T> void BTree<T>::RecursiveConvertToDArray(struct DArray<T>* array, struct BTree<T>* tree)
+template <class T> void BTree<T>::RecursiveConvertToDArray(DArray<T>* array, BTree<T>* tree)
 {
 	assert(array != nullptr);
 
 	for (auto i = tree; i != nullptr; i = i->Right())
 	{
-		if (i->name != 0)
-			array->PutData(i->value);
+		if (i->name != nullptr)
+			array->PutData(i->data);
 
 		RecursiveConvertToDArray(array, i->Left());
 	}
+}
+
+template <class T> void BTree<T>::RecursiveConvertIndexToDArray(DArray<char*>* array, BTree<T>* tree)
+{
+	assert(array != nullptr);
+
+	for (auto i = tree; i != nullptr; i = i->Right())
+	{
+		if (i->name != nullptr)
+			array->PutData(i->name);
+
+		RecursiveConvertIndexToDArray(array, i->Left());
+	}
+}
+
+template <class T> void DeleteBTreeData(BTree<T>* tree)
+{
+	UplinkAssert(tree != nullptr);
+
+	const auto array = tree->ConvertToDArray();
+
+	for (int i = 0; i < array->Size(); i++)
+	{
+		const auto data = array->GetData(i);
+		if (array->ValidIndex(i) && data != nullptr)
+		{
+			if (data != nullptr)
+				delete data;
+		}
+	}
+
+	delete (array);
 }
