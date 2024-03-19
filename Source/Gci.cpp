@@ -1,9 +1,9 @@
 #include <Gci.hpp>
 #include <cstdio>
 #include <cstdlib>
+#include <Util.hpp>
 
 void GciRestoreScreenSize()
 {
-	puts("TODO: implement GciRestoreScreenSize()");
-	abort();
+	//UplinkAbort("TODO: implement GciRestoreScreenSize()");
 }

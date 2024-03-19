@@ -8,8 +8,7 @@ Option::Option() : name{0}, tooltip{0}, yesOrNo(false), visible(true), value(0) 
 bool Option::Load(FILE* file)
 {
 	(void)file;
-	puts("TODO: implement Option::Load(FILE*)");
-	abort();
+	UplinkAbort("TODO: implement Option::Load(FILE*)");
 }
 
 void Option::Save(FILE* file)
@@ -61,15 +60,13 @@ Options::~Options()
 bool Options::Load(FILE* file)
 {
 	(void)file;
-	puts("TODO: implement Options::Load(FILE*)");
-	abort();
+	UplinkAbort("TODO: implement Options::Load(FILE*)");
 }
 
 void Options::Save(FILE* file)
 {
 	(void)file;
-	puts("TODO: implement Options::Save(FILE*)");
-	abort();
+	UplinkAbort("TODO: implement Options::Save(FILE*)");
 }
 
 void Options::Print()
@@ -100,8 +97,7 @@ void Options::ApplyShutdownChanges()
 
 void Options::CreateDefaultOptions()
 {
-	puts("TODO: implement Options::CreateDefaultOptions()");
-	abort();
+	UplinkAbort("TODO: implement Options::CreateDefaultOptions()");
 }
 
 LList<Option*>* Options::GetAllOptions(const char* search, bool getInvisible)
@@ -242,8 +238,7 @@ void Options::SetOptionValue(const char* name, int value, const char* tooltip, b
 void Options::SetThemeName(const char* value)
 {
 	(void)value;
-	puts("TODO: implement Options::SetThemeName()");
-	abort();
+	UplinkAbort("TODO: implement Options::SetThemeName()");
 }
 
 char* Options::ThemeFilename(const char* name)

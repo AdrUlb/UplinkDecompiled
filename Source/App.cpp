@@ -27,33 +27,31 @@ const char* App::GetID()
 
 void App::Print()
 {
-	puts("TODO: implement App::Print()");
-	abort();
+	UplinkAbort("TODO: implement App::Print()");
 }
 
 void App::Update()
 {
-	puts("TODO: implement App::Update()");
-	abort();
+	UplinkAbort("TODO: implement App::Update()");
 }
 
 void App::Close()
 {
-	puts("TODO: implement App::Close()");
-	abort();
+	UplinkAbort("TODO: implement App::Close()");
 }
 
 void App::CloseGame()
 {
-	puts("TODO: implement App::CloseGame()");
-	abort();
+	UplinkAbort("TODO: implement App::CloseGame()");
 }
 
 void App::CoreDump()
 {
 	puts("============== B E G I N  C O R E  D U M P =================");
+	fflush(nullptr);
 	PrintStackTrace();
 	puts("============== E N D  C O R E  D U M P =====================");
+	fflush(nullptr);
 }
 
 bool App::Closed()
@@ -81,14 +79,12 @@ Options* App::GetOptions()
 
 void App::Initialise()
 {
-	puts("TODO: implement App::Initialise()");
-	abort();
+	UplinkAbort("TODO: implement App::Initialise()");
 }
 
 DArray<char*>* App::ListExistingGames()
 {
-	puts("TODO: implement App::ListExistingGames()");
-	abort();
+	UplinkAbort("TODO: implement App::ListExistingGames()");
 }
 
 void App::LoadGame()
@@ -102,8 +98,7 @@ void App::LoadGame()
 void App::LoadGame(const char* name)
 {
 	(void)name;
-	puts("TODO: implement App::LoadGame(const char*)");
-	abort();
+	UplinkAbort("TODO: implement App::LoadGame(const char*)");
 }
 
 void App::RegisterPhoneDialler(PhoneDiallerScreen* newPhoneDiallerScreen)
@@ -120,25 +115,22 @@ void App::RegisterPhoneDialler(PhoneDiallerScreen* newPhoneDiallerScreen)
 void App::UnRegisterPhoneDialler(PhoneDiallerScreen* phoneDiallerScreen)
 {
 	(void)phoneDiallerScreen;
-	puts("TODO: implement App::UnRegisterPhoneDialler(PhoneDiallerScreen*)");
-	abort();
+	UplinkAbort("TODO: implement App::UnRegisterPhoneDialler(PhoneDiallerScreen*)");
 }
 
 void App::RetireGame(const char* name)
 {
 	(void)name;
-	puts("TODO: implement App::RetireGame(const char*)");
-	abort();
+	UplinkAbort("TODO: implement App::RetireGame(const char*)");
 }
 
 void App::SaveGame(char const* name)
 {
 	(void)name;
-	puts("TODO: implement App::SaveGame(const char*)");
-	abort();
+	UplinkAbort("TODO: implement App::SaveGame(const char*)");
 }
 
-void App::Set(char* newPath, char* newVersion, char* newType, char* newDate, char* newTitle)
+void App::Set(const char* newPath, const char* newVersion, const char* newType, const char* newDate, const char* newTitle)
 {
 	// TODO: remove these unnecessary(?) asserts (UplinkStrncpy checks this??)
 	UplinkAssert(strlen(newPath) < PATH_MAX);

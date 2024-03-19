@@ -8,6 +8,7 @@ add_executable(UplinkDecompiled
 	Source/BTree.cpp
 	Source/Gci.cpp
 	Source/Options.cpp
+	Source/RedShirt.cpp
 	Source/UplinkObject.cpp
 	Source/Util.cpp
 )

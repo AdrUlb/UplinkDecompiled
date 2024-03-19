@@ -7,6 +7,9 @@
 
 void PrintStackTrace();
 bool DoesFileExist(const char* path);
+void MakeDirectory(const char* path);
+char* GetFilePath(const char* path);
+void EmptyDirectory(const char* path);
 
 template <class... Args>
 __attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n,

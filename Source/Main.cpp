@@ -3,6 +3,7 @@
 #include <Globals.hpp>
 #include <LList.hpp>
 #include <Options.hpp>
+#include <RedShirt.hpp>
 #include <csignal>
 #include <cstdint>
 #include <cstdio>
@@ -14,97 +15,7 @@ static const char* versionNumberString = "1.55";
 App* app;
 FILE* file_stdout;
 
-void RunUplinkExceptionHandling()
-{
-	if (app != nullptr)
-	{
-		const auto options = app->GetOptionsOrNull();
-
-		if (options != nullptr && options->GetOptionValueOrDefault("crash_graphicsinit", 0))
-		{
-			puts("\nAn Uplink Internal Error has occured during graphics initialization");
-			if (file_stdout != nullptr)
-			{
-				fputs("\nAn Uplink Internal Error has occured during graphics initialization\n", file_stdout);
-				fflush(file_stdout);
-			}
-		}
-	}
-
-	puts("\n"
-		 "An (unrecognised) Uplink Internal Error has occured\n"
-		 "===================================================");
-
-	App::CoreDump();
-
-	if (file_stdout != nullptr)
-	{
-		fputs("\nAn (unrecognised) Uplink Internal Error has occured\n", file_stdout);
-		fputs("===================================================\n", file_stdout);
-		if (app != nullptr && strcmp(app->usersPath, "c:/") != 0)
-		{
-			fprintf(file_stdout, "See the %sdebug.log file for more informations on the error\n", app->usersPath);
-		}
-		else
-			fputs("See the debug.log file for more informations on the error\n", file_stdout);
-
-		fflush(file_stdout);
-	}
-
-	GciRestoreScreenSize();
-	fflush(nullptr);
-	exit(0xFF);
-}
-
-void hSignalSIGSEGV(int signum)
-{
-	(void)signum;
-	puts("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)");
-
-	if (file_stdout != nullptr)
-	{
-		fputs("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)\n", file_stdout);
-		fflush(file_stdout);
-	}
-	return RunUplinkExceptionHandling();
-}
-
-void hSignalSIGFPE(int signum)
-{
-	(void)signum;
-	puts("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)");
-
-	if (file_stdout != nullptr)
-	{
-		fputs("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)\n", file_stdout);
-		fflush(file_stdout);
-	}
-
-	return RunUplinkExceptionHandling();
-}
-
-void hSignalSIGPIPE(int signum)
-{
-	(void)signum;
-	puts("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)");
-
-	if (file_stdout != nullptr)
-	{
-		fputs("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)\n", file_stdout);
-		fflush(file_stdout);
-	}
-
-	return RunUplinkExceptionHandling();
-}
-
-void Init_App(const char* exePath)
-{
-	(void)exePath;
-	puts("TODO: implement Init_App(const char*)");
-	abort();
-}
-
-char* vmg57670648335164_br_find_exe(unsigned int* error)
+static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {
 	auto buffer = (char*)malloc(0xFFF);
 
@@ -190,80 +101,208 @@ char* vmg57670648335164_br_find_exe(unsigned int* error)
 	return nullptr;
 }
 
-void Init_Options(int32_t argc, char** argv)
+static void RunUplinkExceptionHandling()
 {
-	(void)argc;
-	(void)argv;
-	puts("TODO: implement Init_Options(int, char*)");
-	abort();
+	if (app != nullptr)
+	{
+		const auto options = app->GetOptionsOrNull();
+
+		if (options != nullptr && options->GetOptionValueOrDefault("crash_graphicsinit", 0))
+		{
+			puts("\nAn Uplink Internal Error has occured during graphics initialization");
+			if (file_stdout != nullptr)
+			{
+				fputs("\nAn Uplink Internal Error has occured during graphics initialization\n", file_stdout);
+				fflush(file_stdout);
+			}
+		}
+	}
+
+	puts("\n"
+		 "An (unrecognised) Uplink Internal Error has occured\n"
+		 "===================================================");
+
+	App::CoreDump();
+
+	if (file_stdout != nullptr)
+	{
+		fputs("\nAn (unrecognised) Uplink Internal Error has occured\n", file_stdout);
+		fputs("===================================================\n", file_stdout);
+		if (app != nullptr && strcmp(app->usersPath, "c:/") != 0)
+		{
+			fprintf(file_stdout, "See the %sdebug.log file for more informations on the error\n", app->usersPath);
+		}
+		else
+			fputs("See the debug.log file for more informations on the error\n", file_stdout);
+
+		fflush(file_stdout);
+	}
+
+	GciRestoreScreenSize();
+	fflush(nullptr);
+	exit(0xFF);
 }
 
-bool VerifyLegitAndCodeCardCheck()
+static void hSignalSIGSEGV(int signum)
+{
+	(void)signum;
+	puts("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)");
+
+	if (file_stdout != nullptr)
+	{
+		fputs("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)\n", file_stdout);
+		fflush(file_stdout);
+	}
+	return RunUplinkExceptionHandling();
+}
+
+static void hSignalSIGFPE(int signum)
+{
+	(void)signum;
+	puts("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)");
+
+	if (file_stdout != nullptr)
+	{
+		fputs("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)\n", file_stdout);
+		fflush(file_stdout);
+	}
+
+	return RunUplinkExceptionHandling();
+}
+
+static void hSignalSIGPIPE(int signum)
+{
+	(void)signum;
+	puts("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)");
+
+	if (file_stdout != nullptr)
+	{
+		fputs("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)\n", file_stdout);
+		fflush(file_stdout);
+	}
+
+	return RunUplinkExceptionHandling();
+}
+
+static bool VerifyLegitAndCodeCardCheck()
 {
 	puts("TODO: implement VerifyLegitAndCodeCardCheck()");
 	return true;
 }
 
-bool Load_Data()
+static void Init_App(const char* exePath)
 {
-	puts("TODO: implement Load_Data()");
-	abort();
+	char* newPath = GetFilePath(exePath);
+	const auto rax = new App();
+	app = rax;
+	char var_48[0x20];
+	UplinkSnprintf(var_48, sizeof(var_48), "%s at %s", __DATE__, __TIME__);
+	app->Set(newPath, "1.55", "RELEASE", var_48, "Uplink");
+	delete[] newPath;
+	puts("=============================");
+	puts("=                           =");
+	puts("=        U P L I N K        =");
+	puts("=                           =");
+	printf("=        Version %-10s =\n", app->version);
+	puts("=     - R E L E A S E -     =");
+	puts("=                           =");
+	puts("=============================");
+	putchar('\n');
+	puts(app->build);
+
+	MakeDirectory(app->usersPath);
+	MakeDirectory(app->usersTempPath);
+	EmptyDirectory(app->usersTempPath);
+	MakeDirectory(app->usersOldPath);
+
+	char debugLogFile[0x100];
+	UplinkSnprintf(debugLogFile, sizeof(debugLogFile), "%sdebug.log", app->usersPath);
+
+	file_stdout = nullptr;
+	int32_t fd = dup(fileno(stdout));
+
+	if (fd != -1)
+		file_stdout = fdopen(fd, "a");
+
+	if (freopen(debugLogFile, "a", stdout) == 0)
+		printf("WARNING : Failed to open %s for writing stdout\n", debugLogFile);
+
+	if (freopen(debugLogFile, "a", stderr) == 0)
+		printf("WARNING : Failed to open %s for writing stderr\n", debugLogFile);
+
+	time_t currentTime = time(nullptr);
+	auto localTime = localtime(&currentTime);
+	puts("\n");
+	puts("===============================================");
+	printf("NEW GAME     %d:%d, %d/%d/%d\n", localTime->tm_hour, localTime->tm_min, localTime->tm_mday, localTime->tm_mon + 1,
+		   localTime->tm_year + 1900);
+	puts("===============================================");
+	printf("Version : %s\n", app->version);
+	puts("RELEASE");
+	puts("Linux Build");
+	puts(app->build);
+	printf("Path : %s\n", app->path);
+	RsInitialise(app->path);
+	app->Initialise();
 }
 
-void Cleanup_Uplink()
+static void Init_Options(int32_t argc, char** argv)
 {
-	puts("TODO: implement Cleanup_Uplink()");
-	abort();
+	(void)argc;
+	(void)argv;
+	UplinkAbort("TODO: implement Init_Options(int, char*)");
 }
 
-void Init_Game()
+static bool Load_Data()
 {
-	puts("TODO: implement Init_Game()");
-	abort();
+	UplinkAbort("TODO: implement Load_Data()");
 }
 
-void Init_Graphics()
+static void Init_Game()
 {
-	puts("TODO: implement Init_Graphics()");
-	abort();
+	UplinkAbort("TODO: implement Init_Game()");
 }
 
-void Init_OpenGL()
+static void Init_Graphics()
 {
-	puts("TODO: implement Init_OpenGL()");
-	abort();
+	UplinkAbort("TODO: implement Init_Graphics()");
 }
 
-void Init_Fonts()
+static void Init_OpenGL()
 {
-	puts("TODO: implement Init_Fonts()");
-	abort();
+	UplinkAbort("TODO: implement Init_OpenGL()");
 }
 
-void Init_Sound()
+static void Init_Fonts()
 {
-	puts("TODO: implement Init_Sound()");
-	abort();
+	UplinkAbort("TODO: implement Init_Fonts()");
 }
 
-void Init_Music()
+static void Init_Sound()
 {
-	puts("TODO: implement Init_Music()");
-	abort();
+	UplinkAbort("TODO: implement Init_Sound()");
 }
 
-void Run_MainMenu()
+static void Init_Music()
 {
-	puts("TODO: implement Run_MainMenu()");
-	abort();
-}
-void Run_Game()
-{
-	puts("TODO: implement Run_Game()");
-	abort();
+	UplinkAbort("TODO: implement Init_Music()");
 }
 
-void RunUplink(int argc, char** argv)
+static void Run_MainMenu()
+{
+	UplinkAbort("TODO: implement Run_MainMenu()");
+}
+static void Run_Game()
+{
+	UplinkAbort("TODO: implement Run_Game()");
+}
+
+static void Cleanup_Uplink()
+{
+	UplinkAbort("TODO: implement Cleanup_Uplink()");
+}
+
+static void RunUplink(int argc, char** argv)
 {
 	if (argc > 1 && argv[1][0] == '-' && argv[1][1] == 'v')
 	{

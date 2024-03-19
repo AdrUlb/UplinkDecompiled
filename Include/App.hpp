@@ -45,7 +45,7 @@ public:
 	void Update() override;
 
 	void Initialise();
-	void Set(char* newPath, char* newVersion, char* newType, char* newDate, char* newTitle);
+	void Set(const char* newPath, const char* newVersion, const char* newType, const char* newDate, const char* newTitle);
 
 	void Close();
 	void CloseGame();
