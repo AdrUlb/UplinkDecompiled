@@ -28,7 +28,7 @@ public:
 	char title[TITLE_MAX];
 	char build[BUILD_MAX];
 private:
-	int32_t startTime;
+	int startTime;
 	bool closed;
 	Options* options;
 	Network* network;
@@ -44,26 +44,31 @@ public:
 	void Print() override;
 	void Update() override;
 
+	void Initialise();
+	void Set(char* newPath, char* newVersion, char* newType, char* newDate, char* newTitle);
+
 	void Close();
 	void CloseGame();
 	bool Closed();
-	static void CoreDump();
+	
+	void SetNextLoadGame(char const* name);
+	void LoadGame();
+	void LoadGame(const char* name);
+	void SaveGame(char const* name);
+	void RetireGame(const char* name);
+	DArray<char*>* ListExistingGames();
+	
 	MainMenu* GetMainMenu();
 	Network* GetNetwork();
 	Options* GetOptions();
-	void Initialise();
-	DArray<char*>* ListExistingGames();
-	void LoadGame();
-	void LoadGame(const char* name);
-	void RegisterPhoneDialler(PhoneDiallerScreen* phoneDiallerScreen);
-	void RetireGame(const char* name);
-	void SaveGame(char const* name);
-	void Set(char* newPath, char* newVersion, char* newType, char* newDate, char* newTitle);
-	void SetNextLoadGame(char const* name);
-	void UnRegisterPhoneDialler(PhoneDiallerScreen* screen);
 
-	inline bool OptionsValid()
+	void RegisterPhoneDialler(PhoneDiallerScreen* phoneDiallerScreen);
+	void UnRegisterPhoneDialler(PhoneDiallerScreen* phoneDiallerScreen);
+	
+	static void CoreDump();
+
+	inline Options* GetOptionsOrNull()
 	{
-		return options != nullptr;
+		return options;
 	}
 };

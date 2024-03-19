@@ -117,6 +117,13 @@ void App::RegisterPhoneDialler(PhoneDiallerScreen* newPhoneDiallerScreen)
 	phoneDiallerScreen = newPhoneDiallerScreen;
 }
 
+void App::UnRegisterPhoneDialler(PhoneDiallerScreen* phoneDiallerScreen)
+{
+	(void)phoneDiallerScreen;
+	puts("TODO: implement App::UnRegisterPhoneDialler(PhoneDiallerScreen*)");
+	abort();
+}
+
 void App::RetireGame(const char* name)
 {
 	(void)name;
@@ -173,11 +180,4 @@ void App::SetNextLoadGame(char const* name)
 	nextLoadGame = new char[strlen(name) + 1];
 
 	strcpy(nextLoadGame, name);
-}
-
-void App::UnRegisterPhoneDialler(PhoneDiallerScreen* screen)
-{
-	(void)screen;
-	puts("TODO: implement App::UnRegisterPhoneDialler(PhoneDiallerScreen*)");
-	abort();
 }

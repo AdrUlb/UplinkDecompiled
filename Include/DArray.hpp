@@ -6,8 +6,8 @@
 
 template <class T> class DArray
 {
-	int32_t grow;
-	int32_t size;
+	int grow;
+	int size;
 	T* data;
 	bool* dataValid;
 

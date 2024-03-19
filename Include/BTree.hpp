@@ -16,14 +16,17 @@ public:
 	BTree(const char* name, T& value);
 	~BTree();
 
-	DArray<T>* ConvertToDArray();
-	DArray<char*>* ConvertIndexToDArray();
-	void Empty();
 	BTree<T>* Left();
 	BTree<T>* Right();
+
 	BTree<T>* LookupTree(const char* name);
 	T GetData(const char* name);
 	void PutData(const char* name, T& value);
+
+	void Empty();
+
+	DArray<T>* ConvertToDArray();
+	DArray<char*>* ConvertIndexToDArray();
 
 	static void RecursiveConvertToDArray(DArray<T>* array, BTree<T>* tree);
 	static void RecursiveConvertIndexToDArray(DArray<char*>* array, BTree<T>* tree);
