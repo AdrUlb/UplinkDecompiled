@@ -1,16 +1,25 @@
 #pragma once
 
+#include <UplinkObject.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <cstring>
 #include <cstdlib>
+#include <cstring>
 
 void PrintStackTrace();
 bool DoesFileExist(const char* path);
 void MakeDirectory(const char* path);
 char* GetFilePath(const char* path);
 void EmptyDirectory(const char* path);
+void DeleteDirectory(const char* path);
+bool FileExists(const char* path);
+const char* Basename(const char* path);
+bool FileReadDataImpl(const char* sourceFile, const int sourceLine, void* buffer, size_t size, size_t count, FILE* file);
+bool LoadDynamicStringImpl(const char* sourceFile, const int sourceLine, char*& buffer, FILE* file);
+void SaveDynamicString(const char* value, int maxSize, FILE* file);
+void SaveDynamicString(const char* value, FILE* file);
+UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
 
 template <class... Args>
 __attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n,
@@ -74,3 +83,5 @@ __attribute__((always_inline)) [[noreturn]] static void inline UplinkAbortImpl(c
 #define UplinkStrncpy(dest, source, num) UplinkStrncpyImpl(__FILE__, __LINE__, (dest), (source), (num))
 #define UplinkAssert(cond) UplinkAssertImpl(__FILE__, __LINE__, #cond, (cond))
 #define UplinkAbort(message) UplinkAbortImpl(__FILE__, __LINE__, (message))
+#define FileReadData(buffer, size, count, file) FileReadDataImpl(__FILE__, __LINE__, buffer, size, count, file)
+#define LoadDynamicString(buffer, file) LoadDynamicStringImpl(__FILE__, __LINE__, buffer, file)

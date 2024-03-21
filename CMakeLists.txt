@@ -8,6 +8,7 @@ add_executable(UplinkDecompiled
 	Source/Main.cpp
 	Source/App.cpp
 	Source/BTree.cpp
+	Source/Bungle.cpp
 	Source/Ecl.cpp
 	Source/Gci.cpp
 	Source/MainMenu.cpp
@@ -21,3 +22,4 @@ add_executable(UplinkDecompiled
 target_include_directories(UplinkDecompiled PRIVATE Include)
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
 target_link_libraries(UplinkDecompiled tcp4u)
+target_link_libraries(UplinkDecompiled -lcrypto)

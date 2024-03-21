@@ -32,6 +32,7 @@ public:
 	static void RecursiveConvertIndexToDArray(DArray<char*>* array, BTree<T>* tree);
 };
 
+bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file);
 void PrintBTree(BTree<UplinkObject*>* tree);
 void PrintBTree(BTree<char*>* tree);
 

@@ -1,18 +1,20 @@
 #include <App.hpp>
-#include <Util.hpp>
 #include <Ecl.hpp>
+#include <Globals.hpp>
+#include <Util.hpp>
 #include <cstdlib>
+#include <dirent.h>
 
 App::App()
 	: startTime(0), closed(false), options(nullptr), network(nullptr), mainMenu(nullptr), phoneDiallerScreen(nullptr), nextLoadGame(nullptr)
 {
-	UplinkStrncpy(path, "c:/", PATH_MAX);
-	UplinkStrncpy(usersPath, path, PATH_MAX);
-	UplinkStrncpy(version, "1.31c", VERSION_MAX);
-	UplinkStrncpy(type, "RELEASE", TYPE_MAX);
-	UplinkStrncpy(date, "01/01/97", DATE_MAX);
-	UplinkStrncpy(title, "NewApp", TITLE_MAX);
-	UplinkStrncpy(build, "Version 1.0 (RELEASE), Compiled on 01/01/97", BUILD_MAX);
+	UplinkStrncpy(path, "c:/", APP_PATH_MAX);
+	UplinkStrncpy(usersPath, path, APP_PATH_MAX);
+	UplinkStrncpy(version, "1.31c", APP_VERSION_MAX);
+	UplinkStrncpy(type, "RELEASE", APP_TYPE_MAX);
+	UplinkStrncpy(date, "01/01/97", APP_DATE_MAX);
+	UplinkStrncpy(title, "NewApp", APP_TITLE_MAX);
+	UplinkStrncpy(build, "Version 1.0 (RELEASE), Compiled on 01/01/97", APP_BUILD_MAX);
 }
 
 App::~App()
@@ -90,7 +92,30 @@ void App::Initialise()
 
 DArray<char*>* App::ListExistingGames()
 {
-	UplinkAbort("TODO: implement App::ListExistingGames()");
+	const auto array = new DArray<char*>();
+
+	char name[0x100];
+	UplinkStrncpy(name, app->usersPath, sizeof(name));
+	name[0xff] = 0;
+
+	DIR* dirp = opendir(name);
+	if (dirp == nullptr)
+		return array;
+
+	for (auto i = readdir(dirp); i != 0; i = readdir(dirp))
+	{
+		char* usrExt = strstr(i->d_name, ".usr");
+		if (usrExt != nullptr)
+		{
+			usrExt[0] = 0;
+			auto data = new char[0x100];
+			UplinkStrncpy(data, i->d_name, sizeof(name));
+			array->PutData(data);
+		}
+	}
+
+	closedir(dirp);
+	return array;
 }
 
 void App::LoadGame()
@@ -139,33 +164,33 @@ void App::SaveGame(char const* name)
 void App::Set(const char* newPath, const char* newVersion, const char* newType, const char* newDate, const char* newTitle)
 {
 	// TODO: remove these unnecessary(?) asserts (UplinkStrncpy checks this??)
-	UplinkAssert(strlen(newPath) < PATH_MAX);
-	UplinkAssert(strlen(newVersion) < VERSION_MAX);
-	UplinkAssert(strlen(newType) < TYPE_MAX);
-	UplinkAssert(strlen(newDate) < DATE_MAX);
-	UplinkAssert(strlen(newTitle) < TITLE_MAX);
+	UplinkAssert(strlen(newPath) < APP_PATH_MAX);
+	UplinkAssert(strlen(newVersion) < APP_VERSION_MAX);
+	UplinkAssert(strlen(newType) < APP_TYPE_MAX);
+	UplinkAssert(strlen(newDate) < APP_DATE_MAX);
+	UplinkAssert(strlen(newTitle) < APP_TITLE_MAX);
 
-	UplinkStrncpy(path, newPath, PATH_MAX);
-	UplinkStrncpy(version, newVersion, VERSION_MAX);
-	UplinkStrncpy(type, newType, TYPE_MAX);
-	UplinkStrncpy(date, newDate, DATE_MAX);
-	UplinkStrncpy(title, newTitle, TITLE_MAX);
-	UplinkSnprintf(build, BUILD_MAX, "Version %s (%s)\nCompiled on %s\n", version, type, date);
+	UplinkStrncpy(path, newPath, APP_PATH_MAX);
+	UplinkStrncpy(version, newVersion, APP_VERSION_MAX);
+	UplinkStrncpy(type, newType, APP_TYPE_MAX);
+	UplinkStrncpy(date, newDate, APP_DATE_MAX);
+	UplinkStrncpy(title, newTitle, APP_TITLE_MAX);
+	UplinkSnprintf(build, APP_BUILD_MAX, "Version %s (%s)\nCompiled on %s\n", version, type, date);
 
 	// TODO: change back to using getenv
 	char* homeDirPath = nullptr; // getenv("HOME");
 
 	if (homeDirPath != nullptr)
 	{
-		UplinkSnprintf(usersPath, PATH_MAX, "%s/.uplink/", homeDirPath);
-		UplinkSnprintf(usersTempPath, PATH_MAX, "%s/.uplink/userstmp/", homeDirPath);
-		UplinkSnprintf(usersOldPath, PATH_MAX, "%s/.uplink/usersold/", homeDirPath);
+		UplinkSnprintf(usersPath, APP_PATH_MAX, "%s/.uplink/", homeDirPath);
+		UplinkSnprintf(usersTempPath, APP_PATH_MAX, "%s/.uplink/userstmp/", homeDirPath);
+		UplinkSnprintf(usersOldPath, APP_PATH_MAX, "%s/.uplink/usersold/", homeDirPath);
 	}
 	else
 	{
-		UplinkSnprintf(usersPath, PATH_MAX, "%susers/", path);
-		UplinkSnprintf(usersTempPath, PATH_MAX, "%suserstmp/", path);
-		UplinkSnprintf(usersOldPath, PATH_MAX, "%susersold/", path);
+		UplinkSnprintf(usersPath, APP_PATH_MAX, "%susers/", path);
+		UplinkSnprintf(usersTempPath, APP_PATH_MAX, "%suserstmp/", path);
+		UplinkSnprintf(usersOldPath, APP_PATH_MAX, "%susersold/", path);
 	}
 }
 

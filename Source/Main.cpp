@@ -10,10 +10,10 @@
 #include <cstring>
 #include <malloc.h>
 
-static const char* versionNumberString = "1.55";
+App* app = nullptr;
+FILE* file_stdout = nullptr;
 
-App* app;
-FILE* file_stdout;
+const char* versionNumberString = "1.55";
 
 static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {

@@ -1,5 +1,10 @@
 #include <Globals.hpp>
 #include <Options.hpp>
+#include <RedShirt.hpp>
+#include <cmath>
+
+static const char* currentSaveVersion = "SAV62";
+static const char* minSaveVersion = "SAV56";
 
 static ColourOption getColourDefault = {.red = 0, .green = 0, .blue = 0};
 
@@ -60,7 +65,88 @@ Options::~Options()
 bool Options::Load(FILE* file)
 {
 	(void)file;
-	UplinkAbort("TODO: implement Options::Load(FILE*)");
+	FILE* optionsFile;
+	char optionsFilePath[0x100];
+	char themeName[sizeof(themeName) + 4];
+	char saveVersion[0x20];
+
+	UplinkSnprintf(optionsFilePath, sizeof(optionsFilePath), "%soptions", app->usersPath);
+
+	printf("Loading uplink options from %s...", optionsFilePath);
+
+	const auto fileEncrypted = RsFileEncryptedNoVerify(optionsFilePath);
+
+	if (fileEncrypted)
+	{
+		if (!RsFileEncrypted(optionsFilePath))
+		{
+			puts("failed");
+			return false;
+		}
+
+		optionsFile = RsFileOpen(optionsFilePath, "rb");
+	}
+	else
+		optionsFile = fopen(optionsFilePath, "rb");
+
+	if (!optionsFile)
+	{
+		puts("failed");
+		return false;
+	}
+
+	if (!FileReadData(saveVersion, 6, 1, optionsFile) || saveVersion[0] == 0 || strcmp(saveVersion, minSaveVersion) < 0 ||
+		strcmp(saveVersion, saveVersion) > 0)
+	{
+		puts("\nERROR : Could not load options due to incompatible version format");
+		if (fileEncrypted)
+		{
+			RsFileClose(optionsFilePath, optionsFile);
+			return false;
+		}
+		fclose(optionsFile);
+		return false;
+	}
+
+	puts("success");
+
+	LoadID(optionsFile);
+	if (!LoadBTree((BTree<UplinkObject*>*)&options, optionsFile))
+	{
+		DeleteBTreeData((BTree<UplinkObject*>*)&options);
+		return false;
+	}
+	LoadID_END(optionsFile);
+
+	// The size of themeNameLength in the file depends on the native integer size
+	// This code will work with either both 32-bit and 64-bit integers in this field
+	uint32_t themeNameLength = 0;
+	if ((fgetc(optionsFile) == 't' && fread(&themeNameLength, sizeof(themeNameLength), 1, optionsFile) == 1) &&
+		themeNameLength + 1 < sizeof(themeName))
+	{
+		if (fread(themeName, themeNameLength, 1, optionsFile) == 1)
+		{
+			auto fixedThemeName = themeName;
+
+			if (themeNameLength > 0 && themeName[0] == 0)
+			{
+				fread(fixedThemeName + themeNameLength, 4, 1, optionsFile);
+				fixedThemeName += 4;
+			}
+
+			fixedThemeName[themeNameLength] = 0;
+			UplinkStrncpy(this->themeName, fixedThemeName, sizeof(themeName));
+		}
+	}
+
+	if (fileEncrypted)
+	{
+		RsFileClose(optionsFilePath, optionsFile);
+	}
+	else
+		fclose(optionsFile);
+
+	return true;
 }
 
 void Options::Save(FILE* file)
@@ -97,7 +183,92 @@ void Options::ApplyShutdownChanges()
 
 void Options::CreateDefaultOptions()
 {
-	UplinkAbort("TODO: implement Options::CreateDefaultOptions()");
+	if (GetOption("game_debugstart") == nullptr)
+	{
+		SetOptionValue("game_debugstart", 1, "z", true, false);
+	}
+
+	if (GetOption("game_firsttime") == nullptr)
+	{
+		const auto existingGames = App::ListExistingGames();
+		int32_t rax_25 = existingGames->Size();
+		if (rax_25 > 0)
+		{
+			SetOptionValue("game_firsttime", 0, "z", true, false);
+			for (int index = 0; index < rax_25; index++)
+			{
+				if (existingGames->ValidIndex(index))
+				{
+					const auto game = existingGames->GetData(index);
+					if (game != nullptr)
+					{
+						delete game;
+					}
+				}
+			}
+		}
+		else
+			SetOptionValue("game_firsttime", 1, "z", true, false);
+
+		delete existingGames;
+	}
+
+	float versionNumber;
+	sscanf("1.55", "%f", &versionNumber);
+	versionNumber = 100.0f * versionNumber;
+
+	if (GetOption("game_version") == nullptr)
+		Options::SetOptionValue("game_version", ((int32_t)(truncf(versionNumber))), "z", false, false);
+
+	if (GetOption("graphics_screenwidth") == nullptr)
+		Options::SetOptionValue("graphics_screenwidth", 0x400, "Sets the width of the screen", false, false);
+
+	if (GetOption("graphics_screenheight") == nullptr)
+		Options::SetOptionValue("graphics_screenheight", 0x300, "Sets the height of the screen", false, false);
+
+	if (GetOption("graphics_screendepth") == nullptr)
+		Options::SetOptionValue("graphics_screendepth", -1, "Sets the colour depth. -1 Means use desktop colour depth.", false, false);
+
+	if (GetOption("graphics_screenrefresh") == nullptr)
+		Options::SetOptionValue("graphics_screenrefresh", -1, "Sets the refresh rate. -1 Means use desktop refresh.", false, false);
+
+	if (GetOption("graphics_fullscreen") == nullptr)
+		Options::SetOptionValue("graphics_fullscreen", 1, "Sets the game to run fullscreen or in a window", true, true);
+
+	if (GetOption("graphics_buttonanimations") == nullptr)
+		Options::SetOptionValue("graphics_buttonanimations", 1, "Enables or disables button animations", true, true);
+
+	if (GetOption("graphics_safemode") == nullptr)
+		Options::SetOptionValue("graphics_safemode", 0, "Enables graphical safemode for troubleshooting", true, true);
+
+	if (GetOption("graphics_softwaremouse") == nullptr)
+		Options::SetOptionValue("graphics_softwaremouse", 0, "Render a software mouse.  Use to correct mouse problems.", true, true);
+
+	if (GetOption("graphics_fasterbuttonanimations") == nullptr)
+		Options::SetOptionValue("graphics_fasterbuttonanimations", 0, "Increase the speed of button animations.", true, true);
+
+	if (GetOption("graphics_defaultworldmap") == nullptr)
+		Options::SetOptionValue("graphics_defaultworldmap", 0, "Create agents with the default world map.", true, true);
+
+	struct Option* rax_14 = GetOption("graphics_softwarerendering");
+	if (rax_14 == nullptr)
+	{
+		SetOptionValue("graphics_softwarerendering", 0, "Enable software rendering.", true, false);
+	}
+	else
+	{
+		rax_14->SetVisible(false);
+	}
+	if (GetOption("sound_musicenabled") == nullptr)
+	{
+		SetOptionValue("sound_musicenabled", 1, "Enables or disables music", true, true);
+	}
+
+	// TODO: look at THIS??
+	app->GetOptions()->GetOption("graphics_screenwidth")->SetVisible(false);
+	app->GetOptions()->GetOption("graphics_screenheight")->SetVisible(false);
+	app->GetOptions()->GetOption("graphics_screendepth")->SetVisible(false);
+	app->GetOptions()->GetOption("graphics_screenrefresh")->SetVisible(false);
 }
 
 LList<Option*>* Options::GetAllOptions(const char* search, bool getInvisible)
