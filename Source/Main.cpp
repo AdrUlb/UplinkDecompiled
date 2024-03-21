@@ -192,13 +192,16 @@ static bool VerifyLegitAndCodeCardCheck()
 
 static void Init_App(const char* exePath)
 {
-	char* newPath = GetFilePath(exePath);
-	const auto rax = new App();
-	app = rax;
-	char var_48[0x20];
-	UplinkSnprintf(var_48, sizeof(var_48), "%s at %s", __DATE__, __TIME__);
-	app->Set(newPath, "1.55", "RELEASE", var_48, "Uplink");
-	delete[] newPath;
+	char* dirPath = GetFilePath(exePath);
+
+	app = new App();
+
+	char buildTimeDate[0x20];
+	UplinkSnprintf(buildTimeDate, sizeof(buildTimeDate), "%s at %s", __DATE__, __TIME__);
+	app->Set(dirPath, versionNumberString, "RELEASE", buildTimeDate, "Uplink");
+
+	delete[] dirPath;
+
 	puts("=============================");
 	puts("=                           =");
 	puts("=        U P L I N K        =");
@@ -230,8 +233,9 @@ static void Init_App(const char* exePath)
 	if (freopen(debugLogFile, "a", stderr) == 0)
 		printf("WARNING : Failed to open %s for writing stderr\n", debugLogFile);
 
-	time_t currentTime = time(nullptr);
-	auto localTime = localtime(&currentTime);
+	const auto currentTime = time(nullptr);
+	const auto localTime = localtime(&currentTime);
+	
 	puts("\n");
 	puts("===============================================");
 	printf("NEW GAME     %d:%d, %d/%d/%d\n", localTime->tm_hour, localTime->tm_min, localTime->tm_mday, localTime->tm_mon + 1,

@@ -1,5 +1,6 @@
 #include <App.hpp>
 #include <Util.hpp>
+#include <Ecl.hpp>
 #include <cstdlib>
 
 App::App()
@@ -79,7 +80,12 @@ Options* App::GetOptions()
 
 void App::Initialise()
 {
-	UplinkAbort("TODO: implement App::Initialise()");
+	options = new Options();
+	options->Load(nullptr);
+	options->CreateDefaultOptions();
+	startTime = EclGetAccurateTime();
+	network = new Network();
+	mainMenu = new MainMenu();
 }
 
 DArray<char*>* App::ListExistingGames()
@@ -146,7 +152,8 @@ void App::Set(const char* newPath, const char* newVersion, const char* newType, 
 	UplinkStrncpy(title, newTitle, TITLE_MAX);
 	UplinkSnprintf(build, BUILD_MAX, "Version %s (%s)\nCompiled on %s\n", version, type, date);
 
-	char* homeDirPath = getenv("HOME");
+	// TODO: change back to using getenv
+	char* homeDirPath = nullptr; // getenv("HOME");
 
 	if (homeDirPath != nullptr)
 	{
