@@ -311,7 +311,8 @@ static void Init_Game()
 
 static void Init_Graphics()
 {
-	UplinkAbort("TODO: implement Init_Graphics()");
+	const auto options = app->GetOptions();
+	options->SetThemeName(options->GetThemeName());
 }
 
 static void Init_OpenGL()
