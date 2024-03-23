@@ -30,17 +30,17 @@ void BglCloseAllFiles(BTree<LocalFileHeader*>* tree)
 
 	if (header)
 	{
-		if (header->Filename)
-			delete[] header->Filename;
+		if (header->filename)
+			delete[] header->filename;
 
-		if (header->ExtraField)
-			delete[] header->ExtraField;
+		if (header->extraField)
+			delete[] header->extraField;
 
-		if (header->Data)
-			delete[] header->Data;
+		if (header->data)
+			delete[] header->data;
 
-		if (header->ArchiveName)
-			delete[] header->ArchiveName;
+		if (header->archiveName)
+			delete[] header->archiveName;
 
 		delete header;
 	}
@@ -68,78 +68,77 @@ bool BglOpenZipFile(FILE* file, const char* dirPath, const char* fileName)
 
 		auto localFileHeader = new LocalFileHeader();
 		memset(localFileHeader, 0, sizeof(LocalFileHeader));
-		fread(localFileHeader, 4, 1, file);
+		fread(&localFileHeader->signature, 4, 1, file);
 
-		if ((localFileHeader->Signature & 0xFFFF) != 0x4B50)
+		if ((localFileHeader->signature & 0xFFFF) != 0x4B50)
 		{
 			delete localFileHeader;
 			return true;
 		}
 
-		fread(&localFileHeader->Version, 2, 1, file);
-		fread(&localFileHeader->Flags, 2, 1, file);
-		fread(&localFileHeader->Compression, 2, 1, file);
-		fread(&localFileHeader->ModTime, 2, 1, file);
-		fread(&localFileHeader->ModDate, 2, 1, file);
-		fread(&localFileHeader->Crc32, 4, 1, file);
-		fread(&localFileHeader->CompressedSize, 4, 1, file);
-		fread(&localFileHeader->UncompressedSize, 4, 1, file);
-		fread(&localFileHeader->FilenameLength, 2, 1, file);
-		fread(&localFileHeader->ExtraFieldLength, 2, 1, file);
+		fread(&localFileHeader->version, 2, 1, file);
+		fread(&localFileHeader->flags, 2, 1, file);
+		fread(&localFileHeader->compression, 2, 1, file);
+		fread(&localFileHeader->modTime, 2, 1, file);
+		fread(&localFileHeader->modDate, 2, 1, file);
+		fread(&localFileHeader->crc32, 4, 1, file);
+		fread(&localFileHeader->compressedSize, 4, 1, file);
+		fread(&localFileHeader->uncompressedSize, 4, 1, file);
+		fread(&localFileHeader->filenameLength, 2, 1, file);
+		fread(&localFileHeader->extraFieldLength, 2, 1, file);
 
-		localFileHeader->Filename = nullptr;
-		if (localFileHeader->FilenameLength > 0)
+		localFileHeader->filename = nullptr;
+		if (localFileHeader->filenameLength > 0)
 		{
-			localFileHeader->Filename = new char[localFileHeader->FilenameLength + 1];
-			fread(localFileHeader->Filename, localFileHeader->FilenameLength, 1, file);
-			localFileHeader->Filename[localFileHeader->FilenameLength] = 0;
+			localFileHeader->filename = new char[localFileHeader->filenameLength + 1];
+			fread(localFileHeader->filename, localFileHeader->filenameLength, 1, file);
+			localFileHeader->filename[localFileHeader->filenameLength] = 0;
 		}
 
-		localFileHeader->ExtraField = nullptr;
-		if (localFileHeader->ExtraFieldLength > 0)
+		localFileHeader->extraField = nullptr;
+		if (localFileHeader->extraFieldLength > 0)
 		{
-			localFileHeader->ExtraField = new char[localFileHeader->ExtraFieldLength + 1];
-			fread(localFileHeader->ExtraField, localFileHeader->ExtraFieldLength, 1, file);
-			localFileHeader->ExtraField[localFileHeader->ExtraFieldLength] = 0;
+			localFileHeader->extraField = new char[localFileHeader->extraFieldLength + 1];
+			fread(localFileHeader->extraField, localFileHeader->extraFieldLength, 1, file);
+			localFileHeader->extraField[localFileHeader->extraFieldLength] = 0;
 		}
 
-		localFileHeader->Data = nullptr;
-		if (localFileHeader->UncompressedSize > 0)
+		localFileHeader->data = nullptr;
+		if (localFileHeader->uncompressedSize > 0)
 		{
-			localFileHeader->Data = new char[localFileHeader->UncompressedSize + 1];
-			fread(localFileHeader->Data, localFileHeader->UncompressedSize, 1, file);
-			localFileHeader->Data[localFileHeader->UncompressedSize] = 0;
+			localFileHeader->data = new char[localFileHeader->uncompressedSize + 1];
+			fread(localFileHeader->data, localFileHeader->uncompressedSize, 1, file);
+			localFileHeader->data[localFileHeader->uncompressedSize] = 0;
 		}
 
-		localFileHeader->ArchiveName = nullptr;
+		localFileHeader->archiveName = nullptr;
 		if (fileName)
 		{
-			localFileHeader->ArchiveName = new char[strlen(fileName) + 1];
-			strcpy(localFileHeader->ArchiveName, fileName);
+			localFileHeader->archiveName = new char[strlen(fileName) + 1];
+			strcpy(localFileHeader->archiveName, fileName);
 		}
 
-		if ((localFileHeader->Compression != 0) || localFileHeader->CompressedSize != localFileHeader->UncompressedSize ||
-			!localFileHeader->Filename)
+		if ((localFileHeader->compression != 0) || localFileHeader->compressedSize != localFileHeader->uncompressedSize ||
+			!localFileHeader->filename)
 		{
-			if (localFileHeader->Filename)
-				delete[] localFileHeader->Filename;
+			if (localFileHeader->filename)
+				delete[] localFileHeader->filename;
 
-			if (localFileHeader->ExtraField)
-				delete[] localFileHeader->ExtraField;
+			if (localFileHeader->extraField)
+				delete[] localFileHeader->extraField;
 
-			if (localFileHeader->Data)
-				delete[] localFileHeader->Data;
+			if (localFileHeader->data)
+				delete[] localFileHeader->data;
 
-			if (localFileHeader->ArchiveName)
-				delete[] localFileHeader->ArchiveName;
+			if (localFileHeader->archiveName)
+				delete[] localFileHeader->archiveName;
 
 			delete localFileHeader;
 			continue;
 		}
 
-		sprintf(buffer, "%s%s", dirPath, localFileHeader->Filename);
+		sprintf(buffer, "%s%s", dirPath, localFileHeader->filename);
 		BglSlashify(buffer);
 		files.PutData(buffer, localFileHeader);
-		continue;
 	}
 }

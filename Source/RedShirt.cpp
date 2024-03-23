@@ -344,3 +344,50 @@ void RsFileClose(const char* filePath, FILE* file)
 	sprintf(buffer, "%s.d", filePath);
 	remove(buffer);
 }
+
+bool RsLoadArchive(const char* name)
+{
+	char buffer[0x100];
+	sprintf(buffer, "%s%s", rsapppath, name);
+
+	auto file = RsFileOpen(buffer, "rb");
+
+	if (!file)
+	{
+		auto len = strlen(rsapppath);
+
+		if (len < 5)
+			return false;
+
+		const auto c1 = rsapppath[len - 5];
+		const auto c2 = rsapppath[len - 4];
+		const auto c3 = rsapppath[len - 3];
+		const auto c4 = rsapppath[len - 2];
+		const auto c5 = rsapppath[len - 1];
+
+		if ((c1 != '\\' && c1 != '/') || (c2 != 'l' && c2 != 'L') || (c3 != 'i' && c3 != 'I') || (c4 != 'b' && c4 != 'B') ||
+			(c5 != '\\' && c5 != '/'))
+			return false;
+
+		buffer[len - 4] = 0;
+		strcat(buffer, name);
+
+		file = RsFileOpen(buffer, "rb");
+
+		if (!file)
+			return false;
+	}
+
+	printf("Loading data archive %s...\n", name);
+	const auto success = BglOpenZipFile(file, rsapppath, name);
+
+	RsFileClose(name, file);
+
+	if (!success)
+	{
+		puts("ERROR LOADING ARCHIVE!");
+		return false;
+	}
+
+	return true;
+}

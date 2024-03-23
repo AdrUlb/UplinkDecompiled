@@ -3,8 +3,6 @@
 #include <DArray.hpp>
 #include <UplinkObject.hpp>
 
-typedef void MainMenuScreen;
-
 enum class MainMenuScreenCode
 {
 	Unknown = 0x0,
@@ -25,6 +23,15 @@ enum class MainMenuScreenCode
 	NetworkOptions = 0x15,
 	Theme = 0x16,
 	GraphicOptions = 0x17
+};
+
+class MainMenuScreen
+{
+	DArray<char*>* buttons;
+
+public:
+	MainMenuScreen();
+	virtual ~MainMenuScreen();
 };
 
 class MainMenu : UplinkObject

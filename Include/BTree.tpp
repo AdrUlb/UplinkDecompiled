@@ -9,7 +9,7 @@ template <class T> BTree<T>::BTree() : left(nullptr), right(nullptr), name(nullp
 
 template <class T> BTree<T>::BTree(const char* name, T& value) : left(nullptr), right(nullptr)
 {
-	this->name = new char[strlen(name + 1)];
+	this->name = new char[strlen(name) + 1];
 	strcpy(this->name, name);
 	this->data = value;
 }

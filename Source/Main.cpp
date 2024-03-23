@@ -1,4 +1,6 @@
 #include <BTree.hpp>
+#include <ExceptionHandling.hpp>
+#include <Game.hpp>
 #include <Gci.hpp>
 #include <Globals.hpp>
 #include <LList.hpp>
@@ -11,9 +13,13 @@
 #include <malloc.h>
 
 App* app = nullptr;
+Game* game = nullptr;
 FILE* file_stdout = nullptr;
 
 const char* versionNumberString = "1.55";
+
+static float windowScaleX;
+static float windowScaleY;
 
 static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {
@@ -101,87 +107,10 @@ static char* vmg57670648335164_br_find_exe(unsigned int* error)
 	return nullptr;
 }
 
-static void RunUplinkExceptionHandling()
+void SetWindowScaleFactor(float x, float y)
 {
-	if (app != nullptr)
-	{
-		const auto options = app->GetOptionsOrNull();
-
-		if (options != nullptr && options->GetOptionValueOrDefault("crash_graphicsinit", 0))
-		{
-			puts("\nAn Uplink Internal Error has occured during graphics initialization");
-			if (file_stdout != nullptr)
-			{
-				fputs("\nAn Uplink Internal Error has occured during graphics initialization\n", file_stdout);
-				fflush(file_stdout);
-			}
-		}
-	}
-
-	puts("\n"
-		 "An (unrecognised) Uplink Internal Error has occured\n"
-		 "===================================================");
-
-	App::CoreDump();
-
-	if (file_stdout != nullptr)
-	{
-		fputs("\nAn (unrecognised) Uplink Internal Error has occured\n", file_stdout);
-		fputs("===================================================\n", file_stdout);
-		if (app != nullptr && strcmp(app->usersPath, "c:/") != 0)
-		{
-			fprintf(file_stdout, "See the %sdebug.log file for more informations on the error\n", app->usersPath);
-		}
-		else
-			fputs("See the debug.log file for more informations on the error\n", file_stdout);
-
-		fflush(file_stdout);
-	}
-
-	GciRestoreScreenSize();
-	fflush(nullptr);
-	exit(0xFF);
-}
-
-static void hSignalSIGSEGV(int signum)
-{
-	(void)signum;
-	puts("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)");
-
-	if (file_stdout != nullptr)
-	{
-		fputs("\nAn Uplink Internal Error has occured: segmentation violation (SIGSEGV)\n", file_stdout);
-		fflush(file_stdout);
-	}
-	return RunUplinkExceptionHandling();
-}
-
-static void hSignalSIGFPE(int signum)
-{
-	(void)signum;
-	puts("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)");
-
-	if (file_stdout != nullptr)
-	{
-		fputs("\nAn Uplink Internal Error has occured: erroneous arithmetic operation (SIGFPE)\n", file_stdout);
-		fflush(file_stdout);
-	}
-
-	return RunUplinkExceptionHandling();
-}
-
-static void hSignalSIGPIPE(int signum)
-{
-	(void)signum;
-	puts("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)");
-
-	if (file_stdout != nullptr)
-	{
-		fputs("\nAn Uplink Internal Error has occured: write to pipe with no one reading (SIGPIPE)\n", file_stdout);
-		fflush(file_stdout);
-	}
-
-	return RunUplinkExceptionHandling();
+	windowScaleX = x;
+	windowScaleY = y;
 }
 
 static bool VerifyLegitAndCodeCardCheck()
@@ -224,18 +153,18 @@ static void Init_App(const char* exePath)
 	file_stdout = nullptr;
 	int32_t fd = dup(fileno(stdout));
 
-	if (fd != -1)
-		file_stdout = fdopen(fd, "a");
-
 	if (freopen(debugLogFile, "a", stdout) == 0)
 		printf("WARNING : Failed to open %s for writing stdout\n", debugLogFile);
 
 	if (freopen(debugLogFile, "a", stderr) == 0)
 		printf("WARNING : Failed to open %s for writing stderr\n", debugLogFile);
 
+	if (fd != -1)
+		file_stdout = fdopen(fd, "a");
+
 	const auto currentTime = time(nullptr);
 	const auto localTime = localtime(&currentTime);
-	
+
 	puts("\n");
 	puts("===============================================");
 	printf("NEW GAME     %d:%d, %d/%d/%d\n", localTime->tm_hour, localTime->tm_min, localTime->tm_mday, localTime->tm_mon + 1,
@@ -252,19 +181,132 @@ static void Init_App(const char* exePath)
 
 static void Init_Options(int32_t argc, char** argv)
 {
-	(void)argc;
-	(void)argv;
-	UplinkAbort("TODO: implement Init_Options(int, char*)");
+	for (int i = 1; i < argc; i++)
+	{
+		char* arg = argv[i];
+		char prefix = arg[0];
+		switch (prefix)
+		{
+			case '+':
+				app->GetOptions()->SetOptionValue(arg + 1, 1);
+				break;
+			case '-':
+				app->GetOptions()->SetOptionValue(arg + 1, 0);
+				break;
+			case '!':
+			{
+				if (i + 1 >= argc)
+				{
+					printf("Error parsing command line option : %s\n", arg);
+					break;
+				}
+
+				i++;
+
+				int value;
+				sscanf(argv[i], "%d", &value);
+				app->GetOptions()->SetOptionValue(arg + 1, value);
+				break;
+			}
+			default:
+				printf("Error parsing command line option : %s\n", arg);
+				break;
+		}
+	}
+
+	if (app->GetOptions()->GetOptionValue("graphics_safemode"))
+	{
+		app->GetOptions()->SetOptionValue("graphics_fullscreen", 0);
+		app->GetOptions()->SetOptionValue("graphics_screenrefresh", -1);
+		app->GetOptions()->SetOptionValue("graphics_screendepth", -1);
+		app->GetOptions()->SetOptionValue("graphics_softwaremouse", 1);
+	}
+
+	putchar('\n');
+
+	const auto width = app->GetOptions()->GetOptionValue("graphics_screenwidth");
+	const auto height = app->GetOptions()->GetOptionValue("graphics_screenheight");
+
+	SetWindowScaleFactor(width / 640.0f, height / 480.0f);
+
+	if (app->GetOptions()->IsOptionEqualTo("game_debugstart", 1))
+	{
+		puts("=====DEBUGGING INFORMATION ENABLED=====");
+	}
+}
+
+static bool TestRsLoadArchive(char const* name)
+{
+	if (RsLoadArchive(name))
+		return true;
+
+	puts("\nAn error occured in Uplink");
+	puts("Files integrity is not verified");
+	printf("Failed loading '%s'\n", name);
+
+	if (file_stdout != nullptr)
+	{
+		puts("\nAn Uplink Error has occured");
+		puts("Files integrity is not verified");
+		printf("Failed loading '%s'\n", name);
+	}
+
+	return false;
 }
 
 static bool Load_Data()
 {
-	UplinkAbort("TODO: implement Load_Data()");
+	const auto debugStart = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+
+	if (debugStart)
+		puts("Loading application data");
+
+	if (!TestRsLoadArchive("data.dat"))
+		return false;
+
+	if (!TestRsLoadArchive("graphics.dat"))
+		return false;
+
+	if (!TestRsLoadArchive("loading.dat"))
+		return false;
+
+	if (!TestRsLoadArchive("sounds.dat"))
+		return false;
+
+	if (!TestRsLoadArchive("music.dat"))
+		return false;
+
+	if (!TestRsLoadArchive("fonts.dat"))
+		return false;
+
+	if (!TestRsLoadArchive("patch.dat"))
+		return false;
+
+	if (!TestRsLoadArchive("patch2.dat"))
+		return false;
+
+	if (!TestRsLoadArchive("patch3.dat"))
+		return false;
+
+	if (debugStart)
+		puts("Finished loading application data");
+
+	return true;
 }
 
 static void Init_Game()
 {
-	UplinkAbort("TODO: implement Init_Game()");
+	char debugStart = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+
+	if (debugStart)
+		puts("Init_Game called...creating game object");
+
+	srand(time(nullptr));
+
+	game = new Game();
+
+	if (debugStart != 0)
+		puts("Finished with Init_Game");
 }
 
 static void Init_Graphics()
@@ -303,7 +345,8 @@ static void Run_Game()
 
 static void Cleanup_Uplink()
 {
-	UplinkAbort("TODO: implement Cleanup_Uplink()");
+	delete app;
+	app = nullptr;
 }
 
 static void RunUplink(int argc, char** argv)

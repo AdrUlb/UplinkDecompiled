@@ -2,6 +2,18 @@
 
 #include <Util.hpp>
 
+MainMenuScreen::MainMenuScreen()
+{
+	buttons = new DArray<char*>();
+}
+
+MainMenuScreen::~MainMenuScreen()
+{
+	DeleteDArrayDataD(buttons);
+	delete buttons;
+	buttons = nullptr;
+}
+
 MainMenu::MainMenu() : screenCode(MainMenuScreenCode::Unknown), screen(nullptr) {}
 
 MainMenu::~MainMenu()

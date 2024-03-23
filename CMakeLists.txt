@@ -10,6 +10,8 @@ add_executable(UplinkDecompiled
 	Source/BTree.cpp
 	Source/Bungle.cpp
 	Source/Ecl.cpp
+	Source/ExceptionHandling.cpp
+	Source/Game.cpp
 	Source/Gci.cpp
 	Source/MainMenu.cpp
 	Source/Network.cpp

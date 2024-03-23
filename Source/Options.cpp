@@ -3,7 +3,6 @@
 #include <RedShirt.hpp>
 #include <cmath>
 
-static const char* currentSaveVersion = "SAV62";
 static const char* minSaveVersion = "SAV56";
 
 static ColourOption getColourDefault = {.red = 0, .green = 0, .blue = 0};
@@ -67,7 +66,7 @@ bool Options::Load(FILE* file)
 	(void)file;
 	FILE* optionsFile;
 	char optionsFilePath[0x100];
-	char themeName[sizeof(themeName) + 4];
+	char themeName[sizeof(this->themeName) + 4];
 	char saveVersion[0x20];
 
 	UplinkSnprintf(optionsFilePath, sizeof(optionsFilePath), "%soptions", app->usersPath);
@@ -135,7 +134,7 @@ bool Options::Load(FILE* file)
 			}
 
 			fixedThemeName[themeNameLength] = 0;
-			UplinkStrncpy(this->themeName, fixedThemeName, sizeof(themeName));
+			UplinkStrncpy(this->themeName, fixedThemeName, sizeof(this->themeName));
 		}
 	}
 
