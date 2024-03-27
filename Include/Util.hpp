@@ -33,7 +33,7 @@ __attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* 
 			   "======================================\n"
 			   " Location    : %s, line %zu\n Buffer size : %zu\n Format      : %s\n Buffer      : %s\n",
 			   file, line, n, format, s);
-		*(uint32_t*)0 = 0;
+		*(volatile uint64_t*)0 = 0;
 	}
 	return ret;
 }
@@ -49,7 +49,7 @@ __attribute__((always_inline)) static inline char* UplinkStrncpyImpl(const char*
 			   "=====================================\n"
 			   " Location    : %s, line %zu\n Dest. size  : %zu\n Source size : %zu\n Str. Source : %s\n",
 			   file, line, num, sourceSize, source);
-		*(uint32_t*)0 = 0;
+		*(volatile uint64_t*)0 = 0;
 	}
 
 	return strncpy(dest, source, num);
@@ -64,7 +64,7 @@ __attribute__((always_inline)) static inline void UplinkAssertImpl(const char* f
 			   "=======================================\n"
 			   " Condition : %s\n Location  : %s, line %zu\n",
 			   condStr, file, line);
-		*(uint32_t*)0 = 0;
+		*(volatile uint64_t*)0 = 0;
 	}
 }
 
@@ -75,8 +75,8 @@ __attribute__((always_inline)) [[noreturn]] static void inline UplinkAbortImpl(c
 		   "===============================\n"
 		   " Message   : %s\n Location  : %s, line %zu\n",
 		   message, file, line);
-	*(uint64_t*)0 = 0;
-	abort();
+	*(volatile uint64_t*)0 = 0;
+	__builtin_trap();
 }
 
 #define UplinkSnprintf(s, n, format, ...) UplinkSnprintfImpl(__FILE__, __LINE__, (s), (n), (format), __VA_ARGS__)

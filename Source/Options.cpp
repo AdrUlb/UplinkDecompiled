@@ -331,7 +331,7 @@ int Options::GetOptionValue(const char* name)
 
 int Options::GetOptionValueOrDefault(const char* name, int defaultValue)
 {
-	struct Option* option = GetOption(name);
+	const auto option = GetOption(name);
 	if (option == nullptr)
 		return defaultValue;
 	return option->GetValue();

@@ -5,8 +5,8 @@
 
 template <class T> class BTree
 {
-	struct BTree<T>* left;
-	struct BTree<T>* right;
+	BTree<T>* left;
+	BTree<T>* right;
 	char* name;
 
 public:

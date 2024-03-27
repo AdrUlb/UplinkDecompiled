@@ -90,13 +90,13 @@ class Options : UplinkObject
 	static constexpr size_t THEMETITLE_MAX = 0x80;
 	static constexpr size_t THEMEDESCRIPTION_MAX = 0x400;
 
-	struct BTree<Option*> options;
-	struct LList<OptionChange*> optionChanges;
+	BTree<Option*> options;
+	LList<OptionChange*> optionChanges;
 	char themeName[THEMENAME_MAX];
 	char themeAuthor[THEMEAUTHOR_MAX];
 	char themeTitle[THEMETITLE_MAX];
 	char themeDescription[THEMEDESCRIPTION_MAX];
-	struct BTree<ColourOption*> colourOptions;
+	BTree<ColourOption*> colourOptions;
 
 public:
 	Options();

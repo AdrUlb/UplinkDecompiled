@@ -28,7 +28,7 @@ class NetworkServer : UplinkObject
 	SOCKET listenSocket;
 	time_t lastListen;
 	bool listening;
-	struct DArray<ClientConnection*> connections;
+	DArray<ClientConnection*> connections;
 
 	NetworkServer();
 	~NetworkServer() override;

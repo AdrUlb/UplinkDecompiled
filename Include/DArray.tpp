@@ -141,11 +141,11 @@ template <class T> bool DArray<T>::ValidIndex(int index)
 	return dataValid[index];
 }
 
-template <class T> void DeleteDArrayDataD(struct DArray<T>* array)
+template <class T> void DeleteDArrayDataD(DArray<T>* array)
 {
 	UplinkAssert(array != nullptr);
 
-	for (int32_t i = 0; i < array->Size(); i++)
+	for (int i = 0; i < array->Size(); i++)
 	{
 		if ((array->ValidIndex(i) && array->GetData(i)))
 		{

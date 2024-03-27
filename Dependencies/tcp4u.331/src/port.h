@@ -98,9 +98,8 @@
 /* ****************************************************************** */
 
 /* #include LIBCO_VERS_H */
-#ifdef  _WINDOWS
 
-#define  NEED_PROTO
+#ifdef  _WINDOWS
 
 #define WRITE_CR            0
 #define Write(fd,buf,len)  _lwrite(fd,buf,len)
