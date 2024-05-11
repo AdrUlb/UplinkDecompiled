@@ -8,6 +8,7 @@
 
 static char rsapppath[0x100];
 static char tempdir[0x100];
+static char tempfilename[0x100];
 
 static bool rsInitialised = false;
 
@@ -124,8 +125,8 @@ static bool filterStream(FILE* file, FILE* filteredFile, WriteDataCallback write
 }
 
 static bool filterFile(const char* path, const char* filteredPath, ReadHeaderCallback readHeaderCallback,
-					   WriteHeaderCallback writeHeaderCallback, WriteChecksumCallback writeChecksumCallback,
-					   WriteDataCallback writeDataCallback)
+	WriteHeaderCallback writeHeaderCallback, WriteChecksumCallback writeChecksumCallback,
+	WriteDataCallback writeDataCallback)
 {
 
 	auto file = fopen(path, "rb");
@@ -390,4 +391,73 @@ bool RsLoadArchive(const char* name)
 	}
 
 	return true;
+}
+
+const char* RsArchiveFileOpen(const char* filePath)
+{
+	char fullPath[0x100];
+	sprintf(fullPath, "%s%s", rsapppath, filePath);
+	if (RsFileExists(fullPath))
+	{
+		strcpy(tempfilename, fullPath);
+		return tempfilename;
+	}
+
+	if (BglFileLoaded(fullPath) == 0)
+	{
+		printf("REDSHIRT : Failed to load file : %s\n", fullPath);
+		return nullptr;
+	}
+
+	const auto extension = strrchr(fullPath, '.');
+	assert(extension);
+
+	bool success = false;
+	char extractPath[0x100];
+	for (auto i = 0; i < 3; i++)
+	{
+		sprintf(extractPath, "%stemp%d%s", tempdir, i, extension);
+		success = BglExtractFile(fullPath, extractPath);
+		if (success)
+			break;
+	}
+
+	if (!success)
+	{
+		printf("REDSHIRT : Failed to load file : %s\n", fullPath);
+		return nullptr;
+	}
+
+	strcpy(tempfilename, extractPath);
+	return tempfilename;
+}
+
+int RsArchiveFileClose(const char* filePath, FILE* file)
+{
+	if (file != nullptr)
+		fclose(file);
+
+	const auto extension = strrchr(filePath, '.');
+	assert(extension);
+	int ret;
+
+	char extractFilePath[0x100];
+	for (int i = 0; i != 3; i++)
+	{
+		sprintf(extractFilePath, "%stemp%d%s", tempdir, i, extension);
+		ret = remove(extractFilePath);
+	}
+	return ret;
+}
+
+bool RsFileExists(const char* const path)
+{
+	const auto file = fopen(path, "r");
+	if (file != nullptr)
+	{
+		fclose(file);
+		return true;
+	}
+
+	return false;
 }

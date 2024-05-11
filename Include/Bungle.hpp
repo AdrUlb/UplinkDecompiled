@@ -25,3 +25,5 @@ struct LocalFileHeader
 void BglCloseAllFiles(BTree<LocalFileHeader*>* tree);
 void BglCloseAllFiles();
 bool BglOpenZipFile(FILE* file, const char* dirPath, const char* fileName);
+bool BglFileLoaded(char* name);
+bool BglExtractFile(const char* filePath, const char* extractPath);

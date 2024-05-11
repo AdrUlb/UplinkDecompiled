@@ -142,3 +142,37 @@ bool BglOpenZipFile(FILE* file, const char* dirPath, const char* fileName)
 		files.PutData(buffer, localFileHeader);
 	}
 }
+
+bool BglFileLoaded(char* name)
+{
+	const auto slashifiedFilePath = new char[strlen(name) + 1];
+	strcpy(slashifiedFilePath, name);
+	BglSlashify(slashifiedFilePath);
+
+	const auto fileHeader = files.GetData(slashifiedFilePath);
+	delete[] slashifiedFilePath;
+	
+	return fileHeader != nullptr;
+}
+
+bool BglExtractFile(const char* filePath, const char* extractPath)
+{
+	const auto slashifiedFilePath = new char[strlen(filePath) + 1];
+	strcpy(slashifiedFilePath, filePath);
+	BglSlashify(slashifiedFilePath);
+
+	const auto  fileHeader = files.GetData(slashifiedFilePath);
+	delete[] slashifiedFilePath;
+
+	if (fileHeader == nullptr)
+		return false;
+
+	const auto file = fopen(extractPath != nullptr ? extractPath : filePath, "wb");
+	if (file == nullptr)
+		return false;
+
+	fwrite(fileHeader->data, fileHeader->uncompressedSize, 1, file);
+	fclose(file);
+	return true;
+}
+

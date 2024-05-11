@@ -5,9 +5,9 @@
 
 static const char* minSaveVersion = "SAV56";
 
-static ColourOption getColourDefault = {.red = 0, .green = 0, .blue = 0};
+static ColourOption getColourDefault = { .red = 0, .green = 0, .blue = 0 };
 
-Option::Option() : name{0}, tooltip{0}, yesOrNo(false), visible(true), value(0) {}
+Option::Option() : name{ 0 }, tooltip{ 0 }, yesOrNo(false), visible(true), value(0) {}
 
 bool Option::Load(FILE* file)
 {
@@ -28,8 +28,8 @@ void Option::Save(FILE* file)
 void Option::Print()
 {
 	printf("Option : name=%s, value=%d\n"
-		   "\tYesOrNo=%d, Visible=%d\n",
-		   name, value, yesOrNo, visible);
+		"\tYesOrNo=%d, Visible=%d\n",
+		name, value, yesOrNo, visible);
 }
 
 const char* Option::GetID()
@@ -110,9 +110,9 @@ bool Options::Load(FILE* file)
 	puts("success");
 
 	LoadID(optionsFile);
-	if (!LoadBTree((BTree<UplinkObject*>*)&options, optionsFile))
+	if (!LoadBTree((BTree<UplinkObject*>*) & options, optionsFile))
 	{
-		DeleteBTreeData((BTree<UplinkObject*>*)&options);
+		DeleteBTreeData((BTree<UplinkObject*>*) & options);
 		return false;
 	}
 	LoadID_END(optionsFile);
@@ -408,7 +408,22 @@ void Options::SetOptionValue(const char* name, int value, const char* tooltip, b
 void Options::SetThemeName(const char* value)
 {
 	(void)value;
+	UplinkStrncpy(themeName, value, 0x80);
+
+	const auto filePath = ThemeFilename("theme.txt");
+	const auto themeFile = RsArchiveFileOpen(filePath);
+
+	if (themeFile == nullptr)
+	{
+		RsArchiveFileClose(filePath, nullptr);
+		delete[] filePath;
+		return;
+	}
+
 	UplinkAbort("TODO: implement Options::SetThemeName()");
+
+	RsArchiveFileClose(filePath, nullptr);
+	delete[] filePath;
 }
 
 char* Options::ThemeFilename(const char* name)
