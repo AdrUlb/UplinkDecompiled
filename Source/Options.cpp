@@ -2,6 +2,7 @@
 #include <Options.hpp>
 #include <RedShirt.hpp>
 #include <cmath>
+#include <fstream>
 
 static const char* minSaveVersion = "SAV56";
 
@@ -420,7 +421,30 @@ void Options::SetThemeName(const char* value)
 		return;
 	}
 
-	UplinkAbort("TODO: implement Options::SetThemeName()");
+	std::ifstream themeFileStream;
+
+	themeFileStream.open(themeFile);
+
+	char temp[0x68];
+
+	themeFileStream >> temp >> std::ws;
+	themeFileStream.getline(themeTitle, THEMETITLE_MAX, '\r');
+	if ((*temp = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(*temp);
+
+	themeFileStream >> temp >> std::ws;
+	themeFileStream.getline(themeAuthor, THEMEAUTHOR_MAX, '\r');
+	if ((*temp = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(*temp);
+
+	themeFileStream >> temp >> std::ws;
+	themeFileStream.getline(themeDescription, THEMEDESCRIPTION_MAX, '\r');
+	if ((*temp = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(*temp);
+
+	while (!themeFileStream.eof())
+	{
+		UplinkAbort("TODO: implement Options::SetThemeName()");
+	}
+
+	themeFileStream.close();
 
 	RsArchiveFileClose(filePath, nullptr);
 	delete[] filePath;
