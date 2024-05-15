@@ -177,8 +177,11 @@ void App::Set(const char* newPath, const char* newVersion, const char* newType, 
 	UplinkStrncpy(title, newTitle, APP_TITLE_MAX);
 	UplinkSnprintf(build, APP_BUILD_MAX, "Version %s (%s)\nCompiled on %s\n", version, type, date);
 
-	// TODO: change back to using getenv
-	char* homeDirPath = nullptr; // getenv("HOME");
+#ifdef NDEBUG
+	char* homeDirPath = getenv("HOME");
+#else
+	char* homeDirPath = nullptr;
+#endif
 
 	if (homeDirPath != nullptr)
 	{

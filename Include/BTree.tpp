@@ -5,13 +5,13 @@
 #include <Util.hpp>
 #include <cstring>
 
-template <class T> BTree<T>::BTree() : left(nullptr), right(nullptr), name(nullptr), data{0} {}
+template <class T> BTree<T>::BTree() : left(nullptr), right(nullptr), name(nullptr), Data{0} {}
 
-template <class T> BTree<T>::BTree(const char* name, T& value) : left(nullptr), right(nullptr)
+template <class T> BTree<T>::BTree(const char* name, const T& value) : left(nullptr), right(nullptr)
 {
 	this->name = new char[strlen(name) + 1];
 	strcpy(this->name, name);
-	this->data = value;
+	this->Data = value;
 }
 
 template <class T> BTree<T>::~BTree()
@@ -95,10 +95,10 @@ template <class T> T BTree<T>::GetData(const char* name)
 	if (tree == nullptr)
 		return nullptr;
 
-	return tree->data;
+	return tree->Data;
 }
 
-template <class T> void BTree<T>::PutData(char const* name, T& value)
+template <class T> void BTree<T>::PutData(char const* name, const T& value)
 {
 	auto tree = this;
 
@@ -128,7 +128,7 @@ template <class T> void BTree<T>::PutData(char const* name, T& value)
 
 	tree->name = new char[strlen(name) + 1];
 	strcpy(tree->name, name);
-	tree->data = value;
+	tree->Data = value;
 }
 
 template <class T> void BTree<T>::RecursiveConvertToDArray(DArray<T>* array, BTree<T>* tree)
@@ -138,7 +138,7 @@ template <class T> void BTree<T>::RecursiveConvertToDArray(DArray<T>* array, BTr
 	for (auto i = tree; i != nullptr; i = i->Right())
 	{
 		if (i->name != nullptr)
-			array->PutData(i->data);
+			array->PutData(i->Data);
 
 		RecursiveConvertToDArray(array, i->Left());
 	}

@@ -150,7 +150,10 @@ static void Init_App(const char* exePath)
 	char debugLogFile[0x100];
 	UplinkSnprintf(debugLogFile, sizeof(debugLogFile), "%sdebug.log", app->usersPath);
 
+
 	file_stdout = nullptr;
+
+#ifdef NDEBUG
 	int32_t fd = dup(fileno(stdout));
 
 	if (freopen(debugLogFile, "a", stdout) == 0)
@@ -161,6 +164,7 @@ static void Init_App(const char* exePath)
 
 	if (fd != -1)
 		file_stdout = fdopen(fd, "a");
+#endif
 
 	const auto currentTime = time(nullptr);
 	const auto localTime = localtime(&currentTime);
@@ -168,7 +172,7 @@ static void Init_App(const char* exePath)
 	puts("\n");
 	puts("===============================================");
 	printf("NEW GAME     %d:%d, %d/%d/%d\n", localTime->tm_hour, localTime->tm_min, localTime->tm_mday, localTime->tm_mon + 1,
-		   localTime->tm_year + 1900);
+		localTime->tm_year + 1900);
 	puts("===============================================");
 	printf("Version : %s\n", app->version);
 	puts("RELEASE");
@@ -187,30 +191,30 @@ static void Init_Options(int32_t argc, char** argv)
 		char prefix = arg[0];
 		switch (prefix)
 		{
-			case '+':
-				app->GetOptions()->SetOptionValue(arg + 1, 1);
-				break;
-			case '-':
-				app->GetOptions()->SetOptionValue(arg + 1, 0);
-				break;
-			case '!':
+		case '+':
+			app->GetOptions()->SetOptionValue(arg + 1, 1);
+			break;
+		case '-':
+			app->GetOptions()->SetOptionValue(arg + 1, 0);
+			break;
+		case '!':
+		{
+			if (i + 1 >= argc)
 			{
-				if (i + 1 >= argc)
-				{
-					printf("Error parsing command line option : %s\n", arg);
-					break;
-				}
-
-				i++;
-
-				int value;
-				sscanf(argv[i], "%d", &value);
-				app->GetOptions()->SetOptionValue(arg + 1, value);
-				break;
-			}
-			default:
 				printf("Error parsing command line option : %s\n", arg);
 				break;
+			}
+
+			i++;
+
+			int value;
+			sscanf(argv[i], "%d", &value);
+			app->GetOptions()->SetOptionValue(arg + 1, value);
+			break;
+		}
+		default:
+			printf("Error parsing command line option : %s\n", arg);
+			break;
 		}
 	}
 

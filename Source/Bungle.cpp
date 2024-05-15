@@ -26,7 +26,7 @@ void BglCloseAllFiles(BTree<LocalFileHeader*>* tree)
 	BglCloseAllFiles(tree->Left());
 	BglCloseAllFiles(tree->Right());
 
-	const auto header = tree->data;
+	const auto header = tree->Data;
 
 	if (header)
 	{

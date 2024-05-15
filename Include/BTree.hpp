@@ -10,10 +10,10 @@ template <class T> class BTree
 	char* name;
 
 public:
-	T data;
+	T Data;
 
 	BTree();
-	BTree(const char* name, T& value);
+	BTree(const char* name, const T& value);
 	~BTree();
 
 	BTree<T>* Left();
@@ -21,7 +21,7 @@ public:
 
 	BTree<T>* LookupTree(const char* name);
 	T GetData(const char* name);
-	void PutData(const char* name, T& value);
+	void PutData(const char* name, const T& value);
 
 	void Empty();
 

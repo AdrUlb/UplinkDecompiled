@@ -3,6 +3,7 @@
 #include <RedShirt.hpp>
 #include <cmath>
 #include <fstream>
+#include <sstream>
 
 static const char* minSaveVersion = "SAV56";
 
@@ -250,19 +251,15 @@ void Options::CreateDefaultOptions()
 	if (GetOption("graphics_defaultworldmap") == nullptr)
 		Options::SetOptionValue("graphics_defaultworldmap", 0, "Create agents with the default world map.", true, true);
 
-	struct Option* rax_14 = GetOption("graphics_softwarerendering");
-	if (rax_14 == nullptr)
+	if (const auto softwareRenderingOption = GetOption("graphics_softwarerendering"))
 	{
-		SetOptionValue("graphics_softwarerendering", 0, "Enable software rendering.", true, false);
+		softwareRenderingOption->SetVisible(false);
 	}
 	else
-	{
-		rax_14->SetVisible(false);
-	}
+		SetOptionValue("graphics_softwarerendering", 0, "Enable software rendering.", true, false);
+
 	if (GetOption("sound_musicenabled") == nullptr)
-	{
 		SetOptionValue("sound_musicenabled", 1, "Enables or disables music", true, true);
-	}
 
 	// TODO: look at THIS??
 	app->GetOptions()->GetOption("graphics_screenwidth")->SetVisible(false);
@@ -320,7 +317,7 @@ Option* Options::GetOption(const char* name)
 
 int Options::GetOptionValue(const char* name)
 {
-	struct Option* option = GetOption(name);
+	const auto option = GetOption(name);
 	if (option == nullptr)
 	{
 		char s[0x100];
@@ -377,8 +374,8 @@ void Options::SetOptionValue(char const* name, int value)
 	if (tree == nullptr)
 		printf("Tried to set unrecognised option: %s\n", name);
 
-	UplinkAssert(tree->data != nullptr);
-	tree->data->SetValue(value);
+	UplinkAssert(tree->Data != nullptr);
+	tree->Data->SetValue(value);
 }
 
 void Options::SetOptionValue(const char* name, int value, const char* tooltip, bool yesOrNo, bool visible)
@@ -397,8 +394,8 @@ void Options::SetOptionValue(const char* name, int value, const char* tooltip, b
 	}
 	else
 	{
-		UplinkAssert(tree->data != nullptr);
-		const auto option = tree->data;
+		UplinkAssert(tree->Data != nullptr);
+		const auto option = tree->Data;
 		option->SetValue(value);
 		option->SetTooltip(tooltip);
 		option->SetYesOrNo(yesOrNo);
@@ -429,19 +426,44 @@ void Options::SetThemeName(const char* value)
 
 	themeFileStream >> temp >> std::ws;
 	themeFileStream.getline(themeTitle, THEMETITLE_MAX, '\r');
-	if ((*temp = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(*temp);
+	if ((temp[0] = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	themeFileStream >> temp >> std::ws;
 	themeFileStream.getline(themeAuthor, THEMEAUTHOR_MAX, '\r');
-	if ((*temp = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(*temp);
+	if ((temp[0] = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	themeFileStream >> temp >> std::ws;
 	themeFileStream.getline(themeDescription, THEMEDESCRIPTION_MAX, '\r');
-	if ((*temp = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(*temp);
+	if ((temp[0] = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	while (!themeFileStream.eof())
 	{
-		UplinkAbort("TODO: implement Options::SetThemeName()");
+		char buffer[0x100];
+		themeFileStream.getline(buffer, sizeof(buffer), '\r');
+		if ((temp[0] = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(temp[0]);
+
+		if (strlen(buffer) == 0)
+			continue;
+
+		auto stream = std::istringstream(buffer);
+		stream >> std::ws;
+
+		if ((temp[0] = stream.get()) == ';')
+			continue;
+		stream.rdbuf()->sputbackc(temp[0]);
+
+		char colourName[0x40];
+		const auto colourOption = new ColourOption();
+		stream >> colourName >> std::ws >> colourOption->red >> colourOption->green >> colourOption->blue;
+
+		const auto option = colourOptions.LookupTree(colourName);
+		if (option != nullptr)
+		{
+			delete option->Data;
+			option->Data = colourOption;
+		}
+		else
+			colourOptions.PutData(colourName, colourOption);
 	}
 
 	themeFileStream.close();
