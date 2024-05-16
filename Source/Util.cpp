@@ -1,3 +1,4 @@
+#include <Options.hpp>
 #include <Util.hpp>
 #include <cerrno>
 #include <cstdio>
@@ -165,7 +166,8 @@ void SaveDynamicString(const char* value, int maxSize, FILE* file)
 	if (size > (size_t)actualMaxSize)
 	{
 		printf("Print Abort: %s ln %d : ", "app/serialise.cpp", 0x3e5);
-		printf("WARNING: SaveDynamicString, size appears to be too long, size=%zu, maxsize=%d, absolute  maxsize=%d", size, maxSize, 0x4000);
+		printf("WARNING: SaveDynamicString, size appears to be too long, size=%zu, maxsize=%d, absolute  maxsize=%d", size, maxSize,
+			   0x4000);
 		putchar('\n');
 		size = actualMaxSize;
 	}
@@ -187,6 +189,14 @@ void SaveDynamicString(const char* value, FILE* file)
 
 UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 {
-	(void)objectId;
-	UplinkAbort("TODO: implement CreateUplinkObject(UplinkObjectId)");
+	switch (objectId)
+	{
+		case UplinkObjectId::Option:
+			return static_cast<UplinkObject*>(new Option());
+			break;
+		default:
+			printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+			printf("Unrecognised OBJECTID=%d", static_cast<int>(objectId));
+			return nullptr;
+	}
 }

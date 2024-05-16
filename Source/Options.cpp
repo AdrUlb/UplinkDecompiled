@@ -6,15 +6,38 @@
 #include <sstream>
 
 static const char* minSaveVersion = "SAV56";
+static const char* latestSaveVersion = "SAV62";
 
-static ColourOption getColourDefault = { .red = 0, .green = 0, .blue = 0 };
+static ColourOption getColourDefault = {.red = 0, .green = 0, .blue = 0};
 
-Option::Option() : name{ 0 }, tooltip{ 0 }, yesOrNo(false), visible(true), value(0) {}
+Option::Option() : name{0}, tooltip{0}, yesOrNo(false), visible(true), value(0) {}
 
 bool Option::Load(FILE* file)
 {
-	(void)file;
-	UplinkAbort("TODO: implement Option::Load(FILE*)");
+	if (FileReadData(name, NAME_MAX, 1, file) == 0)
+	{
+		name[0] = 0;
+		return false;
+	}
+	name[NAME_MAX - 1] = 0;
+
+	if (FileReadData(tooltip, TOOLTIP_MAX, 1, file) == 0)
+	{
+		tooltip[0] = 0;
+		return false;
+	}
+	tooltip[TOOLTIP_MAX - 1] = 0;
+
+	if (FileReadData(&yesOrNo, 1, 1, file) == 0)
+		return false;
+
+	if (FileReadData(&visible, 1, 1, file) == 0)
+		return false;
+
+	if (FileReadData(&value, 4, 1, file) == 0)
+		return false;
+
+	return true;
 }
 
 void Option::Save(FILE* file)
@@ -30,8 +53,8 @@ void Option::Save(FILE* file)
 void Option::Print()
 {
 	printf("Option : name=%s, value=%d\n"
-		"\tYesOrNo=%d, Visible=%d\n",
-		name, value, yesOrNo, visible);
+		   "\tYesOrNo=%d, Visible=%d\n",
+		   name, value, yesOrNo, visible);
 }
 
 const char* Option::GetID()
@@ -97,7 +120,7 @@ bool Options::Load(FILE* file)
 	}
 
 	if (!FileReadData(saveVersion, 6, 1, optionsFile) || saveVersion[0] == 0 || strcmp(saveVersion, minSaveVersion) < 0 ||
-		strcmp(saveVersion, saveVersion) > 0)
+		strcmp(saveVersion, latestSaveVersion) > 0)
 	{
 		puts("\nERROR : Could not load options due to incompatible version format");
 		if (fileEncrypted)
@@ -112,9 +135,9 @@ bool Options::Load(FILE* file)
 	puts("success");
 
 	LoadID(optionsFile);
-	if (!LoadBTree((BTree<UplinkObject*>*) & options, optionsFile))
+	if (!LoadBTree((BTree<UplinkObject*>*)&options, optionsFile))
 	{
-		DeleteBTreeData((BTree<UplinkObject*>*) & options);
+		DeleteBTreeData((BTree<UplinkObject*>*)&options);
 		return false;
 	}
 	LoadID_END(optionsFile);
@@ -122,16 +145,19 @@ bool Options::Load(FILE* file)
 	// The size of themeNameLength in the file depends on the native integer size
 	// This code will work with either both 32-bit and 64-bit integers in this field
 	uint32_t themeNameLength = 0;
-	if ((fgetc(optionsFile) == 't' && fread(&themeNameLength, sizeof(themeNameLength), 1, optionsFile) == 1) &&
-		themeNameLength + 1 < sizeof(themeName))
+	if ((fgetc(optionsFile) == 't' && fread(&themeNameLength, 4, 1, optionsFile) == 1) && themeNameLength + 1 < sizeof(themeName))
 	{
 		if (fread(themeName, themeNameLength, 1, optionsFile) == 1)
 		{
 			auto fixedThemeName = themeName;
 
+			// If the first byte of the theme name is, assume it is one of the four high bytes of the 64-bit length
 			if (themeNameLength > 0 && themeName[0] == 0)
 			{
+				// Read the remaining 4 theme name bytes
 				fread(fixedThemeName + themeNameLength, 4, 1, optionsFile);
+
+				// Adjust the theme name beginning
 				fixedThemeName += 4;
 			}
 
@@ -152,8 +178,35 @@ bool Options::Load(FILE* file)
 
 void Options::Save(FILE* file)
 {
-	(void)file;
-	UplinkAbort("TODO: implement Options::Save(FILE*)");
+	MakeDirectory(app->usersPath);
+
+	char optionsFilePath[0x100];
+	UplinkSnprintf(optionsFilePath, sizeof(optionsFilePath), "%soptions", app->usersPath);
+
+	printf("Saving uplink options to %s...", optionsFilePath);
+
+	const auto fp = fopen(optionsFilePath, "wb");
+
+	if (fp == nullptr)
+	{
+		puts("failed");
+		return;
+	}
+
+	puts("success");
+
+	fwrite(latestSaveVersion, strlen(latestSaveVersion) + 1, 1, fp);
+
+	SaveBTree((BTree<UplinkObject*>*)&options, fp);
+	fputc('t', fp);
+	const auto themeNameLength = strlen(themeName);
+
+	// The original game would save this with the native
+	fwrite(&themeNameLength, 4, 1, fp);
+	fwrite(themeName, themeNameLength, 1, fp);
+
+	fclose(fp);
+	RsEncryptFile(optionsFilePath);
 }
 
 void Options::Print()
@@ -426,21 +479,25 @@ void Options::SetThemeName(const char* value)
 
 	themeFileStream >> temp >> std::ws;
 	themeFileStream.getline(themeTitle, THEMETITLE_MAX, '\r');
-	if ((temp[0] = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(temp[0]);
+	if ((temp[0] = themeFileStream.get()) != '\n')
+		themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	themeFileStream >> temp >> std::ws;
 	themeFileStream.getline(themeAuthor, THEMEAUTHOR_MAX, '\r');
-	if ((temp[0] = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(temp[0]);
+	if ((temp[0] = themeFileStream.get()) != '\n')
+		themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	themeFileStream >> temp >> std::ws;
 	themeFileStream.getline(themeDescription, THEMEDESCRIPTION_MAX, '\r');
-	if ((temp[0] = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(temp[0]);
+	if ((temp[0] = themeFileStream.get()) != '\n')
+		themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	while (!themeFileStream.eof())
 	{
 		char buffer[0x100];
 		themeFileStream.getline(buffer, sizeof(buffer), '\r');
-		if ((temp[0] = themeFileStream.get()) != '\n') themeFileStream.rdbuf()->sputbackc(temp[0]);
+		if ((temp[0] = themeFileStream.get()) != '\n')
+			themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 		if (strlen(buffer) == 0)
 			continue;

@@ -102,6 +102,27 @@ static bool readRsEncryptedHeader(FILE* file)
 	return strcmp(signature, "REDSHIRT") == 0;
 }
 
+static bool writeRsEncryptedHeader(FILE* file)
+{
+	if (fwrite("REDSHRT2", 9, 1, file) != 1)
+		return false;
+
+	char buf[20]{0};
+	return fwrite(buf, sizeof(buf), 1, file) == 1;
+}
+
+static bool writeRsEncryptedCheckSum(FILE* file)
+{
+	fseek(file, 20 + 9, 0);
+
+	char buf[20];
+	if (RsFileCheckSum(file, buf, 20) != 20)
+		return false;
+		
+	fseek(file, 9, 0);
+	return fwrite(buf, 20, 1, file) == 1;
+}
+
 static bool filterStream(FILE* file, FILE* filteredFile, WriteDataCallback writeDataCallback)
 {
 	unsigned char readBuffer[0x4000];
@@ -125,8 +146,8 @@ static bool filterStream(FILE* file, FILE* filteredFile, WriteDataCallback write
 }
 
 static bool filterFile(const char* path, const char* filteredPath, ReadHeaderCallback readHeaderCallback,
-	WriteHeaderCallback writeHeaderCallback, WriteChecksumCallback writeChecksumCallback,
-	WriteDataCallback writeDataCallback)
+					   WriteHeaderCallback writeHeaderCallback, WriteChecksumCallback writeChecksumCallback,
+					   WriteDataCallback writeDataCallback)
 {
 
 	auto file = fopen(path, "rb");
@@ -178,6 +199,23 @@ static bool filterFile(const char* path, const char* filteredPath, ReadHeaderCal
 
 	fclose(file);
 	fclose(filteredFile);
+	return true;
+}
+bool filterFileInPlace(const char* path, const char* filteredExtension, ReadHeaderCallback readHeaderCallback,
+					   WriteHeaderCallback writeHeaderCallback, WriteChecksumCallback writeChecksumCallback,
+					   WriteDataCallback writeDataCallback)
+{
+	char filteredPath[0x100];
+	sprintf(filteredPath, "%s%s", path, filteredExtension);
+
+	if (filterFile(path, filteredPath, readHeaderCallback, writeHeaderCallback, writeChecksumCallback, writeDataCallback) == 0)
+	{
+		puts("Redshirt ERROR : Failed to write output file");
+		return false;
+	}
+
+	remove(path);
+	rename(filteredPath, path);
 	return true;
 }
 
@@ -460,4 +498,9 @@ bool RsFileExists(const char* const path)
 	}
 
 	return false;
+}
+
+bool RsEncryptFile(const char* path)
+{
+	return filterFileInPlace(path, ".e", noHeader, writeRsEncryptedHeader, writeRsEncryptedCheckSum, encryptBuffer);
 }

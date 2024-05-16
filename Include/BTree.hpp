@@ -35,5 +35,6 @@ public:
 bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file);
 void PrintBTree(BTree<UplinkObject*>* tree);
 void PrintBTree(BTree<char*>* tree);
+void SaveBTree(BTree<UplinkObject*>* tree, FILE* file);
 
 #include "BTree.tpp"

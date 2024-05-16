@@ -107,6 +107,30 @@ static char* vmg57670648335164_br_find_exe(unsigned int* error)
 	return nullptr;
 }
 
+static void opengl_initialise()
+{
+	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+
+	const auto width = app->GetOptions()->GetOptionValue("graphics_screenwidth");
+	const auto height = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto depth = app->GetOptions()->GetOptionValue("graphics_screendepth");
+	const auto refresh = app->GetOptions()->GetOptionValue("graphics_screenrefresh");
+	const auto fullscreen = app->GetOptions()->IsOptionEqualTo("graphics_fullscreen", 1);
+	const auto safemode = app->GetOptions()->IsOptionEqualTo("graphics_safemode", 1);
+
+	GciInitFlags flags
+	{
+		.UnknownFlag0 = true,
+		.UnknownFlag1 = true,
+		.UnknownFlag2 = fullscreen && !safemode
+	};
+
+	if (const auto errorMessage = GciInitGraphicsLibrary(flags); errorMessage != nullptr)
+		UplinkAbort(errorMessage);
+
+	UplinkAbort("TODO: implement opengl_initialise()");
+}
+
 void SetWindowScaleFactor(float x, float y)
 {
 	windowScaleX = x;
@@ -321,7 +345,11 @@ static void Init_Graphics()
 
 static void Init_OpenGL()
 {
-	UplinkAbort("TODO: implement Init_OpenGL()");
+	app->GetOptions()->SetOptionValue("crash_graphicsinit", 1, "", true, false);
+	app->GetOptions()->Save(nullptr);
+	opengl_initialise();
+	app->GetOptions()->SetOptionValue("crash_graphicsinit", 0, "", true, false);
+	app->GetOptions()->Save(nullptr);
 }
 
 static void Init_Fonts()

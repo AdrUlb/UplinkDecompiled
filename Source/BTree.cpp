@@ -117,3 +117,60 @@ bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file)
 	}
 	return true;
 }
+
+void SaveBTree(BTree<UplinkObject*>* tree, FILE* file)
+{
+	UplinkAssert(tree);
+
+	const auto elements = tree->ConvertToDArray();
+	const auto indices = tree->ConvertIndexToDArray();
+
+	const auto elementCountTotal = elements->Size();
+	auto elementCountValid = 0;
+
+	if (elementCountTotal <= 0)
+	{
+		int count = 0;
+		fwrite(&count, 4, 1, file);
+		delete elements;
+		delete indices;
+		return;
+	}
+
+	for (auto i = 0; i < elementCountTotal; i++)
+	{
+		if (elements->ValidIndex(i))
+			elementCountValid++;
+	}
+
+	if (elementCountValid > 0x40000)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: SaveBTree, number of items appears to be too big, size=%d, maxsize=%d", elementCountValid, 0x40000);
+		putchar('\n');
+		elementCountValid = 0x40000;
+	}
+
+	fwrite(&elementCountValid, 4, 1, file);
+
+	elementCountValid = 0;
+	for (auto i = 0; i < elementCountTotal && elementCountValid < 0x40000; i++)
+	{
+		if (!elements->ValidIndex(i))
+			continue;
+
+		UplinkAssert(indices->ValidIndex(i));
+		UplinkAssert(elements->GetData(i));
+
+		SaveDynamicString(indices->GetData(i), file);
+
+		const auto obj = elements->GetData(i);
+		const auto buf = obj->GetOBJECTID();
+		UplinkAssert(buf != UplinkObjectId::Unknown);
+		fwrite(&buf, 4, 1, file);
+		obj->Save(file);
+		elementCountValid++;
+	}
+	delete elements;
+	delete indices;
+}

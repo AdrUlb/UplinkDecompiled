@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.28)
 
 add_subdirectory(Dependencies/tcp4u.331)
 
+set(CXX_STANDARD 20)
+
 project(UplinkDecompiled)
 
 add_executable(UplinkDecompiled
@@ -25,3 +27,4 @@ target_include_directories(UplinkDecompiled PRIVATE Include)
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
 target_link_libraries(UplinkDecompiled tcp4u)
 target_link_libraries(UplinkDecompiled -lcrypto)
+target_link_libraries(UplinkDecompiled -lSDL)

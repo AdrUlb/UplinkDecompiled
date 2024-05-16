@@ -2,7 +2,7 @@
 
 #include <cstdio>
 
-enum class UplinkObjectId
+enum class UplinkObjectId : int
 {
 	Unknown = 0,
 	Option = 8

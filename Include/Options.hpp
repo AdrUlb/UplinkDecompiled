@@ -19,7 +19,7 @@ struct ColourOption
 	float blue;
 };
 
-class Option : UplinkObject
+class Option : public UplinkObject
 {
 	static constexpr size_t NAME_MAX = 0x40;
 	static constexpr size_t TOOLTIP_MAX = 0x80;
