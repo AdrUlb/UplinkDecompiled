@@ -1,5 +1,5 @@
 #include <App.hpp>
-#include <Ecl.hpp>
+#include <Eclipse.hpp>
 #include <Globals.hpp>
 #include <Util.hpp>
 #include <cstdlib>

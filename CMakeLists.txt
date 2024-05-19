@@ -11,7 +11,7 @@ add_executable(UplinkDecompiled
 	Source/App.cpp
 	Source/BTree.cpp
 	Source/Bungle.cpp
-	Source/Ecl.cpp
+	Source/Eclipse.cpp
 	Source/ExceptionHandling.cpp
 	Source/Game.cpp
 	Source/Gci.cpp

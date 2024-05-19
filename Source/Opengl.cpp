@@ -1,5 +1,5 @@
 #include <App.hpp>
-#include <Ecl.hpp>
+#include <Eclipse.hpp>
 #include <GL/gl.h>
 #include <Gci.hpp>
 #include <Globals.hpp>
