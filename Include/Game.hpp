@@ -7,7 +7,7 @@
 #include <World.hpp>
 #include <ctime>
 
-struct Game : UplinkObject
+class Game : UplinkObject
 {
 	Interface* interface;
 	View* view;
