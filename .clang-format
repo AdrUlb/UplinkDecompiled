@@ -3,7 +3,7 @@ AccessModifierOffset: '-4'
 AlignTrailingComments: 'false'
 AllowShortFunctionsOnASingleLine: Empty
 BreakBeforeBraces: Allman
-ColumnLimit: '140'
+ColumnLimit: '180'
 IndentCaseLabels: 'true'
 IndentWidth: '4'
 NamespaceIndentation: All
