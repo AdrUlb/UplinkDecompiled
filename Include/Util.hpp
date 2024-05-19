@@ -21,8 +21,7 @@ void SaveDynamicString(const char* value, int maxSize, FILE* file);
 void SaveDynamicString(const char* value, FILE* file);
 UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
 
-template <class... Args>
-__attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)
+template <class... Args> static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)
 {
 	const auto ret = snprintf(s, n, format, args...);
 	if (ret < 0 || static_cast<size_t>(ret) >= n)
@@ -37,7 +36,7 @@ __attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* 
 	return ret;
 }
 
-__attribute__((always_inline)) static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char* dest, const char* source, const size_t num)
+static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char* dest, const char* source, const size_t num)
 {
 	if (dest == source)
 		return dest;
@@ -56,7 +55,7 @@ __attribute__((always_inline)) static inline char* UplinkStrncpyImpl(const char*
 	return strncpy(dest, source, num);
 }
 
-__attribute__((always_inline)) static inline void UplinkAssertImpl(const char* file, const size_t line, const char* condStr, bool cond)
+static inline void UplinkAssertImpl(const char* file, const size_t line, const char* condStr, bool cond)
 {
 	if (!cond)
 	{
@@ -69,7 +68,7 @@ __attribute__((always_inline)) static inline void UplinkAssertImpl(const char* f
 	}
 }
 
-__attribute__((always_inline)) [[noreturn]] static void inline UplinkAbortImpl(const char* file, const size_t line, const char* message)
+[[noreturn]] static void inline UplinkAbortImpl(const char* file, const size_t line, const char* message)
 {
 	printf("\n"
 		   "Uplink has been forced to Abort\n"
