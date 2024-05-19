@@ -28,4 +28,4 @@ target_include_directories(UplinkDecompiled PRIVATE Include)
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
 target_link_libraries(UplinkDecompiled tcp4u crypto SDL GL)
 
-add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> -graphics_fullscreen 0 \!graphics_screenwidth 1280 \!graphics_screenheight 720)
+add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> -graphics_fullscreen \!graphics_screenwidth 1280 \!graphics_screenheight 720)
