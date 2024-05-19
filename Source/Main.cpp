@@ -1,22 +1,16 @@
-#include <BTree.hpp>
 #include <ExceptionHandling.hpp>
 #include <Game.hpp>
-#include <Gci.hpp>
 #include <Globals.hpp>
-#include <LList.hpp>
-#include <Options.hpp>
+#include <Opengl.hpp>
 #include <RedShirt.hpp>
-#include <csignal>
-#include <cstdint>
-#include <cstdio>
-#include <cstring>
-#include <malloc.h>
+#include <signal.h>
+#include <unistd.h>
 
 App* app = nullptr;
-Game* game = nullptr;
 FILE* file_stdout = nullptr;
-
 const char* versionNumberString = "1.55";
+
+Game* game = nullptr;
 
 static float windowScaleX;
 static float windowScaleY;
@@ -107,30 +101,6 @@ static char* vmg57670648335164_br_find_exe(unsigned int* error)
 	return nullptr;
 }
 
-static void opengl_initialise()
-{
-	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
-
-	const auto width = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	const auto height = app->GetOptions()->GetOptionValue("graphics_screenheight");
-	const auto depth = app->GetOptions()->GetOptionValue("graphics_screendepth");
-	const auto refresh = app->GetOptions()->GetOptionValue("graphics_screenrefresh");
-	const auto fullscreen = app->GetOptions()->IsOptionEqualTo("graphics_fullscreen", 1);
-	const auto safemode = app->GetOptions()->IsOptionEqualTo("graphics_safemode", 1);
-
-	GciInitFlags flags
-	{
-		.UnknownFlag0 = true,
-		.UnknownFlag1 = true,
-		.UnknownFlag2 = fullscreen && !safemode
-	};
-
-	if (const auto errorMessage = GciInitGraphicsLibrary(flags); errorMessage != nullptr)
-		UplinkAbort(errorMessage);
-
-	UplinkAbort("TODO: implement opengl_initialise()");
-}
-
 void SetWindowScaleFactor(float x, float y)
 {
 	windowScaleX = x;
@@ -174,7 +144,6 @@ static void Init_App(const char* exePath)
 	char debugLogFile[0x100];
 	UplinkSnprintf(debugLogFile, sizeof(debugLogFile), "%sdebug.log", app->usersPath);
 
-
 	file_stdout = nullptr;
 
 #ifdef NDEBUG
@@ -196,7 +165,7 @@ static void Init_App(const char* exePath)
 	puts("\n");
 	puts("===============================================");
 	printf("NEW GAME     %d:%d, %d/%d/%d\n", localTime->tm_hour, localTime->tm_min, localTime->tm_mday, localTime->tm_mon + 1,
-		localTime->tm_year + 1900);
+		   localTime->tm_year + 1900);
 	puts("===============================================");
 	printf("Version : %s\n", app->version);
 	puts("RELEASE");
@@ -215,30 +184,30 @@ static void Init_Options(int32_t argc, char** argv)
 		char prefix = arg[0];
 		switch (prefix)
 		{
-		case '+':
-			app->GetOptions()->SetOptionValue(arg + 1, 1);
-			break;
-		case '-':
-			app->GetOptions()->SetOptionValue(arg + 1, 0);
-			break;
-		case '!':
-		{
-			if (i + 1 >= argc)
+			case '+':
+				app->GetOptions()->SetOptionValue(arg + 1, 1);
+				break;
+			case '-':
+				app->GetOptions()->SetOptionValue(arg + 1, 0);
+				break;
+			case '!':
 			{
-				printf("Error parsing command line option : %s\n", arg);
+				if (i + 1 >= argc)
+				{
+					printf("Error parsing command line option : %s\n", arg);
+					break;
+				}
+
+				i++;
+
+				int value;
+				sscanf(argv[i], "%d", &value);
+				app->GetOptions()->SetOptionValue(arg + 1, value);
 				break;
 			}
-
-			i++;
-
-			int value;
-			sscanf(argv[i], "%d", &value);
-			app->GetOptions()->SetOptionValue(arg + 1, value);
-			break;
-		}
-		default:
-			printf("Error parsing command line option : %s\n", arg);
-			break;
+			default:
+				printf("Error parsing command line option : %s\n", arg);
+				break;
 		}
 	}
 

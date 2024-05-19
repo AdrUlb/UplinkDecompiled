@@ -1,0 +1,1 @@
+void opengl_initialise();

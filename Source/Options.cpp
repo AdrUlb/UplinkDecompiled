@@ -178,6 +178,7 @@ bool Options::Load(FILE* file)
 
 void Options::Save(FILE* file)
 {
+	(void)file;
 	MakeDirectory(app->usersPath);
 
 	char optionsFilePath[0x100];
@@ -459,7 +460,7 @@ void Options::SetOptionValue(const char* name, int value, const char* tooltip, b
 void Options::SetThemeName(const char* value)
 {
 	(void)value;
-	UplinkStrncpy(themeName, value, 0x80);
+	UplinkStrncpy(themeName, value, THEMENAME_MAX);
 
 	const auto filePath = ThemeFilename("theme.txt");
 	const auto themeFile = RsArchiveFileOpen(filePath);

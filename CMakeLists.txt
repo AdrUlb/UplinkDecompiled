@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 
-add_subdirectory(Dependencies/tcp4u.331)
+set(CMAKE_CXX_STANDARD 20)
 
-set(CXX_STANDARD 20)
+add_subdirectory(Dependencies/tcp4u.331)
 
 project(UplinkDecompiled)
 
@@ -21,10 +21,11 @@ add_executable(UplinkDecompiled
 	Source/RedShirt.cpp
 	Source/UplinkObject.cpp
 	Source/Util.cpp
+	Source/Opengl.cpp
 )
 
 target_include_directories(UplinkDecompiled PRIVATE Include)
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
-target_link_libraries(UplinkDecompiled tcp4u)
-target_link_libraries(UplinkDecompiled -lcrypto)
-target_link_libraries(UplinkDecompiled -lSDL)
+target_link_libraries(UplinkDecompiled tcp4u crypto SDL GL)
+
+add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> -graphics_fullscreen 0 \!graphics_screenwidth 1280 \!graphics_screenheight 720)

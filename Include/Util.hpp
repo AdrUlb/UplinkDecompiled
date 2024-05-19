@@ -22,8 +22,7 @@ void SaveDynamicString(const char* value, FILE* file);
 UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
 
 template <class... Args>
-__attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n,
-																	const char* format, Args... args)
+__attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)
 {
 	const auto ret = snprintf(s, n, format, args...);
 	if (ret < 0 || static_cast<size_t>(ret) >= n)
@@ -38,9 +37,11 @@ __attribute__((always_inline)) static inline int UplinkSnprintfImpl(const char* 
 	return ret;
 }
 
-__attribute__((always_inline)) static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char* dest, const char* source,
-																	 const size_t num)
+__attribute__((always_inline)) static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char* dest, const char* source, const size_t num)
 {
+	if (dest == source)
+		return dest;
+
 	const auto sourceSize = strlen(source);
 
 	if (sourceSize >= num)
