@@ -145,7 +145,7 @@ void opengl_initialise()
 		app->GetOptions()->SetOptionValue("graphics_screenwidth", width);
 		app->GetOptions()->SetOptionValue("graphics_screenheight", height);
 	}
-	delete screenMode;
+	delete[] screenMode;
 
 	if (const auto errorMessage = GciInitGraphics("uplink", flags, width, height, depth); errorMessage != nullptr)
 		UplinkAbort(errorMessage);
@@ -158,7 +158,7 @@ void opengl_initialise()
 		app->GetOptions()->SetOptionValue("graphics_screenheight", actualScreenMode[1]);
 	}
 
-	delete actualScreenMode;
+	delete[] actualScreenMode;
 
 	if (debug)
 		puts("Initialising OpenGL...");
