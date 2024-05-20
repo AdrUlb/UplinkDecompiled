@@ -5,10 +5,59 @@
 #include <cstdio>
 #include <cstdlib>
 
-SDL_Surface* screen;
+static SDL_Surface* screen = nullptr;
 
-bool _GciIsInitGraphicsLibrary = false;
-bool finished = false;
+static bool _GciIsInitGraphicsLibrary = false;
+static bool finished = false;
+
+static DisplayFunc gciDisplayHandlerP = nullptr;
+static MouseFunc gciMouseHandlerP = nullptr;
+static MotionFunc gciMotionHandlerP = nullptr;
+static PassiveMotionFunc gciPassiveMotionHandlerP = nullptr;
+static KeyboardFunc gciKeyboardHandlerP = nullptr;
+static KeyboardSpecialFunc gciSpecialHandlerP = nullptr;
+static IdleFunc gciIdleHandlerP = nullptr;
+static ReshapeFunc gciReshapeHandlerP = nullptr;
+
+void GciDisplayFunc(DisplayFunc func)
+{
+	gciDisplayHandlerP = func;
+}
+
+void GciMouseFunc(MouseFunc func)
+{
+	gciMouseHandlerP = func;
+}
+
+void GciMotionFunc(MotionFunc func)
+{
+	gciMotionHandlerP = func;
+}
+
+void GciPassiveMotionFunc(PassiveMotionFunc func)
+{
+	gciPassiveMotionHandlerP = func;
+}
+
+void GciKeyboardFunc(KeyboardFunc func)
+{
+	gciKeyboardHandlerP = func;
+}
+
+void GciSpecialFunc(KeyboardSpecialFunc func)
+{
+	gciSpecialHandlerP = func;
+}
+
+void GciIdleFunc(IdleFunc func)
+{
+	gciIdleHandlerP = func;
+}
+
+void GciReshapeFunc(ReshapeFunc func)
+{
+	gciReshapeHandlerP = func;
+}
 
 void GciRestoreScreenSize()
 {

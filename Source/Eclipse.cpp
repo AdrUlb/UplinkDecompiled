@@ -1,20 +1,30 @@
 #include <Eclipse.hpp>
 
-#include <Button.hpp>
 #include <LList.hpp>
 #include <sys/time.h>
 
-static const char* currenthighlight;
-static const char* currentclick;
+static const char* currenthighlight = nullptr;
+static const char* currentclick = nullptr;
+
+static ClearDrawFunc clear_draw = nullptr;
+static ButtonDrawFunc default_draw = nullptr;
+static ButtonMouseUpFunc default_mouseup = nullptr;
+static ButtonMouseDownFunc default_mousedown = nullptr;
+static ButtonMouseMoveFunc default_mousemove = nullptr;
+static SuperhighlightDrawFunc superhighlight_draw = nullptr;
 
 static LList<Button*> buttons;
 static LList<const char*> editablebuttons;
 
-static uint32_t superhighlight_borderwidth = 0;
+static int superhighlight_borderwidth = 0;
 
 static void* dirtyrectangles = nullptr;
 static void* data_7b3788 = nullptr;
 static void* data_7b3790 = nullptr;
+
+static bool animsenabled = true;
+static bool animsfasterenabled = false;
+static double animsfasterspeed = 2.0;
 
 static void EclDirtyClear()
 {
@@ -23,6 +33,27 @@ static void EclDirtyClear()
 	for (auto i = buttons.Size() - 1; i >= 0; i--)
 		if (buttons.ValidIndex(i) != 0)
 			buttons[i]->SetDirty(false);
+}
+
+void EclEnableAnimations()
+{
+	animsenabled = true;
+}
+
+void EclDisableAnimations()
+{
+	animsenabled = false;
+}
+
+void EclEnableFasterAnimations(const double speed)
+{
+	animsfasterenabled = true;
+	animsfasterspeed = speed;
+}
+
+void EclDisableFasterAnimations()
+{
+	animsfasterenabled = false;
 }
 
 double EclGetAccurateTime()
@@ -42,6 +73,25 @@ double EclGetAccurateTime()
 	}
 
 	return (((thisTime.tv_sec - startTime.tv_sec) * 1000.0) + ((thisTime.tv_usec - startTime.tv_usec) / 1000.0));
+}
+
+void EclRegisterClearDrawFunction(ClearDrawFunc func)
+{
+	clear_draw = func;
+}
+
+void EclRegisterDefaultButtonCallbacks(ButtonDrawFunc draw, ButtonMouseUpFunc mouseUp, ButtonMouseDownFunc mouseDown, ButtonMouseMoveFunc mouseMove)
+{
+	default_draw = draw;
+	default_mouseup = mouseUp;
+	default_mousedown = mouseDown;
+	default_mousemove = mouseMove;
+}
+
+void EclRegisterSuperHighlightFunction(int borderWidth, SuperhighlightDrawFunc func)
+{
+	superhighlight_borderwidth = borderWidth;
+	superhighlight_draw = func;
 }
 
 void EclReset()

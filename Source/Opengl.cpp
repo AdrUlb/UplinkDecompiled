@@ -4,12 +4,102 @@
 #include <Gci.hpp>
 #include <Globals.hpp>
 
-void SetColour(const char* name)
+static void button_draw(Button* button, bool highlighted, bool clicked)
+{
+	(void)button;
+	(void)highlighted;
+	(void)clicked;
+	UplinkAbort("TODO: implement button_draw()");
+}
+
+static void button_click(Button* button)
+{
+	(void)button;
+	UplinkAbort("TODO: implement button_click()");
+}
+
+static void button_highlight(Button* button)
+{
+	(void)button;
+	UplinkAbort("TODO: implement button_highlight()");
+}
+
+static void superhighlight_draw(Button* button)
+{
+	(void)button;
+	UplinkAbort("TODO: implement superhighlight_draw()");
+}
+
+void display()
+{
+	UplinkAbort("TODO: implement display()");
+}
+
+void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
+{
+	(void)button;
+	(void)event;
+	(void)x;
+	(void)y;
+	UplinkAbort("TODO: implement mouse()");
+}
+
+void mousemove(int x, int y)
+{
+	(void)x;
+	(void)y;
+	UplinkAbort("TODO: implement mousemove()");
+}
+
+void passivemouse(int x, int y)
+{
+	(void)x;
+	(void)y;
+	UplinkAbort("TODO: implement passivemouse()");
+}
+
+void keyboard(char keychar)
+{
+	(void)keychar;
+	UplinkAbort("TODO: implement keyboard()");
+}
+
+void specialkeyboard(int keycode)
+{
+	(void)keycode;
+	UplinkAbort("TODO: implement specialkeyboard()");
+}
+
+void idle()
+{
+	UplinkAbort("TODO: implement idle()");
+}
+
+void resize(int width, int height)
+{
+	(void)width;
+	(void)height;
+	UplinkAbort("TODO: implement resize()");
+}
+
+static void setcallbacks()
+{
+	GciDisplayFunc(display);
+	GciMouseFunc(mouse);
+	GciMotionFunc(mousemove);
+	GciPassiveMotionFunc(passivemouse);
+	GciKeyboardFunc(keyboard);
+	GciSpecialFunc(specialkeyboard);
+	GciIdleFunc(idle);
+	GciReshapeFunc(resize);
+}
+
+static void SetColour(const char* name)
 {
 	Options* options;
 	ColourOption* colour;
 
-	if (app == nullptr || (app->GetOptions() == nullptr) || (colour = options->GetColour(name)) == nullptr)
+	if (app == nullptr || (options = app->GetOptions()) == nullptr || (colour = options->GetColour(name)) == nullptr)
 	{
 		printf("SetColour WARNING : Failed to find colour %s\n", name);
 		glColor3f(0.0f, 0.0f, 0.0f);
@@ -18,7 +108,7 @@ void SetColour(const char* name)
 	glColor3f(colour->red, colour->green, colour->blue);
 }
 
-void clear_draw(int x, int y, int width, int height)
+static void clear_draw(int x, int y, int width, int height)
 {
 	SetColour("Background");
 	int right = x + width;
@@ -109,14 +199,11 @@ void opengl_initialise()
 	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 
 	EclReset();
-
-	UplinkAbort("TODO: implement opengl_initialise()");
-	/*
 	EclRegisterClearDrawFunction(clear_draw);
-	EclRegisterDefaultButtonCallbacks(button_draw, 0, button_click, button_highlight);
+	EclRegisterDefaultButtonCallbacks(button_draw, nullptr, button_click, button_highlight);
 	EclRegisterSuperHighlightFunction(3, superhighlight_draw);
-
 	const auto buttonAnimationsOption = app->GetOptions()->GetOption("graphics_buttonanimations");
+
 	if (buttonAnimationsOption && !buttonAnimationsOption->GetValue())
 		EclDisableAnimations();
 
@@ -127,7 +214,6 @@ void opengl_initialise()
 
 	if (debug)
 	{
-
 		puts("Finished initialising OpenGL.");
 		printf("Now registering callback functions...");
 	}
@@ -135,5 +221,5 @@ void opengl_initialise()
 	setcallbacks();
 
 	if (debug)
-		printf("done\n ");*/
+		printf("done\n ");
 }
