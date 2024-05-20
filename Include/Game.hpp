@@ -23,9 +23,10 @@ class Game : UplinkObject
 	int field_60;
 	int worldMapType;
 
+public:
 	Game();
 	~Game() override;
-	
+
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;

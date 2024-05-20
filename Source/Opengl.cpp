@@ -80,9 +80,10 @@ void opengl_initialise()
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 
-	UplinkAbort("TODO: implement opengl_initialise()");
+	EclReset();
 
-	/*EclReset();
+	UplinkAbort("TODO: implement opengl_initialise()");
+	/*
 	EclRegisterClearDrawFunction(clear_draw);
 	EclRegisterDefaultButtonCallbacks(button_draw, 0, button_click, button_highlight);
 	EclRegisterSuperHighlightFunction(3, superhighlight_draw);

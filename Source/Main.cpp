@@ -176,7 +176,7 @@ static void Init_App(const char* exePath)
 	app->Initialise();
 }
 
-static void Init_Options(int32_t argc, char** argv)
+static void Init_Options(int argc, char** argv)
 {
 	for (int i = 1; i < argc; i++)
 	{

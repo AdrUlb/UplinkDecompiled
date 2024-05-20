@@ -25,7 +25,18 @@ public:
 	void PutData(const T& value);
 	void PutDataAtEnd(const T& value);
 	void RemoveData(int index);
+	bool ValidIndex(int index);
 	void Empty();
+
+	int Size()
+	{
+		return length;
+	}
+
+	T operator[](int index)
+	{
+		return GetData(index);
+	}
 };
 
 #include "LList.tpp"

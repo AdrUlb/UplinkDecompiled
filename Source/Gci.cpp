@@ -53,7 +53,7 @@ const char* GciInitGraphicsLibrary(GciInitFlags flags)
 	return nullptr;
 }
 
-const char* GciInitGraphics(const char* title, GciInitFlags flags, int32_t width, int32_t height, int32_t depth)
+const char* GciInitGraphics(const char* title, GciInitFlags flags, int width, int height, int depth)
 {
 	if (flags.UnknownFlag0)
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -146,9 +146,9 @@ const char* GciInitGraphics(const char* title, GciInitFlags flags, int32_t width
 	return nullptr;
 }
 
-int32_t* GciGetClosestScreenMode(int32_t width, int32_t height)
+int* GciGetClosestScreenMode(int width, int height)
 {
-	const auto ret = new int32_t[2];
+	const auto ret = new int[2];
 	ret[0] = width;
 	ret[1] = height;
 
@@ -160,14 +160,14 @@ int32_t* GciGetClosestScreenMode(int32_t width, int32_t height)
 		modes = SDL_ListModes(nullptr, SDL_FULLSCREEN | SDL_OPENGL);
 	}
 
-	int32_t minDist = -1;
+	int minDist = -1;
 
 	for (size_t i = 0; modes[i] != nullptr; i++)
 	{
 		auto mode = modes[i];
-		int32_t dx = mode->w - width;
-		int32_t dy = mode->h - height;
-		int32_t diff = (dx * dx) + (dy * dy);
+		int dx = mode->w - width;
+		int dy = mode->h - height;
+		int diff = (dx * dx) + (dy * dy);
 
 		if (minDist == -1 || diff < minDist)
 		{
@@ -180,9 +180,9 @@ int32_t* GciGetClosestScreenMode(int32_t width, int32_t height)
 	return ret;
 }
 
-int32_t* GciGetCurrentScreenMode()
+int* GciGetCurrentScreenMode()
 {
-	const auto ret = new int32_t[2];
+	const auto ret = new int[2];
 	const auto surface = SDL_GetVideoSurface();
 	ret[0] = surface->w;
 	ret[1] = surface->h;

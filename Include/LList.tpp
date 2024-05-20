@@ -126,6 +126,11 @@ template <class T> void LList<T>::RemoveData(int index)
 	cachedItem = nullptr;
 }
 
+template <class T> bool LList<T>::ValidIndex(int index)
+{
+	return index >= 0 && index < length;
+}
+
 template <class T> void LList<T>::Empty()
 {
 	auto item = this->first;
