@@ -4,6 +4,34 @@
 #include <Gci.hpp>
 #include <Globals.hpp>
 
+void SetColour(const char* name)
+{
+	Options* options;
+	ColourOption* colour;
+
+	if (app == nullptr || (app->GetOptions() == nullptr) || (colour = options->GetColour(name)) == nullptr)
+	{
+		printf("SetColour WARNING : Failed to find colour %s\n", name);
+		glColor3f(0.0f, 0.0f, 0.0f);
+	}
+
+	glColor3f(colour->red, colour->green, colour->blue);
+}
+
+void clear_draw(int x, int y, int width, int height)
+{
+	SetColour("Background");
+	int right = x + width;
+	int bottom = y + height;
+
+	glBegin(GL_QUADS);
+	glVertex2i(x, y);
+	glVertex2i(right, y);
+	glVertex2i(right, bottom);
+	glVertex2i(x, bottom);
+	glEnd();
+}
+
 void opengl_initialise()
 {
 	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
