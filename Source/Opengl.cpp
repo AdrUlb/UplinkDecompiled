@@ -132,7 +132,7 @@ void opengl_initialise()
 	const auto fullscreen = app->GetOptions()->IsOptionEqualTo("graphics_fullscreen", 1);
 	const auto safemode = app->GetOptions()->IsOptionEqualTo("graphics_safemode", 1);
 
-	GciInitFlags flags{.UnknownFlag0 = true, .UnknownFlag1 = true, .Fullscreen = fullscreen && !safemode};
+	GciInitFlags flags{.UnknownFlag0 = true, .UnknownFlag1 = true, .Fullscreen = fullscreen && !safemode, .Debug = debug};
 
 	if (const auto errorMessage = GciInitGraphicsLibrary(flags); errorMessage != nullptr)
 		UplinkAbort(errorMessage);
