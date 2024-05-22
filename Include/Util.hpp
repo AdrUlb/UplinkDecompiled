@@ -31,7 +31,7 @@ template <class... Args> static inline int UplinkSnprintfImpl(const char* file, 
 			   "======================================\n"
 			   " Location    : %s, line %zu\n Buffer size : %zu\n Format      : %s\n Buffer      : %s\n",
 			   file, line, n, format, s);
-		*(volatile uint64_t*)0 = 0;
+	__builtin_trap();
 	}
 	return ret;
 }
@@ -49,7 +49,7 @@ static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char*
 			   "=====================================\n"
 			   " Location    : %s, line %zu\n Dest. size  : %zu\n Source size : %zu\n Str. Source : %s\n",
 			   file, line, num, sourceSize, source);
-		*(volatile uint64_t*)0 = 0;
+	__builtin_trap();
 	}
 
 	return strncpy(dest, source, num);
@@ -64,7 +64,7 @@ static inline void UplinkAssertImpl(const char* file, const size_t line, const c
 			   "=======================================\n"
 			   " Condition : %s\n Location  : %s, line %zu\n",
 			   condStr, file, line);
-		*(volatile uint64_t*)0 = 0;
+	__builtin_trap();
 	}
 }
 
@@ -75,7 +75,6 @@ static inline void UplinkAssertImpl(const char* file, const size_t line, const c
 		   "===============================\n"
 		   " Message   : %s\n Location  : %s, line %zu\n",
 		   message, file, line);
-	*(volatile uint64_t*)0 = 0;
 	__builtin_trap();
 }
 
