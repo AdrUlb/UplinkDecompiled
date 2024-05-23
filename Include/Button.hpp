@@ -2,15 +2,16 @@
 
 #include <Image.hpp>
 
-struct Button;
+class Button;
 
-typedef void (*ButtonDrawFunc)(struct Button*, bool, bool);
-typedef void (*ButtonMouseDownFunc)(struct Button*);
-typedef void (*ButtonMouseUpFunc)(struct Button*);
-typedef void (*ButtonMouseMoveFunc)(struct Button*);
+typedef void (*ButtonDrawFunc)(Button*, bool, bool);
+typedef void (*ButtonMouseDownFunc)(Button*);
+typedef void (*ButtonMouseUpFunc)(Button*);
+typedef void (*ButtonMouseMoveFunc)(Button*);
 
-struct Button
+class Button
 {
+public:
 	int X;
 	int Y;
 	int Width;
@@ -28,11 +29,14 @@ struct Button
 	ButtonMouseUpFunc MouseUpFunc;
 	ButtonMouseMoveFunc MouseMoveFunc;
 
-	Button();
+	Button(int x, int y, int width, int height, const char* caption, const char* name);
 	virtual ~Button();
+	void SetProperties(int x, int y, int width, int height, const char* caption, const char* name);
+	void SetCaption(const char* value);
 	void SetStandardImage(Image* value);
 	void RegisterDrawFunction(ButtonDrawFunc func);
 	void RegisterMouseUpFunction(ButtonMouseUpFunc func);
 	void RegisterMouseDownFunction(ButtonMouseDownFunc func);
 	void RegisterMouseMoveFunction(ButtonMouseMoveFunc func);
+	void SetTooltip(const char* value);
 };

@@ -24,6 +24,7 @@ public:
 	T GetData(int index);
 	void PutData(const T& value);
 	void PutDataAtEnd(const T& value);
+	void PutDataAtStart(const T& value);
 	void RemoveData(int index);
 	bool ValidIndex(int index);
 	void Empty();

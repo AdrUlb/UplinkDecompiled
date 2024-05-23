@@ -1,12 +1,12 @@
 #include <App.hpp>
 #include <Eclipse.hpp>
 #include <Globals.hpp>
+#include <IRCInterface.hpp>
 #include <Util.hpp>
 #include <cstdlib>
 #include <dirent.h>
 
-App::App()
-	: startTime(0), closed(false), options(nullptr), network(nullptr), mainMenu(nullptr), phoneDiallerScreen(nullptr), nextLoadGame(nullptr)
+App::App() : startTime(0), closed(false), options(nullptr), network(nullptr), mainMenu(nullptr), phoneDiallerScreen(nullptr), nextLoadGame(nullptr)
 {
 	UplinkStrncpy(path, "c:/", APP_PATH_MAX);
 	UplinkStrncpy(usersPath, path, APP_PATH_MAX);
@@ -45,7 +45,7 @@ void App::Close()
 
 void App::CloseGame()
 {
-	UplinkAbort("TODO: implement App::CloseGame()");
+	IRCInterface::CloseConnection();
 }
 
 void App::CoreDump()

@@ -86,6 +86,33 @@ template <class T> void LList<T>::PutDataAtEnd(const T& value)
 	length++;
 }
 
+template <class T> void LList<T>::PutDataAtStart(const T& value)
+{
+	const auto item = new LListItem<T>();
+	item->prev = nullptr;
+	item->next = first;
+	item->value = value;
+
+	if (last == nullptr) // If the list is empty
+	{
+		last = item; // This item is also the last item now
+	}
+	else // If the list is NOT empty
+	{
+		first->prev = item; // This item becomes previous to the prior first
+	}
+
+	// This is now the new first item
+	first = item;
+
+	// Invalidate cached item
+	cachedIndex = -1;
+	cachedItem = nullptr;
+
+	// Update length
+	length++;
+}
+
 template <class T> void LList<T>::RemoveData(int index)
 {
 	// Get first item, return if it is null

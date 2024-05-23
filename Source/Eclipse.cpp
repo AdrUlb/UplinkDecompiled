@@ -41,9 +41,9 @@ static int EclLookupIndex(const char* name)
 	if (name == nullptr)
 		return -1;
 
-	for (int32_t i = 0; i < buttons.Size(); i++)
+	for (int i = 0; i < buttons.Size(); i++)
 	{
-		if (!buttons.ValidIndex(i) != 0 && strcmp(buttons[i]->Name, name))
+		if (buttons.ValidIndex(i) && strcmp(buttons[i]->Name, name) == 0)
 			return i;
 	}
 
@@ -157,13 +157,19 @@ void EclReset()
 
 void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* name)
 {
-	(void)x;
-	(void)y;
-	(void)width;
-	(void)height;
-	(void)caption;
-	(void)name;
-	UplinkAbort("TODO: implement EclRegisterButton()");
+	if (EclGetButton(name) != nullptr)
+		return;
+
+	const auto button = new Button(x, y, width, height, caption, name);
+	buttons.PutDataAtStart(button);
+	EclRegisterButtonCallbacks(name, default_draw, default_mouseup, default_mousedown, default_mousemove);
+}
+
+void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* tooltip, const char* name)
+{
+	(void)tooltip;
+	EclRegisterButton(x, y, width, height, caption, name);
+	EclGetButton(name)->SetTooltip(tooltip);
 }
 
 Button* EclGetButton(const char* name)

@@ -1,5 +1,7 @@
 #include <Sg.hpp>
 
+#include <Eclipse.hpp>
+#include <RedShirt.hpp>
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
 
@@ -14,11 +16,13 @@ static int playerVolume = 64;
 
 static struct LList<SgPlaylist*> playlists;
 
+static Mix_Music* currentmod;
+
 SgPlaylist::~SgPlaylist()
 {
-	for (int i = 0; i < songs.Size(); i++)
+	for (int i = 0; i < Songs.Size(); i++)
 	{
-		const auto song = songs.GetData(i);
+		const auto song = Songs.GetData(i);
 
 		if (song == nullptr || song[0] == 0)
 			continue;
@@ -29,14 +33,14 @@ SgPlaylist::~SgPlaylist()
 
 void SgPlaylist::SetName(const char* const value)
 {
-	strcpy(name, value);
+	strcpy(Name, value);
 }
 
 void SgPlaylist::AddSong(const char* const name)
 {
 	const auto str = new char[strlen(name) + 1];
 	sprintf(str, name);
-	songs.PutData(str);
+	Songs.PutData(str);
 }
 
 static int musicVol()
@@ -108,6 +112,30 @@ void SgInitialise()
 	SgInitialised = true;
 }
 
+void SgStopMod()
+{
+	if (!SgInitialised || currentmod == nullptr)
+		return;
+
+	Mix_HaltMusic();
+	Mix_FreeMusic(currentmod);
+	currentmod = nullptr;
+}
+
+void SgPlayMod(const char* path)
+{
+	if (SgInitialised != 0)
+	{
+		SgStopMod();
+		currentmod = Mix_LoadMUS(path);
+		if (currentmod != nullptr)
+		{
+			Mix_VolumeMusic(musicVol());
+			Mix_PlayMusic(currentmod, -1);
+		}
+	}
+}
+
 void SgPlaylist_Initialise()
 {
 	strcpy(currentplaylist, "None");
@@ -135,10 +163,9 @@ void SgPlaylist_Create(const char* name)
 
 SgPlaylist* SgPlaylist_GetPlaylist(const char* name)
 {
-
-	for (int32_t rbx = 0; rbx < playlists.Size(); rbx++)
+	for (int i = 0; i < playlists.Size(); i++)
 	{
-		const auto playlist = playlists.GetData(rbx);
+		const auto playlist = playlists.GetData(i);
 		if (playlist != nullptr && strcmp(playlist->GetName(), name) == 0)
 			return playlist;
 	}
@@ -148,12 +175,52 @@ SgPlaylist* SgPlaylist_GetPlaylist(const char* name)
 
 void SgPlaylist_AddSong(char const* playlistName, char const* songName)
 {
-	const auto rax = SgPlaylist_GetPlaylist(playlistName);
-	if (rax == nullptr)
+	const auto playlist = SgPlaylist_GetPlaylist(playlistName);
+	if (playlist == nullptr)
 	{
 		printf("SgPlaylist_AddSong : Failed because playlist %s does not exist\n", playlistName);
 		return;
 	}
 
-	rax->AddSong(songName);
+	playlist->AddSong(songName);
+}
+
+void SgPlaylist_NextSong()
+{
+	const auto playlist = SgPlaylist_GetPlaylist(currentplaylist);
+
+	if (playlist == nullptr)
+	{
+		printf("SgPlaylist_NextSong : Failed because playlist %s does not exist\n", currentplaylist);
+		return;
+	}
+
+	songindex++;
+
+	if (songindex >= playlist->Songs.Size())
+		songindex = 0;
+
+	const auto filePath = playlist->Songs.GetData(songindex);
+	SgPlayMod(RsArchiveFileOpen(filePath));
+	strcpy(currentsong, filePath);
+}
+
+void SgPlaylist_Play(const char* name)
+{
+	if (strcmp(currentplaylist, "None") == 0)
+	{
+		strcpy(currentplaylist, name);
+		songindex = -1;
+		SgPlaylist_NextSong();
+		return;
+	}
+
+	if (strcmp(currentplaylist, name) == 0)
+		return;
+
+	if (strcmp(requestedplaylist, "None") == 0)
+	{
+		requestedtime = EclGetAccurateTime();
+	}
+	strcpy(requestedplaylist, name);
 }

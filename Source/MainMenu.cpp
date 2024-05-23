@@ -1,6 +1,7 @@
 #include <MainMenu.hpp>
 
 #include <Eclipse.hpp>
+#include <FirstTimeLoadingInterface.hpp>
 #include <Globals.hpp>
 #include <Opengl.hpp>
 #include <RedShirt.hpp>
@@ -120,5 +121,26 @@ void MainMenu::Remove()
 void MainMenu::RunScreen(MainMenuScreenCode code)
 {
 	(void)code;
-	UplinkAbort("TODO: implement MainMenu::RunScreen(MainMenuScreenCode)");
+
+	if (screen != nullptr)
+	{
+		screen->Remove();
+		delete screen;
+		screen = nullptr;
+	}
+
+	app->CloseGame();
+	screenCode = code;
+
+	switch (code)
+	{
+		case MainMenuScreenCode::FirstTimeLoading:
+			screen = new FirstTimeLoadingInterface();
+			break;
+		default:
+			printf("TODO: implement MainMenu::RunScreen(%d)\n", static_cast<int>(code));
+			UplinkAbort("Tried to create a local screen with unknown SCREENCODE");
+	}
+
+	screen->Create();
 }

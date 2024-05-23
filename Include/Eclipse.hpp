@@ -19,6 +19,7 @@ void EclRegisterDefaultButtonCallbacks(ButtonDrawFunc draw, ButtonMouseUpFunc mo
 void EclRegisterSuperHighlightFunction(int borderWidth, SuperhighlightDrawFunc func);
 void EclReset();
 void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* name);
+void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* tooltip, const char* name);
 Button* EclGetButton(const char* name);
 void EclDirtyButton();
 void EclRegisterButtonCallbacks(const char* name, ButtonDrawFunc drawFunc, ButtonMouseUpFunc mouseUpFunc, ButtonMouseDownFunc mouseDownFunc,

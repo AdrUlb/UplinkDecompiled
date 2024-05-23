@@ -4,6 +4,53 @@
 #include <Gci.hpp>
 #include <Globals.hpp>
 
+static void SetColour(const char* name)
+{
+	Options* options;
+	ColourOption* colour;
+
+	if (app == nullptr || (options = app->GetOptions()) == nullptr || (colour = options->GetColour(name)) == nullptr)
+	{
+		printf("SetColour WARNING : Failed to find colour %s\n", name);
+		glColor3f(0.0f, 0.0f, 0.0f);
+		return;
+	}
+
+	glColor3f(colour->red, colour->green, colour->blue);
+}
+
+static void clear_draw(int x, int y, int width, int height)
+{
+	SetColour("Background");
+	const auto right = x + width;
+	const auto bottom = y + height;
+
+	glBegin(GL_QUADS);
+	glVertex2i(x, y);
+	glVertex2i(right, y);
+	glVertex2i(right, bottom);
+	glVertex2i(x, bottom);
+	glEnd();
+}
+
+static void border_draw(Button* button)
+{
+	glBegin(GL_LINE_LOOP);
+	glVertex2i(button->X, button->Y);
+	glVertex2i(button->X + button->Width - 1, button->Y);
+	glVertex2i(button->X + button->Width - 1, button->Y + button->Height - 1);
+	glVertex2i(button->X, button->Y + button->Height - 1);
+	glEnd();
+}
+
+static void text_draw(Button* button, bool highlighted, bool clicked)
+{
+	(void)button;
+	(void)highlighted;
+	(void)clicked;
+	puts("TODO: implement text_draw()");
+}
+
 static void button_draw(Button* button, bool highlighted, bool clicked)
 {
 	(void)button;
@@ -51,6 +98,25 @@ void imagebutton_draw(Button* button, bool highlighted, bool clicked)
 	}
 
 	image->Draw(button->X, button->Y);
+
+	glDisable(GL_SCISSOR_TEST);
+}
+
+void textbutton_draw(struct Button* button, bool highlighted, bool clicked)
+{
+	UplinkAssert(button != nullptr);
+	int32_t rax_2 = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	uint64_t height = ((uint64_t)button->Height);
+	glScissor(button->X, ((-(button->Y) - height) + rax_2), ((uint64_t)button->Width), height);
+	glEnable(GL_SCISSOR_TEST);
+	clear_draw(button->X, button->Y, button->Width, button->Height);
+	text_draw(button, highlighted, clicked);
+
+	if (highlighted || clicked)
+	{
+		SetColour("TextBorder");
+		border_draw(button);
+	}
 
 	glDisable(GL_SCISSOR_TEST);
 }
@@ -117,34 +183,6 @@ static void setcallbacks()
 	GciSpecialFunc(specialkeyboard);
 	GciIdleFunc(idle);
 	GciReshapeFunc(resize);
-}
-
-static void SetColour(const char* name)
-{
-	Options* options;
-	ColourOption* colour;
-
-	if (app == nullptr || (options = app->GetOptions()) == nullptr || (colour = options->GetColour(name)) == nullptr)
-	{
-		printf("SetColour WARNING : Failed to find colour %s\n", name);
-		glColor3f(0.0f, 0.0f, 0.0f);
-	}
-
-	glColor3f(colour->red, colour->green, colour->blue);
-}
-
-static void clear_draw(int x, int y, int width, int height)
-{
-	SetColour("Background");
-	int right = x + width;
-	int bottom = y + height;
-
-	glBegin(GL_QUADS);
-	glVertex2i(x, y);
-	glVertex2i(right, y);
-	glVertex2i(right, bottom);
-	glVertex2i(x, bottom);
-	glEnd();
 }
 
 void opengl_initialise()
