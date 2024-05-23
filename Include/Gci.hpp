@@ -34,6 +34,8 @@ typedef void (*KeyboardSpecialFunc)(int keycode);
 typedef void (*IdleFunc)();
 typedef void (*ReshapeFunc)(int width, int height);
 
+typedef void(*GciTimerCallback)(int);
+
 void GciDisplayFunc(DisplayFunc func);
 void GciMouseFunc(MouseFunc func);
 void GciMotionFunc(MotionFunc func);
@@ -54,3 +56,4 @@ bool GciUnregisterTrueTypeFont();
 void GciSetDefaultFont(int index);
 void GciDeleteTrueTypeFont(int index);
 bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size);
+void GciTimerFunc(int delay, GciTimerCallback callback, int arg);

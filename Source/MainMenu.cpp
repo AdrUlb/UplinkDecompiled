@@ -32,32 +32,32 @@ const char* MainMenu::GetID()
 	return "MMI";
 }
 
-void Create()
+void MainMenu::Create()
 {
 	UplinkAbort("TODO: implement MainMenu::Create()");
 }
 
-MainMenuScreen* GetMenuScreen()
+MainMenuScreen* MainMenu::GetMenuScreen()
 {
 	UplinkAbort("TODO: implement MainMenu::GetMenuScreen()");
 }
 
-MainMenuScreenCode InScreen()
+MainMenuScreenCode MainMenu::InScreen()
 {
 	UplinkAbort("TODO: implement MainMenu::InScreen()");
 }
 
-bool IsVisible()
+bool MainMenu::IsVisible()
 {
 	UplinkAbort("TODO: implement MainMenu::IsVisible()");
 }
 
-void Remove()
+void MainMenu::Remove()
 {
 	UplinkAbort("TODO: implement MainMenu::Remove()");
 }
 
-void RunScreen(MainMenuScreenCode code)
+void MainMenu::RunScreen(MainMenuScreenCode code)
 {
 	(void)code;
 	UplinkAbort("TODO: implement MainMenu::RunScreen(MainMenuScreenCode)");

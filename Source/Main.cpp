@@ -4,6 +4,7 @@
 #include <Globals.hpp>
 #include <Opengl.hpp>
 #include <RedShirt.hpp>
+#include <ScriptLibrary.hpp>
 #include <Sg.hpp>
 #include <signal.h>
 #include <unistd.h>
@@ -387,12 +388,58 @@ static void Init_Sound()
 
 static void Init_Music()
 {
-	UplinkAbort("TODO: implement Init_Music()");
+	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+
+	if (debug)
+		puts("Init_Music called...loading modules");
+
+	SgPlaylist_Initialise();
+	SgSetModVolume(20);
+	SgPlaylist_Create("main");
+	SgPlaylist_AddSong("main", "music/bluevalley.uni");
+	SgPlaylist_AddSong("main", "music/serenity.uni");
+	SgPlaylist_AddSong("main", "music/mystique.uni");
+	SgPlaylist_AddSong("main", "music/a94final.uni");
+	SgPlaylist_AddSong("main", "music/symphonic.uni");
+	SgPlaylist_AddSong("main", "music/myst2.uni");
+
+	if (debug)
+		puts("Finished with Init_Music");
 }
 
 static void Run_MainMenu()
 {
-	UplinkAbort("TODO: implement Run_MainMenu()");
+	if (app->GetOptions()->IsOptionEqualTo("game_debugstart", 1))
+	{
+		puts("Creating main menu.");
+		puts("====== END OF DEBUGGING INFORMATION ====");
+	}
+	float currentVersion;
+	sscanf(versionNumberString, "%f", &currentVersion);
+	currentVersion *= 100.0f;
+	int32_t prevVersion = app->GetOptions()->GetOptionValue("game_version");
+	if (prevVersion != currentVersion)
+	{
+		puts("New patch Detected!");
+		printf("Old version = %d\n", prevVersion);
+		printf("New version = %d\n\n", static_cast<int>(currentVersion));
+
+		app->GetOptions()->SetOptionValue("game_version", currentVersion, "z", false, false);
+
+		if (prevVersion <= 119)
+		{
+			app->GetMainMenu()->RunScreen(MainMenuScreenCode::FirstTimeLoading);
+			ScriptLibrary::RunScript(45);
+			return;
+		}
+	}
+	else if (app->GetOptions()->IsOptionEqualTo("game_firsttime", 1))
+	{
+		app->GetMainMenu()->RunScreen(MainMenuScreenCode::FirstTimeLoading);
+		GciTimerFunc(2000, ScriptLibrary::RunScript, 30);
+	}
+	else
+		app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
 }
 
 static void Run_Game()

@@ -269,7 +269,7 @@ void Options::CreateDefaultOptions()
 	}
 
 	float versionNumber;
-	sscanf("1.55", "%f", &versionNumber);
+	sscanf(versionNumberString, "%f", &versionNumber);
 	versionNumber = 100.0f * versionNumber;
 
 	if (GetOption("game_version") == nullptr)

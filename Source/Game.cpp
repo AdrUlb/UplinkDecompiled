@@ -2,9 +2,19 @@
 #include <Util.hpp>
 
 Game::Game()
-	: interface(nullptr), view(nullptr), world(nullptr), speed(0), obituary(nullptr), loadedSaveFileVer(nullptr), field_40(nullptr),
-	  field_48(0), winCodeDesc(nullptr), field_58(nullptr), field_60(0), worldMapType(1)
 {
+	interface = nullptr;
+	view = nullptr;
+	world = nullptr;
+	speed = 0;
+	obituary = nullptr;
+	loadedSaveFileVer = nullptr;
+	field_40 = nullptr;
+	field_48 = 0;
+	winCodeDesc = nullptr;
+	field_58 = nullptr;
+	field_60 = 0;
+	worldMapType = 1;
 }
 
 Game::~Game()

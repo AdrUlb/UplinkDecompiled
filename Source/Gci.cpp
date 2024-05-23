@@ -6,6 +6,7 @@
 #include <Util.hpp>
 #include <cstdio>
 #include <cstdlib>
+#include <list>
 #include <map>
 
 static SDL_Surface* screen = nullptr;
@@ -26,6 +27,15 @@ static bool gci_truetypeenabled = false;
 static int gci_defaultfont = 6;
 
 static std::map<int, FTGLBitmapFont*> fonts;
+
+struct TimerEvent
+{
+	GciTimerCallback callback;
+	int callbackArg;
+	int delay;
+};
+
+static std::list<TimerEvent*> timerEvents;
 
 void GciDisplayFunc(DisplayFunc func)
 {
@@ -150,8 +160,9 @@ const char* GciInitGraphics(const char* title, GciInitFlags flags, int width, in
 	}
 	else if (depth != closestDepth)
 	{
-		printf("Warning, difference in depth between the video mode requested %d and the closest available %d for width: %d, height:%d, flags:%d\n", depth, closestDepth, width,
-			   height, videoModeFlags);
+		printf("Warning, difference in depth between the video mode requested %d and the closest available %d for width: %d, height:%d, "
+			   "flags:%d\n",
+			   depth, closestDepth, width, height, videoModeFlags);
 
 		depth = closestDepth;
 
@@ -268,7 +279,7 @@ bool GciUnregisterTrueTypeFont()
 
 void GciSetDefaultFont(int index)
 {
-    gci_defaultfont = index;
+	gci_defaultfont = index;
 }
 
 void GciDeleteTrueTypeFont(int index)
@@ -300,4 +311,13 @@ bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size
 	GciDeleteTrueTypeFont(index);
 	fonts[index] = font;
 	return true;
+}
+
+void GciTimerFunc(int delay, GciTimerCallback callback, int arg)
+{
+	const auto rax = new TimerEvent();
+	rax->callback = callback;
+	rax->callbackArg = arg;
+	rax->delay = SDL_GetTicks() + delay;
+	timerEvents.push_back(rax);
 }
