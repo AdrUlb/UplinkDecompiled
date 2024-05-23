@@ -408,7 +408,7 @@ static void Run_MainMenu()
 	float currentVersion;
 	sscanf(versionNumberString, "%f", &currentVersion);
 	currentVersion *= 100.0f;
-	int32_t prevVersion = app->GetOptions()->GetOptionValue("game_version");
+	const auto prevVersion = app->GetOptions()->GetOptionValue("game_version");
 	if (prevVersion != currentVersion)
 	{
 		puts("New patch Detected!");
@@ -435,7 +435,7 @@ static void Run_MainMenu()
 
 static void Run_Game()
 {
-	UplinkAbort("TODO: implement Run_Game()");
+	opengl_run();
 }
 
 static void Cleanup_Uplink()

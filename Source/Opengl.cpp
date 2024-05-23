@@ -121,12 +121,12 @@ void textbutton_draw(struct Button* button, bool highlighted, bool clicked)
 	glDisable(GL_SCISSOR_TEST);
 }
 
-void display()
+static void display()
 {
 	UplinkAbort("TODO: implement display()");
 }
 
-void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
+static void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
 {
 	(void)button;
 	(void)event;
@@ -135,38 +135,38 @@ void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
 	UplinkAbort("TODO: implement mouse()");
 }
 
-void mousemove(int x, int y)
+static void mousemove(int x, int y)
 {
 	(void)x;
 	(void)y;
 	UplinkAbort("TODO: implement mousemove()");
 }
 
-void passivemouse(int x, int y)
+static void passivemouse(int x, int y)
 {
 	(void)x;
 	(void)y;
 	UplinkAbort("TODO: implement passivemouse()");
 }
 
-void keyboard(char keychar)
+static void keyboard(char keychar)
 {
 	(void)keychar;
 	UplinkAbort("TODO: implement keyboard()");
 }
 
-void specialkeyboard(int keycode)
+static void specialkeyboard(int keycode)
 {
 	(void)keycode;
 	UplinkAbort("TODO: implement specialkeyboard()");
 }
 
-void idle()
+static void idle()
 {
 	UplinkAbort("TODO: implement idle()");
 }
 
-void resize(int width, int height)
+static void resize(int width, int height)
 {
 	(void)width;
 	(void)height;
@@ -285,4 +285,9 @@ void opengl_initialise()
 
 	if (debug)
 		printf("done\n ");
+}
+
+void opengl_run()
+{
+	GciMainLoop();
 }

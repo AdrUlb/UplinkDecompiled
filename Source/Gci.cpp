@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <list>
 #include <map>
+#include <sys/time.h>
 
 static SDL_Surface* screen = nullptr;
 
@@ -28,11 +29,13 @@ static int gci_defaultfont = 6;
 
 static std::map<int, FTGLBitmapFont*> fonts;
 
+static bool displayDamaged = false;
+
 struct TimerEvent
 {
 	GciTimerCallback callback;
 	int callbackArg;
-	int delay;
+	int fireTime;
 };
 
 static std::list<TimerEvent*> timerEvents;
@@ -318,6 +321,98 @@ void GciTimerFunc(int delay, GciTimerCallback callback, int arg)
 	const auto rax = new TimerEvent();
 	rax->callback = callback;
 	rax->callbackArg = arg;
-	rax->delay = SDL_GetTicks() + delay;
+	rax->fireTime = SDL_GetTicks() + delay;
 	timerEvents.push_back(rax);
+}
+
+size_t _GciGetAccurateTime()
+{
+	static bool initted = false;
+	static timeval startTime;
+
+	timeval thisTime;
+	gettimeofday(&thisTime, nullptr);
+
+	if (!initted)
+	{
+		initted = true;
+		startTime = thisTime;
+		return 0;
+	}
+
+	auto rcx_1 = thisTime.tv_usec - startTime.tv_usec;
+	if (thisTime.tv_usec - startTime.tv_usec < 0)
+	{
+		thisTime.tv_sec--;
+		rcx_1 += 1'000'000;
+	}
+	return (rcx_1 / 1'000) + ((thisTime.tv_sec - startTime.tv_sec) * 1'000);
+}
+
+void GciMainLoop()
+{
+	_GciGetAccurateTime();
+
+	finished = false;
+
+	while (!finished)
+	{
+		if (gciDisplayHandlerP != nullptr)
+			gciDisplayHandlerP();
+
+		SDL_Event event;
+		while (SDL_PollEvent(&event) != 0 && !finished)
+		{
+			while (!finished)
+			{
+				switch (event.type)
+				{
+					case SDL_KEYDOWN:
+						puts("TODO: handle SDL_KEYDOWN");
+						break;
+					case SDL_MOUSEMOTION:
+						puts("TODO: handle SDL_MOUSEMOTION");
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+						puts("TODO: handle SDL_MOUSEBUTTONDOWN");
+						break;
+					case SDL_MOUSEBUTTONUP:
+						puts("TODO: handle SDL_MOUSEBUTTONUP");
+						break;
+					case SDL_QUIT:
+						finished = true;
+						break;
+					case SDL_VIDEORESIZE:
+						puts("TODO: handle SDL_VIDEORESIZE");
+						break;
+					case SDL_VIDEOEXPOSE:
+						displayDamaged = true;
+						break;
+					default:
+						break;
+				}
+			}
+			if (event.type != SDL_QUIT)
+				break;
+		}
+
+		if (finished)
+			continue;
+
+		for (auto it = timerEvents.begin(); it != timerEvents.end();)
+		{
+			auto timerEvent = *it;
+			if (SDL_GetTicks() >= timerEvent->fireTime)
+			{
+				it = timerEvents.erase(it);
+				timerEvent->callback(timerEvent->callbackArg);
+				delete timerEvent;
+				continue;
+			}
+			it++;
+		}
+
+		if (gciIdleHandlerP != nullptr)
+			gciIdleHandlerP();
+	}
 }

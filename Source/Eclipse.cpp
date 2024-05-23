@@ -73,7 +73,7 @@ void EclDisableFasterAnimations()
 
 double EclGetAccurateTime()
 {
-	static bool initted{false};
+	static bool initted = false;
 	static timeval startTime;
 
 	timeval thisTime;

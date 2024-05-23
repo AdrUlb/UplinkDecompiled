@@ -57,3 +57,4 @@ void GciSetDefaultFont(int index);
 void GciDeleteTrueTypeFont(int index);
 bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size);
 void GciTimerFunc(int delay, GciTimerCallback callback, int arg);
+void GciMainLoop();
