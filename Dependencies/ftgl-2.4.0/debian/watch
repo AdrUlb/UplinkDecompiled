@@ -1,0 +1,2 @@
+version=4
+https://github.com/frankheckenbach/ftgl/tags .*/v(\d[\d\.]+)\.(?:tgz|tbz|txz|(?:tar\.(?:gz|bz2|xz))|zip)

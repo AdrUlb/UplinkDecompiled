@@ -1,8 +1,10 @@
 #include <ExceptionHandling.hpp>
 #include <Game.hpp>
+#include <Gci.hpp>
 #include <Globals.hpp>
 #include <Opengl.hpp>
 #include <RedShirt.hpp>
+#include <Sg.hpp>
 #include <signal.h>
 #include <unistd.h>
 
@@ -323,12 +325,64 @@ static void Init_OpenGL()
 
 static void Init_Fonts()
 {
-	UplinkAbort("TODO: implement Init_Fonts()");
+	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+
+	if (debug)
+		puts("Init_Fonts called...setting up system fonts");
+
+	GciEnableTrueTypeSupport();
+
+	const auto path = RsArchiveFileOpen("fonts/dungeon.ttf");
+
+	if (path == nullptr)
+	{
+		printf("Unable to open font : %s\n", "fonts/dungeon.ttf");
+		GciDisableTrueTypeSupport();
+		puts("True type font support is DISABLED");
+	}
+	else
+	{
+		if (debug)
+		{
+			printf("Registering fonts...");
+			printf("done\n ");
+			puts("Loading system fonts into memory...");
+		}
+
+		const auto success = GciLoadTrueTypeFont(7, "Dungeon", path, 16) && GciLoadTrueTypeFont(5, "Dungeon", path, 9) &&
+							 GciLoadTrueTypeFont(6, "Dungeon", path, 11);
+
+		if (debug)
+		{
+			puts("done");
+			printf("Unregistering fonts...");
+			printf("done\n ");
+		}
+
+		if (!success)
+		{
+			GciDisableTrueTypeSupport();
+			puts("True type font support is DISABLED");
+		}
+	}
+
+	GciSetDefaultFont(5);
+
+	if (debug)
+		printf("Finished with Init_Fonts\n ");
 }
 
 static void Init_Sound()
 {
-	UplinkAbort("TODO: implement Init_Sound()");
+	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+
+	if (debug)
+		puts("Init_Sound called...setting up sound system");
+
+	SgInitialise();
+
+	if (debug)
+		puts("Finished with Init_Sound");
 }
 
 static void Init_Music()
@@ -340,6 +394,7 @@ static void Run_MainMenu()
 {
 	UplinkAbort("TODO: implement Run_MainMenu()");
 }
+
 static void Run_Game()
 {
 	UplinkAbort("TODO: implement Run_Game()");

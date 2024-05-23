@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+
+# Passing hardcoded GLUT_LIBS necessary to link demo programs and tests.  GLUT
+# doesn't have pkg-config files or other simple mechanisms.
+GLUT_LIBS := -lglut -lGLU -lGL -lm
+
+SHLIBVER := 2.4.0
+DEB_COPYRIGHT_CHECK_IGNORE_REGEX = \
+        ^(\./\.git/.*|\./debian/.*|\./\.pc/.*|\./test/font_pack/(El_Abogado_Loco\.ttf|timR12-ISO8859-1\.pcf\.gz)|\./docs/images/.*\.png|\./docs/FTGL_1_3\.gif)$
+
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	dh_auto_build -- GLUT_LIBS="$(GLUT_LIBS)"
+
+override_dh_makeshlibs:
+	dh_makeshlibs -p libftgl2 -V "libftgl2 (>= $(SHLIBVER))"
+
+licensecheck:
+	licensecheck -i "$(DEB_COPYRIGHT_CHECK_IGNORE_REGEX)" --deb-machine -r . \
+		> debian/copyright_newhints
+	cmp debian/copyright_hints debian/copyright_newhints \
+		&& rm debian/copyright_newhints

@@ -1,6 +1,8 @@
 #pragma once
 
+#include <ExceptionHandling.hpp>
 #include <UplinkObject.hpp>
+#include <csignal>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -21,7 +23,8 @@ void SaveDynamicString(const char* value, int maxSize, FILE* file);
 void SaveDynamicString(const char* value, FILE* file);
 UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
 
-template <class... Args> static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)
+template <class... Args>
+static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)
 {
 	const auto ret = snprintf(s, n, format, args...);
 	if (ret < 0 || static_cast<size_t>(ret) >= n)
@@ -31,7 +34,7 @@ template <class... Args> static inline int UplinkSnprintfImpl(const char* file, 
 			   "======================================\n"
 			   " Location    : %s, line %zu\n Buffer size : %zu\n Format      : %s\n Buffer      : %s\n",
 			   file, line, n, format, s);
-	__builtin_trap();
+		__builtin_trap();
 	}
 	return ret;
 }
@@ -49,7 +52,7 @@ static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char*
 			   "=====================================\n"
 			   " Location    : %s, line %zu\n Dest. size  : %zu\n Source size : %zu\n Str. Source : %s\n",
 			   file, line, num, sourceSize, source);
-	__builtin_trap();
+		__builtin_trap();
 	}
 
 	return strncpy(dest, source, num);
@@ -64,7 +67,7 @@ static inline void UplinkAssertImpl(const char* file, const size_t line, const c
 			   "=======================================\n"
 			   " Condition : %s\n Location  : %s, line %zu\n",
 			   condStr, file, line);
-	__builtin_trap();
+		__builtin_trap();
 	}
 }
 
@@ -75,6 +78,7 @@ static inline void UplinkAssertImpl(const char* file, const size_t line, const c
 		   "===============================\n"
 		   " Message   : %s\n Location  : %s, line %zu\n",
 		   message, file, line);
+	hSignalSIGSEGV(SIGSEGV);
 	__builtin_trap();
 }
 

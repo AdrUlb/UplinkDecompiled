@@ -1,9 +1,12 @@
 #include <Gci.hpp>
 
+#include <FTFace.h>
+#include <FTGL/ftgl.h>
 #include <SDL/SDL.h>
 #include <Util.hpp>
 #include <cstdio>
 #include <cstdlib>
+#include <map>
 
 static SDL_Surface* screen = nullptr;
 
@@ -18,6 +21,11 @@ static KeyboardFunc gciKeyboardHandlerP = nullptr;
 static KeyboardSpecialFunc gciSpecialHandlerP = nullptr;
 static IdleFunc gciIdleHandlerP = nullptr;
 static ReshapeFunc gciReshapeHandlerP = nullptr;
+
+static bool gci_truetypeenabled = false;
+static int gci_defaultfont = 6;
+
+static std::map<int, FTGLBitmapFont*> fonts;
 
 void GciDisplayFunc(DisplayFunc func)
 {
@@ -236,4 +244,60 @@ int* GciGetCurrentScreenMode()
 	ret[0] = surface->w;
 	ret[1] = surface->h;
 	return ret;
+}
+
+void GciEnableTrueTypeSupport()
+{
+	gci_truetypeenabled = 1;
+}
+
+void GciDisableTrueTypeSupport()
+{
+	gci_truetypeenabled = 0;
+}
+
+bool GciRegisterTrueTypeFont()
+{
+	return true;
+}
+
+bool GciUnregisterTrueTypeFont()
+{
+	return true;
+}
+
+void GciSetDefaultFont(int index)
+{
+    gci_defaultfont = index;
+}
+
+void GciDeleteTrueTypeFont(int index)
+{
+	if (fonts[index] == nullptr)
+		return;
+
+	delete fonts[index];
+	fonts[index] = nullptr;
+}
+
+bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size)
+{
+	(void)name;
+	if (!gci_truetypeenabled)
+	{
+		puts("GciLoadTrueTypeFont called, but truetypes are not enabled");
+		return false;
+	}
+
+	const auto font = new FTGLBitmapFont(path);
+
+	if (font->Error() != FT_Err_Ok || !font->FaceSize(size, 96))
+	{
+		delete font;
+		return false;
+	}
+
+	GciDeleteTrueTypeFont(index);
+	fonts[index] = font;
+	return true;
 }

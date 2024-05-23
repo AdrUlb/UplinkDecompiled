@@ -1,0 +1,132 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: FTGL
+Upstream-Contact: Frank Heckenbach <f.heckenbach@fh-soft.de>
+Source: https://github.com/frankheckenbach/ftgl
+
+Files: *
+Copyright: 2018, Frank Heckenbach <f.heckenbach@fh-soft.de>
+  2012-2016, Richard Ulrich <richard.ulrich@cubx-software.com>
+  2008-2010, Sam Hocevar <sam@hocevar.net>
+  2008, Sean Morrison <learner@brlcad.org>
+  2008, Éric Beets <ericbeets@free.fr>
+  2008, Daniel Remenak <dtremenak@users.sourceforge.net>
+  2001-2004, Henry Maddocks <ftgl@opengl.geek.nz>
+License: Expat
+
+Files: src/FTFont/FTTriangleExtractorFont.cpp
+ src/FTFont/FTTriangleExtractorFontImpl.h
+ src/FTGL/FTGLTriangleExtractorFont.h
+ src/FTGL/FTTriangleExtractorGlyph.h
+ src/FTGlyph/FTTriangleExtractorGlyph.cpp
+ src/FTGlyph/FTTriangleExtractorGlyphImpl.h
+Copyright: 2011, Richard Ulrich <richi@paraeasy.ch>
+License: Expat
+
+Files: test/*mmgr.*
+Copyright: 2000, Fluid Studios, Inc.
+License: Expat
+
+Files: demo/trackball.?
+Copyright: 1993-1994, Silicon Graphics, Inc.
+License: Expat-SGI
+ Permission to use, copy, modify, and distribute this software for
+ any purpose and without fee is hereby granted, provided that the above
+ copyright notice appear in all copies and that both the copyright notice
+ and this permission notice appear in supporting documentation, and that
+ the name of Silicon Graphics, Inc. not be used in advertising
+ or publicity pertaining to distribution of the software without specific,
+ written prior permission.
+ .
+ THE MATERIAL EMBODIED ON THIS SOFTWARE IS PROVIDED TO YOU "AS-IS"
+ AND WITHOUT WARRANTY OF ANY KIND, EXPRESS, IMPLIED OR OTHERWISE,
+ INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY OR
+ FITNESS FOR A PARTICULAR PURPOSE.  IN NO EVENT SHALL SILICON
+ GRAPHICS, INC.  BE LIABLE TO YOU OR ANYONE ELSE FOR ANY DIRECT,
+ SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
+ KIND, OR ANY DAMAGES WHATSOEVER, INCLUDING WITHOUT LIMITATION,
+ LOSS OF PROFIT, LOSS OF USE, SAVINGS OR REVENUE, OR THE CLAIMS OF
+ THIRD PARTIES, WHETHER OR NOT SILICON GRAPHICS, INC.  HAS BEEN
+ ADVISED OF THE POSSIBILITY OF SUCH LOSS, HOWEVER CAUSED AND ON
+ ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE
+ POSSESSION, USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Files: msvc/config.h
+Copyright: 2008, Daniel Remenak <dtremenak@users.sourceforge.net>
+  2008, Jeff Myers <JeffM2501@users.sourceforge.net>
+License: Expat
+
+Files: src/FTUnicode.h
+Copyright: 2008, Daniel Remenak <dtremenak@users.sourceforge.net>
+License: Expat
+
+Files: test/font_pack/El_Abogado_Loco.ttf
+Copyright: 2003, Dustin Norlander. All rights reserved.
+License: GPL-2+
+
+Files: test/font_pack/timR12-ISO8859-1.pcf.gz
+Copyright: 1984-1989, 1994 Adobe Systems Incorporated.
+ 1988, 1994 Digital Equipment Corporation.
+License: Expat-Adobe
+ Adobe is a trademark of Adobe Systems Incorporated which may be
+ registered in certain jurisdictions.
+ Permission to use these trademarks is hereby granted only in
+ association with the images described in this file.
+ .
+ Permission to use, copy, modify, distribute and sell this software
+ and its documentation for any purpose and without fee is hereby
+ granted, provided that the above copyright notices appear in all
+ copies and that both those copyright notices and this permission
+ notice appear in supporting documentation, and that the names of
+ Adobe Systems and Digital Equipment Corporation not be used in
+ advertising or publicity pertaining to distribution of the software
+ without specific, written prior permission.  Adobe Systems and
+ Digital Equipment Corporation make no representations about the
+ suitability of this software for any purpose.  It is provided "as
+ is" without express or implied warranty.
+
+
+Files: debian/*
+Copyright: 2017-2018, Manuel A. Fernandez Montecelo <mafm@debian.org>
+ 2018, IOhannes m zmölnig <umlaeute@debian.org>
+ 2008-2011, Sam Hocevar
+License: Expat
+
+License: Expat
+ Herewith is a license. Basically I want you to use this software and if
+ you think this license is preventing you from doing so let me know.
+ .
+ Permission is hereby granted, free of charge, to any person obtaining
+ a copy of this software and associated documentation files (the
+ "Software"), to deal in the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+ .
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the
+ Free Software Foundation; either version 2, or (at your option) any
+ later version.
+ .
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License along
+ with this program.  If not, see <http://www.gnu.org/licenses/>.
+Comment:
+ On Debian systems, the complete text of the GNU General Public License
+ (GPL) version 2 can be found in "/usr/share/common-licenses/GPL-2".

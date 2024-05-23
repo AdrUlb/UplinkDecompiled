@@ -1,0 +1,86 @@
+TL/DR: Skip to "WORK-AROUND".
+
+PROBLEM
+=======
+
+Unfortunately, FTGL has contained two strictly incompatible
+behaviours for a long time:
+
+The initial library set some OpenGL state, e.g. glEnable(GL_BLEND)
+and glBlendFunc(), from the rendering functions. Not only may this
+not be what the user wants, the blending function used is also not
+quite correct. See
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=742469) for a
+detailed explanation and example.
+
+A fix made by sammy in 2009, see
+https://github.com/frankheckenbach/ftgl/commit/29603ae3fa88c5b9e079a6db23be2cdea95aef39
+removed these settings, but it was never picked up by Debian and
+possibly other distributions.
+
+As a result, programs assuming the new behaviour would behave
+wrongly without the fix. This cannot be changed from within those
+programs, i.e. outside of the library, because the library without
+the fix would override the settings.
+
+OTOH, programs built against the original version would assume these
+settings and not render correctly with the fix applied. These could
+be fixed in principle by making the settings from within the
+programs, but after almost 10 years of ignoring the problem, some of
+those programs have apparently become unmaintained, or maintained
+just to the bare minimum, so expecting them all to fix the issue
+seems unrealistic.
+
+So as a kludge, version 2.4 of FTGL adds a new flag to choose the
+behaviour, as described under "WORK-AROUND" (not a real solution,
+but the best we can realistically get).
+
+To avoid mismatch between the two behaviours, the library will only
+allow to set this flag to the same value (but any number of times)
+within one program run. So, e.g. if your code includes some
+libraries that in turn use FTGL, and they all set this flag to
+false, all is fine. But if some of them set it to false, and some to
+true, things can't work, as described above. To avoid confusion, on
+an attempt to set the flag to a different value than was set before,
+FTGL will throw an exception (a std::logic_error which should not be
+caught in general usually, neither here in particular).
+
+
+WORK-AROUND
+===========
+
+The handling of OpenGL state should now be set with
+
+  FTLibrary::Instance().LegacyOpenGLState(On);
+
+You should add a call to this function near the start of all your
+programs that use FTGL, and in some strategic place in all libraries
+that use FTGL.
+
+If your code relies on FTGL automatically setting some OpenGL state,
+like the versions in Debian and possibly other distributions do,
+pass "true" for the "On" parameter. If you don't call
+LegacyOpenGLState, this is the default behaviour for now, but in the
+future, FTGL will warn about it and finally fail.
+
+If you need manual control over the OpenGL state, like the versions
+on GitHub do, pass "false".
+
+Even if you use the legacy version ("true"), you might want to
+consider changing to manual setting ("false"). To retain the old
+behaviour then, make the following OpenGL calls from your code,
+either globally, or before each respective rendering, possibly
+protected with glPushAttrib/glPopAttrib:
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+To get a better rendering function, instead add:
+
+  #define GL_GLEXT_PROTOTYPES
+
+before including OpenGL headers, and then do:
+
+  glEnable(GL_BLEND);
+  glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+                      GL_ONE, GL_ONE_MINUS_SRC_ALPHA);

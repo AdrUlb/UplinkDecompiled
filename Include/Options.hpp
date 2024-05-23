@@ -27,7 +27,7 @@ class Option : public UplinkObject
 	char tooltip[TOOLTIP_MAX];
 	bool yesOrNo;
 	bool visible;
-	int32_t value;
+	int value;
 
 public:
 	Option();
