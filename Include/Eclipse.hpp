@@ -24,3 +24,6 @@ Button* EclGetButton(const char* name);
 void EclDirtyButton();
 void EclRegisterButtonCallbacks(const char* name, ButtonDrawFunc drawFunc, ButtonMouseUpFunc mouseUpFunc, ButtonMouseDownFunc mouseDownFunc,
 								ButtonMouseMoveFunc mouseMoveFunc);
+void EclClearRectangle(int x, int y, int width, int height);
+void EclDrawAllButtons();
+void EclUpdateAllAnimations();

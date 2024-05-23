@@ -124,16 +124,27 @@ void SgStopMod()
 
 void SgPlayMod(const char* path)
 {
-	if (SgInitialised != 0)
+	if (!SgInitialised)
+		return;
+
+	SgStopMod();
+	currentmod = Mix_LoadMUS(path);
+	if (currentmod != nullptr)
 	{
-		SgStopMod();
-		currentmod = Mix_LoadMUS(path);
-		if (currentmod != nullptr)
-		{
-			Mix_VolumeMusic(musicVol());
-			Mix_PlayMusic(currentmod, -1);
-		}
+		Mix_VolumeMusic(musicVol());
+		Mix_PlayMusic(currentmod, 0);
 	}
+}
+
+static bool SgModFinished()
+{
+	if (!SgInitialised)
+		return false;
+
+	if (currentmod == nullptr)
+		return true;
+
+	return !Mix_PlayingMusic();
 }
 
 void SgPlaylist_Initialise()
@@ -223,4 +234,38 @@ void SgPlaylist_Play(const char* name)
 		requestedtime = EclGetAccurateTime();
 	}
 	strcpy(requestedplaylist, name);
+}
+
+void SgUpdate()
+{
+	// No next playlist
+	if (strcmp(requestedplaylist, "None") == 0)
+	{
+		// If we're playing a playlist and the current mod is finished, play the next
+		if ((strcmp(currentplaylist, "None") != 0 && SgModFinished()))
+			SgPlaylist_NextSong();
+
+		return;
+	}
+
+	// Fade out the current mod
+	auto fadeOutAmount = EclGetAccurateTime() - requestedtime;
+	fadeOutAmount /= 4000.0f;
+	fadeOutAmount *= 20.0f;
+	if (20 - fadeOutAmount > 0)
+	{
+		SgSetModVolume(20 - fadeOutAmount);
+		return;
+	}
+
+	// Play the requested playlist
+	SgStopMod();
+	strcpy(currentplaylist, requestedplaylist);
+	strcpy(requestedplaylist, "None");
+
+	requestedtime = -1;
+	songindex = -1;
+
+	SgSetModVolume(20);
+	SgPlaylist_NextSong();
 }

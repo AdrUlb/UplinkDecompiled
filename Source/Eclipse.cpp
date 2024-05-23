@@ -186,3 +186,19 @@ void EclDirtyButton()
 {
 	// Empty??
 }
+
+void EclClearRectangle(int x, int y, int width, int height)
+{
+	if (clear_draw != nullptr)
+		clear_draw(x, y, width, height);
+}
+
+void EclDrawAllButtons()
+{
+	puts("TODO: implement EclDrawAllButtons()");
+}
+
+void EclUpdateAllAnimations()
+{
+	puts("TODO: implement EclUpdateAllAnimations()");
+}

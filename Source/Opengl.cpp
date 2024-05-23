@@ -3,6 +3,9 @@
 #include <GL/gl.h>
 #include <Gci.hpp>
 #include <Globals.hpp>
+#include <Sg.hpp>
+
+static int lastidleupdate = 0;
 
 static void SetColour(const char* name)
 {
@@ -123,7 +126,37 @@ void textbutton_draw(struct Button* button, bool highlighted, bool clicked)
 
 static void display()
 {
-	UplinkAbort("TODO: implement display()");
+	if (app->Closed() || !GciAppVisible())
+		return;
+
+	glPushMatrix();
+	glLoadIdentity();
+
+	glMatrixMode(GL_PROJECTION);
+
+	glPushMatrix();
+	glLoadIdentity();
+
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
+	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	glOrtho(0.0, screenWidth, screenHeight, 0.0, 0.0, 0.0);
+
+	glTranslatef(0.375f, 0.375f, 0.0f);
+	EclClearRectangle(0, 0, screenWidth, screenHeight);
+	EclDrawAllButtons();
+
+	glPopAttrib();
+
+	glPopMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+
+	glPopMatrix();
+
+	GciSwapBuffers();
+	glFinish();
 }
 
 static void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
@@ -163,7 +196,13 @@ static void specialkeyboard(int keycode)
 
 static void idle()
 {
-	UplinkAbort("TODO: implement idle()");
+	if (app->Closed())
+		return;
+	EclGetAccurateTime();
+	EclUpdateAllAnimations();
+	SgUpdate();
+	app->Update();
+	lastidleupdate = EclGetAccurateTime();
 }
 
 static void resize(int width, int height)

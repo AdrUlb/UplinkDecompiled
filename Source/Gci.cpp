@@ -35,7 +35,7 @@ struct TimerEvent
 {
 	GciTimerCallback callback;
 	int callbackArg;
-	int fireTime;
+	uint32_t fireTime;
 };
 
 static std::list<TimerEvent*> timerEvents;
@@ -363,41 +363,36 @@ void GciMainLoop()
 		SDL_Event event;
 		while (SDL_PollEvent(&event) != 0 && !finished)
 		{
-			while (!finished)
+			switch (event.type)
 			{
-				switch (event.type)
-				{
-					case SDL_KEYDOWN:
-						puts("TODO: handle SDL_KEYDOWN");
-						break;
-					case SDL_MOUSEMOTION:
-						puts("TODO: handle SDL_MOUSEMOTION");
-						break;
-					case SDL_MOUSEBUTTONDOWN:
-						puts("TODO: handle SDL_MOUSEBUTTONDOWN");
-						break;
-					case SDL_MOUSEBUTTONUP:
-						puts("TODO: handle SDL_MOUSEBUTTONUP");
-						break;
-					case SDL_QUIT:
-						finished = true;
-						break;
-					case SDL_VIDEORESIZE:
-						puts("TODO: handle SDL_VIDEORESIZE");
-						break;
-					case SDL_VIDEOEXPOSE:
-						displayDamaged = true;
-						break;
-					default:
-						break;
-				}
+				case SDL_KEYDOWN:
+					puts("TODO: handle SDL_KEYDOWN");
+					break;
+				case SDL_MOUSEMOTION:
+					puts("TODO: handle SDL_MOUSEMOTION");
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					puts("TODO: handle SDL_MOUSEBUTTONDOWN");
+					break;
+				case SDL_MOUSEBUTTONUP:
+					puts("TODO: handle SDL_MOUSEBUTTONUP");
+					break;
+				case SDL_QUIT:
+					finished = true;
+					break;
+				case SDL_VIDEORESIZE:
+					puts("TODO: handle SDL_VIDEORESIZE");
+					break;
+				case SDL_VIDEOEXPOSE:
+					displayDamaged = true;
+					break;
+				default:
+					break;
 			}
-			if (event.type != SDL_QUIT)
-				break;
 		}
 
 		if (finished)
-			continue;
+			break;
 
 		for (auto it = timerEvents.begin(); it != timerEvents.end();)
 		{
@@ -415,4 +410,15 @@ void GciMainLoop()
 		if (gciIdleHandlerP != nullptr)
 			gciIdleHandlerP();
 	}
+}
+
+bool GciAppVisible()
+{
+	return (SDL_GetAppState() & SDL_APPACTIVE) != 0;
+}
+
+void GciSwapBuffers()
+{
+	SDL_GL_SwapBuffers();
+	displayDamaged = false;
 }

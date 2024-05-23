@@ -48,3 +48,8 @@ const char* Game::GetID()
 {
 	return "GAME";
 }
+
+int Game::GameSpeed()
+{
+	return speed;
+}

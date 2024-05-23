@@ -32,4 +32,5 @@ public:
 	void Print() override;
 	void Update() override;
 	const char* GetID() override;
+	int GameSpeed();
 };

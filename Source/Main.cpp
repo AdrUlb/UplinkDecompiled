@@ -12,7 +12,6 @@
 App* app = nullptr;
 FILE* file_stdout = nullptr;
 const char* versionNumberString = "1.55";
-
 Game* game = nullptr;
 
 static char* vmg57670648335164_br_find_exe(unsigned int* error)

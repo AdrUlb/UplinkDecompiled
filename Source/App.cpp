@@ -35,7 +35,9 @@ void App::Print()
 
 void App::Update()
 {
-	UplinkAbort("TODO: implement App::Update()");
+	UplinkAssert(game != nullptr);
+	const auto speed = game->GameSpeed();
+	puts("TODO: implement App::Update()");
 }
 
 void App::Close()
