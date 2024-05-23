@@ -15,9 +15,6 @@ const char* versionNumberString = "1.55";
 
 Game* game = nullptr;
 
-static float windowScaleX;
-static float windowScaleY;
-
 static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {
 	auto buffer = (char*)malloc(0xFFF);
@@ -102,12 +99,6 @@ static char* vmg57670648335164_br_find_exe(unsigned int* error)
 		*error = 3;
 
 	return nullptr;
-}
-
-void SetWindowScaleFactor(float x, float y)
-{
-	windowScaleX = x;
-	windowScaleY = y;
 }
 
 static bool VerifyLegitAndCodeCardCheck()
@@ -350,8 +341,8 @@ static void Init_Fonts()
 			puts("Loading system fonts into memory...");
 		}
 
-		const auto success = GciLoadTrueTypeFont(7, "Dungeon", path, 16) && GciLoadTrueTypeFont(5, "Dungeon", path, 9) &&
-							 GciLoadTrueTypeFont(6, "Dungeon", path, 11);
+		const auto success =
+			GciLoadTrueTypeFont(7, "Dungeon", path, 16) && GciLoadTrueTypeFont(5, "Dungeon", path, 9) && GciLoadTrueTypeFont(6, "Dungeon", path, 11);
 
 		if (debug)
 		{

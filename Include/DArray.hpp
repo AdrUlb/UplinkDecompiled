@@ -18,13 +18,13 @@ public:
 	void Empty();
 	T GetData(int index);
 	int NumUsed();
-	void PutData(T& value);
-	void PutData(T& value, int index);
+	void PutData(T const& value);
+	void PutData(T const& value, int index);
 	void RemoveData(int index);
 	void SetSize(int newSize);
 	void SetStepSize(int newStepSize);
 	bool ValidIndex(int index);
-	
+
 	inline int Size()
 	{
 		return size;

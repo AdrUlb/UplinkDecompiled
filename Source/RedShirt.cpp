@@ -451,7 +451,7 @@ const char* RsArchiveFileOpen(const char* filePath)
 	assert(extension);
 
 	bool success = false;
-	char extractPath[0x100];
+	char extractPath[0x200];
 	for (auto i = 0; i < 3; i++)
 	{
 		sprintf(extractPath, "%stemp%d%s", tempdir, i, extension);
@@ -479,7 +479,7 @@ int RsArchiveFileClose(const char* filePath, FILE* file)
 	assert(extension);
 	int ret;
 
-	char extractFilePath[0x100];
+	char extractFilePath[0x200];
 	for (int i = 0; i != 3; i++)
 	{
 		sprintf(extractFilePath, "%stemp%d%s", tempdir, i, extension);

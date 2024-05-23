@@ -43,7 +43,7 @@ template <class T> int DArray<T>::NumUsed()
 	return count;
 }
 
-template <class T> void DArray<T>::PutData(T& value)
+template <class T> void DArray<T>::PutData(T const& value)
 {
 	// Find first valid index by iterating through all indices until the end is reached or an invalid element is found
 	int validIndex = 0;
@@ -58,7 +58,7 @@ template <class T> void DArray<T>::PutData(T& value)
 	dataValid[validIndex] = true;
 }
 
-template <class T> void DArray<T>::PutData(T& value, int index)
+template <class T> void DArray<T>::PutData(T const& value, int index)
 {
 	assert(index < size && index >= 0);
 	data[index] = value;

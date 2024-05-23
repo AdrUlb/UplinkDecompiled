@@ -2,48 +2,37 @@
 
 #include <Image.hpp>
 
-class Button;
+struct Button;
 
 typedef void (*ButtonDrawFunc)(struct Button*, bool, bool);
 typedef void (*ButtonMouseDownFunc)(struct Button*);
 typedef void (*ButtonMouseUpFunc)(struct Button*);
 typedef void (*ButtonMouseMoveFunc)(struct Button*);
 
-class Button
+struct Button
 {
-	int x;
-	int y;
-	int width;
-	int height;
-	char* caption;
-	char* name;
-	char* tooltip;
+	int X;
+	int Y;
+	int Width;
+	int Height;
+	char* Caption;
+	char* Name;
+	char* Tooltip;
 	int field_30;
-	bool dirty;
-	struct Image* image1;
-	struct Image* image2;
-	struct Image* image3;
-	ButtonDrawFunc drawFunc;
-	ButtonMouseDownFunc mouseDownFunc;
-	ButtonMouseUpFunc mouseUpFunc;
-	ButtonMouseMoveFunc mouseMoveFunc;
+	bool Dirty;
+	Image* ImageNormal;
+	Image* ImageHighlighted;
+	Image* ImageClicked;
+	ButtonDrawFunc DrawFunc;
+	ButtonMouseDownFunc MouseDownFunc;
+	ButtonMouseUpFunc MouseUpFunc;
+	ButtonMouseMoveFunc MouseMoveFunc;
 
 	Button();
 	virtual ~Button();
-
-public:
-	bool GetDirty()
-	{
-		return dirty;
-	}
-
-	void SetDirty(bool value = true)
-	{
-		dirty = value;
-	}
-
-	const char* GetName()
-	{
-		return name;
-	}
+	void SetStandardImage(Image* value);
+	void RegisterDrawFunction(ButtonDrawFunc func);
+	void RegisterMouseUpFunction(ButtonMouseUpFunc func);
+	void RegisterMouseDownFunction(ButtonMouseDownFunc func);
+	void RegisterMouseMoveFunction(ButtonMouseMoveFunc func);
 };

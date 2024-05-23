@@ -30,6 +30,31 @@ static void superhighlight_draw(Button* button)
 	UplinkAbort("TODO: implement superhighlight_draw()");
 }
 
+void imagebutton_draw(Button* button, bool highlighted, bool clicked)
+{
+	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
+	glEnable(GL_SCISSOR_TEST);
+
+	Image* image;
+	if (clicked && button->ImageClicked != nullptr)
+	{
+		image = button->ImageClicked;
+	}
+	else if (highlighted && button->ImageHighlighted != nullptr)
+	{
+		image = button->ImageHighlighted;
+	}
+	else
+	{
+		image = button->ImageNormal;
+	}
+
+	image->Draw(button->X, button->Y);
+
+	glDisable(GL_SCISSOR_TEST);
+}
+
 void display()
 {
 	UplinkAbort("TODO: implement display()");

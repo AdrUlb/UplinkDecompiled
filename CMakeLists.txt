@@ -15,6 +15,6 @@ add_executable(UplinkDecompiled ${UPLINK_SOURCES})
 
 target_include_directories(UplinkDecompiled PRIVATE Include)
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
-target_link_libraries(UplinkDecompiled tcp4u crypto SDL GL ftgl SDL_mixer)
+target_link_libraries(UplinkDecompiled tcp4u crypto SDL GL ftgl SDL_mixer tiff)
 
 add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> -graphics_fullscreen !graphics_screenwidth 1280 !graphics_screenheight 720)

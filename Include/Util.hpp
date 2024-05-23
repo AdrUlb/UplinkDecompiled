@@ -22,6 +22,9 @@ bool LoadDynamicStringImpl(const char* sourceFile, const int sourceLine, char*& 
 void SaveDynamicString(const char* value, int maxSize, FILE* file);
 void SaveDynamicString(const char* value, FILE* file);
 UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
+void SetWindowScaleFactor(float x, float y);
+int GetScaledXPosition(int pos);
+int GetScaledYPosition(int pos);
 
 template <class... Args>
 static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)

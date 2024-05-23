@@ -7,6 +7,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+static float windowScaleX;
+static float windowScaleY;
+
 void PrintStackTrace()
 {
 	constexpr size_t bufferSize = 0x14;
@@ -199,4 +202,20 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 			printf("Unrecognised OBJECTID=%d", static_cast<int>(objectId));
 			return nullptr;
 	}
+}
+
+void SetWindowScaleFactor(float x, float y)
+{
+	windowScaleX = x;
+	windowScaleY = y;
+}
+
+int GetScaledXPosition(int pos)
+{
+	return pos * windowScaleX;
+}
+
+int GetScaledYPosition(int pos)
+{
+	return pos * windowScaleY;
 }

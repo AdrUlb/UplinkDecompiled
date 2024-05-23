@@ -32,6 +32,13 @@ class MainMenuScreen
 public:
 	MainMenuScreen();
 	virtual ~MainMenuScreen();
+	virtual void Create();
+	virtual void Remove();
+	virtual void Update();
+	virtual bool IsVisible();
+	virtual MainMenuScreenCode ScreenID();
+	virtual bool ReturnKeyPressed();
+	void RegisterButton(int x, int y, int width, int height, const char* caption, const char* name);
 };
 
 class MainMenu : UplinkObject
