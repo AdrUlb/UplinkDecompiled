@@ -9,6 +9,7 @@
 #include <EventScheduler.hpp>
 #include <GatewayDef.hpp>
 #include <Person.hpp>
+#include <Player.hpp>
 #include <PlotGenerator.hpp>
 #include <UplinkObject.hpp>
 #include <VLocation.hpp>

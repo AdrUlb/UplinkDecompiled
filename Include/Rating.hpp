@@ -17,6 +17,7 @@ class Rating : UplinkObject
 	int neuromancerScore;
 	int creditRating;
 
+public:
 	Rating();
 	~Rating() override;
 	bool Load(FILE* file) override;
