@@ -24,11 +24,6 @@ void FirstTimeLoadingInterface::Remove()
 	UplinkAbort("TODO: implement FirstTimeLoadingInterface::Remove()");
 }
 
-void FirstTimeLoadingInterface::Update()
-{
-	UplinkAbort("TODO: implement FirstTimeLoadingInterface::Update()");
-}
-
 bool FirstTimeLoadingInterface::IsVisible()
 {
 	return EclGetButton("firsttimeloading_text") != nullptr;
@@ -36,7 +31,7 @@ bool FirstTimeLoadingInterface::IsVisible()
 
 MainMenuScreenCode FirstTimeLoadingInterface::ScreenID()
 {
-	UplinkAbort("TODO: implement FirstTimeLoadingInterface::ScreenID()");
+	return MainMenuScreenCode::FirstTimeLoading;
 }
 
 bool FirstTimeLoadingInterface::ReturnKeyPressed()

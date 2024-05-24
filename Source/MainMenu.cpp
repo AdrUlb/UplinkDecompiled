@@ -46,25 +46,25 @@ void MainMenuScreen::Create()
 	button_assignbitmap("mainmenu_background", "mainmenu/uplinklogo.tif");
 	EclRegisterButtonCallbacks("mainmenu_background", imagebutton_draw, 0, 0, nullptr);
 }
+
 void MainMenuScreen::Remove()
 {
 	UplinkAbort("TODO: implement MainMenuScreen::Remove");
 }
-void MainMenuScreen::Update()
-{
-	UplinkAbort("TODO: implement MainMenuScreen::Update");
-}
+
+void MainMenuScreen::Update() {}
+
 bool MainMenuScreen::IsVisible()
 {
-	UplinkAbort("TODO: implement MainMenuScreen::IsVisible");
+	return false;
 }
 MainMenuScreenCode MainMenuScreen::ScreenID()
 {
-	UplinkAbort("TODO: implement MainMenuScreen::ScreenID");
+	return MainMenuScreenCode::Unknown;
 }
 bool MainMenuScreen::ReturnKeyPressed()
 {
-	UplinkAbort("TODO: implement MainMenuScreen::ReturnKeyPressed");
+	return false;
 }
 
 void MainMenuScreen::RegisterButton(int x, int y, int width, int height, const char* caption, const char* name)
@@ -85,7 +85,8 @@ MainMenu::~MainMenu()
 
 void MainMenu::Update()
 {
-	UplinkAbort("TODO: implement MainMenu::Update()");
+	if (screen != nullptr)
+		screen->Update();
 }
 
 const char* MainMenu::GetID()
@@ -105,12 +106,15 @@ MainMenuScreen* MainMenu::GetMenuScreen()
 
 MainMenuScreenCode MainMenu::InScreen()
 {
-	UplinkAbort("TODO: implement MainMenu::InScreen()");
+	if (screen == nullptr)
+		return MainMenuScreenCode::Unknown;
+
+	return screen->ScreenID();
 }
 
 bool MainMenu::IsVisible()
 {
-	UplinkAbort("TODO: implement MainMenu::IsVisible()");
+	return InScreen() != MainMenuScreenCode::Unknown;
 }
 
 void MainMenu::Remove()

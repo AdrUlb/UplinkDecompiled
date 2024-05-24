@@ -14,8 +14,9 @@
 #include <UplinkObject.hpp>
 #include <VLocation.hpp>
 
-struct World : UplinkObject
+class World : UplinkObject
 {
+public:
 	Date nextUpdateDate;
 	Date currentDate;
 	EventScheduler eventScheduler;

@@ -4,7 +4,7 @@
 #include <MainMenu.hpp>
 #include <Network.hpp>
 #include <Options.hpp>
-#include <PhoneDiallerScreen.hpp>
+#include <PhoneDialler.hpp>
 #include <UplinkObject.hpp>
 #include <cstdint>
 
@@ -34,7 +34,7 @@ private:
 	Options* options;
 	Network* network;
 	MainMenu* mainMenu;
-	PhoneDiallerScreen* phoneDiallerScreen;
+	PhoneDialler* phoneDiallerScreen;
 	char* nextLoadGame;
 	bool checkCodecard;
 
@@ -62,8 +62,8 @@ public:
 	Network* GetNetwork();
 	Options* GetOptions();
 
-	void RegisterPhoneDialler(PhoneDiallerScreen* phoneDiallerScreen);
-	void UnRegisterPhoneDialler(PhoneDiallerScreen* phoneDiallerScreen);
+	void RegisterPhoneDialler(PhoneDialler* phoneDiallerScreen);
+	void UnRegisterPhoneDialler(PhoneDialler* phoneDiallerScreen);
 
 	static void CoreDump();
 	static DArray<char*>* ListExistingGames();

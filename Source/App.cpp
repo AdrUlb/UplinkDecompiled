@@ -47,10 +47,49 @@ void App::Update()
 		}
 		else
 		{
-			UplinkAbort("TODO: implement App::Update()");
+		label_40772f:
+			if (!Closed())
+			{
+			label_4078b8:
+				if (game->IsRunning())
+					game->Update();
+			}
 		}
 	}
-	UplinkAbort("TODO: implement App::Update()");
+
+	if (speed == -1 || running)
+	{
+		UplinkAbort("TODO: implement App::Update()");
+	}
+
+	if (!Closed() && mainMenu->IsVisible())
+		mainMenu->Update();
+
+	if (!Closed())
+	{
+		bool isRunning = game->IsRunning();
+		enum MainMenuScreenCode mainMenuScreen;
+		if (isRunning == 0)
+		{
+			mainMenuScreen = mainMenu->InScreen();
+		}
+
+		if ((isRunning != 0 || (isRunning == 0 && mainMenuScreen == MainMenuScreenCode::FirstTimeLoading)))
+		{
+			if (phoneDiallerScreen != nullptr && phoneDiallerScreen->UpdateSpecial())
+				UnRegisterPhoneDialler(phoneDiallerScreen);
+		}
+	}
+
+	if (!Closed() && network->IsActive())
+	{
+		UplinkAbort("TODO: implement App::Update()");
+	}
+
+	if (!Closed())
+	{
+		IRCInterface::UpdateMessages();
+	}
 }
 
 void App::Close()
@@ -147,7 +186,7 @@ void App::LoadGame(const char* name)
 	UplinkAbort("TODO: implement App::LoadGame(const char*)");
 }
 
-void App::RegisterPhoneDialler(PhoneDiallerScreen* newPhoneDiallerScreen)
+void App::RegisterPhoneDialler(PhoneDialler* newPhoneDiallerScreen)
 {
 	UplinkAssert(newPhoneDiallerScreen != nullptr);
 	UplinkAssert(phoneDiallerScreen != newPhoneDiallerScreen);
@@ -158,7 +197,7 @@ void App::RegisterPhoneDialler(PhoneDiallerScreen* newPhoneDiallerScreen)
 	phoneDiallerScreen = newPhoneDiallerScreen;
 }
 
-void App::UnRegisterPhoneDialler(PhoneDiallerScreen* phoneDiallerScreen)
+void App::UnRegisterPhoneDialler(PhoneDialler* phoneDiallerScreen)
 {
 	(void)phoneDiallerScreen;
 	UplinkAbort("TODO: implement App::UnRegisterPhoneDialler(PhoneDiallerScreen*)");
