@@ -33,4 +33,6 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	int GameSpeed();
+	World* GetWorld();
+	bool IsRunning();
 };

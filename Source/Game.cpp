@@ -53,3 +53,14 @@ int Game::GameSpeed()
 {
 	return speed;
 }
+
+World* Game::GetWorld()
+{
+	UplinkAssert(world != nullptr);
+	return world;
+}
+
+bool Game::IsRunning()
+{
+	return speed > 0;
+}
