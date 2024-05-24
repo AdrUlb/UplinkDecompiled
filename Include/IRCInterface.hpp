@@ -4,11 +4,21 @@ namespace IRCInterface
 {
 	static void CloseConnection()
 	{
-		puts("TODO: implement IRCInterface::CloseConnection()");
+		static auto called = false;
+		if (!called)
+		{
+			puts("TODO: implement IRCInterface::CloseConnection()");
+			called = true;
+		}
 	}
 
 	static void UpdateMessages()
 	{
-		puts("TODO: implement IRCInterface::UpdateMessages()");
+		static auto called = false;
+		if (!called)
+		{
+			puts("TODO: implement IRCInterface::UpdateMessages()");
+			called = true;
+		}
 	}
 } // namespace IRCInterface

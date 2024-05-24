@@ -195,10 +195,20 @@ void EclClearRectangle(int x, int y, int width, int height)
 
 void EclDrawAllButtons()
 {
-	puts("TODO: implement EclDrawAllButtons()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement EclDrawAllButtons()");
+		called = true;
+	}
 }
 
 void EclUpdateAllAnimations()
 {
-	puts("TODO: implement EclUpdateAllAnimations()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement EclUpdateAllAnimations()");
+		called = true;
+	}
 }

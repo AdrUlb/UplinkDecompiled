@@ -10,7 +10,13 @@ class Network
 public:
 	bool IsActive()
 	{
-		puts("TODO: implement Network::IsActive()");
+		static auto called = false;
+		if (!called)
+		{
+			puts("TODO: implement Network::IsActive()");
+			called = true;
+		}
+
 		return false;
 	}
 };
