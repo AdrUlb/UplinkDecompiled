@@ -39,4 +39,5 @@ public:
 	void RegisterMouseDownFunction(ButtonMouseDownFunc func);
 	void RegisterMouseMoveFunction(ButtonMouseMoveFunc func);
 	void SetTooltip(const char* value);
+	void Draw(bool highlighted, bool clicked);
 };

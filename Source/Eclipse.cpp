@@ -155,6 +155,77 @@ void EclReset()
 	EclDirtyClear();
 }
 
+bool EclIsClicked(const char* name)
+{
+	if (currentclick == 0)
+		return false;
+
+	return strcmp(currentclick, name) == 0;
+}
+
+bool EclIsHighlighted(const char* name)
+{
+	if (currenthighlight == 0)
+		return false;
+
+	return strcmp(currenthighlight, name) == 0;
+}
+
+bool EclIsButtonEditable(const char* name)
+{
+	if (EclGetButton(name) == 0)
+		return false;
+
+	for (auto i = 0; i < editablebuttons.Size(); i++)
+	{
+		if (!editablebuttons.ValidIndex(i))
+			continue;
+
+		if (strcmp(editablebuttons.GetData(i), name) == 0)
+			return true;
+	}
+	return false;
+}
+
+void EclDrawButton(int index)
+{
+	if (buttons.ValidIndex(index) == 0)
+		return;
+
+	const auto button = buttons[index];
+
+	if (EclIsClicked(button->Name))
+	{
+		button->Draw(false, true);
+		return;
+	}
+
+	if (EclIsHighlighted(button->Name))
+	{
+		button->Draw(true, false);
+		return;
+	}
+
+	button->Draw(false, false);
+}
+
+void EclDrawAllButtons()
+{
+	for (auto i = buttons.Size() - 1; i >= 0; i--)
+	{
+		if (!buttons.ValidIndex(i))
+			continue;
+
+		const auto button = buttons[i];
+		if (button->X < 0 && button->Y < 0)
+			continue;
+
+		EclDrawButton(i);
+		button->Dirty = false;
+	}
+	data_7b3788 = dirtyrectangles;
+}
+
 void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* name)
 {
 	if (EclGetButton(name) != nullptr)
@@ -191,16 +262,6 @@ void EclClearRectangle(int x, int y, int width, int height)
 {
 	if (clear_draw != nullptr)
 		clear_draw(x, y, width, height);
-}
-
-void EclDrawAllButtons()
-{
-	static auto called = false;
-	if (!called)
-	{
-		puts("TODO: implement EclDrawAllButtons()");
-		called = true;
-	}
 }
 
 void EclUpdateAllAnimations()

@@ -60,3 +60,5 @@ void GciTimerFunc(int delay, GciTimerCallback callback, int arg);
 void GciMainLoop();
 bool GciAppVisible();
 void GciSwapBuffers();
+int GciTextWidth(char const* text, int font);
+int GciTextWidth(const char* text);

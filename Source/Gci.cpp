@@ -4,6 +4,7 @@
 #include <FTGL/ftgl.h>
 #include <SDL/SDL.h>
 #include <Util.hpp>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <list>
@@ -369,7 +370,10 @@ void GciMainLoop()
 					puts("TODO: handle SDL_KEYDOWN");
 					break;
 				case SDL_MOUSEMOTION:
-					puts("TODO: handle SDL_MOUSEMOTION");
+					if (gciMotionHandlerP != nullptr)
+						gciMotionHandlerP(event.motion.x, event.motion.y);
+					if (gciPassiveMotionHandlerP != nullptr)
+						gciPassiveMotionHandlerP(event.motion.x, event.motion.y);
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 					puts("TODO: handle SDL_MOUSEBUTTONDOWN");
@@ -421,4 +425,32 @@ void GciSwapBuffers()
 {
 	SDL_GL_SwapBuffers();
 	displayDamaged = false;
+}
+
+static int GciFallbackTextWidth(const char* text)
+{
+	static auto inside = false;
+
+	if (inside)
+		abort();
+
+	inside = true;
+	GciTextWidth(text, gci_defaultfont);
+	inside = false;
+	return 0;
+}
+
+int GciTextWidth(char const* text, int font)
+{
+	if (fonts[font] == nullptr)
+		return GciFallbackTextWidth(text);
+
+	float llx, lly, llz, urx, ury, urz;
+	fonts[font]->BBox(text, llx, lly, llz, urx, ury, urz);
+	return (int)(fabs(urx - llx) + 0.5);
+}
+
+int GciTextWidth(const char* text)
+{
+	return GciTextWidth(text, gci_defaultfont);
 }

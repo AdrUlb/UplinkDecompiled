@@ -22,6 +22,75 @@ static void SetColour(const char* name)
 	glColor3f(colour->red, colour->green, colour->blue);
 }
 
+static LList<char*>* wordwraptext(const char* text, int width)
+{
+	if (text == nullptr)
+		return nullptr;
+
+	const auto ret = new LList<char*>();
+
+	if (text[0] == 0)
+	{
+		const auto str = new char[2];
+		str[0] = 0;
+
+		ret->PutData(str);
+		return ret;
+	}
+
+	const auto avgCharWidth = GciTextWidth("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") / 52.0f;
+	auto charsPerLine = static_cast<int>(width / avgCharWidth);
+	if (charsPerLine == 0)
+		charsPerLine = 1;
+
+	const auto textLength = strlen(text);
+	auto line = new char[textLength + 3];
+	UplinkSnprintf(line, textLength + 2, "%s\n", text);
+
+	ret->PutData(line);
+	while (true)
+	{
+		// Find the next newline
+		char* newlineIndex = strchr(line, '\n');
+		if (newlineIndex == 0)
+			break;
+
+		// If the next newline is within the maximum width allowed
+		if (newlineIndex <= line + charsPerLine)
+		{
+			// Replace newline with null terminator
+			*newlineIndex = 0;
+
+			// Next line begins right after newline
+			line = newlineIndex + 1;
+
+			// Add line to list
+			ret->PutData(line);
+
+			continue;
+		}
+
+		// Save the last character, replace it with a null terminator
+		const auto lastChar = line[charsPerLine - 1];
+		line[charsPerLine - 1] = 0;
+
+		// Find the last space in the current line, if there is none, advance the line position, add it to the list and continue
+		auto spaceIndex = strrchr(line, ' ');
+		if (spaceIndex == 0)
+		{
+			line += charsPerLine;
+			ret->PutData(line);
+			continue;
+		}
+
+		// If a space was found, replace it with a null terminator, put back the character that was replaced, and continue
+		*spaceIndex = 0;
+		line[charsPerLine - 1] = lastChar;
+		line = spaceIndex + 1;
+		ret->PutData(line);
+	}
+}
+
 static void clear_draw(int x, int y, int width, int height)
 {
 	SetColour("Background");
@@ -48,10 +117,26 @@ static void border_draw(Button* button)
 
 static void text_draw(Button* button, bool highlighted, bool clicked)
 {
-	(void)button;
-	(void)highlighted;
 	(void)clicked;
-	puts("TODO: implement text_draw()");
+
+	UplinkAssert(button != nullptr);
+
+	const auto screenheight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	glScissor(button->X, screenheight - button->Y - button->Height, button->Width, button->Height);
+	glEnable(GL_SCISSOR_TEST);
+	SetColour("DefaultText");
+
+	LList<char*>* wrappedText;
+	if (highlighted && EclIsButtonEditable(button->Name))
+	{
+		UplinkAbort("TODO: implement text_draw()");
+	}
+	else
+	{
+		UplinkAbort("TODO: implement text_draw()");
+	}
+
+	UplinkAbort("TODO: implement text_draw()");
 }
 
 static void button_draw(Button* button, bool highlighted, bool clicked)
@@ -172,14 +257,24 @@ static void mousemove(int x, int y)
 {
 	(void)x;
 	(void)y;
-	UplinkAbort("TODO: implement mousemove()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement mousemove()");
+		called = true;
+	}
 }
 
 static void passivemouse(int x, int y)
 {
 	(void)x;
 	(void)y;
-	UplinkAbort("TODO: implement passivemouse()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement passivemouse()");
+		called = true;
+	}
 }
 
 static void keyboard(char keychar)

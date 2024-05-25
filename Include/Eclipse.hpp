@@ -18,6 +18,8 @@ void EclRegisterClearDrawFunction(ClearDrawFunc func);
 void EclRegisterDefaultButtonCallbacks(ButtonDrawFunc draw, ButtonMouseUpFunc mouseUp, ButtonMouseDownFunc mouseDown, ButtonMouseMoveFunc mouseMove);
 void EclRegisterSuperHighlightFunction(int borderWidth, SuperhighlightDrawFunc func);
 void EclReset();
+bool EclIsButtonEditable(const char* name);
+void EclDrawAllButtons();
 void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* name);
 void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* tooltip, const char* name);
 Button* EclGetButton(const char* name);
@@ -25,5 +27,4 @@ void EclDirtyButton();
 void EclRegisterButtonCallbacks(const char* name, ButtonDrawFunc drawFunc, ButtonMouseUpFunc mouseUpFunc, ButtonMouseDownFunc mouseDownFunc,
 								ButtonMouseMoveFunc mouseMoveFunc);
 void EclClearRectangle(int x, int y, int width, int height);
-void EclDrawAllButtons();
 void EclUpdateAllAnimations();

@@ -6,7 +6,7 @@ void ScriptLibrary::RunScript(int index)
 	{
 		default:
 			printf("WARNING: Unknown script index %d\n", index);
-			UplinkAbort("Script not implemented!!");
+			UplinkAbort("TODO: Script not implemented!!");
 			break;
 	}
 }

@@ -101,3 +101,10 @@ void Button::SetTooltip(const char* value)
 	Tooltip = new char[strlen(value) + 1];
 	strcpy(Tooltip, value);
 }
+void Button::Draw(bool highlighted, bool clicked)
+{
+	if (DrawFunc == nullptr)
+		return;
+
+	DrawFunc(this, highlighted, clicked);
+}
