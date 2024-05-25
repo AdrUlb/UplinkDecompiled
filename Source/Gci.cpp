@@ -2,6 +2,7 @@
 
 #include <FTFace.h>
 #include <FTGL/ftgl.h>
+#include <GL/gl.h>
 #include <SDL/SDL.h>
 #include <Util.hpp>
 #include <cmath>
@@ -435,9 +436,21 @@ static int GciFallbackTextWidth(const char* text)
 		abort();
 
 	inside = true;
-	GciTextWidth(text, gci_defaultfont);
+	const auto ret = GciTextWidth(text, gci_defaultfont);
 	inside = false;
-	return 0;
+	return ret;
+}
+
+static void GciFallbackDrawText(int x, int y, const char* text)
+{
+	static auto inside = false;
+
+	if (inside)
+		abort();
+
+	inside = true;
+	GciDrawText(x, y, text, gci_defaultfont);
+	inside = false;
 }
 
 int GciTextWidth(char const* text, int font)
@@ -453,4 +466,21 @@ int GciTextWidth(char const* text, int font)
 int GciTextWidth(const char* text)
 {
 	return GciTextWidth(text, gci_defaultfont);
+}
+
+void GciDrawText(int x, int y, const char* text, int font)
+{
+	if (!gci_truetypeenabled || fonts[font] == nullptr)
+	{
+		GciFallbackDrawText(x, y, text);
+		return;
+	}
+
+	glRasterPos2i(x, y);
+	fonts[font]->Render(text);
+}
+
+void GciDrawText(int x, int y, const char* text)
+{
+	GciDrawText(x, y, text, gci_defaultfont);
 }

@@ -6,6 +6,7 @@
 #include <Sg.hpp>
 
 static int lastidleupdate = 0;
+static int curserflash = 0x0;
 
 static void SetColour(const char* name)
 {
@@ -48,6 +49,7 @@ static LList<char*>* wordwraptext(const char* text, int width)
 	UplinkSnprintf(line, textLength + 2, "%s\n", text);
 
 	ret->PutData(line);
+
 	while (true)
 	{
 		// Find the next newline
@@ -89,6 +91,8 @@ static LList<char*>* wordwraptext(const char* text, int width)
 		line = spaceIndex + 1;
 		ret->PutData(line);
 	}
+
+	return ret;
 }
 
 static void clear_draw(int x, int y, int width, int height)
@@ -129,14 +133,45 @@ static void text_draw(Button* button, bool highlighted, bool clicked)
 	LList<char*>* wrappedText;
 	if (highlighted && EclIsButtonEditable(button->Name))
 	{
-		UplinkAbort("TODO: implement text_draw()");
+		if (time(nullptr) < curserflash - 1)
+		{
+			wrappedText = wordwraptext(button->Caption, button->Width);
+		}
+		else
+		{
+			const auto captionLength = strlen(button->Caption) + 2;
+			char* rax_13 = new char[captionLength];
+			UplinkSnprintf(rax_13, captionLength, "%s_", button->Caption);
+
+			wrappedText = wordwraptext(rax_13, button->Width);
+			delete[] rax_13;
+
+			if (time(nullptr) >= curserflash)
+				curserflash = (time(nullptr) + 2);
+		}
 	}
 	else
+		wrappedText = wordwraptext(button->Caption, button->Width);
+
+	if (wrappedText == nullptr)
 	{
-		UplinkAbort("TODO: implement text_draw()");
+		glDisable(GL_SCISSOR_TEST);
+		return;
 	}
 
-	UplinkAbort("TODO: implement text_draw()");
+	auto yOffset = 0;
+	for (auto i = 0; i < wrappedText->Size(); i++)
+	{
+		GciDrawText(button->X + 10, button->Y + 10 + yOffset, wrappedText->GetData(i));
+		yOffset += 15;
+	}
+
+	if (wrappedText->ValidIndex(0) && wrappedText->GetData(0) != nullptr)
+		delete[] wrappedText->GetData(0);
+
+	delete wrappedText;
+
+	glDisable(GL_SCISSOR_TEST);
 }
 
 static void button_draw(Button* button, bool highlighted, bool clicked)

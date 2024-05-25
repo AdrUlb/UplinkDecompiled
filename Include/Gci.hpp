@@ -62,3 +62,5 @@ bool GciAppVisible();
 void GciSwapBuffers();
 int GciTextWidth(char const* text, int font);
 int GciTextWidth(const char* text);
+void GciDrawText(int x, int y, const char* text, int font);
+void GciDrawText(int x, int y, const char* text);
