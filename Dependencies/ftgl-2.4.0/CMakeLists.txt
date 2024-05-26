@@ -8,7 +8,6 @@ SET(VERSION_MAJOR 4)
 SET(VERSION_MINOR 0)
 SET(FTGL_SOVERSION 1)
 
-FIND_PACKAGE(Freetype REQUIRED) # if it fails, check this: https://bugs.launchpad.net/ubuntu/+source/cmake/+bug/826988
 FIND_PACKAGE(OpenGL   REQUIRED)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
@@ -16,8 +15,8 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/FTFont)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/FTGL)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/FTGlyph)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/FTLayout)
-INCLUDE_DIRECTORIES(${FREETYPE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(../freetype-2.5.2/include)
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
@@ -69,8 +68,3 @@ if (WIN32)
 else ()
   set(cmakedir lib/cmake/FTGL)
 endif ()
-
-install(EXPORT FTGL-targets DESTINATION "${cmakedir}")
-install(
-  FILES       "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/FTGLConfig.cmake"
-  DESTINATION "${cmakedir}")

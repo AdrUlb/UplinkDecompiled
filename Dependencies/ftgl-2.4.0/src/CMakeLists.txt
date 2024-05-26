@@ -119,11 +119,10 @@ SET(ftlayout_sources
 
 ADD_LIBRARY(ftgl ${libftgl_la_SOURCES} ${ftgl_headers} ${ftglyph_sources} ${ftfont_sources} ${ftlayout_sources})
 TARGET_LINK_LIBRARIES(ftgl
-	${FREETYPE_LIBRARIES}
-	${OPENGL_LIBRARIES}
+	${OPENGL_LIBRARIES} freetype
 )
 
-target_include_directories(ftgl PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> ${FREETYPE_INCLUDE_DIRS})
+target_include_directories(ftgl PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 IF(NOT BUILD_SHARED_LIBS)
 	TARGET_LINK_LIBRARIES(ftgl ${OPENGL_LIBRARIES})
@@ -137,13 +136,5 @@ SET_TARGET_PROPERTIES(
     DEBUG_POSTFIX "d"
 )
 
-INSTALL(TARGETS   ftgl                         	  
-    EXPORT  FTGL-targets
-	RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-)
-
 FILE(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/FTGL/*.h")
 INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/FTGL)
-

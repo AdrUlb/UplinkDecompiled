@@ -306,6 +306,7 @@ bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size
 	}
 
 	const auto font = new FTGLBitmapFont(path);
+	font->GlyphLoadFlags(FT_LOAD_LINEAR_DESIGN);
 
 	if (font->Error() != FT_Err_Ok || !font->FaceSize(size, 96))
 	{
