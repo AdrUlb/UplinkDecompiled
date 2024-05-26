@@ -4,6 +4,46 @@
 #include <Util.hpp>
 #include <cstring>
 
+bool DemoPlotGenerator::Load(FILE* file)
+{
+	return FileReadData(&scene, 4, 1, file);
+}
+
+void DemoPlotGenerator::Save(FILE* file)
+{
+	fwrite(&scene, 4, 1, file);
+	SaveID_END(file);
+}
+
+void DemoPlotGenerator::Print()
+{
+	puts("Demo Plot Generator");
+	printf("Scene %d\n", scene);
+}
+
+void DemoPlotGenerator::Update()
+{
+	UplinkAbort("TODO: implement DemoPlotGenerator::Update()");
+	/*if (!game->GetWorld()->GetPlayer()->connection.TraceInProgress())
+		return;
+
+	if (game->GetWorld()->GetPlayer()->rating.uplinkScore < 15)
+		return;
+
+	Date date;
+	date.SetDate(&game->GetWorld()->currentDate);
+	date.AdvanceMinute(0);
+	const auto notification = new NotificationEvent();
+	notification->SetTYPE(10);
+	notification->SetRunDate(&date);
+	game->GetWorld()->eventScheduler.ScheduleEvent(notification);*/
+}
+
+const char* DemoPlotGenerator::GetID()
+{
+	return "DEMOPGEN";
+}
+
 PlotGenerator::PlotGenerator()
 {
 	act = 0;

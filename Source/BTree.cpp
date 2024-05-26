@@ -174,3 +174,23 @@ void SaveBTree(BTree<UplinkObject*>* tree, FILE* file)
 	delete elements;
 	delete indices;
 }
+
+void UpdateBTree(BTree<UplinkObject*>* tree)
+{
+	UplinkAssert(tree != 0);
+
+	struct DArray<UplinkObject*>* objs = tree->ConvertToDArray();
+
+	for (auto i = 0; i < objs->Size(); i++)
+	{
+		if (!objs->ValidIndex(i))
+			continue;
+
+		const auto obj = objs->GetData(i);
+		if (obj == nullptr)
+			continue;
+
+		obj->Update();
+	}
+	delete objs;
+}

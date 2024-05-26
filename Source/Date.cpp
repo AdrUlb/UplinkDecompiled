@@ -344,8 +344,58 @@ bool Date::Before(Date* other)
 	// Previous second, before.
 	if (second < other->second)
 		return true;
-	
+
 	// Following or same second, after or equal.
+	return false;
+}
+
+bool Date::After(Date* other)
+{
+	// Previous year, before.
+	if (year < other->year)
+		return false;
+
+	// Following year, after.
+	if (year > other->year)
+		return true;
+
+	// Previous month, before.
+	if (month < other->month)
+		return false;
+
+	// Following month, after.
+	if (month > other->month)
+		return true;
+
+	// Previous day, before.
+	if (day < other->day)
+		return false;
+
+	// Following day, after.
+	if (day > other->day)
+		return true;
+
+	// Previous hour, before.
+	if (hour < other->hour)
+		return false;
+
+	// Following hour, after.
+	if (hour > other->hour)
+		return true;
+
+	// Previous minute, before.
+	if (minute < other->minute)
+		return false;
+
+	// Following minute, after.
+	if (minute > other->minute)
+		return true;
+
+	// Following second, after.
+	if (second > other->second)
+		return true;
+
+	// Previous or same second, before or equal.
 	return false;
 }
 

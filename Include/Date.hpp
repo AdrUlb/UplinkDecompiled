@@ -37,5 +37,6 @@ public:
 	int GetMonth();
 	int GetYear();
 	bool Before(Date* other);
+	bool After(Date* other);
 	void Activate();
 };

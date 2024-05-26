@@ -20,3 +20,21 @@ void WorldGenerator::Initialise()
 
 	delete[] filePath;
 }
+
+void WorldGenerator::Shutdown()
+{
+	if (worldmapmask != nullptr)
+	{
+		delete worldmapmask;
+		worldmapmask = nullptr;
+	}
+}
+
+void WorldGenerator::ReplaceInvalidCompanyAdmins()
+{
+	UplinkAbort("TODO: implement WorldGenerator::ReplaceInvalidCompanyAdmins()");
+}
+void WorldGenerator::UpdateSoftwareUpgrades()
+{
+	UplinkAbort("TODO: implement WorldGenerator::UpdateSoftwareUpgrades()");
+}

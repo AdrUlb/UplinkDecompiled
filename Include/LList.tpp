@@ -177,34 +177,6 @@ template <class T> void LList<T>::Empty()
 	this->cachedIndex = -1;
 }
 
-template <class T> bool LoadLList(LList<T>* list, FILE* file)
-{
-	UplinkAssert(list != nullptr);
-
-	int itemCount;
-	if (!FileReadData(&itemCount, 4, 1, file))
-		return false;
-
-	if (itemCount > 0x40000)
-	{
-		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
-		printf("WARNING: LoadLList, number of items appears to be wrong, size=%d\n", itemCount);
-		return false;
-	}
-
-	for (auto i = 0; i < itemCount; i++)
-	{
-		char* str = nullptr;
-
-		if (!LoadDynamicString(str, file))
-			return false;
-
-		list->PutData(str);
-	}
-
-	return true;
-}
-
 template <class T> void DeleteLListData(LList<T>* list)
 {
 	UplinkAssert(list != nullptr);

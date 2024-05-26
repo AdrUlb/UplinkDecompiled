@@ -2,6 +2,7 @@
 #include <Globals.hpp>
 #include <NumberGenerator.hpp>
 #include <Util.hpp>
+#include <WorldGenerator.hpp>
 
 Game::Game()
 {

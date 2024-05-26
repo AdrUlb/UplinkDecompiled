@@ -17,4 +17,5 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	Date* GetDateOfNextEvent();
+	bool UpdateProcessEvents();
 };
