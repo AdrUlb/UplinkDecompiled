@@ -6,8 +6,11 @@
 #include <RedShirt.hpp>
 #include <ScriptLibrary.hpp>
 #include <Sg.hpp>
+#include <FTGL/ftgl.h>
 #include <signal.h>
 #include <unistd.h>
+#include FT_DRIVER_H
+#include FT_MODULE_H
 
 App* app = nullptr;
 FILE* file_stdout = nullptr;
@@ -316,6 +319,9 @@ static void Init_OpenGL()
 
 static void Init_Fonts()
 {
+	FT_UInt interpreterVersion = TT_INTERPRETER_VERSION_35;
+	FT_Property_Set(*FTLibrary::Instance().GetLibrary(), "truetype", "interpreter-version", &interpreterVersion);
+
 	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
 
 	if (debug)

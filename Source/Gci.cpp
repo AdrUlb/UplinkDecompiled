@@ -29,7 +29,7 @@ static ReshapeFunc gciReshapeHandlerP = nullptr;
 static bool gci_truetypeenabled = false;
 static int gci_defaultfont = 6;
 
-static std::map<int, FTGLBitmapFont*> fonts;
+static std::map<int, FTBitmapFont*> fonts;
 
 static bool displayDamaged = false;
 
@@ -305,8 +305,7 @@ bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size
 		return false;
 	}
 
-	const auto font = new FTGLBitmapFont(path);
-	font->GlyphLoadFlags(FT_LOAD_LINEAR_DESIGN);
+	const auto font = new FTBitmapFont(path);
 
 	if (font->Error() != FT_Err_Ok || !font->FaceSize(size, 96))
 	{

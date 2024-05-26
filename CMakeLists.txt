@@ -4,17 +4,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS_RELEASE_INIT "-DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g -rdynamic")
 
+find_package(Freetype REQUIRED)
+
 add_subdirectory(Dependencies/tcp4u.331)
-add_subdirectory(Dependencies/freetype-2.5.2)
 add_subdirectory(Dependencies/ftgl-2.4.0)
 
-project(UplinkDecompiled)
+project(UplinkDecompiled CXX)
 
 file(GLOB_RECURSE UPLINK_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp)
 
 add_executable(UplinkDecompiled ${UPLINK_SOURCES})
 
-target_include_directories(UplinkDecompiled PRIVATE Include Dependencies/freetype-2.5.2/include)
+target_include_directories(UplinkDecompiled PRIVATE Include ${FREETYPE_INCLUDE_DIRS})
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
 target_link_libraries(UplinkDecompiled tcp4u crypto SDL GL ftgl SDL_mixer tiff)
 
