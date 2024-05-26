@@ -6,8 +6,8 @@
 #include <Util.hpp>
 #include <sys/time.h>
 
-static const char* currenthighlight = nullptr;
-static const char* currentclick = nullptr;
+static char* currenthighlight = nullptr;
+static char* currentclick = nullptr;
 
 static ClearDrawFunc clear_draw = nullptr;
 static ButtonDrawFunc default_draw = nullptr;
@@ -195,6 +195,15 @@ bool EclIsButtonEditable(const char* name)
 	}
 	return false;
 }
+void EclUnHighlightButton()
+{
+	EclGetButton(currenthighlight);
+
+	if (currenthighlight != nullptr)
+		delete[] currenthighlight;
+
+	currenthighlight = nullptr;
+}
 
 void EclSuperUnHighlight(const char* name)
 {
@@ -206,6 +215,20 @@ void EclSuperUnHighlight(const char* name)
 		sprintf(buffer, "Ecl_superhighlight %s", name);
 		EclRemoveButton(buffer);
 	}
+}
+
+void EclHighlightButton(const char* name)
+{
+	if (EclIsHighlighted(name) != 0)
+		return;
+
+	EclUnHighlightButton();
+
+	if (currenthighlight != nullptr)
+		delete[] (currenthighlight);
+
+	currenthighlight = new char[strlen(name) + 1];
+	strcpy(currenthighlight, name);
 }
 
 void EclMakeButtonUnEditable(const char* name)

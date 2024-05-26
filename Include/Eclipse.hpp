@@ -16,6 +16,7 @@ void EclRegisterDefaultButtonCallbacks(ButtonDrawFunc draw, ButtonMouseUpFunc mo
 void EclRegisterSuperHighlightFunction(int borderWidth, SuperhighlightDrawFunc func);
 void EclReset();
 bool EclIsButtonEditable(const char* name);
+void EclHighlightButton(const char* name);
 void EclMakeButtonUnEditable(const char* name);
 void EclDrawAllButtons();
 void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* name);

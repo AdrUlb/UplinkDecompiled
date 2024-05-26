@@ -42,8 +42,6 @@ static void DrawConnection(Button* button, bool highlighted, bool clicked)
 
 	glLineWidth(1.0f);
 	glDisable(GL_SCISSOR_TEST);
-
-	printf("GL ERROR: %d\n", glGetError());
 }
 
 static void Script30()
@@ -71,8 +69,8 @@ static void Script31()
 	{
 		if (EclGetButton("start_target") != nullptr)
 		{
-			const auto rax_2 = new PhoneDialler();
-			rax_2->DialNumber(400, 170, "234.773.0.666", 1, nullptr);
+			const auto dialler = new PhoneDialler();
+			dialler->DialNumber(400, 170, "234.773.0.666", PhoneDiallerNextScene::Script92, nullptr);
 			return;
 		}
 

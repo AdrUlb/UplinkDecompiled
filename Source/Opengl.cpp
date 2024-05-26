@@ -154,10 +154,54 @@ static void text_draw(Button* button, bool highlighted, bool clicked)
 
 static void button_draw(Button* button, bool highlighted, bool clicked)
 {
-	(void)button;
-	(void)highlighted;
-	(void)clicked;
-	UplinkAbort("TODO: implement button_draw()");
+	UplinkAssert(button != 0);
+	int32_t screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+
+	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
+	glEnable(GL_SCISSOR_TEST);
+
+	glBegin(GL_QUADS);
+	if (clicked != 0)
+	{
+		SetColour("ButtonClickedA");
+		glVertex2i(button->X, button->Y + button->Height);
+		SetColour("ButtonClickedB");
+		glVertex2i(button->X, button->Y);
+		SetColour("ButtonClickedA");
+		glVertex2i(button->X + button->Width, button->Y);
+		SetColour("ButtonClickedB");
+		glVertex2i(button->X + button->Width, button->Y + button->Height);
+	}
+	else if (highlighted == 0)
+	{
+		SetColour("ButtonNormalA");
+		glVertex2i(button->X, button->Y + button->Height);
+		SetColour("ButtonNormalB");
+		glVertex2i(button->X, button->Y);
+		SetColour("ButtonNormalA");
+		glVertex2i(button->X + button->Width, button->Y);
+		SetColour("ButtonNormalB");
+		glVertex2i(button->X + button->Width, button->Y + button->Height);
+	}
+	else
+	{
+		SetColour("ButtonHighlightedA");
+		glVertex2i(button->X, button->Y + button->Height);
+		SetColour("ButtonHighlightedB");
+		glVertex2i(button->X, button->Y);
+		SetColour("ButtonHighlightedA");
+		glVertex2i(button->X + button->Width, button->Y);
+		SetColour("ButtonHighlightedB");
+		glVertex2i(button->X + button->Width, button->Y + button->Height);
+	}
+	glEnd();
+
+	int32_t textWidth = GciTextWidth(button->Caption);
+	SetColour("DefaultText");
+	const auto x = (button->Width / 2) + button->X - (textWidth / 2);
+	const auto y = button->Y + 2 + (button->Height / 2);
+	GciDrawText(x, y, button->Caption);
+	glDisable(GL_SCISSOR_TEST);
 }
 
 static void button_click(Button* button)

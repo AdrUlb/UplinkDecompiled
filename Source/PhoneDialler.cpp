@@ -3,12 +3,14 @@
 #include <Eclipse.hpp>
 #include <Globals.hpp>
 #include <Opengl.hpp>
+#include <RedShirt.hpp>
+#include <Sg.hpp>
 
 PhoneDialler::PhoneDialler()
 {
 	ip = nullptr;
 	info = nullptr;
-	afterDiallerAction = -1;
+	nextScene = PhoneDiallerNextScene::Unknown;
 	lastUpdateTime = 0;
 	ipIndex = -1;
 }
@@ -56,10 +58,53 @@ bool PhoneDialler::UpdateSpecial()
 
 void PhoneDialler::UpdateDisplay()
 {
-	UplinkAbort("TODO: implement PhoneDialler::UpdateDisplay()");
+	if (ipIndex == -1)
+	{
+		lastUpdateTime = EclGetAccurateTime();
+		return;
+	}
+
+	const auto dialerNumberButton = EclGetButton("dialler_number");
+
+	if (dialerNumberButton == nullptr)
+	{
+		ipIndex = -1;
+		lastUpdateTime = EclGetAccurateTime();
+		return;
+	}
+
+	// Dialler animation done, run next scene
+	if (ipIndex > 0 && static_cast<unsigned>(ipIndex) >= strlen(ip))
+	{
+		UplinkAbort("TODO: implement PhoneDialler::UpdateDisplay()");
+		return;
+	}
+
+	char c;
+	do
+	{
+		c = ip[ipIndex++];
+	} while (ipIndex >= 0 && static_cast<unsigned>(ipIndex) < strlen(ip) && (c < '1' || c > '9'));
+
+	if (c >= '1' && c <= '9')
+	{
+		EclHighlightButton(buttonNames[c - '1']);
+
+		char s[0x40];
+		UplinkStrncpy(s, ip, 0x40);
+
+		s[ipIndex] = 0;
+		dialerNumberButton->SetCaption(s);
+
+		char soundFileName[0x100];
+		UplinkSnprintf(soundFileName, 0x100, "sounds/%d.wav", c - '0');
+		SgPlaySound(RsArchiveFileOpen(soundFileName), soundFileName);
+	}
+
+	this->lastUpdateTime = EclGetAccurateTime();
 }
 
-void PhoneDialler::DialNumber(int x, int y, const char* ip, int afterDiallerAction, const char* info)
+void PhoneDialler::DialNumber(int x, int y, const char* ip, PhoneDiallerNextScene nextScene, const char* info)
 {
 	UplinkAssert(ip != nullptr);
 	if (this->ip != nullptr)
@@ -80,7 +125,7 @@ void PhoneDialler::DialNumber(int x, int y, const char* ip, int afterDiallerActi
 		strcpy(this->info, info);
 	}
 
-	this->afterDiallerAction = afterDiallerAction;
+	this->nextScene = nextScene;
 	lastUpdateTime = 0;
 	ipIndex = 0;
 	app->RegisterPhoneDialler(this);
