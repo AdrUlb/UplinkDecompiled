@@ -98,7 +98,7 @@ template <class T> T BTree<T>::GetData(const char* name)
 	return tree->Data;
 }
 
-template <class T> void BTree<T>::PutData(char const* name, const T& value)
+template <class T> void BTree<T>::PutData(const char* name, const T& value)
 {
 	auto tree = this;
 
@@ -131,6 +131,88 @@ template <class T> void BTree<T>::PutData(char const* name, const T& value)
 	tree->Data = value;
 }
 
+template <class T> void BTree<T>::RemoveData(const char* name)
+{
+	assert(name != nullptr);
+
+	auto tree = this;
+
+	while (true)
+	{
+		const auto cmp = strcmp(name, tree->name);
+
+		const auto leftNode = tree->Left();
+		const auto rightNode = tree->Right();
+
+		// If this tree is the one we want to remove
+		if (cmp == 0)
+		{
+			delete[] tree->name;
+
+			// If there is a node to the left
+			if (leftNode != nullptr)
+			{
+				tree->name = new char[strlen(leftNode->name) + 1];
+				strcpy(tree->name, leftNode->name);
+				tree->Data = leftNode->Data;
+				tree->right = leftNode->Right();
+				tree->left = leftNode->Left();
+				tree->AppendRight(rightNode);
+				return;
+			}
+
+			// If there is a node to the right
+			if (rightNode != nullptr)
+			{
+				tree->name = new char[strlen(rightNode->name) + 1];
+				auto rax_31 = rightNode;
+				strcpy(tree->name, rax_31->name);
+				tree->Data = rightNode->Data;
+				tree->left = rightNode->Left();
+				tree->right = rightNode->Right();
+				return;
+			}
+
+			tree->name = nullptr;
+			return;
+		}
+
+		// If the tree we are looking for is to the left
+		if (cmp < 0)
+		{
+			// There is no tree to the left
+			if (leftNode == nullptr)
+				break;
+
+			// If this tree is the one we want to remove and there is no tree to the left or right
+			if (strcmp(leftNode->name, name) == 0 && leftNode->Left() == nullptr && leftNode->Right() == nullptr)
+			{
+				delete[] leftNode->name;
+				tree->left = 0;
+				return;
+			}
+
+			tree = leftNode;
+			return;
+		}
+
+		// If the tree we are looking for is to the left
+
+		// There is no tree to the right
+		if (rightNode == nullptr)
+			break;
+
+		// If this tree is the one we want to remove and there is no tree to the left or right
+		if (strcmp(rightNode->name, name) == 0 && rightNode->Left() == nullptr && rightNode->Right() == nullptr)
+		{
+			delete[] rightNode->name;
+			tree->right = nullptr;
+			break;
+		}
+		tree = rightNode;
+	}
+}
+
 template <class T> void BTree<T>::RecursiveConvertToDArray(DArray<T>* array, BTree<T>* tree)
 {
 	assert(array != nullptr);
@@ -155,6 +237,21 @@ template <class T> void BTree<T>::RecursiveConvertIndexToDArray(DArray<char*>* a
 
 		RecursiveConvertIndexToDArray(array, i->Left());
 	}
+}
+
+template <class T> void BTree<T>::AppendRight(BTree<T>* value)
+{
+	auto tree = this;
+
+	while (true)
+	{
+		if (tree->Right() == nullptr)
+			break;
+
+		tree = tree->Right();
+	}
+
+	tree->right = value;
 }
 
 template <class T> void DeleteBTreeData(BTree<T>* tree)

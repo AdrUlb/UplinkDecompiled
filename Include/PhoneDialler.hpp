@@ -17,4 +17,6 @@ public:
 	bool IsVisible() override;
 	bool UpdateSpecial();
 	void UpdateDisplay();
+	void DialNumber(int x, int y, const char* ip, int afterDiallerAction, const char* info);
+	void Create(int x, int y);
 };

@@ -18,16 +18,26 @@ public:
 	void Empty();
 	T GetData(int index);
 	int NumUsed();
-	void PutData(T const& value);
-	void PutData(T const& value, int index);
+	int PutData(T const& value);
+	int PutData(T const& value, int index);
 	void RemoveData(int index);
 	void SetSize(int newSize);
 	void SetStepSize(int newStepSize);
 	bool ValidIndex(int index);
 
-	inline int Size()
+	int Size()
 	{
 		return size;
+	}
+
+	T& operator[](int index)
+	{
+		assert(index >= 0 && index < size);
+
+		if (!dataValid[index])
+			std::cout << "DArray error : DArray::[] called, referenced unused data.  (Index = " << index << ")\n";
+
+		return this->data[index];
 	}
 };
 

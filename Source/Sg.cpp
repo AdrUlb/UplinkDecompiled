@@ -1,6 +1,8 @@
 #include <Sg.hpp>
 
+#include <BTree.hpp>
 #include <Eclipse.hpp>
+#include <LList.hpp>
 #include <RedShirt.hpp>
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
@@ -14,7 +16,9 @@ static int requestedtime = 0;
 static int songindex = 0;
 static int playerVolume = 64;
 
-static struct LList<SgPlaylist*> playlists;
+static BTree<Mix_Chunk*> cache;
+
+static LList<SgPlaylist*> playlists;
 
 static Mix_Music* currentmod;
 
@@ -268,4 +272,42 @@ void SgUpdate()
 
 	SgSetModVolume(20);
 	SgPlaylist_NextSong();
+}
+
+void SgPlaySound(const char* path, const char* name)
+{
+	if (!SgInitialised)
+		return;
+
+	auto theName = name;
+	if (name == nullptr)
+		theName = path;
+
+	// If the file is already in the cache
+	if (cache.LookupTree(theName) != nullptr)
+	{
+		// Get the chunk and play it
+		const auto chunk = cache.GetData(theName);
+
+		// If the chunk is null, remove it from the cache
+		if (chunk == nullptr)
+		{
+			cache.RemoveData(theName);
+			return;
+		}
+
+		// Play the chunk
+		Mix_VolumeChunk(chunk, 32);
+		Mix_PlayChannelTimed(-1, chunk, 0, -1);
+		return;
+	}
+
+	// Create a new chunk, add it to the cache and play it
+	const auto chunk = Mix_LoadWAV_RW(SDL_RWFromFile(path, "rb"), true);
+	if (chunk != nullptr)
+	{
+		cache.PutData(theName, chunk);
+		Mix_VolumeChunk(chunk, 32);
+		Mix_PlayChannelTimed(-1, chunk, 0, -1);
+	}
 }

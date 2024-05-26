@@ -7,25 +7,6 @@
 #include <RedShirt.hpp>
 #include <Util.hpp>
 
-static void button_assignbitmap(const char* buttonName, const char* imageName)
-{
-	const auto button = EclGetButton(buttonName);
-	UplinkAssert(button != nullptr);
-
-	char* filePath = app->GetOptions()->ThemeFilename(imageName);
-
-	const auto image = new Image();
-	image->LoadTIF(RsArchiveFileOpen(filePath));
-	image->SetAlpha(0.85f);
-
-	delete[] filePath;
-
-	button->SetStandardImage(image);
-	button->RegisterDrawFunction(imagebutton_draw);
-
-	EclDirtyButton();
-}
-
 MainMenuScreen::MainMenuScreen()
 {
 	buttons = new DArray<char*>();

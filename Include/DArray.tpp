@@ -43,26 +43,28 @@ template <class T> int DArray<T>::NumUsed()
 	return count;
 }
 
-template <class T> void DArray<T>::PutData(T const& value)
+template <class T> int DArray<T>::PutData(T const& value)
 {
 	// Find first valid index by iterating through all indices until the end is reached or an invalid element is found
-	int validIndex = 0;
-	while (validIndex < size && dataValid[validIndex])
-		validIndex++;
+	int index = 0;
+	while (index < size && dataValid[index])
+		index++;
 
 	// If no valid index was found resize the array
-	if (validIndex == size)
+	if (index == size)
 		SetSize(size + this->grow);
 
-	data[validIndex] = value;
-	dataValid[validIndex] = true;
+	data[index] = value;
+	dataValid[index] = true;
+	return index;
 }
 
-template <class T> void DArray<T>::PutData(T const& value, int index)
+template <class T> int DArray<T>::PutData(T const& value, int index)
 {
 	assert(index < size && index >= 0);
 	data[index] = value;
 	dataValid[index] = true;
+	return index;
 }
 
 template <class T> void DArray<T>::RemoveData(int index)

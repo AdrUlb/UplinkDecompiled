@@ -1,27 +1,15 @@
+#include <Opengl.hpp>
+
 #include <App.hpp>
 #include <Eclipse.hpp>
 #include <GL/gl.h>
 #include <Gci.hpp>
 #include <Globals.hpp>
+#include <RedShirt.hpp>
 #include <Sg.hpp>
 
 static int lastidleupdate = 0;
 static int curserflash = 0x0;
-
-static void SetColour(const char* name)
-{
-	Options* options;
-	ColourOption* colour;
-
-	if (app == nullptr || (options = app->GetOptions()) == nullptr || (colour = options->GetColour(name)) == nullptr)
-	{
-		printf("SetColour WARNING : Failed to find colour %s\n", name);
-		glColor3f(0.0f, 0.0f, 0.0f);
-		return;
-	}
-
-	glColor3f(colour->red, colour->green, colour->blue);
-}
 
 static LList<char*>* wordwraptext(const char* text, int width)
 {
@@ -109,16 +97,6 @@ static void clear_draw(int x, int y, int width, int height)
 	glEnd();
 }
 
-static void border_draw(Button* button)
-{
-	glBegin(GL_LINE_LOOP);
-	glVertex2i(button->X, button->Y);
-	glVertex2i(button->X + button->Width - 1, button->Y);
-	glVertex2i(button->X + button->Width - 1, button->Y + button->Height - 1);
-	glVertex2i(button->X, button->Y + button->Height - 1);
-	glEnd();
-}
-
 static void text_draw(Button* button, bool highlighted, bool clicked)
 {
 	(void)clicked;
@@ -200,6 +178,31 @@ static void superhighlight_draw(Button* button)
 	UplinkAbort("TODO: implement superhighlight_draw()");
 }
 
+void SetColour(const char* name)
+{
+	Options* options;
+	ColourOption* colour;
+
+	if (app == nullptr || (options = app->GetOptions()) == nullptr || (colour = options->GetColour(name)) == nullptr)
+	{
+		printf("SetColour WARNING : Failed to find colour %s\n", name);
+		glColor3f(0.0f, 0.0f, 0.0f);
+		return;
+	}
+
+	glColor3f(colour->red, colour->green, colour->blue);
+}
+
+void border_draw(Button* button)
+{
+	glBegin(GL_LINE_LOOP);
+	glVertex2i(button->X, button->Y);
+	glVertex2i(button->X + button->Width - 1, button->Y);
+	glVertex2i(button->X + button->Width - 1, button->Y + button->Height - 1);
+	glVertex2i(button->X, button->Y + button->Height - 1);
+	glEnd();
+}
+
 void imagebutton_draw(Button* button, bool highlighted, bool clicked)
 {
 	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
@@ -261,7 +264,7 @@ static void display()
 
 	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
 	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
-	glOrtho(0.0, screenWidth, screenHeight, 0.0, 0.0, 0.0);
+	glOrtho(0.0, screenWidth, screenHeight, 0.0, -1.0, 1.0);
 
 	glTranslatef(0.375f, 0.375f, 0.0f);
 	EclClearRectangle(0, 0, screenWidth, screenHeight);
@@ -459,4 +462,55 @@ void opengl_initialise()
 void opengl_run()
 {
 	GciMainLoop();
+}
+
+void button_assignbitmap(const char* buttonName, const char* imageName)
+{
+	const auto button = EclGetButton(buttonName);
+	UplinkAssert(button != nullptr);
+
+	const char* filePath = app->GetOptions()->ThemeFilename(imageName);
+
+	const auto image = new Image();
+	image->LoadTIF(RsArchiveFileOpen(filePath));
+	image->SetAlpha(0.85f);
+
+	delete[] filePath;
+
+	button->SetStandardImage(image);
+	button->RegisterDrawFunction(imagebutton_draw);
+
+	EclDirtyButton();
+}
+
+void button_assignbitmaps(const char* buttonName, const char* normalFile, const char* highlightedFile, const char* clickedFile)
+{
+	const auto button = EclGetButton(buttonName);
+	UplinkAssert(button != nullptr);
+
+	const auto normalPath = app->GetOptions()->ThemeFilename(normalFile);
+	const auto imageNormal = new Image();
+	imageNormal->LoadTIF(RsArchiveFileOpen(normalPath));
+	imageNormal->SetAlpha(0.85f);
+	if (normalPath != 0)
+		delete[] normalPath;
+
+	const auto highlightedPath = app->GetOptions()->ThemeFilename(highlightedFile);
+	const auto imageHighlighted = new Image();
+	imageHighlighted->LoadTIF(RsArchiveFileOpen(highlightedPath));
+	imageHighlighted->SetAlpha(0.85f);
+	if (highlightedPath != 0)
+		delete[] highlightedPath;
+
+	const auto clickedPath = app->GetOptions()->ThemeFilename(clickedFile);
+	const auto imageClicked = new Image();
+	imageClicked->LoadTIF(RsArchiveFileOpen(clickedPath));
+	imageClicked->SetAlpha(0.85f);
+	if (clickedPath != 0)
+		delete[] clickedPath;
+
+	button->SetImages(imageNormal, imageHighlighted, imageClicked);
+	button->RegisterDrawFunction(imagebutton_draw);
+
+	EclDirtyButton();
 }

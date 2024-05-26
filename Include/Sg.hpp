@@ -27,3 +27,4 @@ void SgPlaylist_Create(const char* name);
 void SgPlaylist_AddSong(char const* playlistName, char const* songName);
 void SgPlaylist_Play(const char* name);
 void SgUpdate();
+void SgPlaySound(const char* path, const char* name);

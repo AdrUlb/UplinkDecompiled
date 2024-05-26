@@ -7,9 +7,9 @@ class InterfaceScreen : UplinkObject
 {
 	DArray<char*>* buttonNames;
 
+public:
 	InterfaceScreen();
 	~InterfaceScreen() override;
-	void Update() override;
 	virtual void RegisterButton(int x, int y, int width, int height, const char* caption, const char* name);
 	virtual void RegisterButton(int x, int y, int width, int height, const char* caption, const char* tooltip, const char* name);
 	virtual void Create();

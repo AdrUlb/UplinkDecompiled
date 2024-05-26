@@ -1,5 +1,7 @@
 #include <Eclipse.hpp>
 
+#include <BTree.hpp>
+#include <DArray.hpp>
 #include <LList.hpp>
 #include <Util.hpp>
 #include <sys/time.h>
@@ -16,6 +18,8 @@ static SuperhighlightDrawFunc superhighlight_draw = nullptr;
 
 static LList<Button*> buttons;
 static LList<const char*> editablebuttons;
+static DArray<Animation*> anims;
+static BTree<int> superhighlightedbuttons;
 
 static int superhighlight_borderwidth = 0;
 
@@ -106,7 +110,7 @@ void EclRegisterDefaultButtonCallbacks(ButtonDrawFunc draw, ButtonMouseUpFunc mo
 void EclRegisterButtonCallbacks(const char* name, ButtonDrawFunc drawFunc, ButtonMouseUpFunc mouseUpFunc, ButtonMouseDownFunc mouseDownFunc,
 								ButtonMouseMoveFunc mouseMoveFunc)
 {
-	int32_t index = EclLookupIndex(name);
+	const auto index = EclLookupIndex(name);
 	if (!buttons.ValidIndex(index))
 		return;
 
@@ -171,6 +175,11 @@ bool EclIsHighlighted(const char* name)
 	return strcmp(currenthighlight, name) == 0;
 }
 
+bool EclIsSuperHighlighted(const char* name)
+{
+	return superhighlightedbuttons.LookupTree(name) != 0;
+}
+
 bool EclIsButtonEditable(const char* name)
 {
 	if (EclGetButton(name) == 0)
@@ -185,6 +194,36 @@ bool EclIsButtonEditable(const char* name)
 			return true;
 	}
 	return false;
+}
+
+void EclSuperUnHighlight(const char* name)
+{
+	if (superhighlightedbuttons.LookupTree(name) != 0)
+	{
+		superhighlightedbuttons.RemoveData(name);
+
+		char buffer[0x80];
+		sprintf(buffer, "Ecl_superhighlight %s", name);
+		EclRemoveButton(buffer);
+	}
+}
+
+void EclMakeButtonUnEditable(const char* name)
+{
+	for (auto i = 0; i < editablebuttons.Size(); i++)
+	{
+		if (!editablebuttons.ValidIndex(i))
+			continue;
+
+		if (strcmp(editablebuttons.GetData(i), name) != 0)
+			continue;
+
+		auto buttonName = editablebuttons.GetData(i);
+		if (buttonName != nullptr)
+			delete[] buttonName;
+		editablebuttons.RemoveData(i);
+		return;
+	}
 }
 
 void EclDrawButton(int index)
@@ -243,6 +282,64 @@ void EclRegisterButton(int x, int y, int width, int height, const char* caption,
 	EclGetButton(name)->SetTooltip(tooltip);
 }
 
+void EclRemoveButton(const char* name)
+{
+	const auto buttonIndex = EclLookupIndex(name);
+	if (!buttons.ValidIndex(buttonIndex))
+		return;
+
+	const auto button = buttons[buttonIndex];
+
+	if (EclIsHighlighted(name))
+	{
+		if (currenthighlight != nullptr)
+			delete[] currenthighlight;
+
+		currenthighlight = nullptr;
+	}
+
+	if (EclIsClicked(name))
+	{
+		if (currentclick != nullptr)
+			delete[] currentclick;
+
+		currentclick = 0;
+	}
+
+	if (EclIsSuperHighlighted(name))
+		EclSuperUnHighlight(name);
+
+	if (EclIsButtonEditable(name))
+		EclMakeButtonUnEditable(name);
+
+	for (auto index = anims.Size() - 1; index >= 0; index--)
+	{
+		if (!anims.ValidIndex(index))
+			continue;
+
+		if (strcmp(name, anims[index]->buttonName) != 0)
+			continue;
+
+		EclRemoveAnimation(index);
+	}
+
+	buttons.RemoveData(buttonIndex);
+	if (button != nullptr)
+		delete button;
+}
+
+void EclRemoveAnimation(int index)
+{
+	if (!anims.ValidIndex(index))
+		return;
+
+	const auto animation = anims.GetData(index);
+	if (animation != nullptr)
+		delete animation;
+
+	anims.RemoveData(index);
+}
+
 Button* EclGetButton(const char* name)
 {
 	const auto rax = EclLookupIndex(name);
@@ -264,6 +361,29 @@ void EclClearRectangle(int x, int y, int width, int height)
 		clear_draw(x, y, width, height);
 }
 
+int EclIsCaptionChangeActive(const char* buttonName)
+{
+	for (int i = 0; i < anims.Size(); i++)
+	{
+		if (!anims.ValidIndex(i))
+			continue;
+
+		const auto animation = anims[i];
+
+		assert(animation != nullptr);
+
+		// Button name does not match
+		if (strcmp(buttonName, animation->buttonName) != 0)
+			continue;
+
+		// Caption will change
+		if (animation->targetCaption != nullptr)
+			return i;
+	}
+
+	return -1;
+}
+
 void EclUpdateAllAnimations()
 {
 	static auto called = false;
@@ -272,4 +392,122 @@ void EclUpdateAllAnimations()
 		puts("TODO: implement EclUpdateAllAnimations()");
 		called = true;
 	}
+}
+
+int EclRegisterAnimation(const char* buttonName, int x, int y, int moveType, int width, int height, const char* caption, int time,
+						 AnimationFinishedCallback finishedCallback)
+{
+	const auto button = EclGetButton(buttonName);
+
+	if (button == 0)
+		return -1;
+
+	const auto animation = new Animation();
+	animation->buttonName = new char[strlen(buttonName + 1)];
+	strcpy(animation->buttonName, buttonName);
+
+	animation->moveType = moveType;
+	animation->button = button;
+	animation->fromX = button->X;
+	animation->toX = x;
+	animation->fromY = button->Y;
+	animation->toY = y;
+	animation->fromWidth = button->Width;
+	animation->fromHeight = button->Height;
+	animation->toWidth = width;
+	animation->toHeight = height;
+	animation->finishedCallback = finishedCallback;
+	animation->time = time;
+
+	if (animsfasterenabled)
+		animation->time /= animsfasterspeed;
+
+	animation->starttime = EclGetAccurateTime();
+
+	const auto currentTime = EclGetAccurateTime();
+	const auto finishTime = currentTime + animation->time;
+	bool finishTimeIsStartTime = finishTime == animation->starttime;
+
+	animation->finishTime = finishTime;
+	if (finishTimeIsStartTime)
+		animation->finishTime = finishTime + 1;
+
+	if (animation->toX == animation->fromX)
+	{
+		animation->stepX = 0.0f;
+		animation->stepY = 0.0f;
+	}
+	else
+	{
+		const float time = animation->finishTime - animation->starttime;
+		animation->stepX = (animation->toX - animation->fromX) / time;
+		animation->stepY = (animation->toY - animation->fromY) / time;
+	}
+
+	if (animation->toWidth == animation->fromWidth)
+	{
+		animation->stepWidth = 0.0f;
+		animation->stepHeight = 0.0f;
+	}
+	else
+	{
+		const float time = animation->finishTime - animation->starttime;
+		animation->stepWidth = (animation->toWidth - animation->fromWidth) / time;
+		animation->stepHeight = (animation->toHeight - animation->fromHeight) / time;
+	}
+
+	if (caption == nullptr)
+	{
+		animation->targetCaption = nullptr;
+		animation->stepCaption = 0.0f;
+	}
+	else
+	{
+		while (true)
+		{
+			const auto captionAnimation = EclIsCaptionChangeActive(buttonName);
+			if (captionAnimation == -1)
+				break;
+
+			EclRemoveAnimation(captionAnimation);
+		}
+
+		char* targetCaption = animation->targetCaption;
+		if (targetCaption != nullptr)
+			delete[] targetCaption;
+
+		const auto captionLength = strlen(caption);
+		animation->targetCaption = new char[captionLength + 1];
+		strcpy(animation->targetCaption, caption);
+
+		const float time = animation->finishTime - animation->starttime;
+		animation->stepCaption = captionLength / time;
+	}
+
+	return anims.PutData(animation);
+}
+
+int EclRegisterCaptionChange(const char* buttonName, const char* caption, int time, AnimationFinishedCallback finishedCallback)
+{
+	const auto button = EclGetButton(buttonName);
+
+	if (button == 0)
+		return -1;
+
+	return EclRegisterAnimation(buttonName, button->X, button->Y, 1, button->Width, button->Height, caption, time, finishedCallback);
+}
+
+int EclRegisterMovement(const char* buttonName, int x, int y, int time, int moveType, AnimationFinishedCallback callback)
+{
+	const auto button = EclGetButton(buttonName);
+
+	if (button == 0)
+		return -1;
+
+	return EclRegisterAnimation(buttonName, x, y, moveType, button->Width, button->Height, nullptr, time, callback);
+}
+
+int EclRegisterMovement(const char* buttonName, int x, int y, int time, AnimationFinishedCallback callback)
+{
+	return EclRegisterMovement(buttonName, x, y, time, 1, callback);
 }

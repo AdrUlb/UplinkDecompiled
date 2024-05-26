@@ -4,10 +4,10 @@
 
 class Button;
 
-typedef void (*ButtonDrawFunc)(Button*, bool, bool);
-typedef void (*ButtonMouseDownFunc)(Button*);
-typedef void (*ButtonMouseUpFunc)(Button*);
-typedef void (*ButtonMouseMoveFunc)(Button*);
+typedef void (*ButtonDrawFunc)(Button* button, bool highlighted, bool clicked);
+typedef void (*ButtonMouseDownFunc)(Button* button);
+typedef void (*ButtonMouseUpFunc)(Button* button);
+typedef void (*ButtonMouseMoveFunc)(Button* button);
 
 class Button
 {
@@ -40,4 +40,5 @@ public:
 	void RegisterMouseMoveFunction(ButtonMouseMoveFunc func);
 	void SetTooltip(const char* value);
 	void Draw(bool highlighted, bool clicked);
+	void SetImages(Image* imageNormal, Image* imageHighlighted, Image* imageClicked);
 };

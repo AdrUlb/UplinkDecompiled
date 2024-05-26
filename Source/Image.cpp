@@ -90,11 +90,14 @@ void Image::SetAlpha(float value)
 			raster[x + (y * width)] = (raster[x + (y * width)] & 0x00FFFFFF) | (alpha << 24);
 }
 
+#include <cstring>
+
 void Image::Draw(int x, int y)
 {
 	if (raster == 0)
 		return;
 
+	printf("Drawing %dx%d, image at %d, %d\n", width, height, x, y);
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_BLEND);
 	glRasterPos2i(x, y + height);
