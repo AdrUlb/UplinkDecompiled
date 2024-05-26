@@ -5,11 +5,9 @@
 
 class DemoPlotGenerator : public UplinkObject
 {
-	int scene;
+	int scene = 0;
 
 public:
-	DemoPlotGenerator();
-	~DemoPlotGenerator() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;

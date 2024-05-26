@@ -37,4 +37,5 @@ public:
 	bool IsRunning();
 	void NewGame();
 	const char* GetLoadedSavefileVer();
+	int GetWorldMapType();
 };

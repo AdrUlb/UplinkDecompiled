@@ -204,3 +204,15 @@ template <class T> bool LoadLList(LList<T>* list, FILE* file)
 
 	return true;
 }
+
+template <class T> void DeleteLListData(LList<T>* list)
+{
+	UplinkAssert(list != nullptr);
+
+	for (auto i = 0; i < list->Size(); i++)
+	{
+		const auto data = list->GetData(i);
+		if (data != nullptr)
+			delete[] data;
+	}
+}

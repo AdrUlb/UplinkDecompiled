@@ -42,7 +42,7 @@ public:
 	}
 };
 
+#include "LList.tpp"
+
 void SaveLList(LList<char*>* list, FILE* file);
 void PrintLList(LList<char*>* list);
-
-#include "LList.tpp"

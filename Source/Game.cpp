@@ -135,6 +135,11 @@ const char* Game::GetLoadedSavefileVer()
 {
 	if (loadedSaveFileVer == nullptr)
 		return latestSaveVersion;
-		
+
 	return loadedSaveFileVer;
+}
+
+int Game::GetWorldMapType()
+{
+	return worldMapType;
 }

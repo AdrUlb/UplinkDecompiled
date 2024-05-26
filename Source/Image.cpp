@@ -1,6 +1,7 @@
 #include <Image.hpp>
 
 #include <GL/gl.h>
+#include <GL/glu.h>
 #include <tiffio.h>
 
 Image::~Image()
@@ -102,4 +103,49 @@ void Image::Draw(int x, int y)
 	glRasterPos2i(x, y + height);
 	glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, raster);
 	glPopAttrib();
+}
+
+void Image::Scale(int32_t newWidth, int32_t newHeight)
+{
+	if (this->raster == nullptr)
+		return;
+
+	const auto newRaster = new uint32_t[newWidth * newHeight];
+	gluScaleImage(GL_RGBA, width, height, GL_UNSIGNED_BYTE, raster, newWidth, newHeight, GL_UNSIGNED_BYTE, newRaster);
+
+	if (rgbPixels != nullptr)
+	{
+		delete[] rgbPixels;
+		rgbPixels = nullptr;
+	}
+
+	delete[] raster;
+
+	raster = newRaster;
+	width = newWidth;
+	height = newHeight;
+}
+
+void Image::FlipAroundH()
+{
+	if (raster == nullptr)
+		return;
+
+	const auto newRaster = new uint32_t[width * height];
+
+	const auto bytesPerRow = width * 4;
+	for (uint32_t i = 0; i < height; i++)
+	{
+		const auto offset = i * bytesPerRow;
+		memcpy((char*)newRaster + (height * bytesPerRow) - bytesPerRow - offset, (char*)raster + offset, bytesPerRow);
+	}
+
+	if (rgbPixels != nullptr)
+	{
+		delete[] rgbPixels;
+		rgbPixels = nullptr;
+	}
+
+	delete[] raster;
+	raster = newRaster;
 }

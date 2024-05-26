@@ -1,5 +1,10 @@
 #include <EventScheduler.hpp>
 
+EventScheduler::~EventScheduler()
+{
+	DeleteLListData(&events);
+}
+
 Date* EventScheduler::GetDateOfNextEvent()
 {
 	const auto event = events.GetData(0);

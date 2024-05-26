@@ -15,4 +15,6 @@ struct Image
 	void CreateErrorBitmap();
 	void SetAlpha(float value);
 	void Draw(int x, int y);
+	void Scale(int32_t newWidth, int32_t newHeight);
+	void FlipAroundH();
 };
