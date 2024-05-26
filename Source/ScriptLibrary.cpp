@@ -93,6 +93,33 @@ static void Script31()
 	return GciTimerFunc(800, ScriptLibrary::RunScript, 31);
 }
 
+static void Script32()
+{
+	game->NewGame();
+	SgPlaySound(RsArchiveFileOpen("sounds/phonepickup.wav"), "sounds/phonepickup.wav");
+	EclRemoveButton("start_localhost");
+	EclRemoveButton("start_key");
+	EclRemoveButton("start_keylink");
+	EclRemoveButton("start_lock");
+	EclRemoveButton("start_locklink");
+	EclRemoveButton("start_link");
+	app->GetMainMenu()->Remove();
+}
+
+static void Script92()
+{
+	const auto key = EclGetButton("start_key");
+	const auto lock = EclGetButton("start_lock");
+	UplinkAssert(key != nullptr);
+	UplinkAssert(lock != nullptr);
+	const auto size = lock->X - key->X - 16;
+	EclRegisterButton(key->X + (key->Width / 2) + 8, key->Y + 8 + (key->Height / 2), size, size, " ", " ", "start_link");
+	EclRegisterButtonCallbacks("start_link", DrawConnection, 0, 0, nullptr);
+	EclRegisterCaptionChange("firsttimeloading_text", "Awaiting connection acknowledgment from UPLINK...", 800, nullptr);
+	SgPlaySound(RsArchiveFileOpen("sounds/ringout.wav"), "sounds/ringout.wav");
+	GciTimerFunc(900, ScriptLibrary::RunScript, 32);
+}
+
 void ScriptLibrary::RunScript(int index)
 {
 	switch (index)
@@ -102,6 +129,12 @@ void ScriptLibrary::RunScript(int index)
 			return;
 		case 31:
 			Script31();
+			return;
+		case 32:
+			Script32();
+			return;
+		case 92:
+			Script92();
 			return;
 		default:
 			printf("WARNING: Unknown script index %d\n", index);

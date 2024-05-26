@@ -4,6 +4,7 @@
 #include <Globals.hpp>
 #include <Opengl.hpp>
 #include <RedShirt.hpp>
+#include <ScriptLibrary.hpp>
 #include <Sg.hpp>
 
 PhoneDialler::PhoneDialler()
@@ -74,9 +75,33 @@ void PhoneDialler::UpdateDisplay()
 	}
 
 	// Dialler animation done, run next scene
-	if (ipIndex > 0 && static_cast<unsigned>(ipIndex) >= strlen(ip))
+	if (ipIndex >= 0 && static_cast<unsigned>(ipIndex) >= strlen(ip))
 	{
-		UplinkAbort("TODO: implement PhoneDialler::UpdateDisplay()");
+		switch (nextScene)
+		{
+			case PhoneDiallerNextScene::Script92:
+				ScriptLibrary::RunScript(92);
+				break;
+			case PhoneDiallerNextScene::Script93:
+				ScriptLibrary::RunScript(93);
+				break;
+			case PhoneDiallerNextScene::WorldMap:
+				UplinkAbort("TODO: implement nextScene=PhoneDiallerNextScene::WorldMap");
+				break;
+			case PhoneDiallerNextScene::Finance:
+				UplinkAbort("TODO: implement nextScene=PhoneDiallerNextScene::Finance");
+				break;
+			case PhoneDiallerNextScene::Links:
+				UplinkAbort("TODO: implement nextScene=PhoneDiallerNextScene::Links");
+				break;
+			default:
+			{
+				char s[0x40];
+				UplinkSnprintf(s, 0x40, "Unrecognised nextScene=%d", nextScene);
+				UplinkAbort(s);
+			}
+		}
+		ipIndex = -1;
 		return;
 	}
 

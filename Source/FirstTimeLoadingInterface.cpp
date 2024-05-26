@@ -21,7 +21,10 @@ void FirstTimeLoadingInterface::Create()
 
 void FirstTimeLoadingInterface::Remove()
 {
-	UplinkAbort("TODO: implement FirstTimeLoadingInterface::Remove()");
+	if (!IsVisible())
+		return;
+	
+	EclRemoveButton("firsttimeloading_text");
 }
 
 bool FirstTimeLoadingInterface::IsVisible()

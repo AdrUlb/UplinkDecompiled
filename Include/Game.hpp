@@ -35,4 +35,5 @@ public:
 	int GameSpeed();
 	World* GetWorld();
 	bool IsRunning();
+	void NewGame();
 };

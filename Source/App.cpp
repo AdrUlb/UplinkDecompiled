@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <dirent.h>
 
-App::App() : startTime(0), closed(false), options(nullptr), network(nullptr), mainMenu(nullptr), phoneDiallerScreen(nullptr), nextLoadGame(nullptr)
+App::App() : startTime(0), closed(false), options(nullptr), network(nullptr), mainMenu(nullptr), phoneDialler(nullptr), nextLoadGame(nullptr)
 {
 	UplinkStrncpy(path, "c:/", APP_PATH_MAX);
 	UplinkStrncpy(usersPath, path, APP_PATH_MAX);
@@ -76,8 +76,8 @@ void App::Update()
 
 		if ((isRunning != 0 || (isRunning == 0 && mainMenuScreen == MainMenuScreenCode::FirstTimeLoading)))
 		{
-			if (phoneDiallerScreen != nullptr && phoneDiallerScreen->UpdateSpecial())
-				UnRegisterPhoneDialler(phoneDiallerScreen);
+			if (phoneDialler != nullptr && phoneDialler->UpdateSpecial())
+				UnRegisterPhoneDialler(phoneDialler);
 		}
 	}
 
@@ -189,18 +189,23 @@ void App::LoadGame(const char* name)
 void App::RegisterPhoneDialler(PhoneDialler* newPhoneDiallerScreen)
 {
 	UplinkAssert(newPhoneDiallerScreen != nullptr);
-	UplinkAssert(phoneDiallerScreen != newPhoneDiallerScreen);
+	UplinkAssert(phoneDialler != newPhoneDiallerScreen);
 
-	if (phoneDiallerScreen != nullptr)
-		UnRegisterPhoneDialler(phoneDiallerScreen);
+	if (phoneDialler != nullptr)
+		UnRegisterPhoneDialler(phoneDialler);
 
-	phoneDiallerScreen = newPhoneDiallerScreen;
+	phoneDialler = newPhoneDiallerScreen;
 }
 
-void App::UnRegisterPhoneDialler(PhoneDialler* phoneDiallerScreen)
+void App::UnRegisterPhoneDialler(PhoneDialler* dialler)
 {
-	(void)phoneDiallerScreen;
-	UplinkAbort("TODO: implement App::UnRegisterPhoneDialler(PhoneDiallerScreen*)");
+	if (phoneDialler != dialler)
+		return;
+
+	dialler->Remove();
+
+	delete phoneDialler;
+	phoneDialler = nullptr;
 }
 
 void App::RetireGame(const char* name)

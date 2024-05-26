@@ -34,7 +34,7 @@ private:
 	Options* options;
 	Network* network;
 	MainMenu* mainMenu;
-	PhoneDialler* phoneDiallerScreen;
+	PhoneDialler* phoneDialler;
 	char* nextLoadGame;
 	bool checkCodecard;
 

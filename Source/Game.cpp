@@ -64,3 +64,8 @@ bool Game::IsRunning()
 {
 	return speed > 0;
 }
+
+void Game::NewGame()
+{
+	puts("TODO: implement Game::NewGame()");
+}

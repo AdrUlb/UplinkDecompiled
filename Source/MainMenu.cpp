@@ -100,7 +100,15 @@ bool MainMenu::IsVisible()
 
 void MainMenu::Remove()
 {
-	UplinkAbort("TODO: implement MainMenu::Remove()");
+	if (!IsVisible())
+		return;
+
+	if (screen == nullptr)
+		return;
+
+	screen->Remove();
+	delete screen;
+	screen = nullptr;
 }
 
 void MainMenu::RunScreen(MainMenuScreenCode code)
