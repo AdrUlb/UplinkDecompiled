@@ -22,7 +22,7 @@ template <class T> void DArray<T>::Empty()
 	size = 0;
 }
 
-template <class T> T DArray<T>::GetData(int index)
+template <class T> T& DArray<T>::GetData(int index)
 {
 	assert(index < size && index >= 0);
 

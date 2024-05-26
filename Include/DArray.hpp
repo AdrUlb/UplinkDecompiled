@@ -16,7 +16,7 @@ public:
 	~DArray();
 
 	void Empty();
-	T GetData(int index);
+	T& GetData(int index);
 	int NumUsed();
 	int PutData(T const& value);
 	int PutData(T const& value, int index);

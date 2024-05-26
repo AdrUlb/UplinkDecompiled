@@ -407,13 +407,105 @@ int EclIsCaptionChangeActive(const char* buttonName)
 	return -1;
 }
 
+static void EclUpdateSuperHighlights(const char* name)
+{
+	const auto button = EclGetButton(name);
+
+	if (button == nullptr)
+	{
+		EclSuperUnHighlight(name);
+		return;
+	}
+
+	if (!EclIsSuperHighlighted(name))
+		return;
+
+	char highlightButtonName[0x80];
+	sprintf(highlightButtonName, "Ecl_superhighlight %s", name);
+	const auto highlightButton = EclGetButton(highlightButtonName);
+	if (highlightButton == nullptr)
+		return;
+
+	if (highlightButton->X != button->X || highlightButton->Y != button->Y)
+	{
+		highlightButton->X = button->X - superhighlight_borderwidth;
+		highlightButton->Y = button->Y - superhighlight_borderwidth;
+	}
+}
+
 void EclUpdateAllAnimations()
 {
-	static auto called = false;
-	if (!called)
+	const auto superHighlightedButtons = superhighlightedbuttons.ConvertIndexToDArray();
+	for (auto index = 0; index < superHighlightedButtons->Size(); index++)
 	{
-		puts("TODO: implement EclUpdateAllAnimations()");
-		called = true;
+		if (!superHighlightedButtons->ValidIndex(index))
+			continue;
+
+		EclUpdateSuperHighlights(superHighlightedButtons->GetData(index));
+	}
+
+	delete superHighlightedButtons;
+
+	for (int i = 0; i < anims.Size(); i++)
+	{
+		if (!anims.ValidIndex(i))
+			continue;
+
+		const auto animation = anims[i];
+		assert(animation);
+
+		const auto animationButton = EclGetButton(animation->buttonName);
+		animation->button = animationButton;
+
+		if (animationButton == 0)
+		{
+			EclRemoveAnimation(i);
+			continue;
+		}
+
+		const auto currentTime = EclGetAccurateTime();
+		const auto finishTime = animation->finishTime;
+
+		if (currentTime >= finishTime || !animsenabled)
+		{
+			const auto stepX = animation->stepX;
+			const auto stepY = animation->stepY;
+			if (stepX != 0.0f || stepY != 0.0f)
+			{
+				const auto button = animation->button;
+				button->X = animation->toX;
+				button->Y = animation->toY;
+			}
+
+			const auto stepWidth = animation->stepWidth;
+			const auto stepHeight = animation->stepHeight;
+			if (stepWidth != 0.0f || stepHeight != 0.0f)
+			{
+				const auto button = animation->button;
+				button->Width = animation->toWidth;
+				button->Height = animation->toHeight;
+			}
+
+			float stepCaption = animation->stepCaption;
+			if (stepCaption != 0.0f)
+			{
+				animation->button->SetCaption(animation->targetCaption);
+				if (EclIsSuperHighlighted(animation->buttonName))
+				{
+					EclUpdateSuperHighlights(animation->buttonName);
+				}
+			}
+			if (animation->finishedCallback != nullptr)
+			{
+				animation->finishedCallback();
+			}
+
+			EclRemoveAnimation(i);
+		}
+		else
+		{
+			UplinkAbort("TODO: implement EclUpdateAllAnimations()");
+		}
 	}
 }
 
