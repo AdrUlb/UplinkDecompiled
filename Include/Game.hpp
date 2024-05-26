@@ -16,7 +16,7 @@ class Game : UplinkObject
 	GameObituary* obituary;
 	time_t lastAutosaveTime;
 	const char* loadedSaveFileVer;
-	const char* field_40;
+	char* createdSaveFileVer;
 	int field_48;
 	const char* winCodeDesc;
 	const char* field_58;
@@ -36,4 +36,5 @@ public:
 	World* GetWorld();
 	bool IsRunning();
 	void NewGame();
+	const char* GetLoadedSavefileVer();
 };

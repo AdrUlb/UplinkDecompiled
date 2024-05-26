@@ -5,9 +5,18 @@
 #include <UplinkObject.hpp>
 #include <Util.hpp>
 
+static constexpr size_t OPTIONCHANGE_NAME_MAX = 0x40;
+
+static constexpr size_t OPTION_NAME_MAX = 0x40;
+static constexpr size_t OPTION_TOOLTIP_MAX = 0x80;
+
+static constexpr size_t OPTIONS_THEMENAME_MAX = 0x80;
+static constexpr size_t OPTIONS_THEMEAUTHOR_MAX = 0x80;
+static constexpr size_t OPTIONS_THEMETITLE_MAX = 0x80;
+static constexpr size_t OPTIONS_THEMEDESCRIPTION_MAX = 0x400;
+
 struct OptionChange
 {
-	static constexpr size_t NAME_MAX = 0x40;
 	char name[0x40];
 	int value;
 };
@@ -21,10 +30,8 @@ struct ColourOption
 
 class Option : public UplinkObject
 {
-	static constexpr size_t NAME_MAX = 0x40;
-	static constexpr size_t TOOLTIP_MAX = 0x80;
-	char name[NAME_MAX];
-	char tooltip[TOOLTIP_MAX];
+	char name[OPTION_NAME_MAX];
+	char tooltip[OPTION_TOOLTIP_MAX];
 	bool yesOrNo;
 	bool visible;
 	int value;
@@ -39,12 +46,12 @@ public:
 
 	inline void SetName(const char* value)
 	{
-		UplinkStrncpy(name, value, NAME_MAX);
+		UplinkStrncpy(name, value, OPTION_NAME_MAX);
 	}
 
 	inline void SetTooltip(const char* value)
 	{
-		UplinkStrncpy(tooltip, value, TOOLTIP_MAX);
+		UplinkStrncpy(tooltip, value, OPTION_TOOLTIP_MAX);
 	}
 
 	inline void SetValue(int value)
@@ -85,17 +92,13 @@ public:
 
 class Options : UplinkObject
 {
-	static constexpr size_t THEMENAME_MAX = 0x80;
-	static constexpr size_t THEMEAUTHOR_MAX = 0x80;
-	static constexpr size_t THEMETITLE_MAX = 0x80;
-	static constexpr size_t THEMEDESCRIPTION_MAX = 0x400;
 
 	BTree<Option*> options;
 	LList<OptionChange*> optionChanges;
-	char themeName[THEMENAME_MAX];
-	char themeAuthor[THEMEAUTHOR_MAX];
-	char themeTitle[THEMETITLE_MAX];
-	char themeDescription[THEMEDESCRIPTION_MAX];
+	char themeName[OPTIONS_THEMENAME_MAX];
+	char themeAuthor[OPTIONS_THEMEAUTHOR_MAX];
+	char themeTitle[OPTIONS_THEMETITLE_MAX];
+	char themeDescription[OPTIONS_THEMEDESCRIPTION_MAX];
 	BTree<ColourOption*> colourOptions;
 
 public:

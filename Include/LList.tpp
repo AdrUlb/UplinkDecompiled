@@ -2,6 +2,8 @@
 
 #include "LList.hpp"
 
+#include <Util.hpp>
+
 template <class T> LListItem<T>::LListItem() : next(nullptr), prev(nullptr) {}
 
 template <class T> LList<T>::LList() : first(nullptr), last(nullptr), cachedItem(nullptr), cachedIndex(-1), length(0) {}
@@ -173,4 +175,32 @@ template <class T> void LList<T>::Empty()
 	this->length = 0;
 	this->cachedItem = nullptr;
 	this->cachedIndex = -1;
+}
+
+template <class T> bool LoadLList(LList<T>* list, FILE* file)
+{
+	UplinkAssert(list != nullptr);
+
+	int itemCount;
+	if (!FileReadData(&itemCount, 4, 1, file))
+		return false;
+
+	if (itemCount > 0x40000)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: LoadLList, number of items appears to be wrong, size=%d\n", itemCount);
+		return false;
+	}
+
+	for (auto i = 0; i < itemCount; i++)
+	{
+		char* str = nullptr;
+
+		if (!LoadDynamicString(str, file))
+			return false;
+
+		list->PutData(str);
+	}
+
+	return true;
 }

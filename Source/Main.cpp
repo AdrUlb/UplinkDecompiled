@@ -1,4 +1,5 @@
 #include <ExceptionHandling.hpp>
+#include <FTGL/ftgl.h>
 #include <Game.hpp>
 #include <Gci.hpp>
 #include <Globals.hpp>
@@ -6,7 +7,6 @@
 #include <RedShirt.hpp>
 #include <ScriptLibrary.hpp>
 #include <Sg.hpp>
-#include <FTGL/ftgl.h>
 #include <signal.h>
 #include <unistd.h>
 #include FT_DRIVER_H
@@ -16,6 +16,9 @@ App* app = nullptr;
 FILE* file_stdout = nullptr;
 const char* versionNumberString = "1.55";
 Game* game = nullptr;
+const char* minSaveVersion = "SAV56";
+const char* latestSaveVersion = "SAV62";
+
 
 static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {

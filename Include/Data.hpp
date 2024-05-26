@@ -37,5 +37,4 @@ public:
 	void Print() override;
 	void Update() override;
 	const char* GetID() override;
-	UplinkObjectId GetOBJECTID() override;
-};
+	UplinkObjectId GetOBJECTID() override;};

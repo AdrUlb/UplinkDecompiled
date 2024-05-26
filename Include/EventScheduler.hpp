@@ -10,7 +10,6 @@ class EventScheduler : UplinkObject
 	LList<UplinkEvent*> events;
 
 public:
-	EventScheduler();
 	~EventScheduler() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;

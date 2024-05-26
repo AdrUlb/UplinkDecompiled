@@ -1,6 +1,6 @@
 #pragma once
 
-#include <LocalInterfaceScreen.hpp>
+#include <InterfaceScreen.hpp>
 
 enum class PhoneDiallerNextScene
 {

@@ -5,7 +5,6 @@
 #include <Computer.hpp>
 #include <DArray.hpp>
 #include <Date.hpp>
-#include <DemoPlotGenerator.hpp>
 #include <EventScheduler.hpp>
 #include <GatewayDef.hpp>
 #include <Person.hpp>

@@ -1,5 +1,6 @@
-#include <Options.hpp>
 #include <Util.hpp>
+
+#include <Options.hpp>
 #include <cerrno>
 #include <cstdio>
 #include <dirent.h>
@@ -124,11 +125,12 @@ bool FileReadDataImpl(const char* sourceFile, const int sourceLine, void* buffer
 
 	return count == actualCount;
 }
+
 bool LoadDynamicStringImpl(const char* sourceFile, const int sourceLine, char*& buffer, FILE* file)
 {
 	buffer = nullptr;
 	int32_t length;
-	if (!FileReadData(&length, sizeof(length), 1, file))
+	if (!FileReadData(&length, 4, 1, file))
 		return false;
 
 	if (length == -1)
@@ -151,6 +153,65 @@ bool LoadDynamicStringImpl(const char* sourceFile, const int sourceLine, char*& 
 	return true;
 }
 
+bool LoadStringImpl(const char* sourceFile, const int sourceLine, char* buffer, const int max, FILE* file)
+{
+	if (buffer == nullptr)
+	{
+		printf("Print Assert: %s ln %d : %s\n", __FILE__, __LINE__, "buffer != nullptr");
+		return false;
+	}
+
+	if (max > 0)
+		buffer[0] = 0;
+
+	int length;
+	if (!FileReadData(&length, 4, 1, file))
+		return false;
+
+	if (length == -1)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: LoadDynamicString, empty string, %s:%d\n", sourceFile, sourceLine);
+		putchar('\n');
+		return false;
+	}
+
+	if (length > max)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: LoadDynamicString, size > maxsize, size=%d, maxsize=%d, %s:%d\n", length, max, sourceFile, sourceLine);
+		if (max <= 0)
+			return false;
+
+		if (!FileReadData(buffer, max, 1, file))
+		{
+			buffer[max - 1] = 0;
+			return false;
+		}
+
+		buffer[max - 1] = 0;
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: LoadDynamicString, possible string=%s, %s:%d\n", buffer, sourceFile, sourceLine);
+		return false;
+	}
+
+	if (length < 0)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: LoadDynamicString, size appears to be wrong, size=%d, %s:%d\n", length, sourceFile, sourceLine);
+		return false;
+	}
+
+	if (FileReadData(buffer, length, 1, file) == 0)
+	{
+		buffer[length - 1] = 0;
+		return false;
+	}
+	buffer[length - 1] = 0;
+
+	return true;
+}
+
 void SaveDynamicString(const char* value, int maxSize, FILE* file)
 {
 	if (value == nullptr)
@@ -169,8 +230,7 @@ void SaveDynamicString(const char* value, int maxSize, FILE* file)
 	if (size > (size_t)actualMaxSize)
 	{
 		printf("Print Abort: %s ln %d : ", "app/serialise.cpp", 0x3e5);
-		printf("WARNING: SaveDynamicString, size appears to be too long, size=%zu, maxsize=%d, absolute  maxsize=%d", size, maxSize,
-			   0x4000);
+		printf("WARNING: SaveDynamicString, size appears to be too long, size=%zu, maxsize=%d, absolute  maxsize=%d", size, maxSize, 0x4000);
 		putchar('\n');
 		size = actualMaxSize;
 	}

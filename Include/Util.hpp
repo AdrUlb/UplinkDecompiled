@@ -19,6 +19,7 @@ bool FileExists(const char* path);
 const char* Basename(const char* path);
 bool FileReadDataImpl(const char* sourceFile, const int sourceLine, void* buffer, size_t size, size_t count, FILE* file);
 bool LoadDynamicStringImpl(const char* sourceFile, const int sourceLine, char*& buffer, FILE* file);
+bool LoadStringImpl(const char* sourceFile, const int sourceLine, char* buffer, const int max, FILE* file);
 void SaveDynamicString(const char* value, int maxSize, FILE* file);
 void SaveDynamicString(const char* value, FILE* file);
 UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
@@ -91,3 +92,4 @@ static inline void UplinkAssertImpl(const char* file, const size_t line, const c
 #define UplinkAbort(message) UplinkAbortImpl(__FILE__, __LINE__, (message))
 #define FileReadData(buffer, size, count, file) FileReadDataImpl(__FILE__, __LINE__, buffer, size, count, file)
 #define LoadDynamicString(buffer, file) LoadDynamicStringImpl(__FILE__, __LINE__, buffer, file)
+#define LoadString(buffer, max, file) LoadStringImpl(__FILE__, __LINE__, buffer, max, file)

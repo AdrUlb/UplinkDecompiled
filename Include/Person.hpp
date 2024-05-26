@@ -22,6 +22,7 @@ class Person : UplinkObject
 	bool isTargetable;
 	int status;
 
+public:
 	Person();
 	~Person() override;
 	bool Load(FILE* file) override;

@@ -5,28 +5,25 @@
 #include <fstream>
 #include <sstream>
 
-static const char* minSaveVersion = "SAV56";
-static const char* latestSaveVersion = "SAV62";
-
 static ColourOption getColourDefault = {.red = 0, .green = 0, .blue = 0};
 
 Option::Option() : name{0}, tooltip{0}, yesOrNo(false), visible(true), value(0) {}
 
 bool Option::Load(FILE* file)
 {
-	if (FileReadData(name, NAME_MAX, 1, file) == 0)
+	if (FileReadData(name, OPTION_NAME_MAX, 1, file) == 0)
 	{
 		name[0] = 0;
 		return false;
 	}
-	name[NAME_MAX - 1] = 0;
+	name[OPTION_NAME_MAX - 1] = 0;
 
-	if (FileReadData(tooltip, TOOLTIP_MAX, 1, file) == 0)
+	if (FileReadData(tooltip, OPTION_TOOLTIP_MAX, 1, file) == 0)
 	{
 		tooltip[0] = 0;
 		return false;
 	}
-	tooltip[TOOLTIP_MAX - 1] = 0;
+	tooltip[OPTION_TOOLTIP_MAX - 1] = 0;
 
 	if (FileReadData(&yesOrNo, 1, 1, file) == 0)
 		return false;
@@ -42,8 +39,8 @@ bool Option::Load(FILE* file)
 
 void Option::Save(FILE* file)
 {
-	fwrite(name, NAME_MAX, 1, file);
-	fwrite(tooltip, TOOLTIP_MAX, 1, file);
+	fwrite(name, OPTION_NAME_MAX, 1, file);
+	fwrite(tooltip, OPTION_TOOLTIP_MAX, 1, file);
 	fwrite(&yesOrNo, 1, 1, file);
 	fwrite(&visible, 1, 1, file);
 	fwrite(&value, 4, 1, file);
@@ -69,7 +66,7 @@ UplinkObjectId Option::GetOBJECTID()
 
 Options::Options()
 {
-	strncpy(themeName, "graphics", THEMENAME_MAX);
+	strncpy(themeName, "graphics", OPTIONS_THEMENAME_MAX);
 }
 
 Options::~Options()
@@ -416,7 +413,7 @@ bool Options::IsOptionEqualTo(const char* name, int value)
 void Options::RequestShutdownChange(const char* name, int value)
 {
 	auto change = new OptionChange();
-	UplinkStrncpy(change->name, name, OptionChange::NAME_MAX);
+	UplinkStrncpy(change->name, name, OPTIONCHANGE_NAME_MAX);
 	change->value = value;
 	optionChanges.PutData(change);
 }
@@ -460,7 +457,7 @@ void Options::SetOptionValue(const char* name, int value, const char* tooltip, b
 void Options::SetThemeName(const char* value)
 {
 	(void)value;
-	UplinkStrncpy(themeName, value, THEMENAME_MAX);
+	UplinkStrncpy(themeName, value, OPTIONS_THEMENAME_MAX);
 
 	const auto filePath = ThemeFilename("theme.txt");
 	const auto themeFile = RsArchiveFileOpen(filePath);
@@ -479,17 +476,17 @@ void Options::SetThemeName(const char* value)
 	char temp[0x68];
 
 	themeFileStream >> temp >> std::ws;
-	themeFileStream.getline(themeTitle, THEMETITLE_MAX, '\r');
+	themeFileStream.getline(themeTitle, OPTIONS_THEMETITLE_MAX, '\r');
 	if ((temp[0] = themeFileStream.get()) != '\n')
 		themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	themeFileStream >> temp >> std::ws;
-	themeFileStream.getline(themeAuthor, THEMEAUTHOR_MAX, '\r');
+	themeFileStream.getline(themeAuthor, OPTIONS_THEMEAUTHOR_MAX, '\r');
 	if ((temp[0] = themeFileStream.get()) != '\n')
 		themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	themeFileStream >> temp >> std::ws;
-	themeFileStream.getline(themeDescription, THEMEDESCRIPTION_MAX, '\r');
+	themeFileStream.getline(themeDescription, OPTIONS_THEMEDESCRIPTION_MAX, '\r');
 	if ((temp[0] = themeFileStream.get()) != '\n')
 		themeFileStream.rdbuf()->sputbackc(temp[0]);
 

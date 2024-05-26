@@ -348,3 +348,8 @@ bool Date::Before(Date* other)
 	// Following or same second, after or equal.
 	return false;
 }
+
+void Date::Activate()
+{
+	active = true;
+}

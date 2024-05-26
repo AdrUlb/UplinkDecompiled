@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdio>
+
 template <class T> struct LListItem
 {
 	T value;
@@ -39,5 +41,8 @@ public:
 		return GetData(index);
 	}
 };
+
+void SaveLList(LList<char*>* list, FILE* file);
+void PrintLList(LList<char*>* list);
 
 #include "LList.tpp"
