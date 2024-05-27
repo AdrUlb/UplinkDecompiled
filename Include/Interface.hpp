@@ -19,4 +19,5 @@ struct Interface : UplinkObject
 	void Print() override;
 	void Update() override;
 	const char* GetID() override;
+	void Create();
 };

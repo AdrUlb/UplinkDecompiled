@@ -121,3 +121,10 @@ void World::ForceNextUpdate()
 	nextUpdateDate.SetDate(&currentDate);
 	nextUpdateDate.AdvanceSecond(-1);
 }
+
+Player* World::GetPlayer()
+{
+	const auto ret = people.LookupTree("PLAYER");
+	UplinkAssert(ret != nullptr);
+	return dynamic_cast<Player*>(ret->Data);
+}

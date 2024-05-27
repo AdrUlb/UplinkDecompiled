@@ -1,6 +1,9 @@
 #include <Game.hpp>
 #include <Globals.hpp>
+#include <NotificationEvent.hpp>
 #include <NumberGenerator.hpp>
+#include <RedShirt.hpp>
+#include <Sg.hpp>
 #include <Util.hpp>
 #include <WorldGenerator.hpp>
 
@@ -63,6 +66,12 @@ World* Game::GetWorld()
 	return world;
 }
 
+Interface* Game::GetInterface()
+{
+	UplinkAssert(interface != nullptr);
+	return interface;
+}
+
 bool Game::IsRunning()
 {
 	return speed > 0;
@@ -99,14 +108,14 @@ void Game::NewGame()
 		worldMapType = 0;
 
 	world = new World();
-	/*WorldGenerator::LoadDynamicsGatewayDefs();
+	WorldGenerator::LoadDynamicsGatewayDefs();
 	NotificationEvent::ScheduleStartingEvents();
 	WorldGenerator::GenerateAll();
 	world->plotGenerator.Initialise();
 	SgPlaySound(RsArchiveFileOpen("sounds/ringout.wav"), "sounds/ringout.wav");
 
 	view = new View();
-	view.Initialise();
+	view->Initialise();
 
 	interface = new Interface();
 	GetInterface()->Create();
@@ -127,9 +136,7 @@ void Game::NewGame()
 
 		if (NumberGenerator::RandomNumber(5) == 0)
 			WorldGenerator::GenerateSimpleStartingMissionB();
-	}*/
-
-	UplinkAbort("TODO: implement Game::NewGame()");
+	}
 }
 
 const char* Game::GetLoadedSavefileVer()

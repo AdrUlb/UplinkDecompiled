@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DArray.hpp>
 #include <cstdio>
 
 void RsInitialise(const char* appPath);
@@ -14,3 +15,4 @@ bool RsFileExists(const char* path);
 const char* RsArchiveFileOpen(const char* filePath);
 int RsArchiveFileClose(const char* filePath, FILE* file);
 bool RsEncryptFile(const char* path);
+DArray<char*>* RsListArchive(const char* dir, const char* ext);

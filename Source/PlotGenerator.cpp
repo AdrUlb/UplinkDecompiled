@@ -24,19 +24,6 @@ void DemoPlotGenerator::Print()
 void DemoPlotGenerator::Update()
 {
 	UplinkAbort("TODO: implement DemoPlotGenerator::Update()");
-	/*if (!game->GetWorld()->GetPlayer()->connection.TraceInProgress())
-		return;
-
-	if (game->GetWorld()->GetPlayer()->rating.uplinkScore < 15)
-		return;
-
-	Date date;
-	date.SetDate(&game->GetWorld()->currentDate);
-	date.AdvanceMinute(0);
-	const auto notification = new NotificationEvent();
-	notification->SetTYPE(10);
-	notification->SetRunDate(&date);
-	game->GetWorld()->eventScheduler.ScheduleEvent(notification);*/
 }
 
 const char* DemoPlotGenerator::GetID()
@@ -253,4 +240,9 @@ void PlotGenerator::Print()
 const char* PlotGenerator::GetID()
 {
 	return "PLOTGEN";
+}
+
+void PlotGenerator::Initialise()
+{
+	puts("TODO: implement PlotGenerator::Initialise()");
 }

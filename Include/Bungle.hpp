@@ -27,3 +27,4 @@ void BglCloseAllFiles();
 bool BglOpenZipFile(FILE* file, const char* dirPath, const char* fileName);
 bool BglFileLoaded(char* name);
 bool BglExtractFile(const char* filePath, const char* extractPath);
+DArray<char*>* BglListFiles(const char* path, const char* dir, const char* ext);

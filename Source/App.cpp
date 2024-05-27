@@ -43,7 +43,10 @@ void App::Update()
 		running = game->IsRunning();
 		if (running)
 		{
-			UplinkAbort("TODO: implement App::Update()");
+			if (game->GetWorld()->GetPlayer()->gateway.nuked == 0)
+			{
+				goto label_40772f;
+			}
 		}
 		else
 		{

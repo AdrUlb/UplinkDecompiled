@@ -118,8 +118,7 @@ bool BglOpenZipFile(FILE* file, const char* dirPath, const char* fileName)
 			strcpy(localFileHeader->archiveName, fileName);
 		}
 
-		if ((localFileHeader->compression != 0) || localFileHeader->compressedSize != localFileHeader->uncompressedSize ||
-			!localFileHeader->filename)
+		if ((localFileHeader->compression != 0) || localFileHeader->compressedSize != localFileHeader->uncompressedSize || !localFileHeader->filename)
 		{
 			if (localFileHeader->filename)
 				delete[] localFileHeader->filename;
@@ -151,7 +150,7 @@ bool BglFileLoaded(char* name)
 
 	const auto fileHeader = files.GetData(slashifiedFilePath);
 	delete[] slashifiedFilePath;
-	
+
 	return fileHeader != nullptr;
 }
 
@@ -161,7 +160,7 @@ bool BglExtractFile(const char* filePath, const char* extractPath)
 	strcpy(slashifiedFilePath, filePath);
 	BglSlashify(slashifiedFilePath);
 
-	const auto  fileHeader = files.GetData(slashifiedFilePath);
+	const auto fileHeader = files.GetData(slashifiedFilePath);
 	delete[] slashifiedFilePath;
 
 	if (fileHeader == nullptr)
@@ -176,3 +175,35 @@ bool BglExtractFile(const char* filePath, const char* extractPath)
 	return true;
 }
 
+DArray<char*>* BglListFiles(const char* path, const char* dir, const char* ext)
+{
+	char searchDir[0x100];
+	sprintf(searchDir, "%s%s", path, dir);
+	BglSlashify(searchDir);
+
+	const auto fileList = files.ConvertIndexToDArray();
+
+	for (int i = 0; i < fileList->Size(); i++)
+	{
+		if (fileList->ValidIndex(i))
+		{
+			const auto filePath = fileList->GetData(i);
+			char currentDir[0x100];
+			strncpy(currentDir, filePath, strlen(searchDir));
+			currentDir[strlen(searchDir)] = 0;
+
+			bool keep = true;
+
+			if (strcmp(currentDir, searchDir) != 0)
+				keep = false;
+
+			if (strstr(filePath, ext) == nullptr)
+				keep = false;
+
+			if (!keep)
+				fileList->RemoveData(i);
+		}
+	}
+
+	return fileList;
+}

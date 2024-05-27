@@ -1,7 +1,12 @@
 #pragma once
 
+#include <BTree.hpp>
 #include <Connection.hpp>
+#include <Gateway.hpp>
+#include <LList.hpp>
 #include <Message.hpp>
+#include <Mission.hpp>
+#include <Person.hpp>
 #include <Rating.hpp>
 #include <UplinkObject.hpp>
 
@@ -33,4 +38,42 @@ public:
 	UplinkObjectId GetOBJECTID() override;
 	virtual void GiveMessage(Message* message);
 	virtual void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan);
+};
+
+class Agent : Person
+{
+	LList<char*> links;
+	BTree<char*> accessCodes;
+	LList<Mission*> missions;
+	char handle[0x40];
+
+public:
+	~Agent() override;
+	bool Load(FILE* file) override;
+	void Save(FILE* file) override;
+	void Print() override;
+	void Update() override;
+	const char* GetID() override;
+	UplinkObjectId GetOBJECTID() override;
+	void GiveMessage(Message* message) override;
+	void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan) override;
+};
+
+class Player : Agent
+{
+public:
+	BTree<char*> shares;
+	Gateway gateway;
+	int32_t livesRuined = 0;
+	int32_t systemsDestroyed = 0;
+	int32_t highSecurityHacks = 0;
+
+	~Player() override;
+	bool Load(FILE* file) override;
+	void Save(FILE* file) override;
+	void Print() override;
+	void Update() override;
+	const char* GetID() override;
+	UplinkObjectId GetOBJECTID() override;
+	void GiveMessage(Message* message) override;
 };

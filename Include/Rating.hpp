@@ -10,19 +10,16 @@ struct RatingData
 
 class Rating : UplinkObject
 {
-	char owner[0x80];
-	int uplinkRating;
-	int uplinkScore;
-	int neuromancerRating;
-	int neuromancerScore;
-	int creditRating;
+	char owner[0x80] = "";
+	int uplinkRating = 0;
+	int uplinkScore = 0;
+	int neuromancerRating = 0;
+	int neuromancerScore = 0;
+	int creditRating = 0;
 
 public:
-	Rating();
-	~Rating() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
-	void Update() override;
 	const char* GetID() override;
 };

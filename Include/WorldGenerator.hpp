@@ -6,4 +6,8 @@ namespace WorldGenerator
 	void Shutdown();
 	void ReplaceInvalidCompanyAdmins();
 	void UpdateSoftwareUpgrades();
+	void LoadDynamicsGatewayDefs();
+	void GenerateAll();
+	void GenerateSimpleStartingMissionA();
+	void GenerateSimpleStartingMissionB();
 } // namespace WorldGenerator

@@ -5,7 +5,11 @@
 enum class UplinkObjectId : int
 {
 	Unknown = 0,
-	Option = 8
+	Person = 4,
+	Agent,
+	Player,
+	Option = 8,
+	DataBank = 22
 };
 
 class UplinkObject

@@ -1,6 +1,8 @@
 #include <Util.hpp>
 
+#include <Globals.hpp>
 #include <Options.hpp>
+#include <RedShirt.hpp>
 #include <cerrno>
 #include <cstdio>
 #include <dirent.h>
@@ -278,4 +280,53 @@ int GetScaledXPosition(int pos)
 int GetScaledYPosition(int pos)
 {
 	return pos * windowScaleY;
+}
+
+struct DArray<char*>* ListDirectory(const char* dir, const char* ext)
+{
+	const auto files = RsListArchive(dir, ext);
+	char dirPath[0x100];
+	UplinkSnprintf(dirPath, 0x100, "%s%s", app->path, dir);
+
+	const auto dirp = opendir(dirPath);
+	if (dirp != nullptr)
+	{
+		for (const auto i = readdir(dirp); i != nullptr;)
+		{
+			if (strstr(i->d_name, ext) == nullptr)
+				continue;
+
+			const auto filePath = new char[0x100];
+			UplinkSnprintf(filePath, 0x100, "%s%s", dir, i->d_name);
+			files->PutData(filePath);
+		}
+
+		closedir(dirp);
+	}
+
+	if (files->Size() <= 0)
+		return files;
+
+	for (auto i = 0; i < files->Size() - 1; i++)
+	{
+		if (!files->ValidIndex(i))
+			continue;
+
+		for (auto j = i + 1; j < files->Size(); j++)
+		{
+			if (!files->ValidIndex(j))
+				continue;
+
+			const auto path1 = files->GetData(i);
+			const auto path2 = files->GetData(j);
+			if (strcmp(path1, path2) != 0)
+				continue;
+
+			delete[] path2;
+
+			files->RemoveData(j);
+		}
+	}
+
+	return files;
 }

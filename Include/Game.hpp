@@ -34,6 +34,7 @@ public:
 	const char* GetID() override;
 	int GameSpeed();
 	World* GetWorld();
+	Interface* GetInterface();
 	bool IsRunning();
 	void NewGame();
 	const char* GetLoadedSavefileVer();

@@ -13,6 +13,7 @@ class Data : UplinkObject
 	float softwareVersion;
 	int softwareType;
 
+public:
 	Data();
 	~Data() override;
 	bool Load(FILE* file) override;
@@ -23,18 +24,17 @@ class Data : UplinkObject
 	UplinkObjectId GetOBJECTID() override;
 };
 
-class DataBank : UplinkObject
+class DataBank : public UplinkObject
 {
 	DArray<Data*> files;
 	DArray<int> placements;
-	bool formatted;
+	bool formatted = false;
 
 public:
-	DataBank();
 	~DataBank() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
-	void Update() override;
 	const char* GetID() override;
-	UplinkObjectId GetOBJECTID() override;};
+	UplinkObjectId GetOBJECTID() override;
+};

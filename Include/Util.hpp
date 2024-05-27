@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DArray.hpp>
 #include <ExceptionHandling.hpp>
 #include <UplinkObject.hpp>
 #include <csignal>
@@ -26,6 +27,7 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
 void SetWindowScaleFactor(float x, float y);
 int GetScaledXPosition(int pos);
 int GetScaledYPosition(int pos);
+DArray<char*>* ListDirectory(const char* dir, const char* ext);
 
 template <class... Args>
 static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)

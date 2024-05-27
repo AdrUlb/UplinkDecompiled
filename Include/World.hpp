@@ -8,7 +8,6 @@
 #include <EventScheduler.hpp>
 #include <GatewayDef.hpp>
 #include <Person.hpp>
-#include <Player.hpp>
 #include <PlotGenerator.hpp>
 #include <UplinkObject.hpp>
 #include <VLocation.hpp>
@@ -37,4 +36,5 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	void ForceNextUpdate();
+	Player* GetPlayer();
 };
