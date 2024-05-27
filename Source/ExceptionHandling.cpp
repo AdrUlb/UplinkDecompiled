@@ -2,7 +2,7 @@
 #include <Globals.hpp>
 #include <Gci.hpp>
 
-static void RunUplinkExceptionHandling()
+void RunUplinkExceptionHandling()
 {
 	if (app != nullptr)
 	{

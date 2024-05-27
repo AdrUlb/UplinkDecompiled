@@ -37,4 +37,5 @@ public:
 	const char* GetID() override;
 	void ForceNextUpdate();
 	Player* GetPlayer();
+	void CreateCompany(const char* name);
 };

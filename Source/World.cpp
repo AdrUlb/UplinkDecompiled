@@ -128,3 +128,10 @@ Player* World::GetPlayer()
 	UplinkAssert(ret != nullptr);
 	return dynamic_cast<Player*>(ret->Data);
 }
+
+void World::CreateCompany(const char* name)
+{
+	const auto company = new Company();
+	companies.PutData(name, company);
+	company->SetName(name);
+}

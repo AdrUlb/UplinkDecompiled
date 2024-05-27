@@ -19,7 +19,6 @@ Game* game = nullptr;
 const char* minSaveVersion = "SAV56";
 const char* latestSaveVersion = "SAV62";
 
-
 static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {
 	auto buffer = (char*)malloc(0xFFF);

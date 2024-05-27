@@ -30,6 +30,7 @@ public:
 	void RemoveData(int index);
 	bool ValidIndex(int index);
 	void Empty();
+	void PutDataAtIndex(const T& value, int index);
 
 	int Size()
 	{

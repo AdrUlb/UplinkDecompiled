@@ -9,7 +9,9 @@ enum class UplinkObjectId : int
 	Agent,
 	Player,
 	Option = 8,
-	DataBank = 22
+	DataBank = 22,
+	Company = 50,
+	NotificationEvent = 70
 };
 
 class UplinkObject

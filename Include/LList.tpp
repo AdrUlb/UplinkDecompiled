@@ -177,6 +177,48 @@ template <class T> void LList<T>::Empty()
 	this->cachedIndex = -1;
 }
 
+template <class T> void LList<T>::PutDataAtIndex(const T& value, int index)
+{
+	if (index == 0)
+	{
+		PutDataAtStart(value);
+		return;
+	}
+
+	if (index == length)
+	{
+		PutDataAtEnd(value);
+		return;
+	}
+
+	const auto item = new LListItem<T>();
+	item->value = value;
+
+	auto prev = first;
+	for (int i = 0; i < index - 1; i++)
+	{
+		if (prev == nullptr)
+			return;
+
+		prev = prev->next;
+	}
+
+	if (prev == nullptr)
+		return;
+	
+	item->prev = prev;
+	item->next = prev->next;
+	
+	if (prev->next != nullptr)
+		prev->next->prev = item;
+
+	prev->next = item;
+
+	length++;
+	cachedItem = nullptr;
+	cachedIndex = -1;
+}
+
 template <class T> void DeleteLListData(LList<T>* list)
 {
 	UplinkAssert(list != nullptr);

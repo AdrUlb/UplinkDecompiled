@@ -48,3 +48,9 @@ char* UplinkEvent::GetLongString()
 	strncpy(str, "Uplink Event", 0x20);
 	return str;
 }
+
+void UplinkEvent::SetRunDate(Date* date)
+{
+	UplinkAssert(date != nullptr);
+	runDate.SetDate(date);
+}

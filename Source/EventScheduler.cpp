@@ -86,3 +86,22 @@ bool EventScheduler::UpdateProcessEvents()
 
 	return (eventCount - runEventCount) != events.Size();
 }
+
+void EventScheduler::ScheduleEvent(UplinkEvent* event)
+{
+	UplinkAssert(event != nullptr);
+
+	for (auto i = 0; i < events.Size(); i++)
+	{
+		const auto thisEvent = events.GetData(i);
+		UplinkAssert(thisEvent != nullptr);
+
+		if (event->runDate.Before(&thisEvent->runDate))
+		{
+			events.PutDataAtIndex(event, i);
+			return;
+		}
+	}
+
+	events.PutDataAtEnd(event);
+}

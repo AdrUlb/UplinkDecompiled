@@ -7,7 +7,6 @@ struct UplinkEvent : UplinkObject
 {
 	Date runDate;
 
-	UplinkEvent();
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
@@ -17,4 +16,5 @@ struct UplinkEvent : UplinkObject
 	virtual void RunWarning();
 	virtual char* GetShortString();
 	virtual char* GetLongString();
+	void SetRunDate(Date* date);
 };

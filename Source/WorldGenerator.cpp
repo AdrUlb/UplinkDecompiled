@@ -70,14 +70,26 @@ void WorldGenerator::GenerateAll()
 
 void WorldGenerator::GenerateSpecifics()
 {
-	puts("TODO: implement WorldGenerator::GenerateSpecifics");
+	game->GetWorld()->CreateCompany("Player");
+	WorldGenerator::GenerateLocalMachine();
+	WorldGenerator::GenerateCompanyGovernment();
+	WorldGenerator::GenerateGlobalCriminalDatabase();
+	WorldGenerator::GenerateInternationalSocialSecurityDatabase();
+	WorldGenerator::GenerateInternationalAcademicDatabase();
+	WorldGenerator::GenerateInterNIC();
+	WorldGenerator::GenerateStockMarket();
+	WorldGenerator::GenerateProtoVision();
+	WorldGenerator::GenerateOCP();
+	WorldGenerator::GenerateSJGames();
+	WorldGenerator::GenerateIntroversion();
+	WorldGenerator::GenerateCompanyUplink();
 }
 
 void WorldGenerator::GeneratePlayer(const char* handle)
 {
-	// This code will work as-is once the required methods are implemented
-	const auto player = new Player();
-	/*player->SetName(name, "PLAYER");
+	puts("TODO: implement WorldGenerator::GeneratePlayer");
+	/*const auto player = new Player();
+	player->SetName(name, "PLAYER");
 	player->SetAge(21);
 	player->SetHandle(handle);
 	player->SetLocalHost("127.0.0.1");
@@ -94,7 +106,6 @@ void WorldGenerator::GeneratePlayer(const char* handle)
 	player->GetConnection()->Connect();
 	player->GiveLink("234.773.0.666");
 	player->GiveLink("458.615.48.651");*/
-	puts("TODO: implement WorldGenerator::GeneratePlayer");
 }
 
 void WorldGenerator::GenerateRandomWorld()
@@ -115,4 +126,63 @@ void WorldGenerator::GenerateSimpleStartingMissionA()
 void WorldGenerator::GenerateSimpleStartingMissionB()
 {
 	puts("TODO: implement WorldGenerator::GenerateSimpleStartingMissionB()");
+}
+void WorldGenerator::GenerateLocalMachine()
+{
+	puts("TODO: implement WorldGenerator::GenerateLocalMachine()");
+}
+
+void WorldGenerator::GenerateCompanyGovernment()
+{
+	puts("TODO: implement WorldGenerator::GenerateCompanyGovernment()");
+}
+
+void WorldGenerator::GenerateGlobalCriminalDatabase()
+{
+	puts("TODO: implement WorldGenerator::GenerateGlobalCriminalDatabase()");
+}
+
+void WorldGenerator::GenerateInternationalSocialSecurityDatabase()
+{
+	puts("TODO: implement WorldGenerator::GenerateInternationalSocialSecurityDatabase()");
+}
+
+void WorldGenerator::GenerateInternationalAcademicDatabase()
+{
+	puts("TODO: implement WorldGenerator::GenerateInternationalAcademicDatabase()");
+}
+
+void WorldGenerator::GenerateInterNIC()
+{
+	puts("TODO: implement WorldGenerator::GenerateInterNIC()");
+}
+
+void WorldGenerator::GenerateStockMarket()
+{
+	puts("TODO: implement WorldGenerator::GenerateStockMarket()");
+}
+
+void WorldGenerator::GenerateProtoVision()
+{
+	puts("TODO: implement WorldGenerator::GenerateProtoVision()");
+}
+
+void WorldGenerator::GenerateOCP()
+{
+	puts("TODO: implement WorldGenerator::GenerateOCP()");
+}
+
+void WorldGenerator::GenerateSJGames()
+{
+	puts("TODO: implement WorldGenerator::GenerateSJGames()");
+}
+
+void WorldGenerator::GenerateIntroversion()
+{
+	puts("TODO: implement WorldGenerator::GenerateIntroversion()");
+}
+
+void WorldGenerator::GenerateCompanyUplink()
+{
+	puts("TODO: implement WorldGenerator::GenerateCompanyUplink()");
 }

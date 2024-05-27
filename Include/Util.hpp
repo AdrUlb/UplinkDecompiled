@@ -40,6 +40,7 @@ static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* 
 			   "======================================\n"
 			   " Location    : %s, line %zu\n Buffer size : %zu\n Format      : %s\n Buffer      : %s\n",
 			   file, line, n, format, s);
+		RunUplinkExceptionHandling();
 		__builtin_trap();
 	}
 	return ret;
@@ -58,6 +59,7 @@ static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char*
 			   "=====================================\n"
 			   " Location    : %s, line %zu\n Dest. size  : %zu\n Source size : %zu\n Str. Source : %s\n",
 			   file, line, num, sourceSize, source);
+		RunUplinkExceptionHandling();
 		__builtin_trap();
 	}
 
@@ -73,25 +75,27 @@ static inline void UplinkAssertImpl(const char* file, const size_t line, const c
 			   "=======================================\n"
 			   " Condition : %s\n Location  : %s, line %zu\n",
 			   condStr, file, line);
+		RunUplinkExceptionHandling();
 		__builtin_trap();
 	}
 }
 
-[[noreturn]] static void inline UplinkAbortImpl(const char* file, const size_t line, const char* message)
+template <typename... Args> [[noreturn]] static void inline UplinkAbortImpl(const char* file, const size_t line, const char* message, Args... args)
 {
 	printf("\n"
 		   "Uplink has been forced to Abort\n"
 		   "===============================\n"
-		   " Message   : %s\n Location  : %s, line %zu\n",
-		   message, file, line);
-	hSignalSIGSEGV(SIGSEGV);
+		   " Message   : ");
+	printf(message, args...);
+	printf("\n Location  : %s, line %zu\n", file, line);
+	RunUplinkExceptionHandling();
 	__builtin_trap();
 }
 
-#define UplinkSnprintf(s, n, format, ...) UplinkSnprintfImpl(__FILE__, __LINE__, (s), (n), (format), __VA_ARGS__)
+#define UplinkSnprintf(s, n, format, ...) UplinkSnprintfImpl(__FILE__, __LINE__, (s), (n), (format)__VA_OPT__(, ) __VA_ARGS__)
 #define UplinkStrncpy(dest, source, num) UplinkStrncpyImpl(__FILE__, __LINE__, (dest), (source), (num))
 #define UplinkAssert(cond) UplinkAssertImpl(__FILE__, __LINE__, #cond, (cond))
-#define UplinkAbort(message) UplinkAbortImpl(__FILE__, __LINE__, (message))
+#define UplinkAbort(message, ...) UplinkAbortImpl(__FILE__, __LINE__, (message)__VA_OPT__(, ) __VA_ARGS__)
 #define FileReadData(buffer, size, count, file) FileReadDataImpl(__FILE__, __LINE__, buffer, size, count, file)
 #define LoadDynamicString(buffer, file) LoadDynamicStringImpl(__FILE__, __LINE__, buffer, file)
 #define LoadString(buffer, max, file) LoadStringImpl(__FILE__, __LINE__, buffer, max, file)

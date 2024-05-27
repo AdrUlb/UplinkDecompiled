@@ -2,9 +2,28 @@
 
 #include <UplinkEvent.hpp>
 
-class NotificationEvent : UplinkEvent
+enum class NotificationType
 {
-	int type = 0;
+	Unknown,
+	GrowCompanies,
+	GenerateNewMissions,
+	CheckForSecurityBreaches,
+	CheckMissionDueDates,
+	CheckRecentHackCount,
+	GiveMissionToNpc,
+	PayUplinkMonthlyFee,
+	ExpireOldStuff,
+	AddInterestToLoans,
+	DemoGameOver,
+	DemoGenerateMission,
+	BuyAgentList,
+	AgentsOnListDie,
+	WarezGameOver
+};
+
+class NotificationEvent : public UplinkEvent
+{
+	NotificationType type = NotificationType::Unknown;
 
 public:
 	bool Load(FILE* file) override;
@@ -15,5 +34,6 @@ public:
 	void Run() override;
 	char* GetShortString() override;
 	char* GetLongString() override;
+	void SetTYPE(NotificationType type);
 	static void ScheduleStartingEvents();
 };

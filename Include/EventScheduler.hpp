@@ -18,4 +18,5 @@ public:
 	const char* GetID() override;
 	Date* GetDateOfNextEvent();
 	bool UpdateProcessEvents();
+	void ScheduleEvent(UplinkEvent* event);
 };
