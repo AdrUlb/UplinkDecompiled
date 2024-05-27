@@ -44,10 +44,3 @@ public:
 };
 
 #include "LList.tpp"
-
-bool LoadLList(LList<char*>* list, FILE* file);
-bool LoadLList(struct LList<UplinkObject*>* list, FILE* file);
-void SaveLList(LList<char*>* list, FILE* file);
-void SaveLList(LList<UplinkObject*>* list, FILE* file);
-void PrintLList(LList<char*>* list);
-void PrintLList(LList<UplinkObject*>* list);

@@ -84,13 +84,13 @@ bool PlotGenerator::Load(FILE* file)
 	}
 	else
 	{
-		if (!LoadString(act1Scene3Agent, 0x80, file))
+		if (!LoadDynamicStringBuf(act1Scene3Agent, 0x80, file))
 			return false;
 
-		if (!LoadString(act1Scene4Agent, 0x80, file))
+		if (!LoadDynamicStringBuf(act1Scene4Agent, 0x80, file))
 			return false;
 
-		if (!LoadString(act2Scene1Agent, 0x80, file))
+		if (!LoadDynamicStringBuf(act2Scene1Agent, 0x80, file))
 			return false;
 	}
 
@@ -143,13 +143,13 @@ bool PlotGenerator::Load(FILE* file)
 	}
 	else
 	{
-		if (!LoadString(saveItForTheJuryGuyToBeFramed, 0x80, file))
+		if (!LoadDynamicStringBuf(saveItForTheJuryGuyToBeFramed, 0x80, file))
 			return false;
 
-		if (!LoadString(saveItForTheJuryTargetBankIp, 0x18, file))
+		if (!LoadDynamicStringBuf(saveItForTheJuryTargetBankIp, 0x18, file))
 			return false;
 
-		if (!LoadString(tracerLastKnownIp, 0x18, file))
+		if (!LoadDynamicStringBuf(tracerLastKnownIp, 0x18, file))
 			return false;
 	}
 

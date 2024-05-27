@@ -4,7 +4,7 @@
 
 EventScheduler::~EventScheduler()
 {
-	DeleteLListData(&events);
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&events));
 }
 
 bool EventScheduler::Load(FILE* file)

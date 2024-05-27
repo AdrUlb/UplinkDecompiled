@@ -4,7 +4,7 @@
 #include <DArray.hpp>
 #include <UplinkObject.hpp>
 
-class LogBank : UplinkObject
+class LogBank : public UplinkObject
 {
 	DArray<AccessLog*> accessLogs1;
 	DArray<AccessLog*> accessLogs2;

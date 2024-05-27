@@ -272,7 +272,7 @@ void imagebutton_draw(Button* button, bool highlighted, bool clicked)
 	glDisable(GL_SCISSOR_TEST);
 }
 
-void textbutton_draw(struct Button* button, bool highlighted, bool clicked)
+void textbutton_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != nullptr);
 	int32_t rax_2 = app->GetOptions()->GetOptionValue("graphics_screenheight");

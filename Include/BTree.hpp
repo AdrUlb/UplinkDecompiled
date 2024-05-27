@@ -1,7 +1,6 @@
 #pragma once
 
 #include <DArray.hpp>
-#include <UplinkObject.hpp>
 
 template <class T> class BTree
 {
@@ -34,11 +33,5 @@ public:
 	static void RecursiveConvertToDArray(DArray<T>* array, BTree<T>* tree);
 	static void RecursiveConvertIndexToDArray(DArray<char*>* array, BTree<T>* tree);
 };
-
-bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file);
-void PrintBTree(BTree<UplinkObject*>* tree);
-void PrintBTree(BTree<char*>* tree);
-void SaveBTree(BTree<UplinkObject*>* tree, FILE* file);
-void UpdateBTree(BTree<UplinkObject*>* tree);
 
 #include "BTree.tpp"

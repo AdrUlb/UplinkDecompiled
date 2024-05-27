@@ -1,7 +1,6 @@
 #pragma once
 
 #include "DArray.hpp"
-#include "Util.hpp"
 
 template <class T> DArray<T>::DArray() : grow(1), size(0), data(nullptr), dataValid(nullptr) {}
 template <class T> DArray<T>::~DArray()
@@ -141,22 +140,4 @@ template <class T> bool DArray<T>::ValidIndex(int index)
 		return false;
 
 	return dataValid[index];
-}
-
-template <class T> void DeleteDArrayDataD(DArray<T>* array)
-{
-	UplinkAssert(array != nullptr);
-
-	for (int i = 0; i < array->Size(); i++)
-	{
-		if ((array->ValidIndex(i) && array->GetData(i)))
-		{
-			const auto element = array->GetData(i);
-
-			if (element != 0)
-				delete element;
-
-			array->RemoveData(i);
-		}
-	}
 }

@@ -3,8 +3,9 @@
 #include <Date.hpp>
 #include <UplinkObject.hpp>
 
-struct UplinkEvent : UplinkObject
+class UplinkEvent : public UplinkObject
 {
+public:
 	Date runDate;
 
 	bool Load(FILE* file) override;

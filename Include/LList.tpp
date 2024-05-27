@@ -218,15 +218,3 @@ template <class T> void LList<T>::PutDataAtIndex(const T& value, int index)
 	cachedItem = nullptr;
 	cachedIndex = -1;
 }
-
-template <class T> void DeleteLListData(LList<T>* list)
-{
-	UplinkAssert(list != nullptr);
-
-	for (auto i = 0; i < list->Size(); i++)
-	{
-		const auto data = list->GetData(i);
-		if (data != nullptr)
-			delete[] data;
-	}
-}

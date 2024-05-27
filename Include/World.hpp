@@ -37,5 +37,9 @@ public:
 	const char* GetID() override;
 	void ForceNextUpdate();
 	Player* GetPlayer();
-	void CreateCompany(const char* name);
+	VLocation* GetVLocation(const char* ip);
+	Company* GetCompany(const char* name);
+	Company* CreateCompany(const char* name);
+	VLocation* CreateVLocation(const char* ip, int x, int y);
+	Computer* CreateComputer(const char* computerName, const char* companyName, const char* ip);
 };

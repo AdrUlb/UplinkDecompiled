@@ -140,7 +140,7 @@ void NotificationEvent::ScheduleStartingEvents()
 	notif4->SetRunDate(&game->GetWorld()->currentDate);
 	game->GetWorld()->eventScheduler.ScheduleEvent(notif4);
 
-	struct Date date;
+	Date date;
 
 	date.SetDate(&game->GetWorld()->currentDate);
 	date.AdvanceMonth(1);

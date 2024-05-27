@@ -37,7 +37,7 @@ class PlotGenerator : UplinkObject
 	int numUsesRevelation;
 	float versionRevelation;
 	float versionFaith;
-	struct LList<char*> revelationInfected;
+	LList<char*> revelationInfected;
 	bool revelationReleaseUncontrolled;
 	bool revelationReleaseFailed;
 	bool revelationArcBusted;

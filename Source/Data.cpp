@@ -1,5 +1,7 @@
 #include <Data.hpp>
 
+#include <Util.hpp>
+
 DataBank::~DataBank()
 {
 	DeleteDArrayDataD(&files);

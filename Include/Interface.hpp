@@ -6,12 +6,13 @@
 typedef void LocalInterface;
 typedef void RemoteInterface;
 
-struct Interface : UplinkObject
+class Interface : UplinkObject
 {
 	LocalInterface* localInterface;
 	RemoteInterface* remoteInterface;
 	TaskManager* taskManager;
 
+public:
 	Interface();
 	~Interface() override;
 	bool Load(FILE* file) override;

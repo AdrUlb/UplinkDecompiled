@@ -4,13 +4,13 @@
 
 bool Company::Load(FILE* file)
 {
-	if (!LoadString(name, 0x40, file))
+	if (!LoadDynamicStringBuf(name, 0x40, file))
 		return false;
 
-	if (!LoadString(boss, 0x80, file))
+	if (!LoadDynamicStringBuf(boss, 0x80, file))
 		return false;
 
-	if (!LoadString(admin, 0x80, file))
+	if (!LoadDynamicStringBuf(admin, 0x80, file))
 		return false;
 
 	if (!FileReadData(&size, 4, 1, file))

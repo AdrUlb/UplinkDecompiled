@@ -87,6 +87,7 @@ void WorldGenerator::GenerateSpecifics()
 
 void WorldGenerator::GeneratePlayer(const char* handle)
 {
+	(void)handle;
 	puts("TODO: implement WorldGenerator::GeneratePlayer");
 	/*const auto player = new Player();
 	player->SetName(name, "PLAYER");
@@ -129,6 +130,10 @@ void WorldGenerator::GenerateSimpleStartingMissionB()
 }
 void WorldGenerator::GenerateLocalMachine()
 {
+	const auto vlocation = game->GetWorld()->CreateVLocation("127.0.0.1", 284, 73);
+	const auto computer = game->GetWorld()->CreateComputer("Gateway", "Player", "127.0.0.1");
+	vlocation->SetListed(false);
+	computer->SetIsTargetable(false);
 	puts("TODO: implement WorldGenerator::GenerateLocalMachine()");
 }
 

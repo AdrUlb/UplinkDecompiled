@@ -2,14 +2,17 @@
 
 #include <cstdio>
 
-enum class UplinkObjectId : int
+enum class UplinkObjectId
 {
 	Unknown = 0,
+	VLocation = 1,
 	Person = 4,
 	Agent,
 	Player,
 	Option = 8,
+	Computer = 20,
 	DataBank = 22,
+	RecordBank = 26,
 	Company = 50,
 	NotificationEvent = 70
 };

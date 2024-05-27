@@ -2,7 +2,6 @@
 
 #include "BTree.hpp"
 
-#include <Util.hpp>
 #include <cstring>
 
 template <class T> BTree<T>::BTree() : left(nullptr), right(nullptr), name(nullptr), Data{0} {}
@@ -252,23 +251,4 @@ template <class T> void BTree<T>::AppendRight(BTree<T>* value)
 	}
 
 	tree->right = value;
-}
-
-template <class T> void DeleteBTreeData(BTree<T>* tree)
-{
-	UplinkAssert(tree != nullptr);
-
-	const auto array = tree->ConvertToDArray();
-
-	for (int i = 0; i < array->Size(); i++)
-	{
-		const auto data = array->GetData(i);
-		if (array->ValidIndex(i) && data != nullptr)
-		{
-			if (data != nullptr)
-				delete data;
-		}
-	}
-
-	delete (array);
 }

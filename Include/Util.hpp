@@ -1,7 +1,9 @@
 #pragma once
 
+#include <BTree.hpp>
 #include <DArray.hpp>
 #include <ExceptionHandling.hpp>
+#include <LList.hpp>
 #include <UplinkObject.hpp>
 #include <csignal>
 #include <cstddef>
@@ -20,7 +22,7 @@ bool FileExists(const char* path);
 const char* Basename(const char* path);
 bool FileReadDataImpl(const char* sourceFile, const int sourceLine, void* buffer, size_t size, size_t count, FILE* file);
 bool LoadDynamicStringImpl(const char* sourceFile, const int sourceLine, char*& buffer, FILE* file);
-bool LoadStringImpl(const char* sourceFile, const int sourceLine, char* buffer, const int max, FILE* file);
+bool LoadDynamicStringBufImpl(const char* sourceFile, const int sourceLine, char* buffer, const int max, FILE* file);
 void SaveDynamicString(const char* value, int maxSize, FILE* file);
 void SaveDynamicString(const char* value, FILE* file);
 UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
@@ -28,6 +30,22 @@ void SetWindowScaleFactor(float x, float y);
 int GetScaledXPosition(int pos);
 int GetScaledYPosition(int pos);
 DArray<char*>* ListDirectory(const char* dir, const char* ext);
+bool LoadDArray(DArray<UplinkObject*>* array, FILE* file);
+void SaveDArray(DArray<UplinkObject*>* array, FILE* file);
+void PrintDArray(struct DArray<UplinkObject*>* array);
+bool LoadLList(LList<char*>* list, FILE* file);
+bool LoadLList(LList<UplinkObject*>* list, FILE* file);
+void SaveLList(LList<char*>* list, FILE* file);
+void SaveLList(LList<UplinkObject*>* list, FILE* file);
+void PrintLList(LList<char*>* list);
+void PrintLList(LList<UplinkObject*>* list);
+void DeleteLListData(LList<char*>* list);
+void DeleteLListData(LList<UplinkObject*>* list);
+bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file);
+void PrintBTree(BTree<UplinkObject*>* tree);
+void PrintBTree(BTree<char*>* tree);
+void SaveBTree(BTree<UplinkObject*>* tree, FILE* file);
+void UpdateBTree(BTree<UplinkObject*>* tree);
 
 template <class... Args>
 static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)
@@ -98,4 +116,41 @@ template <typename... Args> [[noreturn]] static void inline UplinkAbortImpl(cons
 #define UplinkAbort(message, ...) UplinkAbortImpl(__FILE__, __LINE__, (message)__VA_OPT__(, ) __VA_ARGS__)
 #define FileReadData(buffer, size, count, file) FileReadDataImpl(__FILE__, __LINE__, buffer, size, count, file)
 #define LoadDynamicString(buffer, file) LoadDynamicStringImpl(__FILE__, __LINE__, buffer, file)
-#define LoadString(buffer, max, file) LoadStringImpl(__FILE__, __LINE__, buffer, max, file)
+#define LoadDynamicStringBuf(buffer, max, file) LoadDynamicStringBufImpl(__FILE__, __LINE__, buffer, max, file)
+
+template <class T> void DeleteBTreeData(BTree<T>* tree)
+{
+	UplinkAssert(tree != nullptr);
+
+	const auto array = tree->ConvertToDArray();
+
+	for (int i = 0; i < array->Size(); i++)
+	{
+		const auto data = array->GetData(i);
+		if (array->ValidIndex(i) && data != nullptr)
+		{
+			if (data != nullptr)
+				delete data;
+		}
+	}
+
+	delete (array);
+}
+
+template <class T> void DeleteDArrayDataD(DArray<T>* array)
+{
+	UplinkAssert(array != nullptr);
+
+	for (int i = 0; i < array->Size(); i++)
+	{
+		if ((array->ValidIndex(i) && array->GetData(i)))
+		{
+			const auto element = array->GetData(i);
+
+			if (element != 0)
+				delete element;
+
+			array->RemoveData(i);
+		}
+	}
+}

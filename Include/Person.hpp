@@ -10,7 +10,7 @@
 #include <Rating.hpp>
 #include <UplinkObject.hpp>
 
-class Person : UplinkObject
+class Person : public UplinkObject
 {
 	char name[0x80];
 	int age;

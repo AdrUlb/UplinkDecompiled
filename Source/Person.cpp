@@ -19,6 +19,7 @@ bool Person::Load(FILE* file)
 
 void Person::Save(FILE* file)
 {
+	(void)file;
 	puts("TODO: implement Person::Save()");
 }
 
@@ -39,7 +40,7 @@ const char* Person::GetID()
 
 UplinkObjectId Person::GetOBJECTID()
 {
-	UplinkObjectId::Person;
+	return UplinkObjectId::Person;
 }
 
 void Person::GiveMessage(Message* message)
@@ -62,7 +63,7 @@ Agent::~Agent()
 {
 	DeleteLListData(&links);
 	DeleteBTreeData(&accessCodes);
-	DeleteLListData(&missions);
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&missions));
 }
 
 bool Agent::Load(FILE* file)

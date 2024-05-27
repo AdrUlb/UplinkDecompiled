@@ -1,11 +1,13 @@
 #pragma once
 
+#include <Button.hpp>
+
 typedef void (*AnimationFinishedCallback)();
 
 struct Animation
 {
 	char* buttonName;
-	struct Button* button;
+	Button* button;
 	int fromX;
 	int fromY;
 	int toX;

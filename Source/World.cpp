@@ -129,9 +129,51 @@ Player* World::GetPlayer()
 	return dynamic_cast<Player*>(ret->Data);
 }
 
-void World::CreateCompany(const char* name)
+VLocation* World::GetVLocation(const char* ip)
+{
+	const auto tree = vlocations.LookupTree(ip);
+
+	if (tree == nullptr)
+		return nullptr;
+
+	return tree->Data;
+}
+Company* World::GetCompany(const char* name)
+{
+	struct BTree<Company*>* tree = companies.LookupTree(name);
+	if (tree == nullptr)
+		return nullptr;
+	return tree->Data;
+}
+
+Company* World::CreateCompany(const char* name)
 {
 	const auto company = new Company();
 	companies.PutData(name, company);
 	company->SetName(name);
+	return company;
+}
+
+VLocation* World::CreateVLocation(const char* ip, int x, int y)
+{
+	const auto vlocation = new VLocation();
+	vlocations.PutData(ip, vlocation);
+	vlocation->SetIP(ip);
+	vlocation->SetPLocation(x, y);
+	return vlocation;
+}
+
+Computer* World::CreateComputer(const char* computerName, const char* companyName, const char* ip)
+{
+	const auto computer = new Computer();
+	computers.PutData(computerName, computer);
+	computer->SetName(computerName);
+	computer->SetCompanyName(companyName);
+	computer->SetIP(ip);
+
+	const auto vlocation = World::GetVLocation(ip);
+	UplinkAssert(vlocation != nullptr);
+	vlocation->SetComputer(computerName);
+
+	return computer;
 }
