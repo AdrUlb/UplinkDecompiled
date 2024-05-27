@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS_RELEASE_INIT "-DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-DNDEBUG -O3")
 set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g -rdynamic")
 
 add_subdirectory(Dependencies/tcp4u.331)

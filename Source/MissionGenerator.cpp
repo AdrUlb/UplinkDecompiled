@@ -15,7 +15,7 @@ static int PROB_MISSION_REMOVECOMPUTER[] = {0, 0, 0, 0, 0, 0, 35, 25, 20, 5, 10,
 static int PROB_MISSION_REMOVECOMPANY[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static int PROB_MISSION_REMOVEUSER[] = {0, 0, 0, 0, 0, 0, 0, 0, 40, 25, 30, 20, 20, 20, 20, 20, 20};
 
-static Probability* prob_missiontype[11];
+static Probability* prob_missiontype[17];
 
 void MissionGenerator::Initialise()
 {
