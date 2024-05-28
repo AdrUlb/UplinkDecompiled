@@ -138,12 +138,33 @@ VLocation* World::GetVLocation(const char* ip)
 
 	return tree->Data;
 }
+
+Computer* World::GetComputer(const char* name)
+{
+	const auto tree = computers.LookupTree(name);
+
+	if (tree == nullptr)
+		return nullptr;
+
+	return tree->Data;
+}
+
 Company* World::GetCompany(const char* name)
 {
 	struct BTree<Company*>* tree = companies.LookupTree(name);
 	if (tree == nullptr)
 		return nullptr;
 	return tree->Data;
+}
+
+Person* World::CreatePerson(const char* name, const char* host)
+{
+	const auto person = new Person();
+	people.PutData(name, person);
+	person->SetName(name);
+	person->SetLocalHost(host);
+	person->SetRemoteHost(host);
+	return person;
 }
 
 Company* World::CreateCompany(const char* name)
@@ -154,6 +175,12 @@ Company* World::CreateCompany(const char* name)
 	return company;
 }
 
+void World::CreateCompany(Company* company)
+{
+	UplinkAssert(company != nullptr);
+	companies.PutData(company->name, company);
+}
+
 VLocation* World::CreateVLocation(const char* ip, int x, int y)
 {
 	const auto vlocation = new VLocation();
@@ -161,6 +188,12 @@ VLocation* World::CreateVLocation(const char* ip, int x, int y)
 	vlocation->SetIP(ip);
 	vlocation->SetPLocation(x, y);
 	return vlocation;
+}
+
+void World::CreateVLocation(VLocation* vlocation)
+{
+	UplinkAssert(vlocation != nullptr);
+	vlocations.PutData(vlocation->ip, vlocation);
 }
 
 Computer* World::CreateComputer(const char* computerName, const char* companyName, const char* ip)
@@ -176,4 +209,14 @@ Computer* World::CreateComputer(const char* computerName, const char* companyNam
 	vlocation->SetComputer(computerName);
 
 	return computer;
+}
+
+void World::CreateComputer(Computer* computer)
+{
+	UplinkAssert(computer != nullptr);
+	computers.PutData(computer->name, computer);
+
+	const auto vlocation = GetVLocation(computer->ip);
+	UplinkAssert(vlocation != nullptr);
+	vlocation->SetComputer(computer->name);
 }

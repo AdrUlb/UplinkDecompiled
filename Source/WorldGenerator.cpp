@@ -2,10 +2,13 @@
 
 #include <ComputerScreens/DialogScreen.hpp>
 #include <ComputerScreens/DisconnectedScreen.hpp>
+#include <ComputerScreens/GenericScreen.hpp>
 #include <ComputerScreens/LinksScreen.hpp>
 #include <ComputerScreens/MessageScreen.hpp>
 #include <Globals.hpp>
 #include <Image.hpp>
+#include <NameGenerator.hpp>
+#include <NumberGenerator.hpp>
 #include <RedShirt.hpp>
 #include <fstream>
 
@@ -228,7 +231,7 @@ void WorldGenerator::GenerateLocalMachine()
 
 void WorldGenerator::GenerateCompanyGovernment()
 {
-	puts("TODO: implement WorldGenerator::GenerateCompanyGovernment()");
+	GenerateCompany("Government", 5, 1, 10, -20);
 }
 
 void WorldGenerator::GenerateGlobalCriminalDatabase()
@@ -279,4 +282,159 @@ void WorldGenerator::GenerateIntroversion()
 void WorldGenerator::GenerateCompanyUplink()
 {
 	puts("TODO: implement WorldGenerator::GenerateCompanyUplink()");
+}
+
+Computer* WorldGenerator::GenerateComputer(const char* name)
+{
+	puts("TODO: implement WorldGenerator::GenerateComputer()");
+}
+
+Company* WorldGenerator::GenerateCompany(const char* name, int size, int type, int growth, int alignment)
+{
+	const auto company = new Company();
+	company->SetName(name);
+	company->SetSize(size);
+	company->SetTYPE(type);
+	company->SetGrowth(growth);
+	company->SetAlignment(alignment);
+	game->GetWorld()->CreateCompany(company);
+
+	WorldGenerator::GeneratePublicAccessServer(name);
+	WorldGenerator::GenerateInternalServicesMachine(name);
+	WorldGenerator::GenerateCentralMainframe(name);
+	WorldGenerator::GenerateLAN(name);
+
+	const auto computerCount = size / 20;
+	for (auto i = 0; i < computerCount; i++)
+		WorldGenerator::GenerateComputer(name);
+
+	NameGenerator::GeneratePublicAccessServerName(name);
+	const auto computer = game->GetWorld()->GetComputer(tempname);
+	UplinkAssert(computer != nullptr);
+
+	char s[0x80];
+	UplinkSnprintf(s, 0x80, "internal@%s.net", name);
+	game->GetWorld()->CreatePerson(s, computer->ip)->SetIsTargetable(false);
+	company->Grow(0);
+	return company;
+}
+
+VLocation* WorldGenerator::GenerateLocation()
+{
+	int x, y;
+	WorldGenerator::GenerateValidMapPos(x, y);
+
+	int rax = NumberGenerator::RandomNumber(1000);
+	int rax_1 = NumberGenerator::RandomNumber(1000);
+	int rax_2 = NumberGenerator::RandomNumber(1000);
+
+	char ip[0x18];
+	UplinkSnprintf(ip, 0x18, "%d.%d.%d.%d", NumberGenerator::RandomNumber(0x3e8), rax_2, rax_1, rax);
+
+	struct VLocation* vlocation = new VLocation();
+	vlocation->SetPLocation(x, y);
+	vlocation->SetIP(ip);
+	game->GetWorld()->CreateVLocation(vlocation);
+
+	return vlocation;
+
+	UplinkAbort("TODO: implement WorldGenerator::GenerateLocation()");
+}
+
+Computer* WorldGenerator::GeneratePublicAccessServer(const char* name)
+{
+	NameGenerator::GeneratePublicAccessServerName(name);
+	char value[0x80];
+	UplinkStrncpy(value, tempname, 0x80);
+
+	const auto vlocation = WorldGenerator::GenerateLocation();
+
+	const auto computer = new Computer();
+	computer->SetTYPE(1);
+	computer->SetName(value);
+	computer->SetCompanyName(name);
+	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(-1.0f, -0.1f));
+	computer->SetIP(vlocation->ip);
+
+	const auto messageScreen = new MessageScreen();
+	messageScreen->SetMainTitle(name);
+	messageScreen->SetSubTitle("Public Access Server");
+	messageScreen->SetTextMessage(value);
+	messageScreen->SetButtonMessage("OK");
+	messageScreen->SetNextPage(1);
+	computer->AddComputerScreen(messageScreen, 0);
+
+	const auto companyDataScreen = new GenericScreen();
+	companyDataScreen->SetMainTitle(name);
+	companyDataScreen->SetSubTitle("Company data");
+	companyDataScreen->SetScreenType(28);
+	computer->AddComputerScreen(companyDataScreen, 1);
+	game->GetWorld()->CreateComputer(computer);
+
+	return computer;
+}
+
+Computer* WorldGenerator::GenerateInternalServicesMachine(const char* name)
+{
+	UplinkAbort("TODO: implement WorldGenerator::GenerateInternalServicesMachine()");
+}
+
+Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
+{
+	UplinkAbort("TODO: implement WorldGenerator::GenerateCentralMainframe()");
+}
+
+Computer* WorldGenerator::GenerateLAN(const char* name)
+{
+	UplinkAbort("TODO: implement WorldGenerator::GenerateLAN()");
+}
+
+void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)
+{
+	UplinkAssert(worldmapmask != nullptr);
+
+	const auto vlocations = game->GetWorld()->vlocations.ConvertToDArray();
+
+	int32_t var_34 = 0;
+	int32_t rax_2;
+	int32_t rax_3;
+
+	while (true)
+	{
+		rax_2 = NumberGenerator::RandomNumber(593);
+		rax_3 = NumberGenerator::RandomNumber(314);
+		UplinkAssert(rax_2 <= 593);
+		UplinkAssert(rax_3 <= 314);
+
+		if (worldmapmask->GetPixelR(rax_2, rax_3) != 0)
+		{
+			int32_t rax_5 = vlocations->Size();
+			int32_t i = rax_5 - 1;
+			if (rax_5 - 1 < 0)
+				break;
+
+			struct VLocation* rax_6;
+			do
+			{
+				rax_5 = vlocations->ValidIndex(i);
+				if (rax_5 != 0)
+				{
+					rax_6 = vlocations->GetData(i);
+					if (((rax_6->x - rax_2) + 1) <= 2 && ((rax_6->y - rax_3) + 1) <= 2)
+						break;
+				}
+				i = (i - 1);
+			} while (i != -1);
+			if (!(((rax_5 != 0 && ((rax_6->x - rax_2) + 1) <= 2) && ((rax_6->y - rax_3) + 1) <= 2)))
+				break;
+			if (var_34 > 0x1f)
+				break;
+			var_34 = (var_34 + 1);
+		}
+	}
+
+	outX = rax_2;
+	outY = rax_3;
+
+	delete vlocations;
 }

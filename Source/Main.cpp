@@ -18,6 +18,7 @@ const char* versionNumberString = "1.55";
 Game* game = nullptr;
 const char* minSaveVersion = "SAV56";
 const char* latestSaveVersion = "SAV62";
+char tempname[0x80] = {0};
 
 static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {

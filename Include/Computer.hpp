@@ -11,6 +11,7 @@
 
 class Computer : UplinkObject
 {
+public:
 	int recentHacks = 0;
 	int recentHacksThisMonth = 0;
 	int recentHacksLastMonth = 0;
@@ -31,7 +32,6 @@ class Computer : UplinkObject
 	RecordBank recordBank;
 	Security security;
 
-public:
 	~Computer() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -44,4 +44,6 @@ public:
 	void SetIP(const char* value);
 	void SetIsTargetable(bool value);
 	void AddComputerScreen(ComputerScreen* screen, int index);
+	void SetTYPE(int value);
+	void SetTraceSpeed(int value);
 };

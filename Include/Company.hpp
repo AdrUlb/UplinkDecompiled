@@ -4,6 +4,7 @@
 
 class Company : UplinkObject
 {
+public:
 	int sharePrices[12] = {0};
 	int sharePriceLastMonth = 0;
 	char name[0x40] = " ";
@@ -14,13 +15,16 @@ class Company : UplinkObject
 	int growth;
 	int alignment;
 
-public:
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void SetName(const char* name);
 	void Grow(int amount);
 	void VaryGrowth();
+	void SetName(const char* name);
+	void SetSize(int value);
+	void SetTYPE(int value);
+	void SetGrowth(int value);
+	void SetAlignment(int value);
 };

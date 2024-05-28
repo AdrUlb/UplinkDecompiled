@@ -22,4 +22,5 @@ public:
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
+	void SetOwner(const char* value);
 };

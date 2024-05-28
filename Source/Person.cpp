@@ -1,5 +1,7 @@
 #include <Person.hpp>
 
+#include <Globals.hpp>
+
 Person::Person()
 {
 	puts("TODO: implement Person::Person()");
@@ -57,6 +59,30 @@ void Person::CreateNewAccount(const char* bankIp, const char* owner, const char*
 	(void)amount;
 	(void)loan;
 	puts("TODO: implement Person::CreateNewAccount()");
+}
+
+void Person::SetName(const char* value)
+{
+	UplinkStrncpy(name, value, 0x80);
+	connection.SetOwner(name);
+	rating.SetOwner(name);
+}
+
+void Person::SetLocalHost(const char* value)
+{
+	UplinkStrncpy(localHost, value, 0x18);
+	UplinkAssert(game->GetWorld()->GetVLocation(localHost) != nullptr);
+}
+
+void Person::SetRemoteHost(const char* value)
+{
+	UplinkStrncpy(remoteHost, value, 0x18);
+	UplinkAssert(game->GetWorld()->GetVLocation(remoteHost) != nullptr);
+}
+
+void Person::SetIsTargetable(bool value)
+{
+    isTargetable = value;
 }
 
 Agent::~Agent()

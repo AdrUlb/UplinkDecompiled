@@ -4,8 +4,8 @@
 
 struct Image
 {
-	uint32_t width;
-	uint32_t height;
+	int width;
+	int height;
 	uint32_t alpha;
 	uint8_t* rgbPixels = nullptr;
 	uint32_t* raster = nullptr;
@@ -17,4 +17,5 @@ struct Image
 	void Draw(int x, int y);
 	void Scale(int32_t newWidth, int32_t newHeight);
 	void FlipAroundH();
+	int GetPixelR(int x, int y);
 };

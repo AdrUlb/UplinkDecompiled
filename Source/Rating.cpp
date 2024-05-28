@@ -1,5 +1,7 @@
 #include <Rating.hpp>
 
+#include <Util.hpp>
+
 bool Rating::Load(FILE* file)
 {
 	(void)file;
@@ -21,4 +23,9 @@ void Rating::Print()
 const char* Rating::GetID()
 {
 	return "RATING";
+}
+
+void Rating::SetOwner(const char* value)
+{
+	UplinkStrncpy(owner, value, 0x80);
 }

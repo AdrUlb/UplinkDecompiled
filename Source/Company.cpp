@@ -79,11 +79,6 @@ UplinkObjectId Company::GetOBJECTID()
 	return UplinkObjectId::Company;
 }
 
-void Company::SetName(const char* name)
-{
-	UplinkStrncpy(this->name, name, 0x40);
-}
-
 void Company::Grow(int amount)
 {
 	puts("TODO: implement Company::Grow()");
@@ -92,4 +87,29 @@ void Company::Grow(int amount)
 void Company::VaryGrowth()
 {
 	growth = NumberGenerator::ApplyVariance(growth, 20);
+}
+
+void Company::SetName(const char* name)
+{
+	UplinkStrncpy(this->name, name, 0x40);
+}
+
+void Company::SetSize(int value)
+{
+    size = value;
+}
+
+void Company::SetTYPE(int value)
+{
+    type = value;
+}
+
+void Company::SetGrowth(int value)
+{
+    growth = value;
+}
+
+void Company::SetAlignment(int value)
+{
+    alignment = value;
 }

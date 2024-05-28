@@ -23,6 +23,7 @@ class PhoneDialler : LocalInterfaceScreen
 	static constexpr char buttonNames[][6] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
 
 public:
+	using LocalInterfaceScreen::Create;
 	PhoneDialler();
 	~PhoneDialler() override;
 	void Remove() override;

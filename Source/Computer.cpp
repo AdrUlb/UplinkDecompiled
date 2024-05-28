@@ -164,3 +164,13 @@ void Computer::AddComputerScreen(ComputerScreen* screen, int index)
 
 	screens.PutData(screen, index);
 }
+
+void Computer::SetTYPE(int value)
+{
+	type = value;
+}
+
+void Computer::SetTraceSpeed(int value)
+{
+	traceSpeed = value;
+}

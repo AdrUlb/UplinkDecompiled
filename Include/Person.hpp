@@ -38,6 +38,10 @@ public:
 	UplinkObjectId GetOBJECTID() override;
 	virtual void GiveMessage(Message* message);
 	virtual void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan);
+	void SetName(const char* value);
+	void SetLocalHost(const char* value);
+	void SetRemoteHost(const char* value);
+	void SetIsTargetable(bool value);
 };
 
 class Agent : Person

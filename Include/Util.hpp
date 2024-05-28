@@ -81,7 +81,9 @@ static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char*
 		__builtin_trap();
 	}
 
-	return strncpy(dest, source, num);
+	const auto ret = strncpy(dest, source, num);
+	dest[num - 1] = 0;
+	return ret;
 }
 
 static inline void UplinkAssertImpl(const char* file, const size_t line, const char* condStr, bool cond)

@@ -38,8 +38,13 @@ public:
 	void ForceNextUpdate();
 	Player* GetPlayer();
 	VLocation* GetVLocation(const char* ip);
+	Computer* GetComputer(const char* name);
 	Company* GetCompany(const char* name);
+	Person* CreatePerson(const char* name, const char* host);
 	Company* CreateCompany(const char* name);
+	void CreateCompany(Company* company);
 	VLocation* CreateVLocation(const char* ip, int x, int y);
+	void CreateVLocation(VLocation* vlocation);
 	Computer* CreateComputer(const char* computerName, const char* companyName, const char* ip);
+	void CreateComputer(Computer* computer);
 };

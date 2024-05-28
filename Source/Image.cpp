@@ -56,9 +56,9 @@ void Image::CreateErrorBitmap()
 
 	const auto raster = new uint32_t[width * height];
 
-	for (uint32_t x = 0; x < width; x++)
+	for (auto x = 0; x < width; x++)
 	{
-		for (uint32_t y = 0; y < height; y++)
+		for (auto y = 0; y < height; y++)
 		{
 			if (x != 0 && y != 0 && x != width - 1 && y != height - 1 && x != y && x + y != width)
 			{
@@ -86,8 +86,8 @@ void Image::SetAlpha(float value)
 	if (raster == nullptr)
 		return;
 
-	for (uint32_t x = 0; x < width; x++)
-		for (uint32_t y = 0; y < height; y++)
+	for (auto x = 0; x < width; x++)
+		for (auto y = 0; y < height; y++)
 			raster[x + (y * width)] = (raster[x + (y * width)] & 0x00FFFFFF) | (alpha << 24);
 }
 
@@ -134,7 +134,7 @@ void Image::FlipAroundH()
 	const auto newRaster = new uint32_t[width * height];
 
 	const auto bytesPerRow = width * 4;
-	for (uint32_t i = 0; i < height; i++)
+	for (auto i = 0; i < height; i++)
 	{
 		const auto offset = i * bytesPerRow;
 		memcpy((char*)newRaster + (height * bytesPerRow) - bytesPerRow - offset, (char*)raster + offset, bytesPerRow);
@@ -148,4 +148,12 @@ void Image::FlipAroundH()
 
 	delete[] raster;
 	raster = newRaster;
+}
+
+int Image::GetPixelR(int x, int y)
+{
+	if (raster == nullptr || x < 0 || y < 0 || x >= width || y >= height)
+		return -1;
+
+	return raster[x + (y * width)] & 0xFF;
 }

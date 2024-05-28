@@ -10,3 +10,4 @@ extern const char* versionNumberString;
 extern Game* game;
 extern const char* minSaveVersion;
 extern const char* latestSaveVersion;
+extern char tempname[0x80];
