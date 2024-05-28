@@ -1,8 +1,11 @@
 #include <WorldGenerator.hpp>
 
+#include <ComputerScreens/DialogScreen.hpp>
+#include <ComputerScreens/DisconnectedScreen.hpp>
+#include <ComputerScreens/LinksScreen.hpp>
+#include <ComputerScreens/MessageScreen.hpp>
 #include <Globals.hpp>
 #include <Image.hpp>
-#include <LinksScreen.hpp>
 #include <RedShirt.hpp>
 #include <fstream>
 
@@ -135,13 +138,92 @@ void WorldGenerator::GenerateLocalMachine()
 	const auto computer = game->GetWorld()->CreateComputer("Gateway", "Player", "127.0.0.1");
 	vlocation->SetListed(false);
 	computer->SetIsTargetable(false);
+
 	const auto linksScreen = new LinksScreen();
 	linksScreen->SetScreenType(2);
 	linksScreen->SetMainTitle("Gateway");
 	linksScreen->SetSubTitle("Click on a link to quick-connect to that site");
 	computer->AddComputerScreen(linksScreen, 0);
 
-	puts("TODO: implement WorldGenerator::GenerateLocalMachine()");
+	const auto disconnectedByGatewayScreen = new DisconnectedScreen();
+	disconnectedByGatewayScreen->SetMainTitle("");
+	disconnectedByGatewayScreen->SetSubTitle("");
+	disconnectedByGatewayScreen->SetTextMessage("Connection terminated by Gateway");
+	disconnectedByGatewayScreen->SetNextPage(0);
+	computer->AddComputerScreen(disconnectedByGatewayScreen, 1);
+
+	const auto disconnectedByRemoteHostScreen = new DisconnectedScreen();
+	disconnectedByRemoteHostScreen->SetMainTitle("");
+	disconnectedByRemoteHostScreen->SetSubTitle("");
+	disconnectedByRemoteHostScreen->SetTextMessage("Connection terminated by remote host");
+	disconnectedByRemoteHostScreen->SetNextPage(0);
+	computer->AddComputerScreen(disconnectedByRemoteHostScreen, 2);
+
+	const auto logonCompletedScreen = new DialogScreen();
+	logonCompletedScreen->SetMainTitle("Gateway");
+	logonCompletedScreen->SetSubTitle("Log on complete");
+	logonCompletedScreen->AddWidget("text2", 2, 170, 210, 270, 15, "Welcome back to your Gateway", "");
+	logonCompletedScreen->AddWidget("okbutton", 5, 300, 350, 50, 20, "OK", "Click to continue", 0, 0, nullptr, nullptr);
+	computer->AddComputerScreen(logonCompletedScreen, 3);
+
+	computer->AddComputerScreen(new DialogScreen(), 5);
+
+	const auto osStartedScreen = new DialogScreen();
+	osStartedScreen->AddWidget("text2", 2, 100, 210, 340, 15, "UPLINK Operating System successfully started on Gateway", "");
+	osStartedScreen->AddWidget("okbutton", 5, 300, 350, 50, 20, "OK", "Click to continue", 7, 0, nullptr, nullptr);
+	computer->AddComputerScreen(osStartedScreen, 6);
+
+	const auto setupCompleteScreen = new DialogScreen();
+	setupCompleteScreen->SetMainTitle("Gateway");
+	setupCompleteScreen->SetSubTitle("Set up complete");
+	setupCompleteScreen->AddWidget(
+		"caption", 2, 50, 120, 400, 280,
+		"Your Gateway computer has been successfully set up and will accept only your username and password in the future.  "
+		"When you next start Uplink on your home computer, you will be connected automatically to this Gateway.\n"
+		"\n"
+		"In your email you will find a message from Uplink Corporation, with some useful IP addresses.\n"
+		"You will also find the Uplink Test Mission, which will allow you to practice hacking.\n"
+		"\n"
+		"WOULD YOU LIKE TO RUN THE TUTORIAL?\n(Recommended for first time users)",
+		"");
+	setupCompleteScreen->AddWidget("runtutorial", 8, 300, 350, 50, 20, "Yes", "Run the tutorial", 43, 0, nullptr, nullptr);
+	setupCompleteScreen->AddWidget("dontruntutorial", 5, 200, 350, 50, 20, "No", "Skip the tutorial and return to the main screen", 0, 0, nullptr,
+								   nullptr);
+	computer->AddComputerScreen(setupCompleteScreen, 7);
+
+	const auto systemNotFoundScreen = new MessageScreen();
+	systemNotFoundScreen->SetMainTitle("Error 404");
+	systemNotFoundScreen->SetSubTitle("System not found");
+	systemNotFoundScreen->SetTextMessage(
+		"The IP address you specified did not \nhave a valid computer host.\n\nThe system may be temporarily out of action\nand may return shortly.");
+	systemNotFoundScreen->SetButtonMessage("OK");
+	systemNotFoundScreen->SetNextPage(0);
+	computer->AddComputerScreen(systemNotFoundScreen, 8);
+
+	const auto externalConnectionsDeniedScreen = new MessageScreen();
+	externalConnectionsDeniedScreen->SetMainTitle("Failed to establish connection");
+	externalConnectionsDeniedScreen->SetSubTitle("External connections not permitted");
+	externalConnectionsDeniedScreen->SetTextMessage("The computer you tried to access will not accept external connections.\n"
+													"Only connections from trusted internal systems will be allowed to connect.\n"
+													"\n"
+													"If you wish to establish a connection to this system,\n"
+													"you must first route your connection through a trusted system owned by the same company.");
+	externalConnectionsDeniedScreen->SetButtonMessage("OK");
+	externalConnectionsDeniedScreen->SetNextPage(0);
+	computer->AddComputerScreen(externalConnectionsDeniedScreen, 9);
+
+	const auto gatewayUpgradeCompleteScreen = new MessageScreen();
+	gatewayUpgradeCompleteScreen->SetMainTitle("Gateway");
+	gatewayUpgradeCompleteScreen->SetSubTitle("Upgrade complete");
+	gatewayUpgradeCompleteScreen->SetTextMessage(
+		"Congratulations agent - your are now using your new gateway and your old one is already being dismantled.\n"
+		"\n"
+		"If you view your hardware profile you should see the new gateway in place.\n"
+		"If you experience any problems with this new system, please get in contact with us at\n"
+		"Problems@UplinkCorporation.net.");
+	gatewayUpgradeCompleteScreen->SetButtonMessage("OK");
+	gatewayUpgradeCompleteScreen->SetNextPage(0);
+	computer->AddComputerScreen(gatewayUpgradeCompleteScreen, 10);
 }
 
 void WorldGenerator::GenerateCompanyGovernment()

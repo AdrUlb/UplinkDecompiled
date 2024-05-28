@@ -13,7 +13,10 @@ enum class UplinkObjectId
 	Computer = 20,
 	DataBank = 22,
 	RecordBank = 26,
+	MessageScreen = 31,
+	DialogScreen = 35,
 	LinksScreen = 40,
+	DisconnectedScreen = 44,
 	Company = 50,
 	NotificationEvent = 70
 };

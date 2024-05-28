@@ -1,4 +1,4 @@
-#include <LinksScreen.hpp>
+#include <ComputerScreens/LinksScreen.hpp>
 
 #include <Util.hpp>
 

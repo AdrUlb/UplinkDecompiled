@@ -1,6 +1,6 @@
 #pragma once
 
-#include <MainMenu.hpp>
+#include <MainMenuScreens/MainMenuScreen.hpp>
 
 class FirstTimeLoadingInterface : public MainMenuScreen
 {

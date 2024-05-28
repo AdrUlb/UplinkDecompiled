@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ComputerScreen.hpp>
+#include <ComputerScreens/ComputerScreen.hpp>
 
 class LinksScreen : public ComputerScreen
 {

@@ -1,4 +1,4 @@
-#include <FirstTimeLoadingInterface.hpp>
+#include <MainMenuScreens/FirstTimeLoadingInterface.hpp>
 
 #include <Eclipse.hpp>
 #include <Globals.hpp>
@@ -23,7 +23,7 @@ void FirstTimeLoadingInterface::Remove()
 {
 	if (!IsVisible())
 		return;
-	
+
 	EclRemoveButton("firsttimeloading_text");
 }
 
