@@ -19,4 +19,4 @@ target_include_directories(UplinkDecompiled PRIVATE Include ${FREETYPE_INCLUDE_D
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
 target_link_libraries(UplinkDecompiled tcp4u crypto SDL GL ftgl SDL_mixer tiff)
 
-add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> +game_firsttime -graphics_fullscreen -graphics_buttonanimations !graphics_screenwidth 1280 !graphics_screenheight 720)
+add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> +game_firsttime -graphics_fullscreen +graphics_buttonanimations !graphics_screenwidth 1280 !graphics_screenheight 720)

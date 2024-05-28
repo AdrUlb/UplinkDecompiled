@@ -495,17 +495,54 @@ void EclUpdateAllAnimations()
 					EclUpdateSuperHighlights(animation->buttonName);
 				}
 			}
+
 			if (animation->finishedCallback != nullptr)
 			{
 				animation->finishedCallback();
 			}
 
 			EclRemoveAnimation(i);
+			continue;
 		}
-		else
+
+		switch (animation->moveType)
 		{
-			UplinkAbort("TODO: implement EclUpdateAllAnimations()");
+			case 1:
+				if (animation->stepX != 0 || animation->stepY != 0)
+				{
+					animation->button->X = animation->fromX + animation->stepX * (EclGetAccurateTime() - animation->starttime);
+					animation->button->Y = animation->fromY + animation->stepY * (EclGetAccurateTime() - animation->starttime);
+				}
+				break;
+			case 2:
+				UplinkAbort("TODO: implement EclUpdateAllAnimations()");
+			case 3:
+				UplinkAbort("TODO: implement EclUpdateAllAnimations()");
 		}
+
+		if (animation->stepWidth != 0.0f || animation->stepHeight != 0.0f)
+		{
+			animation->button->Width = animation->fromWidth + animation->stepWidth * (EclGetAccurateTime() - animation->starttime);
+			animation->button->Height = animation->fromHeight + animation->stepHeight * (EclGetAccurateTime() - animation->starttime);
+		}
+
+		if (animation->stepCaption != 0.0f)
+		{
+			const int currentCharCount = animation->stepCaption * (EclGetAccurateTime() - animation->starttime);
+			const auto targetCharCount = strlen(animation->targetCaption) + 1;
+			const auto newCaption = new char[targetCharCount];
+			strcpy(newCaption, animation->targetCaption);
+
+			if (currentCharCount < targetCharCount)
+				newCaption[currentCharCount] = 0;
+
+			animation->button->SetCaption(newCaption);
+			if (newCaption != nullptr)
+				delete[] newCaption;
+		}
+
+		if (EclIsSuperHighlighted(animation->buttonName))
+			EclUpdateSuperHighlights(animation->buttonName);
 	}
 }
 
