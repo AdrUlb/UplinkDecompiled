@@ -167,6 +167,12 @@ Person* World::CreatePerson(const char* name, const char* host)
 	return person;
 }
 
+void World::CreatePerson(Person* person)
+{
+	UplinkAssert(person != 0);
+	people.PutData(person->name, person);
+}
+
 Company* World::CreateCompany(const char* name)
 {
 	const auto company = new Company();

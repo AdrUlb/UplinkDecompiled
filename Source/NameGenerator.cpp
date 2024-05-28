@@ -9,11 +9,6 @@ static LList<char*> agentaliases;
 static LList<char*> companynamesA;
 static LList<char*> companynamesB;
 
-void NameGenerator::GeneratePublicAccessServerName(char const* name)
-{
-	UplinkSnprintf(tempname, 0x80, "%s Public Access Server", name);
-}
-
 void NameGenerator::Shutdown()
 {
 	DeleteLListData(&fornames);
@@ -26,4 +21,24 @@ void NameGenerator::Shutdown()
 	agentaliases.Empty();
 	companynamesA.Empty();
 	companynamesB.Empty();
+}
+
+void NameGenerator::GeneratePublicAccessServerName(char const* companyName)
+{
+	UplinkSnprintf(tempname, 0x80, "%s Public Access Server", companyName);
+}
+
+void NameGenerator::GenerateInternalServicesServerName(char const* companyName)
+{
+	UplinkSnprintf(tempname, 0x80, "%s Internal Services Machine", companyName);
+}
+
+void NameGenerator::GenerateCentralMainframeName(const char* companyName)
+{
+	UplinkSnprintf(tempname, 0x80, "%s Central Mainframe", companyName);
+}
+
+void NameGenerator::GenerateLANName(const char* companyName)
+{
+	UplinkSnprintf(tempname, 0x80, "%s Local Area Network", companyName);
 }

@@ -46,4 +46,6 @@ public:
 	void AddComputerScreen(ComputerScreen* screen, int index);
 	void SetTYPE(int value);
 	void SetTraceSpeed(int value);
+	void SetIsExternallyOpen(bool value);
+	void SetTraceAction(int value);
 };

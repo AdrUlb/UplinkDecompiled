@@ -174,3 +174,13 @@ void Computer::SetTraceSpeed(int value)
 {
 	traceSpeed = value;
 }
+
+void Computer::SetIsExternallyOpen(bool value)
+{
+	externallyOpen = value;
+}
+
+void Computer::SetTraceAction(int value)
+{
+	traceAction = value;
+}

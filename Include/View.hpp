@@ -12,7 +12,7 @@ public:
 	void Start();
 };
 
-class View : UplinkObject
+class View : public UplinkObject
 {
 	FrameRate frameRate;
 

@@ -36,61 +36,33 @@ void App::Print()
 void App::Update()
 {
 	UplinkAssert(game != nullptr);
-	const auto speed = game->GameSpeed();
-	bool running;
-	if (speed != -1)
-	{
-		running = game->IsRunning();
-		if (running)
-		{
-			if (game->GetWorld()->GetPlayer()->gateway.nuked == 0)
-			{
-				goto label_40772f;
-			}
-		}
-		else
-		{
-		label_40772f:
-			if (!Closed())
-			{
-			label_4078b8:
-				if (game->IsRunning())
-					game->Update();
-			}
-		}
-	}
 
-	if (speed == -1 || running)
+	if (game->GameSpeed() == -1 || (game->IsRunning() && game->GetWorld()->GetPlayer()->gateway.nuked))
 	{
+		if (phoneDialler != nullptr)
+			UnRegisterPhoneDialler(phoneDialler);
+
+		SaveGame(game->GetWorld()->GetPlayer()->handle);
 		UplinkAbort("TODO: implement App::Update()");
 	}
 
-	if (!Closed() && mainMenu->IsVisible())
-		mainMenu->Update();
-
 	if (!Closed())
 	{
-		bool isRunning = game->IsRunning();
-		enum MainMenuScreenCode mainMenuScreen;
-		if (isRunning == 0)
-		{
-			mainMenuScreen = mainMenu->InScreen();
-		}
+		if (game->IsRunning())
+			game->Update();
 
-		if ((isRunning != 0 || (isRunning == 0 && mainMenuScreen == MainMenuScreenCode::FirstTimeLoading)))
+		if (mainMenu->IsVisible())
+			mainMenu->Update();
+
+		if (game->IsRunning() || mainMenu->InScreen() == MainMenuScreenCode::FirstTimeLoading)
 		{
 			if (phoneDialler != nullptr && phoneDialler->UpdateSpecial())
 				UnRegisterPhoneDialler(phoneDialler);
 		}
-	}
 
-	if (!Closed() && network->IsActive())
-	{
-		UplinkAbort("TODO: implement App::Update()");
-	}
+		if (network->IsActive())
+			UplinkAbort("TODO: implement App::Update()");
 
-	if (!Closed())
-	{
 		IRCInterface::UpdateMessages();
 	}
 }

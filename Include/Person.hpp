@@ -12,6 +12,7 @@
 
 class Person : public UplinkObject
 {
+public:
 	char name[0x80];
 	int age;
 	int photoIndex;
@@ -27,7 +28,6 @@ class Person : public UplinkObject
 	bool isTargetable;
 	int status;
 
-public:
 	Person();
 	~Person() override;
 	bool Load(FILE* file) override;
@@ -44,14 +44,14 @@ public:
 	void SetIsTargetable(bool value);
 };
 
-class Agent : Person
+class Agent : public Person
 {
+public:
 	LList<char*> links;
 	BTree<char*> accessCodes;
 	LList<Mission*> missions;
 	char handle[0x40];
 
-public:
 	~Agent() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -63,7 +63,7 @@ public:
 	void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan) override;
 };
 
-class Player : Agent
+class Player : public Agent
 {
 public:
 	BTree<char*> shares;

@@ -47,7 +47,19 @@ void Game::Print()
 
 void Game::Update()
 {
-	UplinkAbort("TODO: implement Game::Update()");
+	if (speed > 0)
+	{
+		GetWorld()->Update();
+		GetView()->Update();
+		GetInterface()->Update();
+	}
+
+	if (time(nullptr) > lastAutosaveTime + 60)
+	{
+		const auto player = GetWorld()->GetPlayer();
+		app->SaveGame(player->handle);
+		lastAutosaveTime = time(nullptr);
+	}
 }
 
 const char* Game::GetID()
@@ -64,6 +76,12 @@ World* Game::GetWorld()
 {
 	UplinkAssert(world != nullptr);
 	return world;
+}
+
+View* Game::GetView()
+{
+	UplinkAssert(view != nullptr);
+	return view;
 }
 
 Interface* Game::GetInterface()

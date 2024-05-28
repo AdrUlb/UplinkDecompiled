@@ -41,6 +41,7 @@ public:
 	Computer* GetComputer(const char* name);
 	Company* GetCompany(const char* name);
 	Person* CreatePerson(const char* name, const char* host);
+	void CreatePerson(Person* person);
 	Company* CreateCompany(const char* name);
 	void CreateCompany(Company* company);
 	VLocation* CreateVLocation(const char* ip, int x, int y);

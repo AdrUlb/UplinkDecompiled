@@ -7,6 +7,7 @@
 #include <ComputerScreens/MessageScreen.hpp>
 #include <Globals.hpp>
 #include <Image.hpp>
+#include <LanGenerator.hpp>
 #include <NameGenerator.hpp>
 #include <NumberGenerator.hpp>
 #include <RedShirt.hpp>
@@ -94,36 +95,36 @@ void WorldGenerator::GenerateSpecifics()
 
 void WorldGenerator::GeneratePlayer(const char* handle)
 {
-	(void)handle;
-	puts("TODO: implement WorldGenerator::GeneratePlayer");
-	/*const auto player = new Player();
-	player->SetName(name, "PLAYER");
-	player->SetAge(21);
-	player->SetHandle(handle);
+	const auto player = new Player();
+	player->SetName("PLAYER");
+	/*player->SetAge(21);
+	player->SetHandle(handle);*/
 	player->SetLocalHost("127.0.0.1");
 	player->SetIsTargetable(false);
-	player->SetUplinkRating(0);
+	/*player->SetUplinkRating(0);
 	player->SetNeuromancerRating(5);
 	player->SetCreditRating(10);
 	player->SetCurrentAccount(0);
 	player->gateway.GiveStartingHardware();
-	player->gateway.GiveStartingSoftware();
+	player->gateway.GiveStartingSoftware();*/
 	game->GetWorld()->CreatePerson(player);
-	player->GetConnection()->Reset();
+	/*player->GetConnection()->Reset();
 	player->GetConnection()->AddVLocation("234.773.0.666");
 	player->GetConnection()->Connect();
 	player->GiveLink("234.773.0.666");
 	player->GiveLink("458.615.48.651");*/
+
+	puts("TODO: implement WorldGenerator::GeneratePlayer()");
 }
 
 void WorldGenerator::GenerateRandomWorld()
 {
-	puts("TODO: implement WorldGenerator::GenerateRandomWorld");
+	puts("TODO: implement WorldGenerator::GenerateRandomWorld()");
 }
 
 void WorldGenerator::LoadDynamics()
 {
-	puts("TODO: implement WorldGenerator::LoadDynamics");
+	puts("TODO: implement WorldGenerator::LoadDynamics()");
 }
 
 void WorldGenerator::GenerateSimpleStartingMissionA()
@@ -376,17 +377,65 @@ Computer* WorldGenerator::GeneratePublicAccessServer(const char* name)
 
 Computer* WorldGenerator::GenerateInternalServicesMachine(const char* name)
 {
-	UplinkAbort("TODO: implement WorldGenerator::GenerateInternalServicesMachine()");
+	NameGenerator::GenerateInternalServicesServerName(name);
+
+	char value[0x80];
+	UplinkStrncpy(value, tempname, 0x80);
+
+	const auto company = game->GetWorld()->GetCompany(name);
+	UplinkAssert(company != nullptr);
+
+	const auto vlocation = WorldGenerator::GenerateLocation();
+	const auto computer = new Computer();
+	computer->SetTYPE(2);
+	computer->SetName(value);
+	computer->SetCompanyName(name);
+	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(15.0f, 1.5f));
+	computer->SetIP(vlocation->ip);
+
+	puts("TODO: implement WorldGenerator::GenerateInternalServicesMachine()");
+
+	return computer;
 }
 
 Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
 {
-	UplinkAbort("TODO: implement WorldGenerator::GenerateCentralMainframe()");
+	NameGenerator::GenerateCentralMainframeName(name);
+
+	char value[0x80];
+	UplinkStrncpy(value, tempname, 0x80);
+
+	const auto company = game->GetWorld()->GetCompany(name);
+	UplinkAssert(company != nullptr);
+
+	const auto vlocation = WorldGenerator::GenerateLocation();
+	vlocation->SetListed(false);
+
+	const auto computer = new Computer();
+	computer->SetTYPE(4);
+	computer->SetName(value);
+	computer->SetCompanyName(name);
+	computer->SetIsExternallyOpen(false);
+	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(5.0f, 0.5f));
+	computer->SetTraceAction(9);
+	computer->SetIP(vlocation->ip);
+
+	puts("TODO: implement WorldGenerator::GenerateCentralMainframeName()");
+
+	return computer;
 }
 
-Computer* WorldGenerator::GenerateLAN(const char* name)
+Computer* WorldGenerator::GenerateLAN(const char* companyName)
 {
-	UplinkAbort("TODO: implement WorldGenerator::GenerateLAN()");
+	const auto company = game->GetWorld()->GetCompany(companyName);
+
+	if (company == nullptr)
+		return nullptr;
+
+	if (company->size > 40)
+		return LanGenerator::GenerateLAN(companyName, 4);
+
+	return LanGenerator::GenerateLAN(companyName, (company->size / 10));
 }
 
 void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)
