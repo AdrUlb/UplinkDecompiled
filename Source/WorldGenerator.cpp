@@ -2,6 +2,7 @@
 
 #include <Globals.hpp>
 #include <Image.hpp>
+#include <LinksScreen.hpp>
 #include <RedShirt.hpp>
 #include <fstream>
 
@@ -134,6 +135,12 @@ void WorldGenerator::GenerateLocalMachine()
 	const auto computer = game->GetWorld()->CreateComputer("Gateway", "Player", "127.0.0.1");
 	vlocation->SetListed(false);
 	computer->SetIsTargetable(false);
+	const auto linksScreen = new LinksScreen();
+	linksScreen->SetScreenType(2);
+	linksScreen->SetMainTitle("Gateway");
+	linksScreen->SetSubTitle("Click on a link to quick-connect to that site");
+	computer->AddComputerScreen(linksScreen, 0);
+
 	puts("TODO: implement WorldGenerator::GenerateLocalMachine()");
 }
 

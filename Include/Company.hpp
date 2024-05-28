@@ -21,4 +21,6 @@ public:
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 	void SetName(const char* name);
+	void Grow(int amount);
+	void VaryGrowth();
 };

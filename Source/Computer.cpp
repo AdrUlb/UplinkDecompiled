@@ -5,7 +5,7 @@
 
 Computer::~Computer()
 {
-	DeleteDArrayDataD(&computerScreens);
+	DeleteDArrayDataD(&screens);
 }
 
 bool Computer::Load(FILE* file)
@@ -49,7 +49,7 @@ bool Computer::Load(FILE* file)
 	if (!FileReadData(&revelationInfectedVersion, 4, 1, file))
 		return false;
 
-	if (LoadDArray(reinterpret_cast<DArray<UplinkObject*>*>(&computerScreens), file) == 0)
+	if (LoadDArray(reinterpret_cast<DArray<UplinkObject*>*>(&screens), file) == 0)
 		return false;
 
 	if (dataBank.Load(file) == 0)
@@ -85,7 +85,7 @@ void Computer::Save(FILE* file)
 	fwrite(&externallyOpen, 1, 1, file);
 	fwrite(&running, 1, 1, file);
 	fwrite(&revelationInfectedVersion, 4, 1, file);
-	SaveDArray(reinterpret_cast<DArray<UplinkObject*>*>(&computerScreens), file);
+	SaveDArray(reinterpret_cast<DArray<UplinkObject*>*>(&screens), file);
 	dataBank.Save(file);
 	logBank.Save(file);
 	recordBank.Save(file);
@@ -102,7 +102,7 @@ void Computer::Print()
 	printf("numrecenthacks = %d, numhacksthismonth = %d, numhackslastmonth = %d\n", recentHacks, recentHacksThisMonth, recentHacksLastMonth);
 	printf("infected with revelation = %f\n", revelationInfectedVersion);
 	revelationInfectedDate.Print();
-	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&computerScreens));
+	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&screens));
 	dataBank.Print();
 	logBank.Print();
 	recordBank.Print();
@@ -147,4 +147,20 @@ void Computer::SetIP(const char* value)
 void Computer::SetIsTargetable(bool value)
 {
 	targetable = value;
+}
+
+void Computer::AddComputerScreen(ComputerScreen* screen, int index)
+{
+	UplinkAssert(screen != nullptr);
+	screen->SetComputer(name);
+	if (index == -1)
+	{
+		screens.PutData(screen);
+		return;
+	}
+
+	if (index >= screens.Size())
+		screens.SetSize(index + 1);
+
+	screens.PutData(screen, index);
 }

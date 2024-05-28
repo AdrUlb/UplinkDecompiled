@@ -42,6 +42,48 @@ void NotificationEvent::Run()
 {
 	switch (type)
 	{
+		case NotificationType::GrowCompanies:
+			ApplyMonthlyGrowth();
+			return;
+		case NotificationType::GenerateNewMissions:
+			GenerateNewMissions();
+			return;
+		case NotificationType::CheckForSecurityBreaches:
+			CheckForSecurityBreaches();
+			return;
+		case NotificationType::CheckMissionDueDates:
+			CheckMissionDueDates();
+			return;
+		case NotificationType::CheckRecentHackCount:
+			CheckRecentHackCount();
+			return;
+		case NotificationType::GiveMissionToNpc:
+			GiveMissionToNpc();
+			return;
+		case NotificationType::PayUplinkMonthlyFee:
+			PayUplinkMonthlyFee();
+			return;
+		case NotificationType::ExpireOldStuff:
+			ExpireOldStuff();
+			return;
+		case NotificationType::AddInterestToLoans:
+			AddInterestToLoans();
+			return;
+		case NotificationType::DemoGameOver:
+			DemoGameOver();
+			return;
+		case NotificationType::DemoGenerateMission:
+			DemoGenerateNewMission();
+			return;
+		case NotificationType::BuyAgentList:
+			BuyAgentList();
+			return;
+		case NotificationType::AgentsOnListDie:
+			AgentsOnListDie();
+			return;
+		case NotificationType::WarezGameOver:
+			WarezGameOver();
+			return;
 		default:
 			UplinkAbort("Unrecognised notification type: %d", type);
 	}
@@ -172,4 +214,99 @@ void NotificationEvent::ScheduleStartingEvents()
 	notif9->SetTYPE(NotificationType::AddInterestToLoans);
 	notif9->SetRunDate(&game->GetWorld()->currentDate);
 	game->GetWorld()->eventScheduler.ScheduleEvent(notif9);
+}
+
+void NotificationEvent::ApplyMonthlyGrowth()
+{
+
+	const auto companies = game->GetWorld()->companies.ConvertToDArray();
+	for (int32_t i = 0; i < companies->Size(); i++)
+	{
+		if (!companies->ValidIndex(i))
+			continue;
+
+		companies->GetData(i)->Grow(30);
+		companies->GetData(i)->VaryGrowth();
+	}
+
+	delete companies;
+
+	Date date;
+	date.SetDate(&runDate);
+	date.AdvanceMonth(1);
+	int32_t year = date.GetYear();
+	int32_t month = date.GetMonth();
+	int32_t hour = date.GetHour();
+	int32_t minute = date.GetMinute();
+	date.SetDate(date.GetSecond(), minute, hour, 1, month, year);
+
+	const auto event = new NotificationEvent();
+	event->SetTYPE(NotificationType::GrowCompanies);
+	event->SetRunDate(&date);
+	game->GetWorld()->eventScheduler.ScheduleEvent(event);
+}
+
+void NotificationEvent::GenerateNewMissions()
+{
+	puts("TODO: implement NotificationEvent::GenerateNewMissions()");
+}
+
+void NotificationEvent::CheckForSecurityBreaches()
+{
+	puts("TODO: implement NotificationEvent::CheckForSecurityBreaches()");
+}
+
+void NotificationEvent::CheckMissionDueDates()
+{
+	puts("TODO: implement NotificationEvent::CheckMissionDueDates()");
+}
+
+void NotificationEvent::CheckRecentHackCount()
+{
+	puts("TODO: implement NotificationEvent::CheckRecentHackCount()");
+}
+
+void NotificationEvent::GiveMissionToNpc()
+{
+	puts("TODO: implement NotificationEvent::GiveMissionToNpc()");
+}
+
+void NotificationEvent::PayUplinkMonthlyFee()
+{
+	puts("TODO: implement NotificationEvent::PayUplinkMonthlyFee()");
+}
+
+void NotificationEvent::ExpireOldStuff()
+{
+	puts("TODO: implement NotificationEvent::ExpireOldStuff()");
+}
+
+void NotificationEvent::AddInterestToLoans()
+{
+	puts("TODO: implement NotificationEvent::AddInterestToLoans()");
+}
+
+void NotificationEvent::DemoGameOver()
+{
+	puts("TODO: implement NotificationEvent::DemoGameOver()");
+}
+
+void NotificationEvent::DemoGenerateNewMission()
+{
+	puts("TODO: implement NotificationEvent::DemoGenerateNewMission()");
+}
+
+void NotificationEvent::BuyAgentList()
+{
+	puts("TODO: implement NotificationEvent::BuyAgentList()");
+}
+
+void NotificationEvent::AgentsOnListDie()
+{
+	puts("TODO: implement NotificationEvent::AgentsOnListDie()");
+}
+
+void NotificationEvent::WarezGameOver()
+{
+	puts("TODO: implement NotificationEvent::WarezGameOver()");
 }

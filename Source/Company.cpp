@@ -1,5 +1,6 @@
 #include <Company.hpp>
 
+#include <NumberGenerator.hpp>
 #include <Util.hpp>
 
 bool Company::Load(FILE* file)
@@ -81,4 +82,14 @@ UplinkObjectId Company::GetOBJECTID()
 void Company::SetName(const char* name)
 {
 	UplinkStrncpy(this->name, name, 0x40);
+}
+
+void Company::Grow(int amount)
+{
+	puts("TODO: implement Company::Grow()");
+}
+
+void Company::VaryGrowth()
+{
+	growth = NumberGenerator::ApplyVariance(growth, 20);
 }

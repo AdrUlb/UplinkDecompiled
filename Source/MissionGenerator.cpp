@@ -41,5 +41,6 @@ void MissionGenerator::Initialise()
 
 void MissionGenerator::Shutdown()
 {
-	UplinkAbort("TODO: implement MissionGenerator::Shutdown()");
+	for (auto i = 0; i < 17; i++)
+		delete prob_missiontype[i];
 }

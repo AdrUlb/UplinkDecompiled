@@ -36,4 +36,18 @@ public:
 	char* GetLongString() override;
 	void SetTYPE(NotificationType type);
 	static void ScheduleStartingEvents();
+	void ApplyMonthlyGrowth();
+	void GenerateNewMissions();
+	void CheckForSecurityBreaches();
+	void CheckMissionDueDates();
+	void CheckRecentHackCount();
+	void GiveMissionToNpc();
+	void PayUplinkMonthlyFee();
+	void ExpireOldStuff();
+	void AddInterestToLoans();
+	void DemoGameOver();
+	void DemoGenerateNewMission();
+	void BuyAgentList();
+	void AgentsOnListDie();
+	void WarezGameOver();
 };

@@ -25,7 +25,7 @@ class Computer : UplinkObject
 	char running = true;
 	float revelationInfectedVersion = 0.0f;
 	Date revelationInfectedDate;
-	DArray<ComputerScreen*> computerScreens;
+	DArray<ComputerScreen*> screens;
 	DataBank dataBank;
 	LogBank logBank;
 	RecordBank recordBank;
@@ -43,4 +43,5 @@ public:
 	void SetCompanyName(const char* value);
 	void SetIP(const char* value);
 	void SetIsTargetable(bool value);
+	void AddComputerScreen(ComputerScreen* screen, int index);
 };
