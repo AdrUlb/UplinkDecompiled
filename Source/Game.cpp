@@ -25,7 +25,29 @@ Game::Game()
 
 Game::~Game()
 {
-	UplinkAbort("TODO: implement Game::~Game()");
+	if (interface != nullptr)
+		delete interface;
+
+	if (view != nullptr)
+		delete view;
+
+	if (world != nullptr)
+		delete world;
+
+	if (obituary != nullptr)
+		delete obituary;
+
+	if (loadedSaveFileVer != nullptr)
+		delete[] loadedSaveFileVer;
+
+	if (createdSaveFileVer != nullptr)
+		delete[] createdSaveFileVer;
+
+	if (winCodeDesc != nullptr)
+		delete[] winCodeDesc;
+
+	if (field_58 != nullptr)
+		delete[] field_58;
 }
 
 bool Game::Load(FILE* file)

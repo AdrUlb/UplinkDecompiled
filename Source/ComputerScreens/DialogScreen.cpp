@@ -4,11 +4,13 @@
 
 DialogScreen::~DialogScreen()
 {
-	puts("DialogScreen");
-	ComputerScreen::Print();
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&widgets));
-	printf("ReturnKeyButton = %s\n", returnKeyButton);
-	printf("EscapeKeyButton = %s\n", escapeKeyButton);
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&this->widgets));
+
+	if (returnKeyButton != nullptr)
+		delete[] returnKeyButton;
+
+	if (escapeKeyButton != nullptr)
+		delete[] escapeKeyButton;
 }
 
 bool DialogScreen::Load(FILE* file)

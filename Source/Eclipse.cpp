@@ -141,7 +141,7 @@ void EclReset()
 	}
 
 	while (buttons.ValidIndex(0))
-		buttons.GetData(0)->Name;
+		EclRemoveButton(buttons.GetData(0)->Name);
 
 	while (true)
 	{

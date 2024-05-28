@@ -2,6 +2,7 @@
 #include <Eclipse.hpp>
 #include <Globals.hpp>
 #include <IRCInterface.hpp>
+#include <RedShirt.hpp>
 #include <Util.hpp>
 #include <cstdlib>
 #include <dirent.h>
@@ -69,7 +70,61 @@ void App::Update()
 
 void App::Close()
 {
-	UplinkAbort("TODO: implement App::Close()");
+	UplinkAssert(!closed);
+
+	closed = true;
+
+	CloseGame();
+
+	EclReset();
+
+	/*if (game != nullptr)
+		game->ExitGame();*/
+
+	options->ApplyShutdownChanges();
+	options->Save(nullptr);
+
+	// SvbReset();
+	// GciDeleteAllTrueTypeFonts();
+	RsCleanUp();
+	// SgShutdown();
+	if (mainMenu != nullptr)
+	{
+		delete mainMenu;
+		mainMenu = nullptr;
+	}
+
+	if (options != nullptr)
+	{
+		delete options;
+		options = nullptr;
+	}
+
+	if (network != nullptr)
+	{
+		delete network;
+		network = nullptr;
+	}
+
+	if (game != nullptr)
+	{
+		delete game;
+		game = nullptr;
+	}
+
+	if (phoneDialler != nullptr)
+	{
+		delete phoneDialler;
+		phoneDialler = nullptr;
+	}
+
+	if (nextLoadGame != nullptr)
+	{
+		delete[] nextLoadGame;
+		nextLoadGame = nullptr;
+	}
+
+	puts("TODO: implement App::Close()");
 }
 
 void App::CloseGame()
