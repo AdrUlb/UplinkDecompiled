@@ -16,6 +16,7 @@ enum class UplinkObjectId
 	SecuritySystem = 29,
 	MessageScreen = 31,
 	DialogScreen = 35,
+	DialogScreenWidget,
 	LinksScreen = 40,
 	DisconnectedScreen = 44,
 	Company = 50,

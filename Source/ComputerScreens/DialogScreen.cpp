@@ -60,11 +60,27 @@ UplinkObjectId DialogScreen::GetOBJECTID()
 
 void DialogScreen::AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip)
 {
-	puts("TODO: implement DialogScreen::AddWidget()");
+	const auto widget = new DialogScreenWidget();
+	widget->SetName(name);
+	widget->SetTYPE(type);
+	widget->SetPosition(x, y);
+	widget->SetSize(width, height);
+	widget->SetCaption(caption);
+	widget->SetTooltip(tooltip);
+	widgets.PutData(widget);
 }
 
 void DialogScreen::AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip, int data1,
 							 int data2, const char* stringData1, const char* stringData2)
 {
-	puts("TODO: implement DialogScreen::AddWidget()");
+	const auto widget = new DialogScreenWidget();
+	widget->SetName(name);
+	widget->SetTYPE(type);
+	widget->SetPosition(x, y);
+	widget->SetSize(width, height);
+	widget->SetCaption(caption);
+	widget->SetTooltip(tooltip);
+	widget->SetData(data1, data2);
+	widget->SetStringData(stringData1, stringData2);
+	widgets.PutData(widget);
 }

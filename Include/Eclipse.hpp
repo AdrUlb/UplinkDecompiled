@@ -24,6 +24,7 @@ void EclRegisterButton(int x, int y, int width, int height, const char* caption,
 void EclRemoveButton(const char* name);
 void EclRemoveAnimation(int index);
 Button* EclGetButton(const char* name);
+void EclDirtyRectangle();
 void EclDirtyButton();
 void EclRegisterButtonCallbacks(const char* name, ButtonDrawFunc drawFunc, ButtonMouseUpFunc mouseUpFunc, ButtonMouseDownFunc mouseDownFunc,
 								ButtonMouseMoveFunc mouseMoveFunc);
@@ -31,3 +32,4 @@ void EclClearRectangle(int x, int y, int width, int height);
 void EclUpdateAllAnimations();
 int EclRegisterCaptionChange(const char* buttonName, const char* caption, int time, AnimationFinishedCallback finishedCallback);
 int EclRegisterMovement(const char* buttonName, int x, int y, int time, AnimationFinishedCallback callback);
+void EclButtonBringToFront(const char* name);

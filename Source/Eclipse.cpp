@@ -373,6 +373,11 @@ Button* EclGetButton(const char* name)
 	return nullptr;
 }
 
+void EclDirtyRectangle()
+{
+	// Empty??
+}
+
 void EclDirtyButton()
 {
 	// Empty??
@@ -662,4 +667,16 @@ int EclRegisterMovement(const char* buttonName, int x, int y, int time, int move
 int EclRegisterMovement(const char* buttonName, int x, int y, int time, AnimationFinishedCallback callback)
 {
 	return EclRegisterMovement(buttonName, x, y, time, 1, callback);
+}
+
+void EclButtonBringToFront(const char* name)
+{
+	const auto index = EclLookupIndex(name);
+
+	if (!buttons.ValidIndex(index))
+		return;
+
+	const auto button = buttons[index];
+	buttons.RemoveData(index);
+	buttons.PutDataAtStart(button);
 }

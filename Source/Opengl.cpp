@@ -6,10 +6,14 @@
 #include <Gci.hpp>
 #include <Globals.hpp>
 #include <RedShirt.hpp>
+#include <ScrollBox.hpp>
 #include <Sg.hpp>
 
 static int lastidleupdate = 0;
 static int curserflash = 0x0;
+
+static int mouseX = 0;
+static int mouseY = 0;
 
 static LList<char*>* wordwraptext(const char* text, int width)
 {
@@ -326,6 +330,23 @@ static void display()
 	glFinish();
 }
 
+static void mousedraw(Button* button, bool highlighted, bool clicked)
+{
+	UplinkAssert(button != nullptr);
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glBegin(GL_LINES);
+	glLineWidth(1.0f);
+	glVertex2i(button->X, button->Y);
+	glVertex2i(button->X + button->Width - 1, button->Y + button->Height - 1);
+	glVertex2i(button->X, button->Y);
+	glVertex2i(button->X + (button->Width / 1.5), button->Y);
+	glVertex2i(button->X + (button->Width / 1.5), button->Y);
+	glVertex2i(button->X, button->Y + (button->Height / 1.5));
+	glEnd();
+	glLineWidth(1.0f);
+}
+
 static void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
 {
 	(void)button;
@@ -337,13 +358,30 @@ static void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
 
 static void mousemove(int x, int y)
 {
-	(void)x;
-	(void)y;
-	static auto called = false;
-	if (!called)
+	mouseX = x;
+	mouseY = y;
+
+	if (ScrollBox::IsGrabInProgress())
+		ScrollBox::UpdateGrabScroll();
+
+	if (app->GetOptions()->IsOptionEqualTo("graphics_softwaremouse", 1))
 	{
-		puts("TODO: implement mousemove()");
-		called = true;
+		if (EclGetButton("mouse") == nullptr)
+		{
+			EclRegisterButton(0, 0, 8, 8, "", "mouse");
+			EclRegisterButtonCallbacks("mouse", mousedraw, 0, 0, nullptr);
+		}
+
+		EclButtonBringToFront("mouse");
+
+		const auto mouse = EclGetButton("mouse");
+
+		UplinkAssert(mouse != nullptr);
+
+		mouse->X = x + 1;
+		mouse->Y = y + 1;
+		
+		EclDirtyRectangle();
 	}
 }
 

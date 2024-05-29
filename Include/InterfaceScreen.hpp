@@ -4,7 +4,7 @@
 #include <DArray.hpp>
 #include <UplinkObject.hpp>
 
-class InterfaceScreen : UplinkObject
+class InterfaceScreen : public UplinkObject
 {
 	DArray<char*>* buttonNames;
 
@@ -19,7 +19,7 @@ public:
 	virtual int ScreenID();
 };
 
-class LocalInterfaceScreen : InterfaceScreen
+class LocalInterfaceScreen : public InterfaceScreen
 {
 public:
 	void Create() override;
