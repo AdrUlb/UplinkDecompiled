@@ -2,6 +2,7 @@
 
 #include <Computer.hpp>
 #include <ComputerScreens/ComputerScreen.hpp>
+#include <ComputerScreens/MessageScreen.hpp>
 #include <Image.hpp>
 #include <InterfaceScreen.hpp>
 #include <LList.hpp>
@@ -14,14 +15,26 @@ struct RemoteInterfaceScreen : InterfaceScreen
 {
 	ComputerScreen* computerScreen = nullptr;
 
-	void Update() override;
+	void Create() override;
+	void Remove() override;
+	virtual void Create(ComputerScreen* screen);
+	virtual bool ReturnKeyPressed();
+	virtual bool EscapeKeyPressed();
+	static void DrawMainTitle(Button* button, bool highlighted, bool clicked);
+	static void DrawSubTitle(Button* button, bool highlighted, bool clicked);
+};
+
+class MessageScreenInterface : public RemoteInterfaceScreen
+{
 	void Create() override;
 	void Remove() override;
 	bool IsVisible() override;
 	int ScreenID() override;
-	virtual void Create(ComputerScreen* screen);
-	virtual bool ReturnKeyPressed();
-	virtual bool EscapeKeyPressed();
+	void Create(ComputerScreen* screen) override;
+	bool ReturnKeyPressed() override;
+	MessageScreen* GetComputerScreen();
+	static void Click(Button* button);
+	static void MailMeClick(Button* button);
 };
 
 class RemoteInterface : UplinkObject
@@ -82,6 +95,13 @@ public:
 	void Remove() override;
 	bool IsVisible() override;
 	int ScreenID() override;
+	static int IsVisibleWorldMapInterface();
+	static void CloseWorldMapInterface_Large();
+	static void CreateWorldMapInterface_Small();
+	static void CreateWorldMapInterface_Large();
+	static void CreateWorldMapInterface(int type);
+	static void RemoveTempConnectionButton();
+	static void RemoveWorldMapInterface();
 };
 
 class HUDInterface : LocalInterfaceScreen

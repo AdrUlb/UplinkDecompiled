@@ -48,4 +48,5 @@ public:
 	void SetTraceSpeed(int value);
 	void SetIsExternallyOpen(bool value);
 	void SetTraceAction(int value);
+	ComputerScreen* GetComputerScreen(int index);
 };

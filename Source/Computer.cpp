@@ -187,3 +187,11 @@ void Computer::SetTraceAction(int value)
 {
 	traceAction = value;
 }
+
+ComputerScreen* Computer::GetComputerScreen(int index)
+{
+	if (!screens.ValidIndex(index))
+		return nullptr;
+
+	return screens.GetData(index);
+}

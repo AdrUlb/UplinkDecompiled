@@ -4,12 +4,12 @@
 
 class MessageScreen : public ComputerScreen
 {
+public:
 	int nextPage = -1;
 	char* textMessage = nullptr;
 	char* buttonMessage = nullptr;
 	bool mailThisToMe = false;
 
-public:
 	~MessageScreen() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;

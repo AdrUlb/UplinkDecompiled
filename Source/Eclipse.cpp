@@ -680,3 +680,10 @@ void EclButtonBringToFront(const char* name)
 	buttons.RemoveData(index);
 	buttons.PutDataAtStart(button);
 }
+
+void EclRegisterButtonCallback(const char* name, ButtonMouseUpFunc func)
+{
+	const auto index = EclLookupIndex(name);
+	if (buttons.ValidIndex(index))
+		buttons[index]->RegisterMouseUpFunction(func);
+}

@@ -1,5 +1,6 @@
 #include <ComputerScreens/ComputerScreen.hpp>
 
+#include <Globals.hpp>
 #include <Util.hpp>
 
 bool ComputerScreen::Load(FILE* file)
@@ -34,6 +35,11 @@ void ComputerScreen::Print()
 const char* ComputerScreen::GetID()
 {
 	return "COMPSCR";
+}
+
+Computer* ComputerScreen::GetComputer()
+{
+	return game->GetWorld()->GetComputer(computer);
 }
 
 void ComputerScreen::SetComputer(const char* value)

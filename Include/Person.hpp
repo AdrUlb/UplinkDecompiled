@@ -9,26 +9,26 @@
 #include <Person.hpp>
 #include <Rating.hpp>
 #include <UplinkObject.hpp>
+#include <VLocation.hpp>
 
 class Person : public UplinkObject
 {
 public:
-	char name[0x80];
-	int age;
-	int photoIndex;
-	int voiceIndex;
-	char localHost[0x18];
-	char remoteHost[0x18];
-	char phoneNumber[0x18];
+	char name[0x80] = " ";
+	int age = -1;
+	int photoIndex = 0;
+	int voiceIndex = 0;
+	char localHost[0x18] = " ";
+	char remoteHost[0x18] = " ";
+	char phoneNumber[0x18] = " ";
 	LList<Message*> messages;
 	LList<char*> bankAccounts;
-	int currentAccount;
+	int currentAccount = 0;
 	Connection connection;
 	Rating rating;
-	bool isTargetable;
-	int status;
+	bool isTargetable = true;
+	int status = 0;
 
-	Person();
 	~Person() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -40,6 +40,7 @@ public:
 	virtual void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan);
 	void SetName(const char* value);
 	void SetLocalHost(const char* value);
+	VLocation* GetRemoteHost();
 	void SetRemoteHost(const char* value);
 	void SetIsTargetable(bool value);
 	Connection* GetConnection();

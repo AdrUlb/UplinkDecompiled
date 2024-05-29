@@ -2,14 +2,10 @@
 
 #include <Globals.hpp>
 
-Person::Person()
-{
-	puts("TODO: implement Person::Person()");
-}
-
 Person::~Person()
 {
-	puts("TODO: implement Person::~Person()");
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&messages));
+	DeleteLListData(&bankAccounts);
 }
 
 bool Person::Load(FILE* file)
@@ -72,6 +68,13 @@ void Person::SetLocalHost(const char* value)
 {
 	UplinkStrncpy(localHost, value, 0x18);
 	UplinkAssert(game->GetWorld()->GetVLocation(localHost) != nullptr);
+}
+
+VLocation* Person::GetRemoteHost()
+{
+	const auto ret = game->GetWorld()->GetVLocation(remoteHost);
+	UplinkAssert(ret != nullptr);
+	return ret;
 }
 
 void Person::SetRemoteHost(const char* value)

@@ -570,6 +570,7 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 		"allow unparalleled security in a high risk environment.\n"
 		"\n"
 		"You are here because you wish to join this company.");
+	computer->AddComputerScreen(messageScreeen, 0);
 
 	/*const auto screen = new MenuScreen();
 	computer->AddComputerScreen(messageScreeen, 0);
