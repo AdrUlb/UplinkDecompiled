@@ -82,7 +82,12 @@ void Person::SetRemoteHost(const char* value)
 
 void Person::SetIsTargetable(bool value)
 {
-    isTargetable = value;
+	isTargetable = value;
+}
+
+Connection* Person::GetConnection()
+{
+	return &connection;
 }
 
 Agent::~Agent()

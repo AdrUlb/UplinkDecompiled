@@ -111,6 +111,9 @@ void Computer::Print()
 
 void Computer::Update()
 {
+	if (!running)
+		return;
+
 	puts("TODO: implement Computer::Update()");
 }
 

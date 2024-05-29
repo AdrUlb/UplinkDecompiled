@@ -108,10 +108,10 @@ void WorldGenerator::GeneratePlayer(const char* handle)
 	player->gateway.GiveStartingHardware();
 	player->gateway.GiveStartingSoftware();*/
 	game->GetWorld()->CreatePerson(player);
-	/*player->GetConnection()->Reset();
+	player->GetConnection()->Reset();
 	player->GetConnection()->AddVLocation("234.773.0.666");
 	player->GetConnection()->Connect();
-	player->GiveLink("234.773.0.666");
+	/*player->GiveLink("234.773.0.666");
 	player->GiveLink("458.615.48.651");*/
 
 	puts("TODO: implement WorldGenerator::GeneratePlayer()");
@@ -282,6 +282,10 @@ void WorldGenerator::GenerateIntroversion()
 
 void WorldGenerator::GenerateCompanyUplink()
 {
+	const auto company = new CompanyUplink();
+	game->GetWorld()->CreateCompany(company);
+	GenerateUplinkPublicAccessServer();
+
 	puts("TODO: implement WorldGenerator::GenerateCompanyUplink()");
 }
 
@@ -392,6 +396,53 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* name)
 	computer->SetCompanyName(name);
 	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(15.0f, 1.5f));
 	computer->SetIP(vlocation->ip);
+	const auto companySize = company->size;
+	if (companySize > 1)
+	{
+		auto level = (companySize - 1) / 3;
+
+		if (level == 0)
+			level = 1;
+		else if (level > 5)
+			level = 5;
+
+		computer->security.AddSystem(4, level, -1);
+	}
+
+	if (companySize > 8)
+	{
+		auto level = ((companySize - 8) / 3);
+
+		if (level == 0)
+			level = 1;
+		else if (level > 5)
+			level = 5;
+
+		computer->security.AddSystem(1, level, -1);
+	}
+
+	if (companySize > 10)
+	{
+		auto level = (companySize - 10) / 3;
+
+		if (level == 0)
+			level = 1;
+		else if (level > 5)
+			level = 5;
+
+		computer->security.AddSystem(2, level, -1);
+	}
+	if (companySize <= 4)
+		computer->SetTraceAction(3);
+	else if (companySize <= 11)
+		computer->SetTraceAction(5);
+	else
+		computer->SetTraceAction(9);
+
+	if (strcmp(name, "Government") == 0)
+		computer->SetIsTargetable(0);
+
+	game->GetWorld()->CreateComputer(computer);
 
 	puts("TODO: implement WorldGenerator::GenerateInternalServicesMachine()");
 
@@ -486,4 +537,47 @@ void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)
 	outY = rax_3;
 
 	delete vlocations;
+}
+
+void WorldGenerator::GenerateUplinkPublicAccessServer()
+{
+	int x, y;
+	WorldGenerator::GenerateValidMapPos(x, y);
+	NameGenerator::GeneratePublicAccessServerName("Uplink");
+
+	char serverName[0x80];
+	UplinkStrncpy(serverName, tempname, 0x80);
+
+	game->GetWorld()->CreateVLocation("234.773.0.666", x, y);
+	game->GetWorld()->CreateComputer(serverName, "Uplink", "234.773.0.666");
+
+	const auto computer = game->GetWorld()->GetComputer(serverName);
+	UplinkAssert(computer != nullptr);
+	computer->SetIsTargetable(0);
+	computer->SetTraceSpeed(-1);
+
+	const auto messageScreeen = new MessageScreen();
+	messageScreeen->SetMainTitle("Uplink");
+	messageScreeen->SetSubTitle("About us");
+	messageScreeen->SetNextPage(1);
+	messageScreeen->SetButtonMessage("OK");
+	messageScreeen->SetTextMessage(
+		"Welcome to the Uplink Public Access Server.\n"
+		"\n"
+		"Uplink Corporation maintains the largest list of freelance agents in the world, and we have operated for the last decade with a "
+		"flawless record of satisfied customers and successful agents.  Our company acts as an anonymous job centre, bringing corporations "
+		"together with agents who can work for them.  Our company also provides rental of essential gateway computers to all agents, which "
+		"allow unparalleled security in a high risk environment.\n"
+		"\n"
+		"You are here because you wish to join this company.");
+
+	/*const auto screen = new MenuScreen();
+	computer->AddComputerScreen(messageScreeen, 0);
+	screen->SetMainTitle("Uplink");
+	screen->SetSubTitle("Public server Main Menu");
+	screen->AddOption("About Us", "Find out who we are and what we do", 0, 10, -1);
+	screen->AddOption("Register as an Agent", "Click to register yourself as a new Uplink Agent", 2, 10, -1);
+	computer->AddComputerScreen(screen, 1);*/
+
+	puts("TODO: implement WorldGenerator::GenerateUplinkPublicAccessServer()");
 }

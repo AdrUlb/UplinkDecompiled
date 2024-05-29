@@ -4,6 +4,8 @@
 #include <LList.hpp>
 #include <UplinkObject.hpp>
 
+class Person;
+
 class Connection : public UplinkObject
 {
 	char owner[0x40] = {0};
@@ -18,5 +20,12 @@ public:
 	void Save(FILE* file);
 	void Print();
 	const char* GetID();
+	const char* GetTarget();
+	Person* GetOwner();
 	void SetOwner(const char* value);
+	void Reset();
+	void AddVLocation(const char* ip);
+	bool LocationIncluded(const char* ip);
+	void Connect();
+	void BeginTrace();
 };

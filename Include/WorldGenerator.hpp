@@ -38,4 +38,5 @@ namespace WorldGenerator
 	Computer* GenerateCentralMainframe(const char* name);
 	Computer* GenerateLAN(const char* name);
 	void GenerateValidMapPos(int& outX, int& outY);
+	void GenerateUplinkPublicAccessServer();
 } // namespace WorldGenerator

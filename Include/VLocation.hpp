@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Computer.hpp>
 #include <UplinkObject.hpp>
 
 class VLocation : UplinkObject
@@ -22,4 +23,5 @@ public:
 	void SetPLocation(int x, int y);
 	void SetComputer(const char* computerName);
 	void SetListed(bool value);
+	Computer* GetComputer();
 };

@@ -157,6 +157,19 @@ Company* World::GetCompany(const char* name)
 	return tree->Data;
 }
 
+Person* World::GetPerson(const char* name)
+{
+	if (people.LookupTree("PLAYER") != nullptr && strcmp(name, GetPlayer()->handle) == 0)
+		return GetPlayer();
+
+	const auto tree = people.LookupTree(name);
+	
+	if (tree == nullptr)
+		return nullptr;
+
+	return tree->Data;
+}
+
 Person* World::CreatePerson(const char* name, const char* host)
 {
 	const auto person = new Person();

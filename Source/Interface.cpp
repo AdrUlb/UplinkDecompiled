@@ -93,7 +93,7 @@ bool RemoteInterface::IsVisible()
 
 void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 {
-	puts("TODO: implement RemoteInterface::RunScreen()");
+	printf("TODO: implement RemoteInterface::RunScreen(%d)\n", screenIndex);
 }
 
 RemoteInterfaceScreen* RemoteInterface::GetInterfaceScreen()
@@ -378,6 +378,7 @@ void Interface::Print()
 void Interface::Update()
 {
 	GetLocalInterface()->Update();
+	GetRemoteInterface()->Update();
 	puts("TODO: implement Interface::Update");
 }
 
@@ -388,11 +389,22 @@ const char* Interface::GetID()
 
 void Interface::Create()
 {
-	puts("TODO: implement Interface::Create");
+	Interface::GetRemoteInterface()->Create();
+
+	if (!app->GetOptions()->IsOptionEqualTo("game_firsttime", 1))
+	{
+		puts("TODO: implement Interface::Create");
+	}
 }
 
 LocalInterface* Interface::GetLocalInterface()
 {
 	UplinkAssert(localInterface != nullptr);
 	return localInterface;
+}
+
+RemoteInterface* Interface::GetRemoteInterface()
+{
+	UplinkAssert(remoteInterface != nullptr);
+	return remoteInterface;
 }

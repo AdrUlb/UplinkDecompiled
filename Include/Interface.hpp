@@ -32,6 +32,7 @@ class RemoteInterface : UplinkObject
 	char securityName[0x80] = " ";
 	int securityLevel = 10;
 
+public:
 	~RemoteInterface() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -139,4 +140,5 @@ public:
 	const char* GetID() override;
 	void Create();
 	LocalInterface* GetLocalInterface();
+	RemoteInterface* GetRemoteInterface();
 };

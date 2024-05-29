@@ -40,6 +40,7 @@ public:
 	VLocation* GetVLocation(const char* ip);
 	Computer* GetComputer(const char* name);
 	Company* GetCompany(const char* name);
+	Person* GetPerson(const char* name);
 	Person* CreatePerson(const char* name, const char* host);
 	void CreatePerson(Person* person);
 	Company* CreateCompany(const char* name);

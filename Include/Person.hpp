@@ -42,6 +42,7 @@ public:
 	void SetLocalHost(const char* value);
 	void SetRemoteHost(const char* value);
 	void SetIsTargetable(bool value);
+	Connection* GetConnection();
 };
 
 class Agent : public Person

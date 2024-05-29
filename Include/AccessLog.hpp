@@ -14,6 +14,7 @@ class AccessLog : UplinkObject
 	char* data2;
 	char* data3;
 
+public:
 	AccessLog();
 	~AccessLog() override;
 	bool Load(FILE* file) override;

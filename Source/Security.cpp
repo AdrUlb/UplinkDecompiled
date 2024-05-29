@@ -104,3 +104,12 @@ void Security::AddSystem(int type, int level, int index)
 	system->Enable();
 	AddSystem(system, index);
 }
+
+bool Security::IsAnythingDisabled()
+{
+	for (auto i = 0; i < systems.Size(); i++)
+		if (systems.ValidIndex(i) != 0 && systems.GetData(i) != nullptr && !systems.GetData(i)->enabled)
+			return true;
+
+	return false;
+}

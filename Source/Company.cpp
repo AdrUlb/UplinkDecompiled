@@ -81,6 +81,7 @@ UplinkObjectId Company::GetOBJECTID()
 
 void Company::Grow(int amount)
 {
+	(void)amount;
 	puts("TODO: implement Company::Grow()");
 }
 
@@ -96,20 +97,82 @@ void Company::SetName(const char* name)
 
 void Company::SetSize(int value)
 {
-    size = value;
+	size = value;
 }
 
 void Company::SetTYPE(int value)
 {
-    type = value;
+	type = value;
 }
 
 void Company::SetGrowth(int value)
 {
-    growth = value;
+	growth = value;
 }
 
 void Company::SetAlignment(int value)
 {
-    alignment = value;
+	alignment = value;
+}
+
+CompanyUplink::CompanyUplink()
+{
+	SetName("Uplink");
+}
+
+CompanyUplink::~CompanyUplink()
+{
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&missions));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&news));
+}
+
+bool CompanyUplink::Load(FILE* file)
+{
+	if (!Company::Load(file))
+		return false;
+
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&missions), file))
+		return false;
+
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales), file))
+		return false;
+
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales), file))
+		return false;
+
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&news), file))
+		return false;
+
+	return true;
+}
+
+void CompanyUplink::Save(FILE* file)
+{
+	Company::Save(file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&missions), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&news), file);
+	SaveID_END(file);
+}
+
+void CompanyUplink::Print()
+{
+	Company::Print();
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&missions));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&news));
+}
+
+const char* CompanyUplink::GetID()
+{
+	return "CPNY_UPL";
+}
+
+UplinkObjectId CompanyUplink::GetOBJECTID()
+{
+	return UplinkObjectId::CompanyUplink;
 }

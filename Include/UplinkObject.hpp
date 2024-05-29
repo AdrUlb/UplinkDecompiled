@@ -10,6 +10,7 @@ enum class UplinkObjectId
 	Agent,
 	Player,
 	Option = 8,
+	VlocationSpecial,
 	Computer = 20,
 	DataBank = 22,
 	RecordBank = 26,
@@ -20,6 +21,7 @@ enum class UplinkObjectId
 	LinksScreen = 40,
 	DisconnectedScreen = 44,
 	Company = 50,
+	CompanyUplink = 52,
 	NotificationEvent = 70
 };
 

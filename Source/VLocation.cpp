@@ -82,3 +82,31 @@ void VLocation::SetListed(bool value)
 {
 	listed = value;
 }
+
+Computer* VLocation::GetComputer()
+{
+	auto tree = &game->GetWorld()->computers;
+
+	while (true)
+	{
+		const auto computerTree = tree->LookupTree(this->computer);
+		if (computerTree == nullptr)
+			break;
+
+		const auto comp = computerTree->Data;
+		if (comp != nullptr)
+		{
+			if (strcmp(comp->ip, ip) == 0)
+				return comp;
+
+			if (comp->type == 64 && GetOBJECTID() == UplinkObjectId::VlocationSpecial)
+				return comp;
+		}
+
+		tree = computerTree->Left();
+		if (tree == nullptr)
+			break;
+	}
+
+	return nullptr;
+}

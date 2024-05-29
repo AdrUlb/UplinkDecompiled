@@ -1,8 +1,12 @@
 #pragma once
 
+#include <LList.hpp>
+#include <Mission.hpp>
+#include <News.hpp>
+#include <Sale.hpp>
 #include <UplinkObject.hpp>
 
-class Company : UplinkObject
+class Company : public UplinkObject
 {
 public:
 	int sharePrices[12] = {0};
@@ -27,4 +31,21 @@ public:
 	void SetTYPE(int value);
 	void SetGrowth(int value);
 	void SetAlignment(int value);
+};
+
+class CompanyUplink : public Company
+{
+	LList<Mission*> missions;
+	LList<Sale*> hardwareSales;
+	LList<Sale*> softwareSales;
+	LList<News*> news;
+
+public:
+	CompanyUplink();
+	~CompanyUplink() override;
+	bool Load(FILE* file) override;
+	void Save(FILE* file) override;
+	void Print() override;
+	const char* GetID() override;
+	UplinkObjectId GetOBJECTID() override;
 };
