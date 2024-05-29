@@ -195,6 +195,7 @@ bool EclIsButtonEditable(const char* name)
 	}
 	return false;
 }
+
 void EclUnHighlightButton()
 {
 	EclGetButton(currenthighlight);
@@ -686,4 +687,18 @@ void EclRegisterButtonCallback(const char* name, ButtonMouseUpFunc func)
 	const auto index = EclLookupIndex(name);
 	if (buttons.ValidIndex(index))
 		buttons[index]->RegisterMouseUpFunction(func);
+}
+
+const char* EclGetButtonAtCoord(int x, int y)
+{
+	for (auto i = 0; i < buttons.Size(); i++)
+	{
+		if (!buttons.ValidIndex(i))
+			continue;
+
+		const auto button = buttons[i];
+		if (x >= button->X && x <= button->X + button->Width && y >= button->Y && y <= button->Y + button->Height)
+			return button->Name;
+	}
+	return nullptr;
 }

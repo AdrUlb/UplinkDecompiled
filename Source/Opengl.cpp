@@ -10,10 +10,13 @@
 #include <Sg.hpp>
 
 static int lastidleupdate = 0;
-static int curserflash = 0x0;
+bool data_7b295f = false;
+static int curserflash = 0;
 
 static int mouseX = 0;
 static int mouseY = 0;
+
+static char currentbuttonname[0x200];
 
 static LList<char*>* wordwraptext(const char* text, int width)
 {
@@ -156,6 +159,17 @@ static void text_draw(Button* button, bool highlighted, bool clicked)
 	glDisable(GL_SCISSOR_TEST);
 }
 
+static void tooltip_update(const char* text)
+{
+	(void)text;
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement tooltip_update()");
+		called = true;
+	}
+}
+
 static void button_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != 0);
@@ -216,8 +230,15 @@ static void button_click(Button* button)
 
 static void button_highlight(Button* button)
 {
-	(void)button;
-	UplinkAbort("TODO: implement button_highlight()");
+	UplinkAssert(button != nullptr);
+
+	EclHighlightButton(button->Name);
+	tooltip_update(button->Tooltip);
+
+	if (strcmp(button->Name, currentbuttonname) == 0)
+		return;
+
+	UplinkStrncpy(currentbuttonname, button->Name, 0x200);
 }
 
 static void superhighlight_draw(Button* button)
@@ -332,6 +353,8 @@ static void display()
 
 static void mousedraw(Button* button, bool highlighted, bool clicked)
 {
+	(void)highlighted;
+	(void)clicked;
 	UplinkAssert(button != nullptr);
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -358,6 +381,9 @@ static void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
 
 static void mousemove(int x, int y)
 {
+	if (app->Closed())
+		return;
+
 	mouseX = x;
 	mouseY = y;
 
@@ -380,20 +406,43 @@ static void mousemove(int x, int y)
 
 		mouse->X = x + 1;
 		mouse->Y = y + 1;
-		
+
 		EclDirtyRectangle();
 	}
 }
 
 static void passivemouse(int x, int y)
 {
-	(void)x;
-	(void)y;
-	static auto called = false;
-	if (!called)
+	if (app->Closed())
+		return;
+	mouseX = x;
+	mouseY = y;
+
+	if (app->GetOptions()->IsOptionEqualTo("graphics_softwaremouse", 1))
 	{
-		puts("TODO: implement passivemouse()");
-		called = true;
+		if (EclGetButton("mouse") == 0)
+		{
+			EclRegisterButton(0, 0, 8, 8, "", "mouse");
+			EclRegisterButtonCallbacks("mouse", mousedraw, 0, 0, nullptr);
+		}
+		EclButtonBringToFront("mouse");
+		const auto mouse = EclGetButton("mouse");
+		UplinkAssert(mouse != nullptr);
+		mouse->X = x + 1;
+		mouse->Y = y + 1;
+	}
+
+	const auto buttonName = EclGetButtonAtCoord(x, y);
+	if (buttonName == nullptr)
+	{
+		EclUnHighlightButton();
+		tooltip_update(" ");
+	}
+	else
+	{
+		const auto button = EclGetButton(buttonName);
+		if (button != nullptr)
+			return button->MouseMove();
 	}
 }
 

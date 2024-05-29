@@ -17,6 +17,7 @@ void EclRegisterSuperHighlightFunction(int borderWidth, SuperhighlightDrawFunc f
 void EclReset();
 bool EclIsButtonEditable(const char* name);
 void EclHighlightButton(const char* name);
+void EclUnHighlightButton();
 void EclMakeButtonUnEditable(const char* name);
 void EclDrawAllButtons();
 void EclRegisterButton(int x, int y, int width, int height, const char* caption, const char* name);
@@ -34,3 +35,4 @@ int EclRegisterCaptionChange(const char* buttonName, const char* caption, int ti
 int EclRegisterMovement(const char* buttonName, int x, int y, int time, AnimationFinishedCallback callback);
 void EclButtonBringToFront(const char* name);
 void EclRegisterButtonCallback(const char* name, ButtonMouseUpFunc func);
+const char* EclGetButtonAtCoord(int x, int y);

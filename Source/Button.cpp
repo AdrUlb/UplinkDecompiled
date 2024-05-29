@@ -131,3 +131,11 @@ void Button::SetImages(Image* imageNormal, Image* imageHighlighted, Image* image
 	ImageHighlighted = imageHighlighted;
 	ImageClicked = imageClicked;
 }
+
+void Button::MouseMove()
+{
+	if (MouseMoveFunc == nullptr)
+		return;
+
+	MouseMoveFunc(this);
+}

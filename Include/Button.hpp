@@ -41,4 +41,5 @@ public:
 	void SetTooltip(const char* value);
 	void Draw(bool highlighted, bool clicked);
 	void SetImages(Image* imageNormal, Image* imageHighlighted, Image* imageClicked);
+	void MouseMove();
 };

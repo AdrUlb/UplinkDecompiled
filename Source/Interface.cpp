@@ -575,7 +575,12 @@ void HUDInterface::Save(FILE* file)
 
 void HUDInterface::Update()
 {
-	puts("TODO: implement HUDInterface::Update()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: HUDInterface::Update()");
+		called = true;
+	}
 }
 
 const char* HUDInterface::GetID()
@@ -718,7 +723,13 @@ void Interface::Update()
 {
 	GetLocalInterface()->Update();
 	GetRemoteInterface()->Update();
-	puts("TODO: implement Interface::Update");
+
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement Interface::Update");
+		called = true;
+	}
 }
 
 const char* Interface::GetID()
