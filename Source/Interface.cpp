@@ -43,7 +43,9 @@ void RemoteInterfaceScreen::DrawMainTitle(Button* button, bool highlighted, bool
 	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
-	SetColour("MenuText");
+	// HACK: for some reason the scissor test prevents the text from being drawn even though it is within the scissor box
+	glDisable(GL_SCISSOR_TEST);
+	SetColour("DefaultText");
 	GciDrawText(button->X, button->Y + (button->Height / 2) + 5, button->Caption, 7);
 	glDisable(GL_SCISSOR_TEST);
 }
@@ -134,7 +136,7 @@ void MessageScreenInterface::Create(ComputerScreen* screen)
 		UplinkAssert(rax_22 != nullptr);
 		EclRegisterButton(rax_22->X - 120, rax_22->Y, 100, 20, "Mail this to me", "Click to send this information to yourself in an email",
 						  "messagescreen_mailme");
-		EclRegisterButtonCallback("messagescreen_mailme", MessageScreenInterface::MailMeClick);
+		EclRegisterButtonCallback("messagescreen_mailme", MailMeClick);
 	}
 }
 
