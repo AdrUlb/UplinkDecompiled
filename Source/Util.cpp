@@ -131,7 +131,7 @@ bool FileReadDataImpl(const char* sourceFile, const int sourceLine, void* buffer
 bool LoadDynamicStringImpl(const char* sourceFile, const int sourceLine, char*& buffer, FILE* file)
 {
 	buffer = nullptr;
-	int32_t length;
+	int length;
 	if (!FileReadData(&length, 4, 1, file))
 		return false;
 
@@ -398,7 +398,7 @@ void SaveDArray(DArray<UplinkObject*>* array, FILE* file)
 {
 	UplinkAssert(array != nullptr);
 
-	int32_t itemCount = array->Size();
+	auto itemCount = array->Size();
 	if (itemCount > 0x40000)
 	{
 		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
@@ -439,7 +439,7 @@ void PrintDArray(struct DArray<UplinkObject*>* array)
 {
 	UplinkAssert(array != nullptr);
 
-	for (int32_t i = 0; i < array->Size(); i++)
+	for (auto i = 0; i < array->Size(); i++)
 	{
 		printf("Index = %d\n", i);
 
@@ -548,7 +548,7 @@ void SaveLList(LList<char*>* list, FILE* file)
 
 	fwrite(&itemCount, 4, 1, file);
 
-	for (int32_t i = 0; i < itemCount; i++)
+	for (auto i = 0; i < itemCount; i++)
 		SaveDynamicString(list->GetData(i), file);
 }
 

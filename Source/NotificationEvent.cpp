@@ -19,7 +19,6 @@ void NotificationEvent::Save(FILE* file)
 {
 	UplinkEvent::Save(file);
 	fwrite(&type, 4, 1, file);
-	SaveID_END(file);
 }
 
 void NotificationEvent::Print()
@@ -220,7 +219,7 @@ void NotificationEvent::ApplyMonthlyGrowth()
 {
 
 	const auto companies = game->GetWorld()->companies.ConvertToDArray();
-	for (int32_t i = 0; i < companies->Size(); i++)
+	for (auto i = 0; i < companies->Size(); i++)
 	{
 		if (!companies->ValidIndex(i))
 			continue;
@@ -234,10 +233,10 @@ void NotificationEvent::ApplyMonthlyGrowth()
 	Date date;
 	date.SetDate(&runDate);
 	date.AdvanceMonth(1);
-	int32_t year = date.GetYear();
-	int32_t month = date.GetMonth();
-	int32_t hour = date.GetHour();
-	int32_t minute = date.GetMinute();
+	auto year = date.GetYear();
+	auto month = date.GetMonth();
+	auto hour = date.GetHour();
+	auto minute = date.GetMinute();
 	date.SetDate(date.GetSecond(), minute, hour, 1, month, year);
 
 	const auto event = new NotificationEvent();

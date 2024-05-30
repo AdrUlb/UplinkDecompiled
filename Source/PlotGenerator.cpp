@@ -12,7 +12,6 @@ bool DemoPlotGenerator::Load(FILE* file)
 void DemoPlotGenerator::Save(FILE* file)
 {
 	fwrite(&scene, 4, 1, file);
-	SaveID_END(file);
 }
 
 void DemoPlotGenerator::Print()
@@ -204,7 +203,6 @@ void PlotGenerator::Save(FILE* file)
 	fwrite(&versionRevelation, 4, 1, file);
 	fwrite(&versionFaith, 4, 1, file);
 	SaveLList(&revelationInfected, file);
-	SaveID_END(file);
 }
 
 void PlotGenerator::Print()

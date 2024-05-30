@@ -22,7 +22,6 @@ void ComputerScreen::Save(FILE* file)
 	SaveDynamicString(mainTitle, 0x40, file);
 	SaveDynamicString(subTitle, 0x40, file);
 	SaveDynamicString(computer, 0x40, file);
-	SaveID_END(file);
 }
 
 void ComputerScreen::Print()

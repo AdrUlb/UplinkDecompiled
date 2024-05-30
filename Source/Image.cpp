@@ -105,7 +105,7 @@ void Image::Draw(int x, int y)
 	glPopAttrib();
 }
 
-void Image::Scale(int32_t newWidth, int32_t newHeight)
+void Image::Scale(int newWidth, int newHeight)
 {
 	if (this->raster == nullptr)
 		return;

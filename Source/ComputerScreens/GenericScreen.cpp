@@ -21,7 +21,6 @@ void GenericScreen::Save(FILE* file)
 	ComputerScreen::Save(file);
 	fwrite(&nextPage, 4, 1, file);
 	fwrite(&type, 4, 1, file);
-	SaveID_END(file);
 }
 
 void GenericScreen::Print()

@@ -224,7 +224,6 @@ void RemoteInterface::Save(FILE* file)
 	fwrite(&screenIndex, 4, 1, file);
 	SaveDynamicString(securityName, 0x80, file);
 	fwrite(&securityLevel, 4, 1, file);
-	SaveID_END(file);
 }
 
 void RemoteInterface::Print()
@@ -382,7 +381,6 @@ bool WorldMapInterface::Load(FILE* file)
 void WorldMapInterface::Save(FILE* file)
 {
 	SaveLList(&savedConnection, file);
-	SaveID_END(file);
 }
 
 void WorldMapInterface::Print()
@@ -444,8 +442,8 @@ void WorldMapInterface::CreateWorldMapInterface_Small()
 {
 	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
 	app->GetOptions()->GetOptionValue("graphics_screenheight");
-	int32_t width = screenWidth * 0.29;
-	int32_t height = width / 188.0 * 100.0;
+	auto width = screenWidth * 0.29;
+	auto height = width / 188.0 * 100.0;
 	EclRegisterButton(screenWidth - width - 3, 3, width, height, "", "Global Communications", "worldmap_smallmap");
 	if (game->GetWorldMapType() == 1)
 		button_assignbitmap("worldmap_smallmap", "worldmapsmall_defcon.tif");
@@ -504,7 +502,7 @@ void WorldMapInterface::RemoveTempConnectionButton()
 
 void WorldMapInterface::RemoveWorldMapInterface()
 {
-	int32_t visibleInterface = WorldMapInterface::IsVisibleWorldMapInterface();
+	auto visibleInterface = WorldMapInterface::IsVisibleWorldMapInterface();
 
 	if (visibleInterface == 0)
 		return;
@@ -570,7 +568,6 @@ bool HUDInterface::Load(FILE* file)
 void HUDInterface::Save(FILE* file)
 {
 	worldMapInterface.Save(file);
-	SaveID_END(file);
 }
 
 void HUDInterface::Update()
@@ -635,7 +632,7 @@ void LocalInterface::Save(FILE* file)
 {
 	if (screenCode <= 17)
 	{
-		int32_t buf = 0;
+		auto buf = 0;
 		fwrite(&buf, 4, 1, file);
 	}
 	else

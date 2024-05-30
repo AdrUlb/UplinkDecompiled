@@ -75,7 +75,6 @@ void DialogScreenWidget::Save(FILE* file)
 	fwrite(&data2, 4, 1, file);
 	SaveDynamicString(stringData1, file);
 	SaveDynamicString(stringData2, file);
-	SaveID_END(file);
 }
 
 void DialogScreenWidget::Print()

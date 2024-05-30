@@ -162,9 +162,8 @@ static void text_draw(Button* button, bool highlighted, bool clicked)
 
 static void tooltip_callback()
 {
-    tooltipanimindex = -1;
+	tooltipanimindex = -1;
 }
-
 
 static void tooltip_update(const char* text)
 {
@@ -183,41 +182,26 @@ static void tooltip_update(const char* text)
 		return;
 
 	tooltipButton->SetTooltip(text);
-	bool cond2 = tooltipanimindex != -1;
+
 	if (tooltipanimindex != -1)
 	{
 		EclRemoveAnimation(tooltipanimindex);
 		tooltipanimindex = -1;
 	}
-	char const* rdi_2 = " ";
-	int64_t i = 2;
-	auto name_1 = text;
-	while (i != 0)
+	
+	if (strcmp(text, " ") == 0)
 	{
-		char temp0_1 = *(uint8_t*)name_1;
-		char const temp1_1 = *(uint8_t*)rdi_2;
-		cond2 = temp0_1 != temp1_1;
-		name_1 = &name_1[1];
-		rdi_2 = &rdi_2[1];
-		i = (i - 1);
-		if (temp0_1 != temp1_1)
-		{
-			break;
-		}
+		tooltipButton->SetCaption(" ");
+		currentbuttonname[0] = 0;
 	}
-	if (cond2)
-	{
+	else
 		tooltipanimindex = EclRegisterCaptionChange("tooltip", text, tooltip_callback);
-		return;
-	}
-	tooltipButton->SetCaption(" ");
-	currentbuttonname[0] = 0;
 }
 
 static void button_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != 0);
-	int32_t screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
 
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
@@ -258,7 +242,7 @@ static void button_draw(Button* button, bool highlighted, bool clicked)
 	}
 	glEnd();
 
-	int32_t textWidth = GciTextWidth(button->Caption);
+	auto textWidth = GciTextWidth(button->Caption);
 	SetColour("DefaultText");
 	const auto x = (button->Width / 2) + button->X - (textWidth / 2);
 	const auto y = button->Y + 2 + (button->Height / 2);
@@ -344,7 +328,7 @@ void imagebutton_draw(Button* button, bool highlighted, bool clicked)
 void textbutton_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != nullptr);
-	int32_t rax_2 = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	auto rax_2 = app->GetOptions()->GetOptionValue("graphics_screenheight");
 	uint64_t height = ((uint64_t)button->Height);
 	glScissor(button->X, ((-(button->Y) - height) + rax_2), ((uint64_t)button->Width), height);
 	glEnable(GL_SCISSOR_TEST);

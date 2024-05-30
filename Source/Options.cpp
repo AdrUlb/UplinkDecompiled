@@ -44,7 +44,6 @@ void Option::Save(FILE* file)
 	fwrite(&yesOrNo, 1, 1, file);
 	fwrite(&visible, 1, 1, file);
 	fwrite(&value, 4, 1, file);
-	SaveID_END(file);
 }
 
 void Option::Print()
@@ -131,13 +130,11 @@ bool Options::Load(FILE* file)
 
 	puts("success");
 
-	LoadID(optionsFile);
 	if (!LoadBTree((BTree<UplinkObject*>*)&options, optionsFile))
 	{
 		DeleteBTreeData((BTree<UplinkObject*>*)&options);
 		return false;
 	}
-	LoadID_END(optionsFile);
 
 	// The size of themeNameLength in the file depends on the native integer size
 	// This code will work with either both 32-bit and 64-bit integers in this field
@@ -243,7 +240,7 @@ void Options::CreateDefaultOptions()
 	if (GetOption("game_firsttime") == nullptr)
 	{
 		const auto existingGames = App::ListExistingGames();
-		int32_t rax_25 = existingGames->Size();
+		auto rax_25 = existingGames->Size();
 		if (rax_25 > 0)
 		{
 			SetOptionValue("game_firsttime", 0, "z", true, false);
@@ -270,7 +267,7 @@ void Options::CreateDefaultOptions()
 	versionNumber = 100.0f * versionNumber;
 
 	if (GetOption("game_version") == nullptr)
-		Options::SetOptionValue("game_version", ((int32_t)(truncf(versionNumber))), "z", false, false);
+		Options::SetOptionValue("game_version", versionNumber, "z", false, false);
 
 	if (GetOption("graphics_screenwidth") == nullptr)
 		Options::SetOptionValue("graphics_screenwidth", 0x400, "Sets the width of the screen", false, false);

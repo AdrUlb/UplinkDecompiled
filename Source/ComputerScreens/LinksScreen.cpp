@@ -21,7 +21,6 @@ void LinksScreen::Save(FILE* file)
 	ComputerScreen::Save(file);
 	fwrite(&this->nextPage, 4, 1, file);
 	fwrite(&this->type, 4, 1, file);
-	SaveID_END(file);
 }
 
 void LinksScreen::Print()

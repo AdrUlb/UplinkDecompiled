@@ -4,7 +4,9 @@
 #include <ComputerScreens/DisconnectedScreen.hpp>
 #include <ComputerScreens/GenericScreen.hpp>
 #include <ComputerScreens/LinksScreen.hpp>
+#include <ComputerScreens/MenuScreen.hpp>
 #include <ComputerScreens/MessageScreen.hpp>
+#include <ComputerScreens/UserIDScreen.hpp>
 #include <Globals.hpp>
 #include <Image.hpp>
 #include <LanGenerator.hpp>
@@ -95,6 +97,7 @@ void WorldGenerator::GenerateSpecifics()
 
 void WorldGenerator::GeneratePlayer(const char* handle)
 {
+	(void)handle;
 	const auto player = new Player();
 	player->SetName("PLAYER");
 	/*player->SetAge(21);
@@ -291,7 +294,9 @@ void WorldGenerator::GenerateCompanyUplink()
 
 Computer* WorldGenerator::GenerateComputer(const char* name)
 {
+	(void)name;
 	puts("TODO: implement WorldGenerator::GenerateComputer()");
+	return nullptr;
 }
 
 Company* WorldGenerator::GenerateCompany(const char* name, int size, int type, int growth, int alignment)
@@ -444,6 +449,23 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* name)
 
 	game->GetWorld()->CreateComputer(computer);
 
+	const auto loginScreen = new UserIDScreen();
+	loginScreen->SetMainTitle(name);
+	loginScreen->SetSubTitle("Log in");
+	loginScreen->SetDifficulty(NumberGenerator::RandomNormalNumber(45.0f, 6.75f));
+	loginScreen->SetNextPage(1);
+	computer->AddComputerScreen(loginScreen, 0);
+
+	const auto menuScreen = new MenuScreen();
+	menuScreen->SetMainTitle(name);
+	menuScreen->SetSubTitle("Internal Services Main Menu");
+	computer->AddComputerScreen(menuScreen, 1);
+	menuScreen->AddOption("File Server", "Access the file server", 2, 10, -1);
+	menuScreen->AddOption("View records", "View the records stored on this system", 4, 10, -1);
+	menuScreen->AddOption("View links", "View all links available on this system", 6, 10, -1);
+	menuScreen->AddOption("Admin", "Enter administrative mode", 7, 1, -1);
+	computer->AddComputerScreen(menuScreen, 1);
+
 	puts("TODO: implement WorldGenerator::GenerateInternalServicesMachine()");
 
 	return computer;
@@ -495,46 +517,45 @@ void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)
 
 	const auto vlocations = game->GetWorld()->vlocations.ConvertToDArray();
 
-	int32_t var_34 = 0;
-	int32_t rax_2;
-	int32_t rax_3;
+	auto x = 0;
+	auto y = 0;
 
-	while (true)
+	// 32 attempts
+	for (auto attempts = 0; attempts < 32; attempts++)
 	{
-		rax_2 = NumberGenerator::RandomNumber(593);
-		rax_3 = NumberGenerator::RandomNumber(314);
-		UplinkAssert(rax_2 <= 593);
-		UplinkAssert(rax_3 <= 314);
+		x = NumberGenerator::RandomNumber(593);
+		y = NumberGenerator::RandomNumber(314);
 
-		if (worldmapmask->GetPixelR(rax_2, rax_3) != 0)
+		UplinkAssert(x <= 593);
+		UplinkAssert(y <= 314);
+
+		// If we are outside of the world map, try again and do not count the attempt
+		if (worldmapmask->GetPixelR(x, y) == 0)
 		{
-			int32_t rax_5 = vlocations->Size();
-			int32_t i = rax_5 - 1;
-			if (rax_5 - 1 < 0)
+			attempts--;
+			continue;
+		}
+
+		auto valid = false;
+		for (auto i = vlocations->Size() - 1; i >= 0; i--)
+		{
+			if (!vlocations->ValidIndex(i))
 				break;
 
-			struct VLocation* rax_6;
-			do
+			const auto vlocation = vlocations->GetData(i);
+			if (vlocation->x - x <= 1 && vlocation->y - y <= 1)
 			{
-				rax_5 = vlocations->ValidIndex(i);
-				if (rax_5 != 0)
-				{
-					rax_6 = vlocations->GetData(i);
-					if (((rax_6->x - rax_2) + 1) <= 2 && ((rax_6->y - rax_3) + 1) <= 2)
-						break;
-				}
-				i = (i - 1);
-			} while (i != -1);
-			if (!(((rax_5 != 0 && ((rax_6->x - rax_2) + 1) <= 2) && ((rax_6->y - rax_3) + 1) <= 2)))
+				valid = true;
 				break;
-			if (var_34 > 0x1f)
-				break;
-			var_34 = (var_34 + 1);
+			}
 		}
+
+		if (!valid)
+			break;
 	}
 
-	outX = rax_2;
-	outY = rax_3;
+	outX = x;
+	outY = y;
 
 	delete vlocations;
 }

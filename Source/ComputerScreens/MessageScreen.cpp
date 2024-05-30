@@ -38,7 +38,6 @@ void MessageScreen::Save(FILE* file)
 	SaveDynamicString(textMessage, file);
 	SaveDynamicString(buttonMessage, file);
 	fwrite(&mailThisToMe, 1, 1, file);
-	SaveID_END(file);
 }
 
 void MessageScreen::Print()

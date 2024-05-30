@@ -15,7 +15,6 @@ bool EventScheduler::Load(FILE* file)
 void EventScheduler::Save(FILE* file)
 {
 	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&events), file);
-	UplinkObject::SaveID_END(file);
 }
 
 void EventScheduler::Print()
@@ -48,7 +47,7 @@ bool EventScheduler::UpdateProcessEvents()
 {
 	const auto eventCount = events.Size();
 	LList<UplinkEvent*> runEvents;
-	int32_t runEventCount = 0;
+	auto runEventCount = 0;
 
 	if (events.Size() > 0)
 	{

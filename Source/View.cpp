@@ -18,7 +18,7 @@ bool View::Load(FILE* file)
 
 void View::Save(FILE* file)
 {
-	SaveID_END(file);
+	(void)file;
 }
 
 void View::Print()

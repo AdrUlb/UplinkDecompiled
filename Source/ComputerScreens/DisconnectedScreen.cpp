@@ -27,7 +27,6 @@ void DisconnectedScreen::Save(FILE* file)
 	ComputerScreen::Save(file);
 	fwrite(&nextPage, 4, 1, file);
 	SaveDynamicString(textMessage, file);
-	SaveID_END(file);
 }
 
 void DisconnectedScreen::Print()

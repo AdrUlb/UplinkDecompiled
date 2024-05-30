@@ -4,7 +4,7 @@
 
 class Probability
 {
-	DArray<int32_t> values;
+	DArray<int> values;
 
 public:
 	Probability();

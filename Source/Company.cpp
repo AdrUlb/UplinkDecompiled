@@ -1,5 +1,6 @@
 #include <Company.hpp>
 
+#include <Globals.hpp>
 #include <NumberGenerator.hpp>
 #include <Util.hpp>
 
@@ -51,8 +52,6 @@ void Company::Save(FILE* file)
 		fwrite(&sharePrices[i], 4, 1, file);
 
 	fwrite(&this->sharePriceLastMonth, 4, 1, file);
-
-	SaveID_END(file);
 }
 
 void Company::Print()
@@ -81,8 +80,32 @@ UplinkObjectId Company::GetOBJECTID()
 
 void Company::Grow(int amount)
 {
-	(void)amount;
-	puts("TODO: implement Company::Grow()");
+	size *= ((amount / 90.0 * this->growth) + 100.0) / 100.0;
+
+	auto month = game->GetWorld()->currentDate.GetMonth();
+
+	UplinkAssert(month >= 1 && month <= 12);
+
+	month--;
+	sharePriceLastMonth = month;
+
+	auto price = NumberGenerator::ApplyVariance(size, 30);
+	if (price <= 0)
+		price = 1;
+
+	sharePrices[month] = price;
+
+	while (true)
+	{
+		month--;
+		if (month < 0)
+			month = 11;
+
+		if (sharePrices[month] != 0)
+			break;
+
+		sharePrices[month] = NumberGenerator::RandomNumber(size);
+	}
 }
 
 void Company::VaryGrowth()
@@ -155,7 +178,6 @@ void CompanyUplink::Save(FILE* file)
 	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales), file);
 	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales), file);
 	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&news), file);
-	SaveID_END(file);
 }
 
 void CompanyUplink::Print()

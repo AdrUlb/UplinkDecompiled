@@ -91,7 +91,6 @@ void Computer::Save(FILE* file)
 	recordBank.Save(file);
 	security.Save(file);
 	revelationInfectedDate.Save(file);
-	SaveID_END(file);
 }
 
 void Computer::Print()

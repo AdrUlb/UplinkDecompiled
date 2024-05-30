@@ -39,7 +39,6 @@ void VLocation::Save(FILE* file)
 	fwrite(&listed, 1, 1, file);
 	fwrite(&displayed, 1, 1, file);
 	fwrite(&colored, 1, 1, file);
-	SaveID_END(file);
 }
 
 void VLocation::Print()

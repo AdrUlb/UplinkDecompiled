@@ -70,9 +70,9 @@ class Player : public Agent
 public:
 	BTree<char*> shares;
 	Gateway gateway;
-	int32_t livesRuined = 0;
-	int32_t systemsDestroyed = 0;
-	int32_t highSecurityHacks = 0;
+	int livesRuined = 0;
+	int systemsDestroyed = 0;
+	int highSecurityHacks = 0;
 
 	~Player() override;
 	bool Load(FILE* file) override;

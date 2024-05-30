@@ -36,7 +36,6 @@ void DialogScreen::Save(FILE* file)
 	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&widgets), file);
 	SaveDynamicString(returnKeyButton, file);
 	SaveDynamicString(escapeKeyButton, file);
-	SaveID_END(file);
 }
 
 void DialogScreen::Print()

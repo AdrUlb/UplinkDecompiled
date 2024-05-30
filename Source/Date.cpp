@@ -57,7 +57,6 @@ void Date::Save(FILE* file)
 	fwrite(&month, 4, 1, file);
 	fwrite(&year, 4, 1, file);
 	fwrite(&active, 1, 1, file);
-	SaveID_END(file);
 }
 
 void Date::Print()

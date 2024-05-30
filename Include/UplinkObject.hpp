@@ -5,7 +5,7 @@
 enum class UplinkObjectId
 {
 	Unknown = 0,
-	VLocation = 1,
+	VLocation,
 	Person = 4,
 	Agent,
 	Player,
@@ -16,8 +16,11 @@ enum class UplinkObjectId
 	RecordBank = 26,
 	SecuritySystem = 29,
 	MessageScreen = 31,
-	DialogScreen = 35,
+	MenuScreen = 33,
+	MenuScreenOption,
+	DialogScreen,
 	DialogScreenWidget,
+	UserIDScreen,
 	LinksScreen = 40,
 	DisconnectedScreen = 44,
 	Company = 50,
@@ -35,10 +38,4 @@ public:
 	virtual void Update();
 	virtual const char* GetID();
 	virtual UplinkObjectId GetOBJECTID();
-
-	char* GetID_END();
-	void LoadID(FILE* file);
-	void LoadID_END(FILE* file);
-	void SaveID(FILE* file);
-	void SaveID_END(FILE* file);
 };

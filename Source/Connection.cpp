@@ -44,7 +44,6 @@ void Connection::Save(FILE* file)
 	fwrite(&traceInProgress, 1, 1, file);
 	fwrite(&traceProgress, 4, 1, file);
 	SaveLList(&vlocations, file);
-	SaveID_END(file);
 }
 
 void Connection::Print()

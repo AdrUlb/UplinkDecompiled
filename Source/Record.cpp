@@ -13,7 +13,6 @@ bool RecordBank::Load(FILE* file)
 void RecordBank::Save(FILE* file)
 {
 	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&this->records), file);
-	SaveID_END(file);
 }
 
 void RecordBank::Print()

@@ -25,7 +25,6 @@ void SecuritySystem::Save(FILE* file)
 	fwrite(&enabled, 1, 1, file);
 	fwrite(&bypassed, 1, 1, file);
 	fwrite(&level, 4, 1, file);
-	SaveID_END(file);
 }
 
 void SecuritySystem::Print()
@@ -71,7 +70,6 @@ bool Security::Load(FILE* file)
 void Security::Save(FILE* file)
 {
 	SaveDArray(reinterpret_cast<DArray<UplinkObject*>*>(&systems), file);
-	SaveID_END(file);
 }
 
 void Security::Print()

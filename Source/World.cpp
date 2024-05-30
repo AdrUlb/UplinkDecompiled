@@ -79,7 +79,6 @@ void World::Save(FILE* file)
 	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&companies), file);
 	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&computers), file);
 	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&people), file);
-	SaveID_END(file);
 }
 
 void World::Print()
