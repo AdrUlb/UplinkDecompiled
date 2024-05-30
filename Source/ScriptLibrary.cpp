@@ -55,7 +55,16 @@ static void Script31()
 	if (EclGetButton("start_localhost") == nullptr)
 	{
 		EclRegisterButton(230, 200, 64, 78, " ", " ", "start_localhost");
-		button_assignbitmap("start_localhost", "start/localhost_linux.tif");
+
+		const auto localhostImage =
+#if 0
+			"start/localhost_linux.tif"
+#else
+			"start/localhost_win32.tif"
+#endif
+			;
+			
+		button_assignbitmap("start_localhost", localhostImage);
 		EclRegisterButton(330, 220, 32, 32, " ", " ", "start_key");
 		button_assignbitmap("start_key", "analyser/nonsecure.tif");
 		const auto buttonStartKey = EclGetButton("start_key");

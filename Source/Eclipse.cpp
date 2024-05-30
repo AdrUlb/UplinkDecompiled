@@ -534,7 +534,7 @@ void EclUpdateAllAnimations()
 
 		if (animation->stepCaption != 0.0f)
 		{
-			const int currentCharCount = animation->stepCaption * (EclGetAccurateTime() - animation->starttime);
+			const size_t currentCharCount = animation->stepCaption * (EclGetAccurateTime() - animation->starttime);
 			const auto targetCharCount = strlen(animation->targetCaption) + 1;
 			const auto newCaption = new char[targetCharCount];
 			strcpy(newCaption, animation->targetCaption);
@@ -655,6 +655,11 @@ int EclRegisterCaptionChange(const char* buttonName, const char* caption, int ti
 	return EclRegisterAnimation(buttonName, button->X, button->Y, 1, button->Width, button->Height, caption, time, finishedCallback);
 }
 
+int EclRegisterCaptionChange(const char* buttonName, const char* caption, AnimationFinishedCallback finishedCallback)
+{
+	return EclRegisterCaptionChange(buttonName, caption, strlen(caption) * 50, finishedCallback);
+}
+
 int EclRegisterMovement(const char* buttonName, int x, int y, int time, int moveType, AnimationFinishedCallback callback)
 {
 	const auto button = EclGetButton(buttonName);
@@ -680,6 +685,18 @@ void EclButtonBringToFront(const char* name)
 	const auto button = buttons[index];
 	buttons.RemoveData(index);
 	buttons.PutDataAtStart(button);
+}
+
+void EclButtonSendToBack(const char* name)
+{
+	const auto index = EclLookupIndex(name);
+
+	if (!buttons.ValidIndex(index))
+		return;
+
+	const auto button = buttons[index];
+	buttons.RemoveData(index);
+	buttons.PutDataAtEnd(button);
 }
 
 void EclRegisterButtonCallback(const char* name, ButtonMouseUpFunc func)

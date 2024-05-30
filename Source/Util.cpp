@@ -10,8 +10,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-static float windowScaleX;
-static float windowScaleY;
+static float windowScaleX = 1.0f;
+static float windowScaleY = 1.0f;
 
 void PrintStackTrace()
 {

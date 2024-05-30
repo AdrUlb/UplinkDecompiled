@@ -12,6 +12,7 @@
 static int lastidleupdate = 0;
 bool data_7b295f = false;
 static int curserflash = 0;
+int tooltipanimindex = -1;
 
 static int mouseX = 0;
 static int mouseY = 0;
@@ -159,15 +160,58 @@ static void text_draw(Button* button, bool highlighted, bool clicked)
 	glDisable(GL_SCISSOR_TEST);
 }
 
+static void tooltip_callback()
+{
+    tooltipanimindex = -1;
+}
+
+
 static void tooltip_update(const char* text)
 {
-	(void)text;
-	static auto called = false;
-	if (!called)
+	auto tooltipButton = EclGetButton("tooltip");
+
+	if (tooltipButton == nullptr)
 	{
-		puts("TODO: implement tooltip_update()");
-		called = true;
+		app->GetOptions()->GetOptionValue("graphics_screenwidth");
+		EclRegisterButton(0, app->GetOptions()->GetOptionValue("graphics_screenheight") - 15, 500, 15, "", "tooltip");
+		EclRegisterButtonCallbacks("tooltip", textbutton_draw, 0, 0, nullptr);
+		EclButtonSendToBack("tooltip");
+		tooltipButton = EclGetButton("tooltip");
 	}
+
+	if (strcmp(tooltipButton->Tooltip, text) == 0)
+		return;
+
+	tooltipButton->SetTooltip(text);
+	bool cond2 = tooltipanimindex != -1;
+	if (tooltipanimindex != -1)
+	{
+		EclRemoveAnimation(tooltipanimindex);
+		tooltipanimindex = -1;
+	}
+	char const* rdi_2 = " ";
+	int64_t i = 2;
+	auto name_1 = text;
+	while (i != 0)
+	{
+		char temp0_1 = *(uint8_t*)name_1;
+		char const temp1_1 = *(uint8_t*)rdi_2;
+		cond2 = temp0_1 != temp1_1;
+		name_1 = &name_1[1];
+		rdi_2 = &rdi_2[1];
+		i = (i - 1);
+		if (temp0_1 != temp1_1)
+		{
+			break;
+		}
+	}
+	if (cond2)
+	{
+		tooltipanimindex = EclRegisterCaptionChange("tooltip", text, tooltip_callback);
+		return;
+	}
+	tooltipButton->SetCaption(" ");
+	currentbuttonname[0] = 0;
 }
 
 static void button_draw(Button* button, bool highlighted, bool clicked)

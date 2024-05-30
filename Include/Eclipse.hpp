@@ -32,7 +32,9 @@ void EclRegisterButtonCallbacks(const char* name, ButtonDrawFunc drawFunc, Butto
 void EclClearRectangle(int x, int y, int width, int height);
 void EclUpdateAllAnimations();
 int EclRegisterCaptionChange(const char* buttonName, const char* caption, int time, AnimationFinishedCallback finishedCallback);
+int EclRegisterCaptionChange(const char* buttonName, const char* caption, AnimationFinishedCallback finishedCallback);
 int EclRegisterMovement(const char* buttonName, int x, int y, int time, AnimationFinishedCallback callback);
 void EclButtonBringToFront(const char* name);
+void EclButtonSendToBack(const char* name);
 void EclRegisterButtonCallback(const char* name, ButtonMouseUpFunc func);
 const char* EclGetButtonAtCoord(int x, int y);
