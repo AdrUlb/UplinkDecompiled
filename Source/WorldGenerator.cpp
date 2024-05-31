@@ -724,13 +724,13 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 		"You are here because you wish to join this company.");
 	computer->AddComputerScreen(messageScreeen, 0);
 
-	/*const auto screen = new MenuScreen();
+	const auto screen = new MenuScreen();
 	computer->AddComputerScreen(messageScreeen, 0);
 	screen->SetMainTitle("Uplink");
 	screen->SetSubTitle("Public server Main Menu");
 	screen->AddOption("About Us", "Find out who we are and what we do", 0, 10, -1);
 	screen->AddOption("Register as an Agent", "Click to register yourself as a new Uplink Agent", 2, 10, -1);
-	computer->AddComputerScreen(screen, 1);*/
+	computer->AddComputerScreen(screen, 1);
 
 	puts("TODO: implement WorldGenerator::GenerateUplinkPublicAccessServer()");
 }

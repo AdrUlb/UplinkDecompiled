@@ -252,8 +252,9 @@ static void button_draw(Button* button, bool highlighted, bool clicked)
 
 static void button_click(Button* button)
 {
-	(void)button;
-	UplinkAbort("TODO: implement button_click()");
+	UplinkAssert(button != nullptr);
+	EclClickButton(button->Name);
+	SgPlaySound(RsArchiveFileOpen("sounds/mouseclick.wav"), "sounds/mouseclick.wav");
 }
 
 static void button_highlight(Button* button)

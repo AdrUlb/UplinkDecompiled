@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Button.hpp>
 #include <DArray.hpp>
 #include <UplinkObject.hpp>
 
@@ -17,15 +16,4 @@ public:
 	virtual void Remove();
 	virtual bool IsVisible();
 	virtual int ScreenID();
-};
-
-class LocalInterfaceScreen : public InterfaceScreen
-{
-public:
-	void Create() override;
-	void Remove() override;
-	bool IsVisible() override;
-
-	static void BackgroundDraw(Button* button, bool highlighted, bool clicked);
-	void CreateHeight(int value);
 };

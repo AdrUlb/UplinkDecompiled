@@ -4,38 +4,13 @@
 #include <ComputerScreens/ComputerScreen.hpp>
 #include <ComputerScreens/MessageScreen.hpp>
 #include <Image.hpp>
-#include <InterfaceScreen.hpp>
+#include <Interface/LocalScreens/LocalInterfaceScreen.hpp>
+#include <Interface/RemoteScreens/RemoteInterfaceScreen.hpp>
 #include <LList.hpp>
 #include <TaskManager.hpp>
 #include <UplinkObject.hpp>
 
 typedef void WorldMapLayout;
-
-struct RemoteInterfaceScreen : InterfaceScreen
-{
-	ComputerScreen* computerScreen = nullptr;
-
-	void Create() override;
-	void Remove() override;
-	virtual void Create(ComputerScreen* screen);
-	virtual bool ReturnKeyPressed();
-	virtual bool EscapeKeyPressed();
-	static void DrawMainTitle(Button* button, bool highlighted, bool clicked);
-	static void DrawSubTitle(Button* button, bool highlighted, bool clicked);
-};
-
-class MessageScreenInterface : public RemoteInterfaceScreen
-{
-	void Create() override;
-	void Remove() override;
-	bool IsVisible() override;
-	int ScreenID() override;
-	void Create(ComputerScreen* screen) override;
-	bool ReturnKeyPressed() override;
-	MessageScreen* GetComputerScreen();
-	static void Click(Button* button);
-	static void MailMeClick(Button* button);
-};
 
 class RemoteInterface : UplinkObject
 {
