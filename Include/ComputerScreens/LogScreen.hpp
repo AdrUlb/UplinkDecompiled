@@ -2,10 +2,10 @@
 
 #include <ComputerScreens/ComputerScreen.hpp>
 
-class GenericScreen : public ComputerScreen
+class LogScreen : public ComputerScreen
 {
 	int nextPage = -1;
-	int type = 0;
+	int target = -1;
 
 public:
 	bool Load(FILE* file) override;
@@ -13,5 +13,5 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	void SetNextPage(int value);
-	void SetScreenType(int value);
+	void SetTARGET(int value);
 };

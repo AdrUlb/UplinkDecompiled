@@ -25,7 +25,6 @@ static int superhighlight_borderwidth = 0;
 
 static void* dirtyrectangles = nullptr;
 static void* data_7b3788 = nullptr;
-static void* data_7b3790 = nullptr;
 
 static bool animsenabled = true;
 static bool animsfasterenabled = false;

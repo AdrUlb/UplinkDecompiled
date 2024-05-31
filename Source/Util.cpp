@@ -435,6 +435,82 @@ void SaveDArray(DArray<UplinkObject*>* array, FILE* file)
 	}
 }
 
+bool LoadDArrayGatewayDefLocation(DArray<GatewayDefLocation*>* array, FILE* file)
+{
+	if (array == nullptr)
+	{
+		printf("Print Assert: %s ln %d : %s\n", __FILE__, __LINE__, "array == nullptr");
+		return false;
+	}
+
+	int itemCount;
+	if (!FileReadData(&itemCount, 4, 1, file))
+		return false;
+
+	if (itemCount > 0x40000)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: LoadDArrayGatewayDefLocation, number of items appears to be wrong, size=%d\n", itemCount);
+		return false;
+	}
+
+	array->SetSize(itemCount);
+
+	for (auto i = 0; i < itemCount; i++)
+	{
+		int index;
+		if (!FileReadData(&index, 4, 1, file))
+			return false;
+
+		if (index == -1)
+			continue;
+
+		if (index >= 0x40000)
+		{
+			printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+			printf("WARNING: LoadDArrayGatewayDefLocation, number of items appears to be wrong, index=%d\n", index);
+			return false;
+		}
+
+		const auto def = new GatewayDefLocation();
+		if (!FileReadData(def, 8, 1, file))
+		{
+			delete def;
+			return false;
+		}
+
+		array->PutData(def, index);
+	}
+
+	return true;
+}
+
+void SaveDArrayGatewayDefLocation(DArray<GatewayDefLocation*>* array, FILE* file)
+{
+	UplinkAssert(array != nullptr);
+
+	const auto itemCount = array->Size();
+	fwrite(&itemCount, 4, 1, file);
+
+	if (itemCount <= 0)
+		return;
+
+	for (auto i = 0; i < itemCount; i++)
+	{
+		if (!array->ValidIndex(i))
+		{
+			int buf = -1;
+			fwrite(&buf, 4, 1, file);
+			continue;
+		}
+
+		const auto loc = array->GetData(i);
+		UplinkAssert(sizeof(loc) == 8);
+		fwrite(&i, 4, 1, file);
+		fwrite(loc, 8, 1, file);
+	}
+}
+
 void PrintDArray(struct DArray<UplinkObject*>* array)
 {
 	UplinkAssert(array != nullptr);
@@ -450,7 +526,7 @@ void PrintDArray(struct DArray<UplinkObject*>* array)
 		}
 
 		const auto data = array->GetData(i);
-		
+
 		if (data == nullptr)
 		{
 			puts("NULL");

@@ -3,6 +3,7 @@
 #include <BTree.hpp>
 #include <DArray.hpp>
 #include <ExceptionHandling.hpp>
+#include <GatewayDef.hpp>
 #include <LList.hpp>
 #include <UplinkObject.hpp>
 #include <csignal>
@@ -32,6 +33,8 @@ int GetScaledYPosition(int pos);
 DArray<char*>* ListDirectory(const char* dir, const char* ext);
 bool LoadDArray(DArray<UplinkObject*>* array, FILE* file);
 void SaveDArray(DArray<UplinkObject*>* array, FILE* file);
+bool LoadDArrayGatewayDefLocation(DArray<GatewayDefLocation*>* array, FILE* file);
+void SaveDArrayGatewayDefLocation(DArray<GatewayDefLocation*>* array, FILE* file);
 void PrintDArray(struct DArray<UplinkObject*>* array);
 bool LoadLList(LList<char*>* list, FILE* file);
 bool LoadLList(LList<UplinkObject*>* list, FILE* file);

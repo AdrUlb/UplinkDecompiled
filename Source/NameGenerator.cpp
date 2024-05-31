@@ -2,6 +2,7 @@
 
 #include <Globals.hpp>
 #include <LList.hpp>
+#include <NumberGenerator.hpp>
 
 static LList<char*> fornames;
 static LList<char*> surnames;
@@ -41,4 +42,46 @@ void NameGenerator::GenerateCentralMainframeName(const char* companyName)
 void NameGenerator::GenerateLANName(const char* companyName)
 {
 	UplinkSnprintf(tempname, 0x80, "%s Local Area Network", companyName);
+}
+
+void NameGenerator::GenerateDataName(const char* companyName, int type)
+{
+	UplinkAssert(companyName != nullptr);
+
+	const auto num = NumberGenerator::RandomNumber(99999);
+
+	char s[0x40];
+	const char* typeString;
+
+	switch (type)
+	{
+		case 0:
+			typeString = "file";
+			break;
+		case 1:
+			typeString = "data";
+			break;
+		case 2:
+			typeString = "prog";
+			break;
+		default:
+			typeString = "unknown";
+			break;
+	}
+
+	UplinkSnprintf(s, 0x40, "%c%c%c-%s-%d", companyName[0], companyName[1], companyName[2], typeString, num);
+	strncpy(tempname, s, 0x80);
+}
+
+const char* NameGenerator::GeneratePassword()
+{
+	const auto& passwords = game->GetWorld()->passwords;
+
+	while (true)
+	{
+		const auto index = NumberGenerator::RandomNumber(passwords.Size());
+
+		if (passwords.ValidIndex(index))
+			return passwords.GetData(index);
+	}
 }

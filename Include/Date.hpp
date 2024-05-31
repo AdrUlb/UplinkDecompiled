@@ -39,4 +39,5 @@ public:
 	bool Before(Date* other);
 	bool After(Date* other);
 	void Activate();
+	bool Equal(Date& other);
 };

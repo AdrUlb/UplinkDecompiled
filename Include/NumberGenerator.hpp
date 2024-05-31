@@ -3,6 +3,6 @@
 namespace NumberGenerator
 {
 	int RandomNumber(int max);
-	int RandomNormalNumber(float arg1, float arg2);
-	int ApplyVariance(int value, int arg2);
+	int RandomNormalNumber(float mean, float deviation);
+	int ApplyVariance(int value, int deviation);
 } // namespace NumberGenerator

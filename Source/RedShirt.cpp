@@ -468,6 +468,15 @@ const char* RsArchiveFileOpen(const char* filePath)
 	return tempfilename;
 }
 
+FILE* RsArchiveFileOpen(const char* filePath, const char* mode)
+{
+	const auto newFileName = RsArchiveFileOpen(filePath);
+	if (newFileName == nullptr)
+		return nullptr;
+
+	return fopen(newFileName, mode);
+}
+
 int RsArchiveFileClose(const char* filePath, FILE* file)
 {
 	if (file != nullptr)

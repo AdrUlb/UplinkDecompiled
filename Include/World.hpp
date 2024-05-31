@@ -49,4 +49,6 @@ public:
 	void CreateVLocation(VLocation* vlocation);
 	Computer* CreateComputer(const char* computerName, const char* companyName, const char* ip);
 	void CreateComputer(Computer* computer);
+	void CreatePassword(const char* password);
+	void CreateGatewayDef(GatewayDef* def);
 };

@@ -40,6 +40,11 @@ UplinkObjectId LinksScreen::GetOBJECTID()
 	return UplinkObjectId::LinksScreen;
 }
 
+void LinksScreen::SetNextPage(int value)
+{
+	nextPage = value;
+}
+
 void LinksScreen::SetScreenType(int value)
 {
 	type = value;

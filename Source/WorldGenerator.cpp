@@ -4,6 +4,7 @@
 #include <ComputerScreens/DisconnectedScreen.hpp>
 #include <ComputerScreens/GenericScreen.hpp>
 #include <ComputerScreens/LinksScreen.hpp>
+#include <ComputerScreens/LogScreen.hpp>
 #include <ComputerScreens/MenuScreen.hpp>
 #include <ComputerScreens/MessageScreen.hpp>
 #include <ComputerScreens/UserIDScreen.hpp>
@@ -384,21 +385,21 @@ Computer* WorldGenerator::GeneratePublicAccessServer(const char* name)
 	return computer;
 }
 
-Computer* WorldGenerator::GenerateInternalServicesMachine(const char* name)
+Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyName)
 {
-	NameGenerator::GenerateInternalServicesServerName(name);
+	NameGenerator::GenerateInternalServicesServerName(companyName);
 
 	char value[0x80];
 	UplinkStrncpy(value, tempname, 0x80);
 
-	const auto company = game->GetWorld()->GetCompany(name);
+	const auto company = game->GetWorld()->GetCompany(companyName);
 	UplinkAssert(company != nullptr);
 
 	const auto vlocation = WorldGenerator::GenerateLocation();
 	const auto computer = new Computer();
 	computer->SetTYPE(2);
 	computer->SetName(value);
-	computer->SetCompanyName(name);
+	computer->SetCompanyName(companyName);
 	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(15.0f, 1.5f));
 	computer->SetIP(vlocation->ip);
 	const auto companySize = company->size;
@@ -444,20 +445,20 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* name)
 	else
 		computer->SetTraceAction(9);
 
-	if (strcmp(name, "Government") == 0)
+	if (strcmp(companyName, "Government") == 0)
 		computer->SetIsTargetable(0);
 
 	game->GetWorld()->CreateComputer(computer);
 
 	const auto loginScreen = new UserIDScreen();
-	loginScreen->SetMainTitle(name);
+	loginScreen->SetMainTitle(companyName);
 	loginScreen->SetSubTitle("Log in");
 	loginScreen->SetDifficulty(NumberGenerator::RandomNormalNumber(45.0f, 6.75f));
 	loginScreen->SetNextPage(1);
 	computer->AddComputerScreen(loginScreen, 0);
 
 	const auto menuScreen = new MenuScreen();
-	menuScreen->SetMainTitle(name);
+	menuScreen->SetMainTitle(companyName);
 	menuScreen->SetSubTitle("Internal Services Main Menu");
 	computer->AddComputerScreen(menuScreen, 1);
 	menuScreen->AddOption("File Server", "Access the file server", 2, 10, -1);
@@ -465,6 +466,100 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* name)
 	menuScreen->AddOption("View links", "View all links available on this system", 6, 10, -1);
 	menuScreen->AddOption("Admin", "Enter administrative mode", 7, 1, -1);
 	computer->AddComputerScreen(menuScreen, 1);
+
+	const auto fileScreen = new GenericScreen();
+	fileScreen->SetScreenType(6);
+	fileScreen->SetMainTitle(companyName);
+	fileScreen->SetSubTitle("File server");
+	fileScreen->SetNextPage(1);
+	computer->AddComputerScreen(fileScreen, 2);
+
+	const auto logScreen = new LogScreen();
+	logScreen->SetTARGET(0);
+	logScreen->SetMainTitle(companyName);
+	logScreen->SetSubTitle("Access Logs");
+	logScreen->SetNextPage(7);
+	computer->AddComputerScreen(logScreen, 3);
+
+	const auto recordScreen = new GenericScreen();
+	recordScreen->SetScreenType(11);
+	recordScreen->SetMainTitle(companyName);
+	recordScreen->SetSubTitle("Records");
+	recordScreen->SetNextPage(1);
+	computer->AddComputerScreen(recordScreen, 4);
+
+	const auto securityScreen = new GenericScreen();
+	securityScreen->SetScreenType(17);
+	securityScreen->SetMainTitle(companyName);
+	securityScreen->SetSubTitle("Security");
+	securityScreen->SetNextPage(7);
+	computer->AddComputerScreen(securityScreen, 5);
+
+	const auto linksScreen = new LinksScreen();
+	linksScreen->SetMainTitle(companyName);
+	linksScreen->SetSubTitle("Links");
+	linksScreen->SetNextPage(1);
+	linksScreen->SetScreenType(3);
+	computer->AddComputerScreen(linksScreen, 6);
+
+	const auto adminScreen = new MenuScreen();
+	adminScreen->SetMainTitle(companyName);
+	adminScreen->SetSubTitle("Admin menu");
+	adminScreen->AddOption("View logs", "View the access logs on this system", 3, 1, -1);
+	adminScreen->AddOption("Security", "Enable and disable security systems", 5, 1, -1);
+	adminScreen->AddOption("Console", "Run a console", 8, 1, -1);
+	adminScreen->AddOption("Exit", "Return to the main menu", 1, 10, -1);
+	computer->AddComputerScreen(adminScreen, 7);
+
+	const auto consoleScreen = new GenericScreen();
+	consoleScreen->SetScreenType(20);
+	consoleScreen->SetMainTitle(companyName);
+	consoleScreen->SetSubTitle("Console");
+	consoleScreen->SetNextPage(7);
+	computer->AddComputerScreen(consoleScreen, 8);
+	computer->dataBank.SetSize(NumberGenerator::RandomNormalNumber(100.0f, 40.0f));
+
+	const auto fileCount = NumberGenerator::RandomNormalNumber(10.0f, 5.0f);
+
+	for (auto i = 0; i < fileCount; i++)
+	{
+		const auto type = NumberGenerator::RandomNumber(2) + 1;
+		const auto size = NumberGenerator::RandomNormalNumber(6.0f, 6.0f);
+		const auto makeCompressed = NumberGenerator::RandomNumber(2);
+		const auto makeEncrypted = NumberGenerator::RandomNumber(2);
+
+		NameGenerator::GenerateDataName(companyName, type);
+		const auto data = new Data();
+		data->SetTitle(tempname);
+
+		auto compressed = 0;
+		auto encrypted = 0;
+		if (makeCompressed != 0)
+			compressed = NumberGenerator::RandomNumber(5);
+
+		if (makeEncrypted)
+			encrypted = NumberGenerator::RandomNumber(5);
+
+		data->SetDetails(type, size, encrypted, compressed, 1.0f, 0);
+		computer->dataBank.PutData(data);
+	}
+
+	const auto logCount = NumberGenerator::RandomNumber(10);
+
+	for (int32_t i = 0; i < logCount; i++)
+	{
+		const auto log = new AccessLog();
+		const auto loc = WorldGenerator::GetRandomLocation();
+		log->SetProperties(game->GetWorld()->currentDate, loc->ip, " ", 0, 1);
+		log->SetData1("Accessed File");
+		computer->logBank.AddLog(log, -1);
+	}
+
+	const auto record = new Record();
+	record->AddField("Name", "admin");
+	record->AddField("Password", NameGenerator::GeneratePassword());
+	record->AddField("Security", "1");
+	computer->recordBank.AddRecord(*record);
 
 	puts("TODO: implement WorldGenerator::GenerateInternalServicesMachine()");
 
@@ -602,4 +697,21 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 	computer->AddComputerScreen(screen, 1);*/
 
 	puts("TODO: implement WorldGenerator::GenerateUplinkPublicAccessServer()");
+}
+
+VLocation* WorldGenerator::GetRandomLocation()
+{
+	const auto indices = game->GetWorld()->vlocations.ConvertIndexToDArray();
+
+	UplinkAssert(indices->Size() > 0);
+
+	const auto index = NumberGenerator::RandomNumber(indices->Size());
+
+	UplinkAssert(indices->ValidIndex(index));
+
+	const auto loc = game->GetWorld()->GetVLocation(indices->GetData(index));
+
+	delete indices;
+
+	return loc;
 }

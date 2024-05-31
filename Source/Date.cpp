@@ -402,3 +402,26 @@ void Date::Activate()
 {
 	active = true;
 }
+
+bool Date::Equal(Date& other)
+{
+	if (year != other.year)
+		return false;
+
+	if (month != other.month)
+		return false;
+
+	if (day != other.day)
+		return false;
+
+	if (hour != other.hour)
+		return false;
+
+	if (minute != other.minute)
+		return false;
+
+	if (second != other.second)
+		return false;
+
+	return true;
+}

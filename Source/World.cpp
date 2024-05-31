@@ -2,7 +2,10 @@
 
 #include <MissionGenerator.hpp>
 #include <NameGenerator.hpp>
+#include <RedShirt.hpp>
+#include <Util.hpp>
 #include <WorldGenerator.hpp>
+#include <fstream>
 
 World::World()
 {
@@ -11,6 +14,52 @@ World::World()
 	WorldGenerator::Initialise();
 	MissionGenerator::Initialise();
 	passwords.SetStepSize(100);
+
+	const auto wordlist = RsArchiveFileOpen("data/wordlist.txt", "rt");
+	UplinkAssert(wordlist != nullptr);
+	while (!feof(wordlist))
+	{
+		char buf[0x40];
+		fscanf(wordlist, "%s\n", buf);
+		CreatePassword(buf);
+	}
+	RsArchiveFileClose("data/wordlist.txt", wordlist);
+
+	const auto gatewayDefFile = RsArchiveFileOpen("data/gatewaydefs.txt");
+	UplinkAssert(gatewayDefFile != nullptr);
+
+	std::ifstream gatewayDefStream;
+	gatewayDefStream.open(gatewayDefFile);
+
+	char temp[0x100];
+	gatewayDefStream.getline(temp, 0x100, '\r');
+	if ((temp[0] = gatewayDefStream.get()) != '\n')
+		gatewayDefStream.rdbuf()->sputbackc(temp[0]);
+
+	gatewayDefStream >> temp >> std::ws;
+	int gatewayDefCount;
+	gatewayDefStream >> gatewayDefCount;
+	gatewayDefStream.getline(temp, 0x100, '\r');
+	if ((temp[0] = gatewayDefStream.get()) != '\n')
+		gatewayDefStream.rdbuf()->sputbackc(temp[0]);
+
+	for (auto i = 0; i < gatewayDefCount; i++)
+	{
+		const auto gatewayDef = new GatewayDef();
+		gatewayDef->LoadGatewayDefinition(gatewayDefStream);
+
+		char filename[0x100];
+		UplinkSnprintf(filename, 0x100, "gateway/gateway%d.tif", i);
+		char thumbnail[0x100];
+		UplinkSnprintf(thumbnail, 0x100, "gateway/gateway_t%d.tif", i);
+
+		gatewayDef->SetFilename(filename);
+		gatewayDef->SetThumbnail(thumbnail);
+		CreateGatewayDef(gatewayDef);
+	}
+
+	gatewayDefStream.close();
+	RsArchiveFileClose("data/gatewaydefs.txt", nullptr);
 }
 
 World::~World()
@@ -162,7 +211,7 @@ Person* World::GetPerson(const char* name)
 		return GetPlayer();
 
 	const auto tree = people.LookupTree(name);
-	
+
 	if (tree == nullptr)
 		return nullptr;
 
@@ -237,4 +286,20 @@ void World::CreateComputer(Computer* computer)
 	const auto vlocation = GetVLocation(computer->ip);
 	UplinkAssert(vlocation != nullptr);
 	vlocation->SetComputer(computer->name);
+}
+
+void World::CreatePassword(const char* password)
+{
+	char* str = new char[strlen(password) + 1];
+	strcpy(str, password);
+	passwords.PutData(str);
+}
+
+void World::CreateGatewayDef(GatewayDef* gatewayDef)
+{
+	if (!gatewayDef->VerifyCorrectness())
+		return;
+
+	gatewayDefs.PutData(gatewayDef);
+	gatewayDefs.Sort(GatewayDef::GatewayDefComparator);
 }

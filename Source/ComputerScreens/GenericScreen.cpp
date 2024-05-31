@@ -35,6 +35,11 @@ const char* GenericScreen::GetID()
 	return "SCR_GEN";
 }
 
+void GenericScreen::SetNextPage(int value)
+{
+	nextPage = value;
+}
+
 void GenericScreen::SetScreenType(int value)
 {
 	type = value;

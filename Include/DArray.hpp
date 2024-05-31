@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 
 template <class T> class DArray
@@ -12,20 +13,23 @@ template <class T> class DArray
 	bool* dataValid;
 
 public:
+	typedef int (*ComparatorFunc)(T* a, T* b);
+
 	DArray();
 	~DArray();
 
 	void Empty();
-	T& GetData(int index);
+	T& GetData(int index) const;
 	int NumUsed();
 	int PutData(T const& value);
 	int PutData(T const& value, int index);
 	void RemoveData(int index);
 	void SetSize(int newSize);
 	void SetStepSize(int newStepSize);
-	bool ValidIndex(int index);
+	bool ValidIndex(int index) const;
+	void Sort(ComparatorFunc func);
 
-	int Size()
+	int Size() const
 	{
 		return size;
 	}
