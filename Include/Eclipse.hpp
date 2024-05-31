@@ -38,3 +38,4 @@ void EclButtonBringToFront(const char* name);
 void EclButtonSendToBack(const char* name);
 void EclRegisterButtonCallback(const char* name, ButtonMouseUpFunc func);
 const char* EclGetButtonAtCoord(int x, int y);
+void EclUnClickButton();

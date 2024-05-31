@@ -125,6 +125,7 @@ void Connection::Connect()
 
 	if (strcmp("PLAYER", owner) == 0) // cond3
 	{
+		// SecurityMonitor::BeginAttack(); and so on
 		puts("TODO: Connection::Connect()");
 	}
 
@@ -144,25 +145,25 @@ void Connection::Connect()
 			called = true;
 		}
 
-		/*const auto accessLog = new AccessLog();
+		const auto accessLog = new AccessLog();
 
 		const auto lastLoc = vlocations.Size() - 1;
 
 		if (j == lastLoc)
 		{
-			accessLog->SetProperties(&game->GetWorld()->currentDate, vlocations.GetData(lastLoc - 1), owner, 0, 2);
+			accessLog->SetProperties(game->GetWorld()->currentDate, vlocations.GetData(lastLoc - 1), owner, 0, 2);
 			comp->logBank.AddLog(accessLog, -1);
 			continue;
 		}
 
 		if (j == 0)
-			accessLog->SetProperties(&game->GetWorld()->currentDate, "LOCAL", &this->owner, 0, 4);
+			accessLog->SetProperties(game->GetWorld()->currentDate, "LOCAL", owner, 0, 4);
 		else
-			accessLog->SetProperties(&game->GetWorld()->currentDate, vlocations.GetData(j - 1), &this->owner, 0, 5);
+			accessLog->SetProperties(game->GetWorld()->currentDate, vlocations.GetData(j - 1), owner, 0, 5);
 
 		accessLog->SetData1(vlocations.GetData(j + 1));
 
-		comp->logBank.AddLog(accessLog, -1);*/
+		comp->logBank.AddLog(accessLog, -1);
 	}
 }
 

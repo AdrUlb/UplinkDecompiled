@@ -188,7 +188,7 @@ static void tooltip_update(const char* text)
 		EclRemoveAnimation(tooltipanimindex);
 		tooltipanimindex = -1;
 	}
-	
+
 	if (strcmp(text, " ") == 0)
 	{
 		tooltipButton->SetCaption(" ");
@@ -400,11 +400,44 @@ static void mousedraw(Button* button, bool highlighted, bool clicked)
 
 static void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
 {
-	(void)button;
-	(void)event;
-	(void)x;
-	(void)y;
-	UplinkAbort("TODO: implement mouse()");
+	if (app->Closed())
+		return;
+
+	if (button == GciMouseButton::Left && event == GciMouseEvent::Down)
+	{
+		const auto buttonName = EclGetButtonAtCoord(x, y);
+		if (buttonName != nullptr)
+		{
+			const auto button = EclGetButton(buttonName);
+			if (button != nullptr)
+				button->MouseDown();
+		}
+
+		return;
+	}
+
+	if (button == GciMouseButton::Left && event == GciMouseEvent::Up)
+	{
+		EclUnClickButton();
+		ScrollBox::UnGrabScrollBar();
+		const auto buttonName = EclGetButtonAtCoord(x, y);
+		if (buttonName != 0)
+		{
+			const auto button = EclGetButton(buttonName);
+			if (button != nullptr)
+				button->MouseUp();
+		}
+		else if (game->IsRunning() && SWInterface::IsVisibleSoftwareMenu())
+			SWInterface::ToggleSoftwareMenu();
+
+		return;
+	}
+
+	if (button == GciMouseButton::Right && event == GciMouseEvent::Up)
+	{
+		if (game->IsRunning())
+			game->GetInterface()->GetTaskManager()->SetTargetProgram(-1);
+	}
 }
 
 static void mousemove(int x, int y)

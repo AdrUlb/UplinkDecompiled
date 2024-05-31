@@ -139,3 +139,19 @@ void Button::MouseMove()
 
 	MouseMoveFunc(this);
 }
+
+void Button::MouseDown()
+{
+	if (MouseDownFunc == nullptr)
+		return;
+
+	MouseDownFunc(this);
+}
+
+void Button::MouseUp()
+{
+	if (MouseUpFunc == nullptr)
+		return;
+
+	MouseUpFunc(this);
+}

@@ -6,3 +6,8 @@ void SvbShowAllTasks()
 {
 	puts("TODO: implement SvbShowAllTasks()");
 }
+
+void SvbReset()
+{
+	puts("TODO: implement SvbReset()");
+}

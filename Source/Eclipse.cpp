@@ -718,3 +718,13 @@ const char* EclGetButtonAtCoord(int x, int y)
 	}
 	return nullptr;
 }
+
+void EclUnClickButton()
+{
+	EclGetButton(currentclick);
+
+	if (currentclick != nullptr)
+		delete[] currentclick;
+		
+	currentclick = nullptr;
+}

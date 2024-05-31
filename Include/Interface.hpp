@@ -74,6 +74,10 @@ class SWInterface : LocalInterfaceScreen
 	void Create() override;
 	void Remove() override;
 	bool IsVisible() override;
+
+public:
+	static bool IsVisibleSoftwareMenu();
+	static void ToggleSoftwareMenu();
 };
 
 class WorldMapInterface : LocalInterfaceScreen
@@ -148,10 +152,9 @@ class Interface : UplinkObject
 {
 	LocalInterface* localInterface = new LocalInterface();
 	RemoteInterface* remoteInterface = new RemoteInterface();
-	TaskManager* taskManager;
+	TaskManager* taskManager = new TaskManager();
 
 public:
-	Interface();
 	~Interface() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -161,4 +164,5 @@ public:
 	void Create();
 	LocalInterface* GetLocalInterface();
 	RemoteInterface* GetRemoteInterface();
+	TaskManager* GetTaskManager();
 };

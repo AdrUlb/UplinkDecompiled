@@ -4,4 +4,5 @@ namespace ScrollBox
 {
 	bool IsGrabInProgress();
 	void UpdateGrabScroll();
+	void UnGrabScrollBar();
 }

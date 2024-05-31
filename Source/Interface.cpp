@@ -361,6 +361,16 @@ bool SWInterface::IsVisible()
 	return false;
 }
 
+bool SWInterface::IsVisibleSoftwareMenu()
+{
+	return EclGetButton("hud_swmenu 1") != nullptr;
+}
+
+void SWInterface::ToggleSoftwareMenu()
+{
+	puts("TODO: implement SWInterface::ToggleSoftwareMenu()");
+}
+
 WorldMapInterface::~WorldMapInterface()
 {
 	if (layout != nullptr)
@@ -688,11 +698,6 @@ void LocalInterface::RunScreen(int code, int index)
 	puts("TODO: implement Interface::RunScreen()");
 }
 
-Interface::Interface()
-{
-	puts("TODO: implement Interface::Interface()");
-}
-
 Interface::~Interface()
 {
 	puts("TODO: implement Interface::~Interface()");
@@ -754,4 +759,10 @@ RemoteInterface* Interface::GetRemoteInterface()
 {
 	UplinkAssert(remoteInterface != nullptr);
 	return remoteInterface;
+}
+
+TaskManager* Interface::GetTaskManager()
+{
+	UplinkAssert(taskManager != nullptr);
+	return taskManager;
 }

@@ -10,24 +10,107 @@ Person::~Person()
 
 bool Person::Load(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement Person::Load()");
-	return false;
+	if (!LoadDynamicStringBuf(name, 0x80, file))
+		return false;
+
+	if (!LoadDynamicStringBuf(localHost, 0x18, file))
+		return false;
+
+	if (!LoadDynamicStringBuf(remoteHost, 0x18, file))
+		return false;
+
+	if (!LoadDynamicStringBuf(phoneNumber, 0x18, file))
+		return false;
+
+	// TODO: this does not seem right? it warns about an already existing thing when it *doesn't* find anything??
+	if (game->GetWorld()->vlocations.LookupTree(localHost) == nullptr)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: Person::Load, Localhost IP '%s' already existing\n", localHost);
+		return false;
+	}
+
+	if (game->GetWorld()->vlocations.LookupTree(remoteHost) == nullptr)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: Person::Load, Remotehost IP '%s' already existing\n", remoteHost);
+		return false;
+	}
+
+	if (!FileReadData(&age, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&photoIndex, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&voiceIndex, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&currentAccount, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&isTargetable, 1, 1, file))
+		return false;
+
+	if (!FileReadData(&status, 4, 1, file))
+		return false;
+
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&messages), file))
+		return false;
+
+	if (!LoadLList(&bankAccounts, file))
+		return false;
+
+	if (!connection.Load(file))
+		return false;
+
+	if (!rating.Load(file))
+		return false;
+
+	return true;
 }
 
 void Person::Save(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement Person::Save()");
+	SaveDynamicString(name, 0x80, file);
+	SaveDynamicString(localHost, 0x18, file);
+	SaveDynamicString(remoteHost, 0x18, file);
+	SaveDynamicString(phoneNumber, 0x18, file);
+	fwrite(&age, 4, 1, file);
+	fwrite(&photoIndex, 4, 1, file);
+	fwrite(&voiceIndex, 4, 1, file);
+	fwrite(&currentAccount, 4, 1, file);
+	fwrite(&isTargetable, 1, 1, file);
+	fwrite(&status, 4, 1, file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&messages), file);
+	SaveLList(&bankAccounts, file);
+	connection.Save(file);
+	rating.Save(file);
 }
 
 void Person::Print()
 {
-	puts("TODO: implement Person::Print()");
+	printf("Person : ");
+	printf("name = %s, Age = %d, photoindex = %d, voiceindex = %d, status = %d\n", name, age, photoIndex, voiceIndex, status);
+	printf("LocalHost : %s, RemoteHost : %s, Phone : %s\n", localHost, remoteHost, phoneNumber);
+	puts("Messages : ");
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&messages));
+	PrintLList(&bankAccounts);
+	printf("currentaccount:%d\n", currentAccount);
+	connection.Print();
+	rating.Print();
+	printf("Is Targetable? %d\n", isTargetable);
 }
 
 void Person::Update()
 {
+
+	if (strcmp(name, "PLAYER") == 0)
+		return;
+
+	if (messages.Size() <= 0)
+		return;
+
 	puts("TODO: implement Person::Update()");
 }
 
@@ -43,8 +126,7 @@ UplinkObjectId Person::GetOBJECTID()
 
 void Person::GiveMessage(Message* message)
 {
-	(void)message;
-	puts("TODO: implement Person::CreateNewAccount()");
+	messages.PutData(message);
 }
 
 void Person::CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan)
@@ -121,7 +203,7 @@ void Agent::Print()
 
 void Agent::Update()
 {
-	puts("TODO: implement Agent::Update()");
+	Person::Update();
 }
 
 const char* Agent::GetID()
@@ -158,24 +240,29 @@ Player::~Player()
 bool Player::Load(FILE* file)
 {
 	(void)file;
-	puts("TODO: implement Person::Load()");
+	puts("TODO: implement Player::Load()");
 	return false;
 }
 
 void Player::Save(FILE* file)
 {
 	(void)file;
-	puts("TODO: implement Person::Save()");
+	puts("TODO: implement Player::Save()");
 }
 
 void Player::Print()
 {
-	puts("TODO: implement Person::Print()");
+	puts("TODO: implement Player::Print()");
 }
 
 void Player::Update()
 {
-	puts("TODO: implement Person::Person()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: Player::Update()");
+		called = true;
+	}
 }
 
 const char* Player::GetID()

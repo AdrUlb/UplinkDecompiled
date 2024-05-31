@@ -377,11 +377,43 @@ void GciMainLoop()
 						gciPassiveMotionHandlerP(event.motion.x, event.motion.y);
 					break;
 				case SDL_MOUSEBUTTONDOWN:
-					puts("TODO: handle SDL_MOUSEBUTTONDOWN");
-					break;
 				case SDL_MOUSEBUTTONUP:
-					puts("TODO: handle SDL_MOUSEBUTTONUP");
+					if (gciMouseHandlerP == nullptr)
+						break;
+
+					GciMouseEvent mouseEvent;
+					switch (event.type)
+					{
+						case SDL_MOUSEBUTTONDOWN:
+							mouseEvent = GciMouseEvent::Down;
+							break;
+						case SDL_MOUSEBUTTONUP:
+							mouseEvent = GciMouseEvent::Up;
+							break;
+						default:
+							mouseEvent = GciMouseEvent::Unknown;
+							break;
+					}
+
+					GciMouseButton mouseButton;
+					switch (event.button.button)
+					{
+						case SDL_BUTTON_LEFT:
+							mouseButton = GciMouseButton::Left;
+							break;
+						case SDL_BUTTON_MIDDLE:
+							mouseButton = GciMouseButton::Middle;
+							break;
+						case SDL_BUTTON_RIGHT:
+							mouseButton = GciMouseButton::Right;
+							break;
+						default:
+							mouseButton = GciMouseButton::Unknown;
+							break;
+					}
+					gciMouseHandlerP(mouseButton, mouseEvent, event.button.x, event.button.y);
 					break;
+
 				case SDL_QUIT:
 					finished = true;
 					break;

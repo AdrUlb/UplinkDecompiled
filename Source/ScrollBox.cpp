@@ -11,5 +11,11 @@ bool ScrollBox::IsGrabInProgress()
 
 void ScrollBox::UpdateGrabScroll()
 {
-	UplinkAbort("TODO: implement ScrollBox::UpdateGrabScroll()");
+	// Probably unreachable
+	puts("TODO: implement ScrollBox::UpdateGrabScroll()");
+}
+
+void ScrollBox::UnGrabScrollBar()
+{
+	// Pretty much a no-op
 }

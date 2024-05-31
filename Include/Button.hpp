@@ -42,4 +42,6 @@ public:
 	void Draw(bool highlighted, bool clicked);
 	void SetImages(Image* imageNormal, Image* imageHighlighted, Image* imageClicked);
 	void MouseMove();
+	void MouseDown();
+	void MouseUp();
 };

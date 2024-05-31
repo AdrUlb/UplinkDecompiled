@@ -4,16 +4,15 @@
 #include <ComputerScreens/MenuScreenOption.hpp>
 #include <LList.hpp>
 
-class MenuScreen : public ComputerScreen
+class HighSecurityScreen : ComputerScreen
 {
 	LList<MenuScreenOption*> options;
+	int nextPage;
 
-public:
-	~MenuScreen() override;
+	~HighSecurityScreen() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void AddOption(const char* caption, const char* tooltip, int nextPage, int security, int index);
 };

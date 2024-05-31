@@ -113,7 +113,12 @@ void Computer::Update()
 	if (!running)
 		return;
 
-	puts("TODO: implement Computer::Update()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: Computer::Update()");
+		called = true;
+	}
 }
 
 const char* Computer::GetID()
