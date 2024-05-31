@@ -561,8 +561,6 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	record->AddField("Security", "1");
 	computer->recordBank.AddRecord(*record);
 
-	puts("TODO: implement WorldGenerator::GenerateInternalServicesMachine()");
-
 	return computer;
 }
 
@@ -588,7 +586,45 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
 	computer->SetTraceAction(9);
 	computer->SetIP(vlocation->ip);
 
-	puts("TODO: implement WorldGenerator::GenerateCentralMainframeName()");
+	int level1 = (company->size - 1) / 3;
+	if (level1 > 5)
+	{
+		level1 = 5;
+	}
+	else if (level1 < 1)
+	{
+		level1 = 1;
+	}
+	computer->security.AddSystem(4, level1, -1);
+
+	int level2 = (company->size - 8) / 3;
+	if (level2 > 5)
+	{
+		level2 = 5;
+	}
+	else if (level2 < 1)
+	{
+		level2 = 1;
+	}
+	computer->security.AddSystem(1, level2, -1);
+
+	int level3 = (company->size - 10) / 3;
+	if (level3 > 5)
+	{
+		level3 = 5;
+	}
+	else if (level3 < 1)
+	{
+		level3 = 1;
+	}
+	computer->security.AddSystem(2, level3, -1);
+
+	if (strcmp(name, "Government") == 0)
+		computer->SetIsTargetable(false);
+
+	game->GetWorld()->CreateComputer(computer);
+
+	puts("TODO: implement WorldGenerator::GenerateCentralMainframe()");
 
 	return computer;
 }
