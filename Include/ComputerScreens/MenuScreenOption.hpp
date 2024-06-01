@@ -1,3 +1,5 @@
+#pragma once
+
 #include <UplinkObject.hpp>
 
 class MenuScreenOption : UplinkObject

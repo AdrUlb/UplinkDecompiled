@@ -3,6 +3,7 @@
 #include <ComputerScreens/DialogScreen.hpp>
 #include <ComputerScreens/DisconnectedScreen.hpp>
 #include <ComputerScreens/GenericScreen.hpp>
+#include <ComputerScreens/HighSecurityScreen.hpp>
 #include <ComputerScreens/LinksScreen.hpp>
 #include <ComputerScreens/LogScreen.hpp>
 #include <ComputerScreens/MenuScreen.hpp>
@@ -525,8 +526,6 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	{
 		const auto type = NumberGenerator::RandomNumber(2) + 1;
 		const auto size = NumberGenerator::RandomNormalNumber(6.0f, 6.0f);
-		const auto makeCompressed = NumberGenerator::RandomNumber(2);
-		const auto makeEncrypted = NumberGenerator::RandomNumber(2);
 
 		NameGenerator::GenerateDataName(companyName, type);
 		const auto data = new Data();
@@ -534,10 +533,10 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 
 		auto compressed = 0;
 		auto encrypted = 0;
-		if (makeCompressed != 0)
+		if (NumberGenerator::RandomNumber(2) != 0)
 			compressed = NumberGenerator::RandomNumber(5);
 
-		if (makeEncrypted)
+		if (NumberGenerator::RandomNumber(2))
 			encrypted = NumberGenerator::RandomNumber(5);
 
 		data->SetDetails(type, size, encrypted, compressed, 1.0f, 0);
@@ -546,7 +545,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 
 	const auto logCount = NumberGenerator::RandomNumber(10);
 
-	for (int32_t i = 0; i < logCount; i++)
+	for (auto i = 0; i < logCount; i++)
 	{
 		const auto log = new AccessLog();
 		const auto loc = WorldGenerator::GetRandomLocation();
@@ -624,7 +623,99 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
 
 	game->GetWorld()->CreateComputer(computer);
 
-	puts("TODO: implement WorldGenerator::GenerateCentralMainframe()");
+	const auto highSecurityScreen = new HighSecurityScreen();
+	highSecurityScreen->SetMainTitle(name);
+	highSecurityScreen->SetSubTitle("Authorisation required");
+	highSecurityScreen->AddSystem("UserID / password verification", 1);
+	highSecurityScreen->AddSystem("Voice Print Identification", 2);
+	highSecurityScreen->SetNextPage(3);
+	computer->AddComputerScreen(highSecurityScreen, 0);
+
+	const auto loginScreen = new UserIDScreen();
+	loginScreen->SetMainTitle(name);
+	loginScreen->SetSubTitle("Log in");
+	loginScreen->SetDifficulty(NumberGenerator::RandomNormalNumber(80.0f, 12.0f));
+	loginScreen->SetNextPage(0);
+	computer->AddComputerScreen(loginScreen, 1);
+
+	const auto voiceRequiredScreen = new GenericScreen();
+	voiceRequiredScreen->SetMainTitle(name);
+	voiceRequiredScreen->SetSubTitle("Voice print analysis required");
+	voiceRequiredScreen->SetScreenType(0x1b);
+	voiceRequiredScreen->SetNextPage(0);
+	computer->AddComputerScreen(voiceRequiredScreen, 2);
+
+	const auto mainMenuScreen = new MenuScreen();
+	mainMenuScreen->SetMainTitle(name);
+	mainMenuScreen->SetSubTitle("Central Mainframe Main Menu");
+	mainMenuScreen->AddOption(" File Server", "Access the file server", 4, 3, -1);
+	mainMenuScreen->AddOption("View logs", "View the access logs on this system", 5, 1, -1);
+	mainMenuScreen->AddOption("Console", "Use a console on this system", 6, 1, -1);
+	computer->AddComputerScreen(mainMenuScreen, 3);
+
+	const auto fileServerScreen = new GenericScreen();
+	fileServerScreen->SetScreenType(6);
+	fileServerScreen->SetMainTitle(name);
+	fileServerScreen->SetSubTitle("File server");
+	fileServerScreen->SetNextPage(3);
+	computer->AddComputerScreen(fileServerScreen, 4);
+
+	const auto logScreen = new LogScreen();
+	logScreen->SetTARGET(0);
+	logScreen->SetMainTitle(name);
+	logScreen->SetSubTitle("Access Logs");
+	logScreen->SetNextPage(3);
+	computer->AddComputerScreen(logScreen, 5);
+
+	const auto consoleScreen = new GenericScreen();
+	consoleScreen->SetScreenType(20);
+	consoleScreen->SetMainTitle(name);
+	consoleScreen->SetSubTitle("Console");
+	consoleScreen->SetNextPage(3);
+	computer->AddComputerScreen(consoleScreen, 6);
+
+	computer->dataBank.SetSize(NumberGenerator::RandomNormalNumber(100.0f, 40.0f));
+
+	const auto fileCount = NumberGenerator::RandomNormalNumber(10.0f, 5.0f);
+
+	for (auto i = 0; i < fileCount; i++)
+	{
+		const auto type = NumberGenerator::RandomNumber(2) + 1;
+		const auto size = NumberGenerator::RandomNormalNumber(6.0f, 4.0f);
+
+		NameGenerator::GenerateDataName(name, type);
+		const auto data = new Data();
+		data->SetTitle(tempname);
+
+		auto compressed = 0;
+		auto encrypted = 0;
+		if (NumberGenerator::RandomNumber(2) != 0)
+			compressed = NumberGenerator::RandomNumber(5);
+
+		if (NumberGenerator::RandomNumber(2) != 0)
+			encrypted = NumberGenerator::RandomNumber(5);
+
+		data->SetDetails(type, size, encrypted, compressed, 1.0f, 0);
+		computer->dataBank.PutData(data);
+	}
+
+	const auto logCount = NumberGenerator::RandomNumber(10);
+
+	for (auto i = 0; i < logCount; i++)
+	{
+		const auto log = new AccessLog();
+		const auto loc = WorldGenerator::GetRandomLocation();
+		log->SetProperties(game->GetWorld()->currentDate, loc->ip, " ", 0, 1);
+		log->SetData1("Accessed File");
+		computer->logBank.AddLog(log, -1);
+	}
+
+	const auto record = new Record();
+	record->AddField("Name", "admin");
+	NameGenerator::GenerateComplexPassword();
+	record->AddField("Password", tempname);
+	record->AddField("Security", "1");
+	computer->recordBank.AddRecord(*record);
 
 	return computer;
 }

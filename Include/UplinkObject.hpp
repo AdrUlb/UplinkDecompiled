@@ -26,7 +26,8 @@ enum class UplinkObjectId
 	DialogScreenWidget,
 	UserIDScreen,
 	LinksScreen = 40,
-	DisconnectedScreen = 44,
+	HighSecurityScreen = 43,
+	DisconnectedScreen,
 	Company = 50,
 	CompanyUplink = 52,
 	NotificationEvent = 70

@@ -85,3 +85,18 @@ const char* NameGenerator::GeneratePassword()
 			return passwords.GetData(index);
 	}
 }
+
+void NameGenerator::GenerateComplexPassword()
+{
+	char pass[0x9];
+	strncpy(pass, NameGenerator::GeneratePassword(), 9);
+
+	const auto count = NumberGenerator::RandomNumber(5);
+	for (auto i = 0; i < count; i++)
+	{
+		const auto changeIndex = NumberGenerator::RandomNumber(8);
+		pass[changeIndex] = 'a' + NumberGenerator::RandomNumber(26);
+	}
+
+	strncpy(tempname, pass, 0x80);
+}
