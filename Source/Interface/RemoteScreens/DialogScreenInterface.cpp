@@ -114,9 +114,7 @@ bool DialogScreenInterface::ReturnKeyPressed()
 	const auto screen = GetComputerScreen();
 	UplinkAssert(screen != nullptr);
 	char* returnKeyButton = screen->returnKeyButton;
-	int32_t rax_3;
-	bool rdx_1;
-	int32_t i;
+
 	if (returnKeyButton == nullptr)
 		return false;
 
@@ -134,8 +132,7 @@ bool DialogScreenInterface::ReturnKeyPressed()
 		auto button = EclGetButton(s);
 		if (button == nullptr)
 		{
-			const auto rax_13 = screen->GetComputer();
-			UplinkSnprintf(s, 0x59, "%s %d %d %s", widget->GetName(), widget->data1, widget->data2, &rax_13->ip);
+			UplinkSnprintf(s, 0x59, "%s %d %d %s", widget->GetName(), widget->data1, widget->data2, screen->GetComputer()->ip);
 			button = EclGetButton(s);
 		}
 		button->MouseUp();
