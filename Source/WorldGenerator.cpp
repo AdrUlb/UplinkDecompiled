@@ -74,27 +74,29 @@ void WorldGenerator::LoadDynamicsGatewayDefs()
 
 void WorldGenerator::GenerateAll()
 {
-	WorldGenerator::GenerateSpecifics();
-	WorldGenerator::GeneratePlayer("NEWAGENT");
-	WorldGenerator::GenerateRandomWorld();
-	WorldGenerator::LoadDynamics();
+	GenerateSpecifics();
+	GeneratePlayer("NEWAGENT");
+	GenerateRandomWorld();
+	LoadDynamics();
 }
+
+#include <string>
 
 void WorldGenerator::GenerateSpecifics()
 {
 	game->GetWorld()->CreateCompany("Player");
-	WorldGenerator::GenerateLocalMachine();
-	WorldGenerator::GenerateCompanyGovernment();
-	WorldGenerator::GenerateGlobalCriminalDatabase();
-	WorldGenerator::GenerateInternationalSocialSecurityDatabase();
-	WorldGenerator::GenerateInternationalAcademicDatabase();
-	WorldGenerator::GenerateInterNIC();
-	WorldGenerator::GenerateStockMarket();
-	WorldGenerator::GenerateProtoVision();
-	WorldGenerator::GenerateOCP();
-	WorldGenerator::GenerateSJGames();
-	WorldGenerator::GenerateIntroversion();
-	WorldGenerator::GenerateCompanyUplink();
+	GenerateLocalMachine();
+	GenerateCompanyGovernment();
+	GenerateGlobalCriminalDatabase();
+	GenerateInternationalSocialSecurityDatabase();
+	GenerateInternationalAcademicDatabase();
+	GenerateInterNIC();
+	GenerateStockMarket();
+	GenerateProtoVision();
+	GenerateOCP();
+	GenerateSJGames();
+	GenerateIntroversion();
+	GenerateCompanyUplink();
 }
 
 void WorldGenerator::GeneratePlayer(const char* handle)

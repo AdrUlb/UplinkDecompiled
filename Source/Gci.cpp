@@ -390,40 +390,28 @@ void GciMainLoop()
 							switch (event.key.keysym.sym)
 							{
 								case SDLK_KP_PERIOD:
-								{
 									unicode = '.';
 									break;
-								}
 								case SDLK_KP_DIVIDE:
-								{
 									unicode = SDLK_SLASH;
 									break;
-								}
 								case SDLK_KP_MULTIPLY:
-								{
 									unicode = SDLK_ASTERISK;
 									break;
-								}
 								case SDLK_KP_MINUS:
-								{
 									unicode = SDLK_MINUS;
 									break;
-								}
 								case SDLK_KP_PLUS:
-								{
 									unicode = SDLK_PLUS;
 									break;
-								}
 								case SDLK_KP_ENTER:
-								{
 									unicode = SDLK_RETURN;
 									break;
-								}
 								case SDLK_KP_EQUALS:
-								{
 									unicode = SDLK_EQUALS;
 									break;
-								}
+								default:
+									break;
 							}
 						}
 					}

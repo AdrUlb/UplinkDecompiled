@@ -103,20 +103,7 @@ void DialogScreenInterface::Create(ComputerScreen* screen)
 				EclRegisterButtonCallbacks(buttonNameWithIp, button_draw, ScriptButtonClick, button_click, button_highlight);
 				break;
 			case 9:
-				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
-				EclRegisterButtonCallbacks(buttonName, textbutton_draw, nullptr, nullptr, nullptr);
-				EclMakeButtonEditable(buttonName);
-
 				puts("TODO: implement DialogScreenInterface::Create()	for widget type 9");
-				/*const auto securityRecord =
-					dialogScreen->GetComputer()->recordBank.GetRecordFromName(game->GetInterface()->GetRemoteInterface()->securityName);
-				if (securityRecord != nullptr)
-				{
-					char* securityName = securityRecord->GetField(widget->GetStringData1());
-					if (securityName != nullptr)
-						EclGetButton(buttonName)->SetCaption(securityName);
-				}*/
-				break;
 				break;
 		}
 	}
@@ -124,7 +111,38 @@ void DialogScreenInterface::Create(ComputerScreen* screen)
 
 bool DialogScreenInterface::ReturnKeyPressed()
 {
-	puts("TODO: implement DialogScreenInterface::ReturnKeyPressed()");
+	const auto screen = GetComputerScreen();
+	UplinkAssert(screen != nullptr);
+	char* returnKeyButton = screen->returnKeyButton;
+	int32_t rax_3;
+	bool rdx_1;
+	int32_t i;
+	if (returnKeyButton == nullptr)
+		return false;
+
+	for (auto i = 0; i < screen->widgets.Size(); i++)
+	{
+		const auto widget = screen->widgets.GetData(i);
+
+		UplinkAssert(widget != nullptr);
+
+		if (strcmp(widget->GetName(), returnKeyButton) != 0)
+			continue;
+
+		char s[0x59];
+		UplinkSnprintf(s, 0x59, "%s %d %d", widget->GetName(), widget->data1, widget->data2);
+		auto button = EclGetButton(s);
+		if (button == nullptr)
+		{
+			const auto rax_13 = screen->GetComputer();
+			UplinkSnprintf(s, 0x59, "%s %d %d %s", widget->GetName(), widget->data1, widget->data2, &rax_13->ip);
+			button = EclGetButton(s);
+		}
+		button->MouseUp();
+
+		return true;
+	}
+
 	return false;
 }
 

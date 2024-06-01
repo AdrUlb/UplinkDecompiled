@@ -3,10 +3,11 @@
 #include <Util.hpp>
 #include <cstring>
 
+static char currentGrab[0x100] = "None";
+
 bool ScrollBox::IsGrabInProgress()
 {
-	// TODO: whaaat???
-	return strcmp("None", "None") != 0;
+	return strcmp(currentGrab, "None") != 0;
 }
 
 void ScrollBox::UpdateGrabScroll()
@@ -17,5 +18,5 @@ void ScrollBox::UpdateGrabScroll()
 
 void ScrollBox::UnGrabScrollBar()
 {
-	// Pretty much a no-op
+	strncpy(currentGrab, "None", 0x100);
 }

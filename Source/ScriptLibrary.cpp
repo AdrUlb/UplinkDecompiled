@@ -115,6 +115,11 @@ static void Script32()
 	app->GetMainMenu()->Remove();
 }
 
+static void Script33()
+{
+	
+}
+
 static void Script92()
 {
 	const auto key = EclGetButton("start_key");
@@ -141,6 +146,9 @@ void ScriptLibrary::RunScript(int index)
 			return;
 		case 32:
 			Script32();
+			return;
+		case 33:
+			Script33();
 			return;
 		case 92:
 			Script92();
