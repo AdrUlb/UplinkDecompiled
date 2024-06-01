@@ -43,7 +43,7 @@ void Data::Print()
 {
 	printf("Data: %s\n", title);
 	printf("type = %d, size = %d, encrypted = %d, compressed = %d\nversion = %f, softwareTYPE = %d\n", type, size, encrypted, compressed,
-		   softwareType, softwareVersion);
+		   softwareVersion, softwareType);
 }
 
 const char* Data::GetID()
@@ -53,7 +53,7 @@ const char* Data::GetID()
 
 UplinkObjectId Data::GetOBJECTID()
 {
-	UplinkObjectId::Data;
+	return UplinkObjectId::Data;
 }
 
 void Data::SetTitle(const char* value)

@@ -1,8 +1,8 @@
 #include <ExceptionHandling.hpp>
-#include <Globals.hpp>
 #include <Gci.hpp>
+#include <Globals.hpp>
 
-void RunUplinkExceptionHandling()
+[[noreturn]] void RunUplinkExceptionHandling()
 {
 	if (app != nullptr)
 	{

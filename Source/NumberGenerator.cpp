@@ -3,7 +3,7 @@
 
 int NumberGenerator::RandomNumber(int max)
 {
-	int ret = rand() * 4.65661287e-10f * max;
+	int ret = rand() / RAND_MAX * max;
 	if (ret < 0)
 		ret = 0;
 
@@ -17,8 +17,8 @@ int NumberGenerator::RandomNormalNumber(float mean, float deviation)
 {
 	auto a = 0.0f;
 
-	for (auto i = 0; i != 12; i++)
-		a += rand() * 4.65661287e-10f;
+	for (auto i = 0; i < 12; i++)
+		a += rand() / RAND_MAX;
 
 	a = (a - 6.0f) * (deviation / 3.0f) + mean;
 
