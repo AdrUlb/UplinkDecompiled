@@ -296,6 +296,12 @@ void GciDeleteTrueTypeFont(int index)
 	fonts[index] = nullptr;
 }
 
+void GciDeleteAllTrueTypeFonts()
+{
+	for (const auto node : fonts)
+		GciDeleteTrueTypeFont(node.first);
+}
+
 bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size)
 {
 	(void)name;

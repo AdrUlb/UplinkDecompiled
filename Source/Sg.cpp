@@ -52,6 +52,16 @@ static int musicVol()
 	return playerVolume / 20.0 * 85.333333333333329;
 }
 
+static void SgStopMod()
+{
+	if (!SgInitialised || currentmod == nullptr)
+		return;
+
+	Mix_HaltMusic();
+	Mix_FreeMusic(currentmod);
+	currentmod = nullptr;
+}
+
 void SgInitialise()
 {
 	printf("Compiled with SDL_mixer version: %d.%d.%d\n", SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL);
@@ -116,14 +126,13 @@ void SgInitialise()
 	SgInitialised = true;
 }
 
-void SgStopMod()
+void SgShutdown()
 {
-	if (!SgInitialised || currentmod == nullptr)
+	if (!SgInitialised)
 		return;
-
-	Mix_HaltMusic();
-	Mix_FreeMusic(currentmod);
-	currentmod = nullptr;
+	SgStopMod();
+	Mix_HaltChannel(-1);
+	Mix_CloseAudio();
 }
 
 void SgPlayMod(const char* path)

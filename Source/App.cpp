@@ -1,8 +1,11 @@
 #include <App.hpp>
 #include <Eclipse.hpp>
+#include <Gci.hpp>
 #include <Globals.hpp>
 #include <IRCInterface.hpp>
 #include <RedShirt.hpp>
+#include <Sg.hpp>
+#include <Svb.hpp>
 #include <Util.hpp>
 #include <cstdlib>
 #include <dirent.h>
@@ -78,16 +81,17 @@ void App::Close()
 
 	EclReset();
 
-	/*if (game != nullptr)
-		game->ExitGame();*/
+	if (game != nullptr)
+		game->ExitGame();
 
 	options->ApplyShutdownChanges();
 	options->Save(nullptr);
 
-	// SvbReset();
-	// GciDeleteAllTrueTypeFonts();
+	SvbReset();
+	GciDeleteAllTrueTypeFonts();
 	RsCleanUp();
-	// SgShutdown();
+	SgShutdown();
+
 	if (mainMenu != nullptr)
 	{
 		delete mainMenu;
@@ -123,8 +127,6 @@ void App::Close()
 		delete[] nextLoadGame;
 		nextLoadGame = nullptr;
 	}
-
-	puts("TODO: implement App::Close()");
 }
 
 void App::CloseGame()

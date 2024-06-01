@@ -2,6 +2,7 @@
 #include <Globals.hpp>
 #include <NotificationEvent.hpp>
 #include <NumberGenerator.hpp>
+#include <Opengl.hpp>
 #include <RedShirt.hpp>
 #include <Sg.hpp>
 #include <Util.hpp>
@@ -190,4 +191,9 @@ const char* Game::GetLoadedSavefileVer()
 int Game::GetWorldMapType()
 {
 	return worldMapType;
+}
+
+void Game::ExitGame()
+{
+	opengl_close();
 }

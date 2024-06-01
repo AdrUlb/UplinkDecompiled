@@ -20,6 +20,7 @@ public:
 };
 
 void SgInitialise();
+void SgShutdown();
 void SgPlaylist_Initialise();
 SgPlaylist* SgPlaylist_GetPlaylist(const char* name);
 void SgSetModVolume(int value);

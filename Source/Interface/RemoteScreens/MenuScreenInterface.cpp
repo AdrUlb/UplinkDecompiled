@@ -8,7 +8,26 @@
 
 void MenuScreenInterface::Remove()
 {
-	puts("TODO: implement MenuScreenInterface::Remove()");
+	if (!IsVisible())
+		return;
+
+	EclRemoveButton("menuscreeninterface");
+	EclRemoveButton("menuscreen_maintitle");
+	EclRemoveButton("menuscreen_subtitle");
+
+	const auto ip = GetComputerScreen()->GetComputer()->ip;
+
+	for (auto index = 0; index < GetComputerScreen()->NumOptions(); index++)
+	{
+		char image[0x39];
+		char text[0x39];
+
+		snprintf(image, 0x39, "menuscreenimage %d %d %s", index, GetComputerScreen()->GetNextPage(index), ip);
+		snprintf(text, 0x39, "menuscreentext %d %d %s", index, GetComputerScreen()->GetNextPage(index), ip);
+
+		EclRemoveButton(image);
+		EclRemoveButton(text);
+	}
 }
 
 bool MenuScreenInterface::IsVisible()
@@ -53,7 +72,7 @@ void MenuScreenInterface::Create(ComputerScreen* screen)
 		UplinkSnprintf(image, 57, "menuscreentext %d %d %s", i, GetComputerScreen()->GetNextPage(i), ip);
 
 		time += timeInc;
-		
+
 		if (game->GetInterface()->GetRemoteInterface()->securityLevel < GetComputerScreen()->GetSecurity(i))
 		{
 			EclRegisterButton(-350, 120 + yOffset, 16, 16, "", GetComputerScreen()->GetTooltip(i), text);

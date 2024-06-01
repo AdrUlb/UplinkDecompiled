@@ -657,6 +657,11 @@ void opengl_run()
 	GciMainLoop();
 }
 
+void opengl_close()
+{
+	GciRestoreScreenSize();
+}
+
 void button_assignbitmap(const char* buttonName, const char* imageName)
 {
 	const auto button = EclGetButton(buttonName);

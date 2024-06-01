@@ -40,4 +40,5 @@ public:
 	void NewGame();
 	const char* GetLoadedSavefileVer();
 	int GetWorldMapType();
+	void ExitGame();
 };

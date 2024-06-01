@@ -390,7 +390,12 @@ void LocalInterface::RunScreen(int code, int index)
 
 Interface::~Interface()
 {
-	puts("TODO: implement Interface::~Interface()");
+	if (localInterface != 0)
+		delete localInterface;
+	if (remoteInterface != 0)
+		delete remoteInterface;
+	if (taskManager != 0)
+		delete taskManager;
 }
 
 bool Interface::Load(FILE* file)

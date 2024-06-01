@@ -55,6 +55,7 @@ bool GciRegisterTrueTypeFont();
 bool GciUnregisterTrueTypeFont();
 void GciSetDefaultFont(int index);
 void GciDeleteTrueTypeFont(int index);
+void GciDeleteAllTrueTypeFonts();
 bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size);
 void GciTimerFunc(int delay, GciTimerCallback callback, int arg);
 void GciMainLoop();
