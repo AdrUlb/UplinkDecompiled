@@ -53,7 +53,9 @@ char* GetFilePath(const char* path)
 	if (finalSlash == nullptr)
 	{
 		delete[] buffer;
-		return strdup("./");
+		buffer = new char[3];
+		strcpy(buffer, "./");
+		return buffer;
 	}
 
 	// Place a null terminator after the final slash and return the buffer

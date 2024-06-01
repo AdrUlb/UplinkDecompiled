@@ -63,7 +63,7 @@ static void Script31()
 			"start/localhost_win32.tif"
 #endif
 			;
-			
+
 		button_assignbitmap("start_localhost", localhostImage);
 		EclRegisterButton(330, 220, 32, 32, " ", " ", "start_key");
 		button_assignbitmap("start_key", "analyser/nonsecure.tif");
@@ -117,7 +117,7 @@ static void Script32()
 
 static void Script33()
 {
-	
+	puts("TODO: implement Script33");
 }
 
 static void Script92()

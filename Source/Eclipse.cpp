@@ -762,7 +762,6 @@ void EclHighlightNextEditableButton()
 			if (!editablebuttons.ValidIndex(i))
 				continue;
 
-			printf("Checking %s\n", editablebuttons.GetData(i));
 			if (strcmp(editablebuttons.GetData(i), currenthighlight) != 0)
 				continue;
 
