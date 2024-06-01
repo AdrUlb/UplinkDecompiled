@@ -20,4 +20,5 @@ public:
 	void AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip);
 	void AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip, int data1, int data2,
 				   const char* stringData1, const char* stringData2);
+	void SetReturnKeyButton(const char* button);
 };

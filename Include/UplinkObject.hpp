@@ -11,6 +11,7 @@ enum class UplinkObjectId
 	Player,
 	Option = 8,
 	VlocationSpecial,
+	LanComputer = 15,
 	Computer = 20,
 	Data,
 	DataBank,

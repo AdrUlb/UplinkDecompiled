@@ -563,14 +563,14 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	return computer;
 }
 
-Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
+Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 {
-	NameGenerator::GenerateCentralMainframeName(name);
+	NameGenerator::GenerateCentralMainframeName(companyName);
 
 	char value[0x80];
 	UplinkStrncpy(value, tempname, 0x80);
 
-	const auto company = game->GetWorld()->GetCompany(name);
+	const auto company = game->GetWorld()->GetCompany(companyName);
 	UplinkAssert(company != nullptr);
 
 	const auto vlocation = WorldGenerator::GenerateLocation();
@@ -579,7 +579,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
 	const auto computer = new Computer();
 	computer->SetTYPE(4);
 	computer->SetName(value);
-	computer->SetCompanyName(name);
+	computer->SetCompanyName(companyName);
 	computer->SetIsExternallyOpen(false);
 	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(5.0f, 0.5f));
 	computer->SetTraceAction(9);
@@ -618,13 +618,13 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
 	}
 	computer->security.AddSystem(2, level3, -1);
 
-	if (strcmp(name, "Government") == 0)
+	if (strcmp(companyName, "Government") == 0)
 		computer->SetIsTargetable(false);
 
 	game->GetWorld()->CreateComputer(computer);
 
 	const auto highSecurityScreen = new HighSecurityScreen();
-	highSecurityScreen->SetMainTitle(name);
+	highSecurityScreen->SetMainTitle(companyName);
 	highSecurityScreen->SetSubTitle("Authorisation required");
 	highSecurityScreen->AddSystem("UserID / password verification", 1);
 	highSecurityScreen->AddSystem("Voice Print Identification", 2);
@@ -632,21 +632,21 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
 	computer->AddComputerScreen(highSecurityScreen, 0);
 
 	const auto loginScreen = new UserIDScreen();
-	loginScreen->SetMainTitle(name);
+	loginScreen->SetMainTitle(companyName);
 	loginScreen->SetSubTitle("Log in");
 	loginScreen->SetDifficulty(NumberGenerator::RandomNormalNumber(80.0f, 12.0f));
 	loginScreen->SetNextPage(0);
 	computer->AddComputerScreen(loginScreen, 1);
 
 	const auto voiceRequiredScreen = new GenericScreen();
-	voiceRequiredScreen->SetMainTitle(name);
+	voiceRequiredScreen->SetMainTitle(companyName);
 	voiceRequiredScreen->SetSubTitle("Voice print analysis required");
 	voiceRequiredScreen->SetScreenType(0x1b);
 	voiceRequiredScreen->SetNextPage(0);
 	computer->AddComputerScreen(voiceRequiredScreen, 2);
 
 	const auto mainMenuScreen = new MenuScreen();
-	mainMenuScreen->SetMainTitle(name);
+	mainMenuScreen->SetMainTitle(companyName);
 	mainMenuScreen->SetSubTitle("Central Mainframe Main Menu");
 	mainMenuScreen->AddOption(" File Server", "Access the file server", 4, 3, -1);
 	mainMenuScreen->AddOption("View logs", "View the access logs on this system", 5, 1, -1);
@@ -655,21 +655,21 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
 
 	const auto fileServerScreen = new GenericScreen();
 	fileServerScreen->SetScreenType(6);
-	fileServerScreen->SetMainTitle(name);
+	fileServerScreen->SetMainTitle(companyName);
 	fileServerScreen->SetSubTitle("File server");
 	fileServerScreen->SetNextPage(3);
 	computer->AddComputerScreen(fileServerScreen, 4);
 
 	const auto logScreen = new LogScreen();
 	logScreen->SetTARGET(0);
-	logScreen->SetMainTitle(name);
+	logScreen->SetMainTitle(companyName);
 	logScreen->SetSubTitle("Access Logs");
 	logScreen->SetNextPage(3);
 	computer->AddComputerScreen(logScreen, 5);
 
 	const auto consoleScreen = new GenericScreen();
 	consoleScreen->SetScreenType(20);
-	consoleScreen->SetMainTitle(name);
+	consoleScreen->SetMainTitle(companyName);
 	consoleScreen->SetSubTitle("Console");
 	consoleScreen->SetNextPage(3);
 	computer->AddComputerScreen(consoleScreen, 6);
@@ -683,7 +683,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* name)
 		const auto type = NumberGenerator::RandomNumber(2) + 1;
 		const auto size = NumberGenerator::RandomNormalNumber(6.0f, 4.0f);
 
-		NameGenerator::GenerateDataName(name, type);
+		NameGenerator::GenerateDataName(companyName, type);
 		const auto data = new Data();
 		data->SetTitle(tempname);
 
@@ -815,15 +815,112 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 		"You are here because you wish to join this company.");
 	computer->AddComputerScreen(messageScreeen, 0);
 
-	const auto screen = new MenuScreen();
-	computer->AddComputerScreen(messageScreeen, 0);
-	screen->SetMainTitle("Uplink");
-	screen->SetSubTitle("Public server Main Menu");
-	screen->AddOption("About Us", "Find out who we are and what we do", 0, 10, -1);
-	screen->AddOption("Register as an Agent", "Click to register yourself as a new Uplink Agent", 2, 10, -1);
-	computer->AddComputerScreen(screen, 1);
+	const auto menuScreen = new MenuScreen();
+	menuScreen->SetMainTitle("Uplink");
+	menuScreen->SetSubTitle("Public server Main Menu");
+	menuScreen->AddOption("About Us", "Find out who we are and what we do", 0, 10, -1);
+	menuScreen->AddOption("Register as an Agent", "Click to register yourself as a new Uplink Agent", 2, 10, -1);
+	computer->AddComputerScreen(menuScreen, 1);
 
-	puts("TODO: implement WorldGenerator::GenerateUplinkPublicAccessServer()");
+	const auto dialogScreen = new DialogScreen();
+	dialogScreen->SetMainTitle("Uplink");
+	dialogScreen->SetSubTitle("Registration");
+	dialogScreen->AddWidget("caption1", 2, 100, 110, 380, 270,
+							"Your Uplink membership package includes : \n"
+							"\n"
+							"- A Gateway computer at a secure location.  "
+							"You will connect to this machine from your home computer when you are working for Uplink.  "
+							"You can have it upgraded at a later stage if necessary.\n"
+							"\n"
+							"- A low interest loan of 3000 credits with Uplink International Bank, to get you started.\n"
+							"\n"
+							"- Access to our Bulletin Board system - the usual place for Uplink Agents to find work.\n"
+							"\n"
+							"- You will be officially rated as an Uplink Agent, and we will monitor your progress.  "
+							"As your rating increases you will find new avenues of work become available.",
+							"");
+	dialogScreen->AddWidget("cancel", 5, 160, 380, 100, 20, "Cancel", "Cancel registration", 1, 0, nullptr, nullptr);
+	dialogScreen->AddWidget("continue", 5, 270, 380, 100, 20, "Continue", "Continue registration", 3, 0, nullptr, nullptr);
+	dialogScreen->SetReturnKeyButton("continue");
+	computer->AddComputerScreen(dialogScreen, 2);
+
+	const auto registrationScreen = new DialogScreen();
+	registrationScreen->SetMainTitle("Uplink Registration");
+	registrationScreen->SetSubTitle("Create your agent profile");
+	registrationScreen->AddWidget("name", 1, 80, 140, 170, 20, "Enter your name", "Enter the name you wish to use");
+	registrationScreen->AddWidget("password", 1, 80, 170, 170, 20, "Enter your password", "You will need this to access the Uplink Services Machine");
+	registrationScreen->AddWidget("password2", 1, 80, 200, 170, 20, "Re-type your password", "For verification purposes");
+	registrationScreen->AddWidget("nametext", 3, 270, 140, 170, 20, "Fill this in", "Enter your name here");
+	registrationScreen->AddWidget("passwordtext", 4, 270, 170, 170, 20, "", "Enter your password here");
+	registrationScreen->AddWidget("passwordtext2", 4, 270, 200, 170, 20, "", "Re-type your password here");
+	registrationScreen->AddWidget("moretext", 2, 80, 270, 360, 100,
+								  "Uplink Corporation will not ask for any more personal details.  In the event of you being charged with illegal "
+								  "operations, our corporation will be forced to disavow all knowledge of your actions, however you will be safe "
+								  "from arrest as your real world address will never be stored.",
+								  "");
+	registrationScreen->AddWidget("continue", 8, 270, 400, 100, 20, "Done", "Click here when finished", 33, -1, nullptr, nullptr);
+	registrationScreen->SetReturnKeyButton("continue");
+	computer->AddComputerScreen(registrationScreen, 3);
+
+	const auto gatewaySelectionScreen = new GenericScreen();
+	gatewaySelectionScreen->SetMainTitle("Uplink");
+	gatewaySelectionScreen->SetSubTitle("Local gateway selection");
+	gatewaySelectionScreen->SetScreenType(0x1f);
+	gatewaySelectionScreen->SetNextPage(9);
+	computer->AddComputerScreen(gatewaySelectionScreen, 4);
+
+	const auto gatewayInfoScreen = new DialogScreen();
+	gatewayInfoScreen->SetMainTitle("Uplink Registration");
+	gatewayInfoScreen->SetSubTitle("Your Gateway computer");
+	gatewayInfoScreen->AddWidget(
+		"caption1", 2, 100, 130, 380, 270,
+		"Registration is now taking place.\n"
+		"\n"
+		"As part of your membership, we will assign you a Gateway computer system in your chosen server room.  "
+		"This will act as your jumping off point to the rest of the Net.  "
+		"When you next log in you will connect directly from your home computer to "
+		"this gateway machine, and from there to the rest of the world.\n"
+		"\n"
+		"Should any of your actions be traced back to your Gateway, Uplink "
+		"Corporation will disavow any knowledge of your actions and will destroy your account.  Your Gateway machine will also be "
+		"destroyed.\n"
+		"\n"
+		"Rental of your Gateway computer will cost 300 credits a month.",
+		"");
+	gatewayInfoScreen->AddWidget("continue", 8, 270, 380, 100, 20, "Done", "Click here when finished", 34, 6, nullptr, nullptr);
+	gatewayInfoScreen->SetReturnKeyButton("continue");
+	computer->AddComputerScreen(gatewayInfoScreen, 5);
+
+	const auto connectingScreen = new DialogScreen();
+	connectingScreen->AddWidget("connecting", 2, app->GetOptions()->GetOptionValue("graphics_screenwidth") - 370,
+								app->GetOptions()->GetOptionValue("graphics_screenheight") - 30, 370, 20, "", "");
+	computer->AddComputerScreen(connectingScreen, 6);
+
+	const auto codeCardScreen = new GenericScreen();
+	codeCardScreen->SetMainTitle("Uplink");
+	codeCardScreen->SetSubTitle("Code card verification");
+	codeCardScreen->SetScreenType(33);
+	codeCardScreen->SetNextPage(5);
+	computer->AddComputerScreen(codeCardScreen, 9);
+
+	const auto connectionFailedScreen = new DialogScreen();
+	connectionFailedScreen->SetMainTitle("Uplink");
+	connectionFailedScreen->SetSubTitle("Gateway connection failed");
+	connectionFailedScreen->AddWidget(
+		"caption1", 2, 100, 130, 400, 270,
+		"We have been unable to connect you to your Gateway computer.\n"
+		"\n"
+		"This may be due to a fault in out communications lines, and if this is the case then we apologise and ask you to try again later.\n"
+		"\n"
+		"We are aware that Uplink Agents occasionally suffer 'difficulties' with their Gateway systems and sometimes require a new one as a result.  "
+		"If this is the case, click YES below and we will assign you a new gateway.  (There will be an administrative charge of 1000 "
+		"credits if you take this action.)  Otherwise, click NO to log off and try again later.\n"
+		"\n"
+		"Rent a new Gateway computer?",
+		"", 0, 0, nullptr, nullptr);
+	connectionFailedScreen->AddWidget("yes", 8, 170, 380, 100, 20, "YES", "Click here to rent a new Gateway", 50, 4, nullptr, nullptr);
+	connectionFailedScreen->AddWidget("no", 8, 300, 380, 100, 20, "NO", "Click here to log out", 51, -1, nullptr, nullptr);
+	computer->AddComputerScreen(connectionFailedScreen, 10);
 }
 
 VLocation* WorldGenerator::GetRandomLocation()

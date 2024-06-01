@@ -83,3 +83,12 @@ void DialogScreen::AddWidget(const char* name, int type, int x, int y, int width
 	widget->SetStringData(stringData1, stringData2);
 	widgets.PutData(widget);
 }
+
+void DialogScreen::SetReturnKeyButton(const char* button)
+{
+	if (returnKeyButton != nullptr)
+		delete[] returnKeyButton;
+
+	returnKeyButton = new char[strlen(button) + 1];
+	strcpy(returnKeyButton, button);
+}

@@ -10,7 +10,7 @@
 
 class ComputerScreen;
 
-class Computer : UplinkObject
+class Computer : public UplinkObject
 {
 public:
 	int recentHacks = 0;
