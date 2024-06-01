@@ -73,7 +73,7 @@ void EmptyDirectory(const char* path)
 	{
 		if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
 		{
-			UplinkSnprintf(filePath, sizeof(filePath), "%s%s", path);
+			UplinkSnprintf(filePath, 0x100, "%s%s", path, entry->d_name);
 			unlink(filePath);
 			entry = readdir(dirp);
 		}

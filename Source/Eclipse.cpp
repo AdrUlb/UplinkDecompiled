@@ -560,7 +560,7 @@ int EclRegisterAnimation(const char* buttonName, int x, int y, int moveType, int
 		return -1;
 
 	const auto animation = new Animation();
-	animation->buttonName = new char[strlen(buttonName + 1)];
+	animation->buttonName = new char[strlen(buttonName) + 1];
 	strcpy(animation->buttonName, buttonName);
 
 	animation->moveType = moveType;

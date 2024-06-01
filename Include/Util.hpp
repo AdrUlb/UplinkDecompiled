@@ -62,7 +62,6 @@ static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* 
 			   " Location    : %s, line %zu\n Buffer size : %zu\n Format      : %s\n Buffer      : %s\n",
 			   file, line, n, format, s);
 		RunUplinkExceptionHandling();
-		__builtin_trap();
 	}
 	return ret;
 }
@@ -81,7 +80,6 @@ static inline char* UplinkStrncpyImpl(const char* file, const size_t line, char*
 			   " Location    : %s, line %zu\n Dest. size  : %zu\n Source size : %zu\n Str. Source : %s\n",
 			   file, line, num, sourceSize, source);
 		RunUplinkExceptionHandling();
-		__builtin_trap();
 	}
 
 	const auto ret = strncpy(dest, source, num);
@@ -99,7 +97,6 @@ static inline void UplinkAssertImpl(const char* file, const size_t line, const c
 			   " Condition : %s\n Location  : %s, line %zu\n",
 			   condStr, file, line);
 		RunUplinkExceptionHandling();
-		__builtin_trap();
 	}
 }
 
@@ -112,7 +109,6 @@ template <typename... Args> [[noreturn]] static void inline UplinkAbortImpl(cons
 	printf(message, args...);
 	printf("\n Location  : %s, line %zu\n", file, line);
 	RunUplinkExceptionHandling();
-	__builtin_trap();
 }
 
 #define UplinkSnprintf(s, n, format, ...) UplinkSnprintfImpl(__FILE__, __LINE__, (s), (n), (format)__VA_OPT__(, ) __VA_ARGS__)

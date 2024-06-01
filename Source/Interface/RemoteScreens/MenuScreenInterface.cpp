@@ -116,6 +116,8 @@ void MenuScreenInterface::ClickMenuScreenOption(Button* button)
 
 void MenuScreenInterface::DrawMenuOption(Button* button, bool highlighted, bool clicked)
 {
+	(void)highlighted;
+	(void)clicked;
 	SetColour("MenuText");
 	GciDrawText(button->X, button->Y + 20, button->Caption, 7);
 }
