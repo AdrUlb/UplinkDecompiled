@@ -1,0 +1,227 @@
+#include <Interface/RemoteScreens/DialogScreenInterface.hpp>
+
+#include <Eclipse.hpp>
+#include <GL/gl.h>
+#include <Gci.hpp>
+#include <Globals.hpp>
+#include <Opengl.hpp>
+#include <ScriptLibrary.hpp>
+#include <Util.hpp>
+#include <cstdio>
+
+void DialogScreenInterface::Remove()
+{
+	if (!IsVisible())
+		return;
+
+	struct DialogScreen* screen = GetComputerScreen();
+	const auto computer = screen->GetComputer();
+
+	UplinkAssert(screen != nullptr);
+
+	EclRemoveButton("dialogscreen");
+	EclRemoveButton("dialogscreen_maintitle");
+	EclRemoveButton("dialogscreen_subtitle");
+
+	for (auto i = 0; i < screen->widgets.Size(); i++)
+		RemoveWidget(screen->widgets.GetData(i), computer);
+}
+
+bool DialogScreenInterface::IsVisible()
+{
+	return EclGetButton("dialogscreen") != 0;
+}
+
+int DialogScreenInterface::ScreenID()
+{
+	return 5;
+}
+
+void DialogScreenInterface::Create(ComputerScreen* screen)
+{
+	UplinkAssert(screen != nullptr);
+
+	if (IsVisible())
+		return;
+
+	computerScreen = screen;
+
+	EclRegisterButton(0, 0, 0, 0, " ", " ", "dialogscreen");
+	EclRegisterButtonCallbacks("dialogscreen", nullptr, nullptr, nullptr, nullptr);
+	EclRegisterButton(80, 60, 350, 25, GetComputerScreen()->mainTitle, "", "dialogscreen_maintitle");
+	EclRegisterButtonCallbacks("dialogscreen_maintitle", RemoteInterfaceScreen::DrawMainTitle, nullptr, nullptr, nullptr);
+	EclRegisterButton(80, 80, 350, 20, GetComputerScreen()->subTitle, "", "dialogscreen_subtitle");
+	EclRegisterButtonCallbacks("dialogscreen_subtitle", RemoteInterfaceScreen::DrawSubTitle, nullptr, nullptr, nullptr);
+	const auto dialogScreen = GetComputerScreen();
+	const auto computer = dialogScreen->GetComputer();
+
+	for (auto i = 0; i < dialogScreen->widgets.Size(); i++)
+	{
+		const auto widget = dialogScreen->widgets[i];
+		UplinkAssert(widget != nullptr);
+
+		char buttonName[0x40];
+		char buttonNameWithIp[0x59];
+		UplinkSnprintf(buttonName, 0x40, "%s %d %d", widget->GetName(), widget->data1, widget->data2);
+		UplinkSnprintf(buttonNameWithIp, 0x59, "%s %d %d %s", widget->GetName(), widget->data1, widget->data2, computer->ip);
+
+		switch (widget->type)
+		{
+			case 0:
+				puts("TODO: implement DialogScreenInterface::Create()	for widget type 0");
+				break;
+			case 1:
+				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButtonCallbacks(buttonName, button_draw, nullptr, nullptr, nullptr);
+				break;
+			case 2:
+				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButtonCallbacks(buttonName, textbutton_draw, nullptr, nullptr, nullptr);
+				break;
+			case 3:
+				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButtonCallbacks(buttonName, textbutton_draw, 0, button_click, button_highlight);
+				EclMakeButtonEditable(buttonName);
+				break;
+			case 4:
+				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButtonCallbacks(buttonName, PasswordBoxDraw, 0, button_click, button_highlight);
+				EclMakeButtonEditable(buttonName);
+				break;
+			case 5:
+				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonNameWithIp);
+				EclRegisterButtonCallbacks(buttonNameWithIp, button_draw, NextPageClick, button_click, button_highlight);
+				break;
+			case 6:
+				puts("TODO: implement DialogScreenInterface::Create()	for widget type 6");
+				break;
+			case 7:
+				puts("TODO: implement DialogScreenInterface::Create()	for widget type 7");
+				break;
+			case 8:
+				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonNameWithIp);
+				EclRegisterButtonCallbacks(buttonNameWithIp, button_draw, ScriptButtonClick, button_click, button_highlight);
+				break;
+			case 9:
+				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButtonCallbacks(buttonName, textbutton_draw, nullptr, nullptr, nullptr);
+				EclMakeButtonEditable(buttonName);
+
+				puts("TODO: implement DialogScreenInterface::Create()	for widget type 9");
+				/*const auto securityRecord =
+					dialogScreen->GetComputer()->recordBank.GetRecordFromName(game->GetInterface()->GetRemoteInterface()->securityName);
+				if (securityRecord != nullptr)
+				{
+					char* securityName = securityRecord->GetField(widget->GetStringData1());
+					if (securityName != nullptr)
+						EclGetButton(buttonName)->SetCaption(securityName);
+				}*/
+				break;
+				break;
+		}
+	}
+}
+
+bool DialogScreenInterface::ReturnKeyPressed()
+{
+	puts("TODO: implement DialogScreenInterface::ReturnKeyPressed()");
+	return false;
+}
+
+bool DialogScreenInterface::EscapeKeyPressed()
+{
+	puts("TODO: implement DialogScreenInterface::EscapeKeyPressed()");
+	return false;
+}
+
+DialogScreen* DialogScreenInterface::GetComputerScreen()
+{
+	UplinkAssert(computerScreen != nullptr);
+	return dynamic_cast<DialogScreen*>(computerScreen);
+}
+
+void DialogScreenInterface::RemoveWidget(DialogScreenWidget* widget, Computer* computer)
+{
+	UplinkAssert(widget != nullptr);
+	UplinkAssert(computer != nullptr);
+
+	char buttonName[0x40];
+	UplinkSnprintf(buttonName, 0x40, "%s %d %d", widget->GetName(), widget->data1, widget->data2);
+	EclRemoveButton(buttonName);
+
+	char buttonNameWithIp[0x59];
+	UplinkSnprintf(buttonNameWithIp, 0x59, "%s %d %d %s", widget->GetName(), widget->data1, widget->data2, computer->ip);
+	EclRemoveButton(buttonNameWithIp);
+}
+
+void DialogScreenInterface::NextPageClick(Button* button)
+{
+	UplinkAssert(button != nullptr);
+
+	char widgetName[0x60];
+	int data1;
+	int data2;
+	char ip[0x18];
+	sscanf(button->Name, "%s %d %d %s", widgetName, &data1, &data2, ip);
+
+	const auto screenIndex = data1;
+	struct VLocation* vlocation = game->GetWorld()->GetVLocation(ip);
+
+	struct Computer* computer = nullptr;
+	if (vlocation != 0)
+		computer = vlocation->GetComputer();
+
+	if (screenIndex != -1)
+		game->GetInterface()->GetRemoteInterface()->RunScreen(screenIndex, computer);
+}
+
+void DialogScreenInterface::PasswordBoxDraw(Button* button, bool highlighted, bool clicked)
+{
+	UplinkAssert(button != nullptr);
+
+	int32_t rax_2 = app->GetOptions()->GetOptionValue("graphics_screenheight");
+
+	glScissor(button->X, rax_2 - button->Y - button->Height, button->Width, button->Height);
+	glEnable(GL_SCISSOR_TEST);
+
+	clear_draw(button->X, button->Y, button->Width, button->Height);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.85f);
+
+	const auto textLen = strlen(button->Caption);
+	char* text = new char[textLen + 1];
+	for (size_t i = 0; i < textLen; i++)
+		text[i] = '*';
+
+	text[textLen] = 0;
+	GciDrawText(button->X + 10, button->Y + 10, text, 2);
+	delete[] text;
+
+	if (highlighted || clicked)
+		border_draw(button);
+
+	glDisable(GL_SCISSOR_TEST);
+}
+
+void DialogScreenInterface::ScriptButtonClick(Button* button)
+{
+	UplinkAssert(button != nullptr);
+	char widgetName[0x40];
+	int data1;
+	int data2;
+	char ip[0x18];
+	sscanf(button->Name, "%s %d %d %s", widgetName, &data1, &data2, ip);
+	const auto script = data1;
+	const auto screenIndex = data2;
+
+	if (script != -1)
+		ScriptLibrary::RunScript(script);
+
+	const auto vlocation = game->GetWorld()->GetVLocation(ip);
+
+	Computer* computer = nullptr;
+	if (vlocation != nullptr)
+		computer = vlocation->GetComputer();
+
+	if (screenIndex != -1)
+		game->GetInterface()->GetRemoteInterface()->RunScreen(screenIndex, computer);
+}

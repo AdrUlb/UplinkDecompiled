@@ -171,3 +171,18 @@ void DialogScreenWidget::SetStringData(const char* stringData1, const char* stri
 		strcpy(this->stringData2, stringData2);
 	}
 }
+
+const char* DialogScreenWidget::GetName()
+{
+	return name;
+}
+
+const char* DialogScreenWidget::GetCaption()
+{
+	return caption;
+}
+
+const char* DialogScreenWidget::GetTooltip()
+{
+	return tooltip;
+}

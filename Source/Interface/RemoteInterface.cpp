@@ -1,6 +1,7 @@
 #include <Interface/RemoteInterface.hpp>
 
 #include <Globals.hpp>
+#include <Interface/RemoteScreens/DialogScreenInterface.hpp>
 #include <Interface/RemoteScreens/MenuScreenInterface.hpp>
 #include <Interface/RemoteScreens/MessageScreenInterface.hpp>
 #include <Svb.hpp>
@@ -129,6 +130,9 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 			break;
 		case UplinkObjectId::MenuScreen:
 			screen = new MenuScreenInterface();
+			break;
+		case UplinkObjectId::DialogScreen:
+			screen = new DialogScreenInterface();
 			break;
 		default:
 			UplinkAbort("Unrecognised ComputerScreen %d, computer '%s' (%s)", screenObjId, remoteComputer->name, remoteComputer->ip);

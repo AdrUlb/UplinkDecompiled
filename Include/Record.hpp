@@ -29,4 +29,7 @@ public:
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 	void AddRecord(Record& record);
+	Record* GetRecord(char* search);
+	char* MakeSafeField(const char* name);
+	Record* GetRecordFromName(const char* name);
 };

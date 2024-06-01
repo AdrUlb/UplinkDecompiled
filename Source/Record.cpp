@@ -89,3 +89,29 @@ void RecordBank::AddRecord(Record& record)
 {
 	records.PutData(&record);
 }
+
+char* RecordBank::MakeSafeField(const char* name)
+{
+	const auto len = strlen(name);
+	char* str = new char[len + 1];
+	strcpy(str, name);
+
+	for (size_t i = 0; i < len; i++)
+	{
+		if (str[i] == ';')
+			str[i] = '.';
+	}
+
+	return str;
+}
+
+/*Record* RecordBank::GetRecordFromName(const char* name)
+{
+	char* rax = MakeSafeField(name);
+	char s[0x100];
+	UplinkSnprintf(s, 0x100, "%s = %s", "Name", rax);
+	if (rax != nullptr)
+		delete[] rax;
+
+	return GetRecord(s);
+}*/

@@ -4,6 +4,7 @@
 
 class DialogScreenWidget : UplinkObject
 {
+public:
 	char* name = nullptr;
 	char* caption = nullptr;
 	char* tooltip = nullptr;
@@ -17,7 +18,6 @@ class DialogScreenWidget : UplinkObject
 	int data1 = 0;
 	int data2 = 0;
 
-public:
 	~DialogScreenWidget() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -32,4 +32,7 @@ public:
 	void SetTooltip(const char* value);
 	void SetData(int data1, int data2);
 	void SetStringData(const char* stringData1, const char* stringData2);
+	const char* GetName();
+	const char* GetCaption();
+	const char* GetTooltip();
 };

@@ -91,20 +91,6 @@ static LList<char*>* wordwraptext(const char* text, int width)
 	return ret;
 }
 
-static void clear_draw(int x, int y, int width, int height)
-{
-	SetColour("Background");
-	const auto right = x + width;
-	const auto bottom = y + height;
-
-	glBegin(GL_QUADS);
-	glVertex2i(x, y);
-	glVertex2i(right, y);
-	glVertex2i(right, bottom);
-	glVertex2i(x, bottom);
-	glEnd();
-}
-
 static void text_draw(Button* button, bool highlighted, bool clicked)
 {
 	(void)clicked;
@@ -198,7 +184,13 @@ static void tooltip_update(const char* text)
 		tooltipanimindex = EclRegisterCaptionChange("tooltip", text, tooltip_callback);
 }
 
-static void button_draw(Button* button, bool highlighted, bool clicked)
+static void superhighlight_draw(Button* button)
+{
+	(void)button;
+	UplinkAbort("TODO: implement superhighlight_draw()");
+}
+
+void button_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != 0);
 	auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
@@ -250,10 +242,18 @@ static void button_draw(Button* button, bool highlighted, bool clicked)
 	glDisable(GL_SCISSOR_TEST);
 }
 
-static void superhighlight_draw(Button* button)
+void clear_draw(int x, int y, int width, int height)
 {
-	(void)button;
-	UplinkAbort("TODO: implement superhighlight_draw()");
+	SetColour("Background");
+	const auto right = x + width;
+	const auto bottom = y + height;
+
+	glBegin(GL_QUADS);
+	glVertex2i(x, y);
+	glVertex2i(right, y);
+	glVertex2i(right, bottom);
+	glVertex2i(x, bottom);
+	glEnd();
 }
 
 void button_click(Button* button)
@@ -329,9 +329,8 @@ void imagebutton_draw(Button* button, bool highlighted, bool clicked)
 void textbutton_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != nullptr);
-	auto rax_2 = app->GetOptions()->GetOptionValue("graphics_screenheight");
-	uint64_t height = ((uint64_t)button->Height);
-	glScissor(button->X, ((-(button->Y) - height) + rax_2), ((uint64_t)button->Width), height);
+	auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 	clear_draw(button->X, button->Y, button->Width, button->Height);
 	text_draw(button, highlighted, clicked);

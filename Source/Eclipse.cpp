@@ -231,6 +231,16 @@ void EclHighlightButton(const char* name)
 	strcpy(currenthighlight, name);
 }
 
+void EclMakeButtonEditable(const char* name)
+{
+	if (EclGetButton(name) == nullptr)
+		return;
+
+	char* str = new char[strlen(name) + 1];
+	strcpy(str, name);
+	editablebuttons.PutDataAtEnd(str);
+}
+
 void EclMakeButtonUnEditable(const char* name)
 {
 	for (auto i = 0; i < editablebuttons.Size(); i++)
