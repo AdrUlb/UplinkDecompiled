@@ -59,3 +59,8 @@ void LocalInterfaceScreen::CreateHeight(int value)
 
 	EclRegisterButtonCallbacks("localint_background", BackgroundDraw, 0, 0, nullptr);
 }
+
+int LocalInterfaceScreen::ScreenID()
+{
+	return 0;
+}

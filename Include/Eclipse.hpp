@@ -27,7 +27,6 @@ void EclRemoveButton(const char* name);
 void EclRemoveAnimation(int index);
 Button* EclGetButton(const char* name);
 void EclDirtyRectangle();
-void EclDirtyButton();
 void EclRegisterButtonCallbacks(const char* name, ButtonDrawFunc drawFunc, ButtonMouseUpFunc mouseUpFunc, ButtonMouseDownFunc mouseDownFunc,
 								ButtonMouseMoveFunc mouseMoveFunc);
 void EclClearRectangle(int x, int y, int width, int height);
@@ -41,3 +40,7 @@ void EclRegisterButtonCallback(const char* name, ButtonMouseUpFunc func);
 const char* EclGetButtonAtCoord(int x, int y);
 void EclClickButton(const char* name);
 void EclUnClickButton();
+char const* EclGetHighlightedButton();
+void GciSaveScreenshot(const char* filePath);
+void EclHighlightNextEditableButton();
+void textbutton_keypress(Button* button, char c);

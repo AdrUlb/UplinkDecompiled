@@ -5,6 +5,7 @@
 #include <GL/gl.h>
 #include <Gci.hpp>
 #include <Globals.hpp>
+#include <IRCInterface.hpp>
 #include <RedShirt.hpp>
 #include <ScrollBox.hpp>
 #include <Sg.hpp>
@@ -467,8 +468,6 @@ static void mousemove(int x, int y)
 
 		mouse->X = x + 1;
 		mouse->Y = y + 1;
-
-		EclDirtyRectangle();
 	}
 }
 
@@ -509,14 +508,85 @@ static void passivemouse(int x, int y)
 
 static void keyboard(char keychar)
 {
-	(void)keychar;
-	UplinkAbort("TODO: implement keyboard()");
+	if (app->Closed())
+		return;
+
+	// Return key
+	if (keychar == '\r')
+	{
+		if (!game->IsRunning())
+		{
+			if (app->GetMainMenu()->InScreen() == MainMenuScreenCode::Unknown || !app->GetMainMenu()->GetMenuScreen()->ReturnKeyPressed())
+				goto highlighted;
+
+			return;
+		}
+
+		if (game->GetInterface()->GetLocalInterface()->InScreen() == 0)
+		{
+			if (!game->GetInterface()->GetRemoteInterface()->GetInterfaceScreen()->ReturnKeyPressed())
+				goto highlighted;
+
+			return;
+		}
+
+		if (game->GetInterface()->GetLocalInterface()->GetInterfaceScreen()->ScreenID() == 16)
+		{
+			if (!IRCInterface::ReturnKeyPressed())
+				goto highlighted;
+
+			return;
+		}
+
+		if (!game->GetInterface()->GetRemoteInterface()->GetInterfaceScreen()->ReturnKeyPressed())
+			goto highlighted;
+
+		return;
+	}
+
+	// Escape key
+	if (keychar == 27)
+	{
+		const auto highlightedButtonName = EclGetHighlightedButton();
+		if (EclIsButtonEditable(highlightedButtonName))
+		{
+			textbutton_keypress(EclGetButton(highlightedButtonName), 27);
+			return;
+		}
+
+		if (game->IsRunning())
+			game->GetInterface()->GetRemoteInterface()->GetInterfaceScreen()->EscapeKeyPressed();
+
+		return;
+	}
+
+	// Tab key
+	if (keychar == 9)
+	{
+		EclHighlightNextEditableButton();
+		return;
+	}
+
+	// Grave accent key
+	if (keychar == '`')
+	{
+		char s[0x100];
+		UplinkSnprintf(s, 0x100, "%sscreenshot.bmp", &app->usersPath);
+		GciSaveScreenshot(s);
+		return;
+	}
+
+	// Any other key
+highlighted:
+	const auto highlightedButtonName = EclGetHighlightedButton();
+	if (EclIsButtonEditable(highlightedButtonName))
+		textbutton_keypress(EclGetButton(highlightedButtonName), keychar);
 }
 
 static void specialkeyboard(int keycode)
 {
 	(void)keycode;
-	UplinkAbort("TODO: implement specialkeyboard()");
+	puts("TODO: implement specialkeyboard()");
 }
 
 static void idle()
@@ -676,8 +746,6 @@ void button_assignbitmap(const char* buttonName, const char* imageName)
 
 	button->SetStandardImage(image);
 	button->RegisterDrawFunction(imagebutton_draw);
-
-	EclDirtyButton();
 }
 
 void button_assignbitmaps(const char* buttonName, const char* normalFile, const char* highlightedFile, const char* clickedFile)
@@ -708,6 +776,4 @@ void button_assignbitmaps(const char* buttonName, const char* normalFile, const 
 
 	button->SetImages(imageNormal, imageHighlighted, imageClicked);
 	button->RegisterDrawFunction(imagebutton_draw);
-
-	EclDirtyButton();
 }

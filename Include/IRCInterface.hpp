@@ -11,4 +11,10 @@ namespace IRCInterface
 	{
 		// TODO
 	}
+
+	static bool ReturnKeyPressed()
+	{
+		// TODO
+		return false;
+	}
 } // namespace IRCInterface

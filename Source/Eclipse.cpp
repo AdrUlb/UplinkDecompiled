@@ -168,7 +168,7 @@ bool EclIsClicked(const char* name)
 
 bool EclIsHighlighted(const char* name)
 {
-	if (currenthighlight == 0)
+	if (currenthighlight == nullptr)
 		return false;
 
 	return strcmp(currenthighlight, name) == 0;
@@ -215,6 +215,11 @@ void EclSuperUnHighlight(const char* name)
 		sprintf(buffer, "Ecl_superhighlight %s", name);
 		EclRemoveButton(buffer);
 	}
+}
+
+char const* EclGetHighlightedButton()
+{
+	return currenthighlight;
 }
 
 void EclHighlightButton(const char* name)
@@ -381,16 +386,6 @@ Button* EclGetButton(const char* name)
 		return buttons[rax];
 
 	return nullptr;
-}
-
-void EclDirtyRectangle()
-{
-	// Empty??
-}
-
-void EclDirtyButton()
-{
-	// Empty??
 }
 
 void EclClearRectangle(int x, int y, int width, int height)
@@ -750,4 +745,69 @@ void EclUnClickButton()
 		delete[] currentclick;
 
 	currentclick = nullptr;
+}
+
+void GciSaveScreenshot(const char* filePath)
+{
+	(void)filePath;
+	puts("TODO: implement GciSaveScreenshot()");
+}
+
+void EclHighlightNextEditableButton()
+{
+	if (currenthighlight != nullptr)
+	{
+		for (auto i = 0; i < editablebuttons.Size() - 1; i++)
+		{
+			if (!editablebuttons.ValidIndex(i))
+				continue;
+
+			printf("Checking %s\n", editablebuttons.GetData(i));
+			if (strcmp(editablebuttons.GetData(i), currenthighlight) != 0)
+				continue;
+
+			if (!editablebuttons.ValidIndex(i + 1))
+				continue;
+
+			EclHighlightButton(editablebuttons.GetData(i + 1));
+			return;
+		}
+	}
+
+	if (editablebuttons.ValidIndex(0))
+		EclHighlightButton(editablebuttons.GetData(0));
+}
+
+void textbutton_keypress(Button* button, char c)
+{
+	UplinkAssert(button != nullptr);
+
+	// Backspace
+	if (c == 8)
+	{
+		if (button->Caption[0] != 0)
+			button->Caption[strlen(button->Caption) - 1] = 0;
+
+		return;
+	}
+	// Escape
+
+	if (c == 27)
+	{
+		button->SetCaption("");
+		return;
+	}
+
+	const auto newLen = strlen(button->Caption) + 2;
+	char* newStr = new char[newLen];
+
+	// Enter
+	if (c == '\r')
+		c = '\n';
+
+	if (newLen != 0)
+		UplinkSnprintf(newStr, newLen, "%s%c", button->Caption, c);
+
+	button->SetCaption(newStr);
+	delete[] newStr;
 }

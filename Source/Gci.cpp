@@ -374,8 +374,80 @@ void GciMainLoop()
 			switch (event.type)
 			{
 				case SDL_KEYDOWN:
-					puts("TODO: handle SDL_KEYDOWN");
+				{
+					int x, y;
+					SDL_GetMouseState(&x, &y);
+
+					auto unicode = event.key.keysym.unicode;
+					if ((event.key.keysym.mod & KMOD_NUM) != 0)
+					{
+						if (event.key.keysym.sym >= SDLK_KP0 && event.key.keysym.sym <= SDLK_KP9)
+						{
+							unicode = event.key.keysym.sym - SDLK_KP0 + SDLK_0;
+						}
+						else
+						{
+							switch (event.key.keysym.sym)
+							{
+								case SDLK_KP_PERIOD:
+								{
+									unicode = '.';
+									break;
+								}
+								case SDLK_KP_DIVIDE:
+								{
+									unicode = SDLK_SLASH;
+									break;
+								}
+								case SDLK_KP_MULTIPLY:
+								{
+									unicode = SDLK_ASTERISK;
+									break;
+								}
+								case SDLK_KP_MINUS:
+								{
+									unicode = SDLK_MINUS;
+									break;
+								}
+								case SDLK_KP_PLUS:
+								{
+									unicode = SDLK_PLUS;
+									break;
+								}
+								case SDLK_KP_ENTER:
+								{
+									unicode = SDLK_RETURN;
+									break;
+								}
+								case SDLK_KP_EQUALS:
+								{
+									unicode = SDLK_EQUALS;
+									break;
+								}
+							}
+						}
+					}
+
+					if (unicode == 0)
+					{
+						if (gciSpecialHandlerP == nullptr)
+							break;
+
+						if (event.key.keysym.sym >= SDLK_F1 && event.key.keysym.sym <= SDLK_F12)
+						{
+							gciSpecialHandlerP(event.key.keysym.sym - SDLK_F1 + 1);
+							break;
+						}
+
+						gciSpecialHandlerP(event.key.keysym.sym + 1000);
+						break;
+					}
+
+					if (gciKeyboardHandlerP != nullptr)
+						gciKeyboardHandlerP(unicode);
+
 					break;
+				}
 				case SDL_MOUSEMOTION:
 					if (gciMotionHandlerP != nullptr)
 						gciMotionHandlerP(event.motion.x, event.motion.y);
@@ -424,8 +496,6 @@ void GciMainLoop()
 					finished = true;
 					break;
 				case SDL_VIDEORESIZE:
-					puts("TODO: handle SDL_VIDEORESIZE");
-					break;
 				case SDL_VIDEOEXPOSE:
 					displayDamaged = true;
 					break;

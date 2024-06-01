@@ -12,4 +12,5 @@ public:
 
 	static void BackgroundDraw(Button* button, bool highlighted, bool clicked);
 	void CreateHeight(int value);
+	int ScreenID();
 };
