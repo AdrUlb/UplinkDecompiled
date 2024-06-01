@@ -5,7 +5,6 @@
 
 class MessageScreenInterface : public RemoteInterfaceScreen
 {
-	void Create() override;
 	void Remove() override;
 	bool IsVisible() override;
 	int ScreenID() override;

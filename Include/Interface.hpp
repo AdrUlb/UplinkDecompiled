@@ -1,38 +1,12 @@
 #pragma once
 
-#include <Computer.hpp>
-#include <ComputerScreens/ComputerScreen.hpp>
-#include <ComputerScreens/MessageScreen.hpp>
-#include <Image.hpp>
+#include <Interface.hpp>
 #include <Interface/LocalScreens/LocalInterfaceScreen.hpp>
-#include <Interface/RemoteScreens/RemoteInterfaceScreen.hpp>
+#include <Interface/RemoteInterface.hpp>
 #include <LList.hpp>
 #include <TaskManager.hpp>
-#include <UplinkObject.hpp>
 
 typedef void WorldMapLayout;
-
-class RemoteInterface : UplinkObject
-{
-	RemoteInterfaceScreen* screen = nullptr;
-	int previousScreenIndex = 0;
-	int screenIndex = 0;
-	char securityName[0x80] = " ";
-	int securityLevel = 10;
-
-public:
-	~RemoteInterface() override;
-	bool Load(FILE* file) override;
-	void Save(FILE* file) override;
-	void Print() override;
-	void Update() override;
-	const char* GetID() override;
-	void Create();
-	bool VerifyScreen(int index);
-	bool IsVisible();
-	void RunScreen(int screenIndex, Computer* computer);
-	RemoteInterfaceScreen* GetInterfaceScreen();
-};
 
 class GatewayInterface : LocalInterfaceScreen
 {

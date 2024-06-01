@@ -58,3 +58,32 @@ void MenuScreen::AddOption(const char* caption, const char* tooltip, int nextPag
 
 	options.PutDataAtIndex(option, index);
 }
+
+int MenuScreen::NumOptions()
+{
+	return options.Size();
+}
+
+int MenuScreen::GetNextPage(int index)
+{
+	UplinkAssert(options.ValidIndex(index));
+	return options.GetData(index)->nextPage;
+}
+
+int MenuScreen::GetSecurity(int index)
+{
+	UplinkAssert(options.ValidIndex(index));
+	return options.GetData(index)->security;
+}
+
+const char* MenuScreen::GetTooltip(int index)
+{
+	UplinkAssert(options.ValidIndex(index));
+	return options.GetData(index)->tooltip;
+}
+
+const char* MenuScreen::GetCaption(int index)
+{
+	UplinkAssert(options.ValidIndex(index));
+	return options.GetData(index)->caption;
+}

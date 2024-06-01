@@ -6,17 +6,6 @@
 #include <Opengl.hpp>
 #include <Util.hpp>
 
-void MessageScreenInterface::Create()
-{
-	if (computerScreen == nullptr)
-	{
-		puts("MessageScreenInterface::Create, tried to create when MessageScreen==NULL");
-		return;
-	}
-
-	Create(computerScreen);
-}
-
 void MessageScreenInterface::Remove()
 {
 	if (!IsVisible())

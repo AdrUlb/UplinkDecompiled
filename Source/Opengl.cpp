@@ -250,14 +250,20 @@ static void button_draw(Button* button, bool highlighted, bool clicked)
 	glDisable(GL_SCISSOR_TEST);
 }
 
-static void button_click(Button* button)
+static void superhighlight_draw(Button* button)
+{
+	(void)button;
+	UplinkAbort("TODO: implement superhighlight_draw()");
+}
+
+void button_click(Button* button)
 {
 	UplinkAssert(button != nullptr);
 	EclClickButton(button->Name);
 	SgPlaySound(RsArchiveFileOpen("sounds/mouseclick.wav"), "sounds/mouseclick.wav");
 }
 
-static void button_highlight(Button* button)
+void button_highlight(Button* button)
 {
 	UplinkAssert(button != nullptr);
 
@@ -268,12 +274,6 @@ static void button_highlight(Button* button)
 		return;
 
 	UplinkStrncpy(currentbuttonname, button->Name, 0x200);
-}
-
-static void superhighlight_draw(Button* button)
-{
-	(void)button;
-	UplinkAbort("TODO: implement superhighlight_draw()");
 }
 
 void SetColour(const char* name)

@@ -16,4 +16,9 @@ public:
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 	void AddOption(const char* caption, const char* tooltip, int nextPage, int security, int index);
+	int NumOptions();
+	int GetNextPage(int index);
+	int GetSecurity(int index);
+	const char* GetTooltip(int index);
+	const char* GetCaption(int index);
 };

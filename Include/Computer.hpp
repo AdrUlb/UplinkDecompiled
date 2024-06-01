@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ComputerScreens/ComputerScreen.hpp>
 #include <DArray.hpp>
 #include <Data.hpp>
 #include <Date.hpp>
@@ -8,6 +7,8 @@
 #include <Record.hpp>
 #include <Security.hpp>
 #include <UplinkObject.hpp>
+
+class ComputerScreen;
 
 class Computer : UplinkObject
 {

@@ -4,6 +4,8 @@ void SetColour(const char* name);
 void border_draw(Button* button);
 void imagebutton_draw(Button* button, bool highlighted, bool clicked);
 void textbutton_draw(Button* button, bool highlighted, bool clicked);
+void button_click(Button* button);
+void button_highlight(Button* button);
 void opengl_initialise();
 void opengl_run();
 void button_assignbitmap(const char* buttonName, const char* imageName);

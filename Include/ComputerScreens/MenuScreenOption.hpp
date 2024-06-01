@@ -2,12 +2,12 @@
 
 class MenuScreenOption : UplinkObject
 {
+public:
 	char caption[0x40] = {0};
 	char tooltip[0x80] = {0};
 	int nextPage = -1;
 	int security = 10;
 
-public:
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;

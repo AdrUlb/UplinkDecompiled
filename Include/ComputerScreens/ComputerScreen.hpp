@@ -1,8 +1,7 @@
 #pragma once
 
+#include <Computer.hpp>
 #include <UplinkObject.hpp>
-
-class Computer;
 
 class ComputerScreen : public UplinkObject
 {
