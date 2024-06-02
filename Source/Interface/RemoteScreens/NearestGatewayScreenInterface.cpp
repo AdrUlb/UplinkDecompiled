@@ -74,7 +74,7 @@ void NearestGatewayScreenInterface::Create(ComputerScreen* screen)
 	}
 	EclRegisterButtonCallbacks("nearestgateway_largemap", DrawMainMap, 0, 0, nullptr);
 
-	const auto locations = game->GetWorldMapType() == 1 ? PHYSICALGATEWAYLOCATIONS : PHYSICALGATEWAYLOCATIONS_DEFCON;
+	const auto locations = game->GetWorldMapType() == 1 ? PHYSICALGATEWAYLOCATIONS_DEFCON : PHYSICALGATEWAYLOCATIONS;
 
 	for (auto i = 0; i < 8; i++)
 	{
@@ -142,7 +142,7 @@ void NearestGatewayScreenInterface::DrawLocation(Button* button, bool highlighte
 
 	UplinkAssert(index < 8);
 
-	const auto locations = game->GetWorldMapType() == 1 ? PHYSICALGATEWAYLOCATIONS : PHYSICALGATEWAYLOCATIONS_DEFCON;
+	const auto locations = game->GetWorldMapType() == 1 ? PHYSICALGATEWAYLOCATIONS_DEFCON : PHYSICALGATEWAYLOCATIONS;
 	const auto& location = locations[index];
 	GciDrawText(button->X - 10, button->Y + 20, location.City);
 }
@@ -157,7 +157,7 @@ void NearestGatewayScreenInterface::ClickLocation(Button* button)
 
 	UplinkAssert(index < 8);
 
-	const auto locations = game->GetWorldMapType() == 1 ? PHYSICALGATEWAYLOCATIONS : PHYSICALGATEWAYLOCATIONS_DEFCON;
+	const auto locations = game->GetWorldMapType() == 1 ? PHYSICALGATEWAYLOCATIONS_DEFCON : PHYSICALGATEWAYLOCATIONS;
 	const auto& location = locations[index];
 
 	game->GetWorld()->GetPlayer()->GetLocalHost()->SetPLocation(location.X, location.Y);
