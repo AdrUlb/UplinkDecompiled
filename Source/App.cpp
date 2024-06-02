@@ -41,12 +41,12 @@ void App::Update()
 {
 	UplinkAssert(game != nullptr);
 
-	if (game->GameSpeed() == -1 || (game->IsRunning() && game->GetWorld()->GetPlayer()->gateway.GetNuked()))
+	if (game->GameSpeed() == -1 || (game->IsRunning() && game->GetWorld()->GetPlayer()->GetGateway().GetNuked()))
 	{
 		if (_phoneDialler != nullptr)
 			UnRegisterPhoneDialler(_phoneDialler);
 
-		SaveGame(game->GetWorld()->GetPlayer()->handle);
+		SaveGame(game->GetWorld()->GetPlayer()->GetHandle());
 		UplinkAbort("TODO: implement App::Update()");
 	}
 

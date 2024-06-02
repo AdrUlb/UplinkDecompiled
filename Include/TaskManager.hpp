@@ -4,11 +4,11 @@
 
 class TaskManager : UplinkObject
 {
-	int targetProgramPid = -1;
-	int unknown = 0;
-	int lastTargetProgramPid = -1;
-	UplinkObject* programTarget = nullptr;
-	int lastUpdateTime = 0;
+	int _targetProgramPid = -1;
+	int _unknown = 0;
+	int _lastTargetProgramPid = -1;
+	UplinkObject* _programTarget = nullptr;
+	int _lastUpdateTime = 0;
 
 public:
 	TaskManager();

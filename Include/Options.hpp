@@ -17,24 +17,24 @@ static constexpr size_t OPTIONS_THEMEDESCRIPTION_MAX = 0x400;
 
 struct OptionChange
 {
-	char name[0x40];
-	int value;
+	char Name[0x40];
+	int Value;
 };
 
 struct ColourOption
 {
-	float red;
-	float green;
-	float blue;
+	float Red;
+	float Green;
+	float Blue;
 };
 
 class Option : public UplinkObject
 {
-	char name[OPTION_NAME_MAX];
-	char tooltip[OPTION_TOOLTIP_MAX];
-	bool yesOrNo;
-	bool visible;
-	int value;
+	char _name[OPTION_NAME_MAX];
+	char _tooltip[OPTION_TOOLTIP_MAX];
+	bool _yesOrNo;
+	bool _visible;
+	int _value;
 
 public:
 	Option();
@@ -44,62 +44,62 @@ public:
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 
-	inline void SetName(const char* value)
-	{
-		UplinkStrncpy(name, value, OPTION_NAME_MAX);
-	}
-
-	inline void SetTooltip(const char* value)
-	{
-		UplinkStrncpy(tooltip, value, OPTION_TOOLTIP_MAX);
-	}
-
-	inline void SetValue(int value)
-	{
-		this->value = value;
-	}
-
-	inline void SetVisible(bool visible)
-	{
-		this->visible = visible;
-	}
-
-	inline void SetYesOrNo(bool yesOrNo)
-	{
-		this->yesOrNo = yesOrNo;
-	}
-
 	inline const char* GetName()
 	{
-		return name;
+		return _name;
 	}
 
 	inline int GetValue()
 	{
-		return value;
+		return _value;
 	}
 
 	inline bool GetVisible()
 	{
-		return visible;
+		return _visible;
 	}
 
 	inline bool GetYesOrNo()
 	{
-		return yesOrNo;
+		return _yesOrNo;
+	}
+
+	inline void SetName(const char* name)
+	{
+		UplinkStrncpy(_name, name, OPTION_NAME_MAX);
+	}
+
+	inline void SetTooltip(const char* tooltip)
+	{
+		UplinkStrncpy(_tooltip, tooltip, OPTION_TOOLTIP_MAX);
+	}
+
+	inline void SetValue(int value)
+	{
+		this->_value = value;
+	}
+
+	inline void SetVisible(bool visible)
+	{
+		this->_visible = visible;
+	}
+
+	inline void SetYesOrNo(bool yesOrNo)
+	{
+		this->_yesOrNo = yesOrNo;
 	}
 };
 
 class Options : UplinkObject
 {
 
-	BTree<Option*> options;
-	LList<OptionChange*> optionChanges;
-	char themeName[OPTIONS_THEMENAME_MAX];
-	char themeAuthor[OPTIONS_THEMEAUTHOR_MAX];
-	char themeTitle[OPTIONS_THEMETITLE_MAX];
-	char themeDescription[OPTIONS_THEMEDESCRIPTION_MAX];
-	BTree<ColourOption*> colourOptions;
+	BTree<Option*> _options;
+	LList<OptionChange*> _optionChanges;
+	char _themeName[OPTIONS_THEMENAME_MAX];
+	char _themeAuthor[OPTIONS_THEMEAUTHOR_MAX];
+	char _themeTitle[OPTIONS_THEMETITLE_MAX];
+	char _themeDescription[OPTIONS_THEMEDESCRIPTION_MAX];
+	BTree<ColourOption*> _colourOptions;
 
 public:
 	Options();

@@ -9,11 +9,11 @@
 
 World::World()
 {
-	currentDate.SetDate(0, 0, 0, 24, 2, 2010);
-	currentDate.Activate();
+	_currentDate.SetDate(0, 0, 0, 24, 2, 2010);
+	_currentDate.Activate();
 	WorldGenerator::Initialise();
 	MissionGenerator::Initialise();
-	passwords.SetStepSize(100);
+	_passwords.SetStepSize(100);
 
 	const auto wordlist = RsArchiveFileOpen("data/wordlist.txt", "rt");
 	UplinkAssert(wordlist != nullptr);
@@ -68,18 +68,18 @@ World::~World()
 	NameGenerator::Shutdown();
 	MissionGenerator::Shutdown();
 
-	DeleteBTreeData(&vlocations);
-	DeleteBTreeData(&companies);
-	DeleteBTreeData(&computers);
-	DeleteBTreeData(&people);
-	DeleteDArrayDataD(&passwords);
+	DeleteBTreeData(&_vlocations);
+	DeleteBTreeData(&_companies);
+	DeleteBTreeData(&_computers);
+	DeleteBTreeData(&_people);
+	DeleteDArrayDataD(&_passwords);
 
-	for (auto i = 0; i < gatewayDefs.Size(); i++)
+	for (auto i = 0; i < _gatewayDefs.Size(); i++)
 	{
-		if (!gatewayDefs.ValidIndex(i))
+		if (!_gatewayDefs.ValidIndex(i))
 			continue;
 
-		const auto gatewayDef = gatewayDefs.GetData(i);
+		const auto gatewayDef = _gatewayDefs.GetData(i);
 
 		if (gatewayDef != nullptr)
 			delete gatewayDef;
@@ -88,28 +88,28 @@ World::~World()
 
 bool World::Load(FILE* file)
 {
-	if (!currentDate.Load(file))
+	if (!_currentDate.Load(file))
 		return false;
 
-	if (!eventScheduler.Load(file))
+	if (!_eventScheduler.Load(file))
 		return false;
 
-	if (!plotGenerator.Load(file))
+	if (!_plotGenerator.Load(file))
 		return false;
 
-	if (!demoPlotGenerator.Load(file))
+	if (!_demoPlotGenerator.Load(file))
 		return false;
 
-	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&vlocations), file))
+	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_vlocations), file))
 		return false;
 
-	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&companies), file))
+	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_companies), file))
 		return false;
 
-	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&computers), file))
+	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_computers), file))
 		return false;
 
-	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&people), file))
+	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_people), file))
 		return false;
 
 	WorldGenerator::ReplaceInvalidCompanyAdmins();
@@ -120,42 +120,42 @@ bool World::Load(FILE* file)
 
 void World::Save(FILE* file)
 {
-	currentDate.Save(file);
-	eventScheduler.Save(file);
-	plotGenerator.Save(file);
-	demoPlotGenerator.Save(file);
-	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&vlocations), file);
-	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&companies), file);
-	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&computers), file);
-	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&people), file);
+	_currentDate.Save(file);
+	_eventScheduler.Save(file);
+	_plotGenerator.Save(file);
+	_demoPlotGenerator.Save(file);
+	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_vlocations), file);
+	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_companies), file);
+	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_computers), file);
+	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_people), file);
 }
 
 void World::Print()
 {
 	puts("============== W O R L D ===================================");
-	currentDate.Print();
-	eventScheduler.Print();
-	plotGenerator.Print();
-	demoPlotGenerator.Print();
-	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&vlocations));
-	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&companies));
-	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&computers));
-	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&people));
+	_currentDate.Print();
+	_eventScheduler.Print();
+	_plotGenerator.Print();
+	_demoPlotGenerator.Print();
+	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_vlocations));
+	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_companies));
+	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_computers));
+	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_people));
 	puts("============== E N D  O F  W O R L D =======================");
 }
 
 void World::Update()
 {
-	currentDate.Update();
-	if (currentDate.After(&nextUpdateDate) != 0)
+	_currentDate.Update();
+	if (_currentDate.After(&_nextUpdateDate) != 0)
 	{
-		UpdateBTree(reinterpret_cast<BTree<UplinkObject*>*>(&vlocations));
-		UpdateBTree(reinterpret_cast<BTree<UplinkObject*>*>(&companies));
-		UpdateBTree(reinterpret_cast<BTree<UplinkObject*>*>(&computers));
-		UpdateBTree(reinterpret_cast<BTree<UplinkObject*>*>(&people));
-		eventScheduler.Update();
-		nextUpdateDate.SetDate(&currentDate);
-		nextUpdateDate.AdvanceSecond(2);
+		UpdateBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_vlocations));
+		UpdateBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_companies));
+		UpdateBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_computers));
+		UpdateBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_people));
+		_eventScheduler.Update();
+		_nextUpdateDate.SetDate(&_currentDate);
+		_nextUpdateDate.AdvanceSecond(2);
 	}
 }
 
@@ -166,20 +166,60 @@ const char* World::GetID()
 
 void World::ForceNextUpdate()
 {
-	nextUpdateDate.SetDate(&currentDate);
-	nextUpdateDate.AdvanceSecond(-1);
+	_nextUpdateDate.SetDate(&_currentDate);
+	_nextUpdateDate.AdvanceSecond(-1);
+}
+
+Date& World::GetCurrentDate()
+{
+	return _currentDate;
+}
+
+EventScheduler& World::GetEventScheduler()
+{
+	return _eventScheduler;
+}
+
+PlotGenerator& World::GetPlotGenerator()
+{
+	return _plotGenerator;
+}
+
+BTree<VLocation*>& World::GetVLocations()
+{
+	return _vlocations;
+}
+
+BTree<Company*>& World::GetCompanies()
+{
+	return _companies;
+}
+
+BTree<Computer*>& World::GetComputers()
+{
+	return _computers;
+}
+
+DArray<char*>& World::GetPasswords()
+{
+	return _passwords;
+}
+
+DArray<GatewayDef*>& World::GetGatewayDefs()
+{
+	return _gatewayDefs;
 }
 
 Player* World::GetPlayer()
 {
-	const auto ret = people.LookupTree("PLAYER");
+	const auto ret = _people.LookupTree("PLAYER");
 	UplinkAssert(ret != nullptr);
 	return dynamic_cast<Player*>(ret->Data);
 }
 
 VLocation* World::GetVLocation(const char* ip)
 {
-	const auto tree = vlocations.LookupTree(ip);
+	const auto tree = _vlocations.LookupTree(ip);
 
 	if (tree == nullptr)
 		return nullptr;
@@ -189,7 +229,7 @@ VLocation* World::GetVLocation(const char* ip)
 
 Computer* World::GetComputer(const char* name)
 {
-	const auto tree = computers.LookupTree(name);
+	const auto tree = _computers.LookupTree(name);
 
 	if (tree == nullptr)
 		return nullptr;
@@ -199,7 +239,7 @@ Computer* World::GetComputer(const char* name)
 
 Company* World::GetCompany(const char* name)
 {
-	struct BTree<Company*>* tree = companies.LookupTree(name);
+	struct BTree<Company*>* tree = _companies.LookupTree(name);
 	if (tree == nullptr)
 		return nullptr;
 	return tree->Data;
@@ -207,10 +247,10 @@ Company* World::GetCompany(const char* name)
 
 Person* World::GetPerson(const char* name)
 {
-	if (people.LookupTree("PLAYER") != nullptr && strcmp(name, GetPlayer()->handle) == 0)
+	if (_people.LookupTree("PLAYER") != nullptr && strcmp(name, GetPlayer()->GetHandle()) == 0)
 		return GetPlayer();
 
-	const auto tree = people.LookupTree(name);
+	const auto tree = _people.LookupTree(name);
 
 	if (tree == nullptr)
 		return nullptr;
@@ -221,7 +261,7 @@ Person* World::GetPerson(const char* name)
 Person* World::CreatePerson(const char* name, const char* host)
 {
 	const auto person = new Person();
-	people.PutData(name, person);
+	_people.PutData(name, person);
 	person->SetName(name);
 	person->SetLocalHost(host);
 	person->SetRemoteHost(host);
@@ -231,13 +271,13 @@ Person* World::CreatePerson(const char* name, const char* host)
 void World::CreatePerson(Person* person)
 {
 	UplinkAssert(person != 0);
-	people.PutData(person->name, person);
+	_people.PutData(person->GetName(), person);
 }
 
 Company* World::CreateCompany(const char* name)
 {
 	const auto company = new Company();
-	companies.PutData(name, company);
+	_companies.PutData(name, company);
 	company->SetName(name);
 	return company;
 }
@@ -245,14 +285,14 @@ Company* World::CreateCompany(const char* name)
 void World::CreateCompany(Company* company)
 {
 	UplinkAssert(company != nullptr);
-	companies.PutData(company->GetName(), company);
+	_companies.PutData(company->GetName(), company);
 }
 
 VLocation* World::CreateVLocation(const char* ip, int x, int y)
 {
 	const auto vlocation = new VLocation();
-	vlocations.PutData(ip, vlocation);
-	vlocation->SetIP(ip);
+	_vlocations.PutData(ip, vlocation);
+	vlocation->SetIp(ip);
 	vlocation->SetPLocation(x, y);
 	return vlocation;
 }
@@ -260,13 +300,13 @@ VLocation* World::CreateVLocation(const char* ip, int x, int y)
 void World::CreateVLocation(VLocation* vlocation)
 {
 	UplinkAssert(vlocation != nullptr);
-	vlocations.PutData(vlocation->ip, vlocation);
+	_vlocations.PutData(vlocation->GetIp(), vlocation);
 }
 
 Computer* World::CreateComputer(const char* computerName, const char* companyName, const char* ip)
 {
 	const auto computer = new Computer();
-	computers.PutData(computerName, computer);
+	_computers.PutData(computerName, computer);
 	computer->SetName(computerName);
 	computer->SetCompanyName(companyName);
 	computer->SetIP(ip);
@@ -281,7 +321,7 @@ Computer* World::CreateComputer(const char* computerName, const char* companyNam
 void World::CreateComputer(Computer* computer)
 {
 	UplinkAssert(computer != nullptr);
-	computers.PutData(computer->GetName(), computer);
+	_computers.PutData(computer->GetName(), computer);
 
 	const auto vlocation = GetVLocation(computer->GetIp());
 	UplinkAssert(vlocation != nullptr);
@@ -292,7 +332,7 @@ void World::CreatePassword(const char* password)
 {
 	char* str = new char[strlen(password) + 1];
 	strcpy(str, password);
-	passwords.PutData(str);
+	_passwords.PutData(str);
 }
 
 void World::CreateGatewayDef(GatewayDef* gatewayDef)
@@ -300,6 +340,6 @@ void World::CreateGatewayDef(GatewayDef* gatewayDef)
 	if (!gatewayDef->VerifyCorrectness())
 		return;
 
-	gatewayDefs.PutData(gatewayDef);
-	gatewayDefs.Sort(GatewayDef::GatewayDefComparator);
+	_gatewayDefs.PutData(gatewayDef);
+	_gatewayDefs.Sort(GatewayDef::GatewayDefComparator);
 }

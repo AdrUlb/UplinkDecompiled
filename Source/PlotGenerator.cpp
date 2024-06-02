@@ -6,18 +6,18 @@
 
 bool DemoPlotGenerator::Load(FILE* file)
 {
-	return FileReadData(&scene, 4, 1, file);
+	return FileReadData(&_scene, 4, 1, file);
 }
 
 void DemoPlotGenerator::Save(FILE* file)
 {
-	fwrite(&scene, 4, 1, file);
+	fwrite(&_scene, 4, 1, file);
 }
 
 void DemoPlotGenerator::Print()
 {
 	puts("Demo Plot Generator");
-	printf("Scene %d\n", scene);
+	printf("Scene %d\n", _scene);
 }
 
 void DemoPlotGenerator::Update()
@@ -32,145 +32,145 @@ const char* DemoPlotGenerator::GetID()
 
 PlotGenerator::PlotGenerator()
 {
-	act = 0;
-	scene = 0;
-	strncpy(act1Scene3Agent, " ", 0x80);
-	strncpy(act1Scene4Agent, " ", 0x80);
-	strncpy(act2Scene1Agent, " ", 0x80);
-	playerLoyalty = 0;
-	completedTracer = false;
-	completedDarwin = false;
-	completedSaveItForTheJury = false;
-	completedShinyHammer = false;
-	completedArcInfiltration = false;
-	completedTakeMeToYourLeader = false;
-	strncpy(saveItForTheJuryGuyToBeFramed, "None", 0x80);
-	strcpy(saveItForTheJuryTargetBankIp, "None");
-	strcpy(tracerLastKnownIp, "None ");
-	numUsesRevelation = 0;
-	versionRevelation = 0.0f;
-	versionFaith = 0.0f;
-	revelationReleaseUncontrolled = false;
-	revelationReleaseFailed = false;
-	revelationArcBusted = false;
-	specialMissionsCompleted = 0;
+	_act = 0;
+	_scene = 0;
+	strncpy(_act1Scene3Agent, " ", 0x80);
+	strncpy(_act1Scene4Agent, " ", 0x80);
+	strncpy(_act2Scene1Agent, " ", 0x80);
+	_playerLoyalty = 0;
+	_completedTracer = false;
+	_completedDarwin = false;
+	_completedSaveItForTheJury = false;
+	_completedShinyHammer = false;
+	_completedArcInfiltration = false;
+	_completedTakeMeToYourLeader = false;
+	strncpy(_saveItForTheJuryGuyToBeFramed, "None", 0x80);
+	strcpy(_saveItForTheJuryTargetBankIp, "None");
+	strcpy(_tracerLastKnownIp, "None ");
+	_numUsesRevelation = 0;
+	_versionRevelation = 0.0f;
+	_versionFaith = 0.0f;
+	_revelationReleaseUncontrolled = false;
+	_revelationReleaseFailed = false;
+	_revelationArcBusted = false;
+	_specialMissionsCompleted = 0;
 }
 
 bool PlotGenerator::Load(FILE* file)
 {
-	if (!FileReadData(&act, 4, 1, file))
+	if (!FileReadData(&_act, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&scene, 4, 1, file))
+	if (!FileReadData(&_scene, 4, 1, file))
 		return false;
 
 	if (strcmp(game->GetLoadedSavefileVer(), "SAV59") < 0)
 	{
-		auto success = FileReadData(act1Scene3Agent, 0x80, 1, file);
-		act1Scene3Agent[0x7F] = 0;
+		auto success = FileReadData(_act1Scene3Agent, 0x80, 1, file);
+		_act1Scene3Agent[0x7F] = 0;
 		if (!success)
 			return false;
 
-		success = FileReadData(act1Scene4Agent, 0x80, 1, file);
-		act1Scene4Agent[0x7F] = 0;
+		success = FileReadData(_act1Scene4Agent, 0x80, 1, file);
+		_act1Scene4Agent[0x7F] = 0;
 		if (!success)
 			return false;
 
-		success = FileReadData(act2Scene1Agent, 0x80, 1, file);
-		act2Scene1Agent[0x7F] = 0;
+		success = FileReadData(_act2Scene1Agent, 0x80, 1, file);
+		_act2Scene1Agent[0x7F] = 0;
 		if (!success)
 			return false;
 	}
 	else
 	{
-		if (!LoadDynamicStringBuf(act1Scene3Agent, 0x80, file))
+		if (!LoadDynamicStringBuf(_act1Scene3Agent, 0x80, file))
 			return false;
 
-		if (!LoadDynamicStringBuf(act1Scene4Agent, 0x80, file))
+		if (!LoadDynamicStringBuf(_act1Scene4Agent, 0x80, file))
 			return false;
 
-		if (!LoadDynamicStringBuf(act2Scene1Agent, 0x80, file))
+		if (!LoadDynamicStringBuf(_act2Scene1Agent, 0x80, file))
 			return false;
 	}
 
-	if (!FileReadData(&playerVisitsPlotSites, 1, 1, file))
+	if (!FileReadData(&_playerVisitsPlotSites, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&playerCancelsMail, 1, 1, file))
+	if (!FileReadData(&_playerCancelsMail, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&playerLoyalty, 4, 1, file))
+	if (!FileReadData(&_playerLoyalty, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&completedTracer, 1, 1, file))
+	if (!FileReadData(&_completedTracer, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&completedTakeMeToYourLeader, 1, 1, file))
+	if (!FileReadData(&_completedTakeMeToYourLeader, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&completedArcInfiltration, 1, 1, file))
+	if (!FileReadData(&_completedArcInfiltration, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&completedDarwin, 1, 1, file))
+	if (!FileReadData(&_completedDarwin, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&completedSaveItForTheJury, 1, 1, file))
+	if (!FileReadData(&_completedSaveItForTheJury, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&completedShinyHammer, 1, 1, file))
+	if (!FileReadData(&_completedShinyHammer, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&specialMissionsCompleted, 4, 1, file))
+	if (!FileReadData(&_specialMissionsCompleted, 4, 1, file))
 		return false;
 
 	if (strcmp(game->GetLoadedSavefileVer(), "SAV59") < 0)
 	{
-		auto success = FileReadData(saveItForTheJuryGuyToBeFramed, 0x80, 1, file);
-		saveItForTheJuryGuyToBeFramed[0x7f] = 0;
+		auto success = FileReadData(_saveItForTheJuryGuyToBeFramed, 0x80, 1, file);
+		_saveItForTheJuryGuyToBeFramed[0x7f] = 0;
 		if (!success)
 			return false;
 
-		success = FileReadData(saveItForTheJuryTargetBankIp, 0x18, 1, file);
-		this->saveItForTheJuryTargetBankIp[0x17] = 0;
+		success = FileReadData(_saveItForTheJuryTargetBankIp, 0x18, 1, file);
+		this->_saveItForTheJuryTargetBankIp[0x17] = 0;
 		if (!success)
 			return false;
 
-		success = FileReadData(tracerLastKnownIp, 0x18, 1, file);
-		this->tracerLastKnownIp[0x17] = 0;
+		success = FileReadData(_tracerLastKnownIp, 0x18, 1, file);
+		this->_tracerLastKnownIp[0x17] = 0;
 		if (!success)
 			return false;
 	}
 	else
 	{
-		if (!LoadDynamicStringBuf(saveItForTheJuryGuyToBeFramed, 0x80, file))
+		if (!LoadDynamicStringBuf(_saveItForTheJuryGuyToBeFramed, 0x80, file))
 			return false;
 
-		if (!LoadDynamicStringBuf(saveItForTheJuryTargetBankIp, 0x18, file))
+		if (!LoadDynamicStringBuf(_saveItForTheJuryTargetBankIp, 0x18, file))
 			return false;
 
-		if (!LoadDynamicStringBuf(tracerLastKnownIp, 0x18, file))
+		if (!LoadDynamicStringBuf(_tracerLastKnownIp, 0x18, file))
 			return false;
 	}
 
-	if (!FileReadData(&numUsesRevelation, 4, 1, file))
+	if (!FileReadData(&_numUsesRevelation, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&revelationReleaseUncontrolled, 1, 1, file))
+	if (!FileReadData(&_revelationReleaseUncontrolled, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&revelationReleaseFailed, 1, 1, file))
+	if (!FileReadData(&_revelationReleaseFailed, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&revelationArcBusted, 1, 1, file))
+	if (!FileReadData(&_revelationArcBusted, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&versionRevelation, 4, 1, file))
+	if (!FileReadData(&_versionRevelation, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&versionFaith, 4, 1, file))
+	if (!FileReadData(&_versionFaith, 4, 1, file))
 		return false;
 
-	if (!LoadLList(&revelationInfected, file))
+	if (!LoadLList(&_revelationInfected, file))
 		return false;
 
 	return true;
@@ -178,61 +178,61 @@ bool PlotGenerator::Load(FILE* file)
 
 void PlotGenerator::Save(FILE* file)
 {
-	fwrite(&act, 4, 1, file);
-	fwrite(&scene, 4, 1, file);
-	SaveDynamicString(act1Scene3Agent, 0x80, file);
-	SaveDynamicString(act1Scene4Agent, 0x80, file);
-	SaveDynamicString(act2Scene1Agent, 0x80, file);
-	fwrite(&playerVisitsPlotSites, 1, 1, file);
-	fwrite(&playerCancelsMail, 1, 1, file);
-	fwrite(&playerLoyalty, 4, 1, file);
-	fwrite(&completedTracer, 1, 1, file);
-	fwrite(&completedTakeMeToYourLeader, 1, 1, file);
-	fwrite(&completedArcInfiltration, 1, 1, file);
-	fwrite(&completedDarwin, 1, 1, file);
-	fwrite(&completedSaveItForTheJury, 1, 1, file);
-	fwrite(&completedShinyHammer, 1, 1, file);
-	fwrite(&specialMissionsCompleted, 4, 1, file);
-	SaveDynamicString(saveItForTheJuryGuyToBeFramed, 0x80, file);
-	SaveDynamicString(saveItForTheJuryTargetBankIp, 0x18, file);
-	SaveDynamicString(tracerLastKnownIp, 0x18, file);
-	fwrite(&numUsesRevelation, 4, 1, file);
-	fwrite(&revelationReleaseUncontrolled, 1, 1, file);
-	fwrite(&revelationReleaseFailed, 1, 1, file);
-	fwrite(&revelationArcBusted, 1, 1, file);
-	fwrite(&versionRevelation, 4, 1, file);
-	fwrite(&versionFaith, 4, 1, file);
-	SaveLList(&revelationInfected, file);
+	fwrite(&_act, 4, 1, file);
+	fwrite(&_scene, 4, 1, file);
+	SaveDynamicString(_act1Scene3Agent, 0x80, file);
+	SaveDynamicString(_act1Scene4Agent, 0x80, file);
+	SaveDynamicString(_act2Scene1Agent, 0x80, file);
+	fwrite(&_playerVisitsPlotSites, 1, 1, file);
+	fwrite(&_playerCancelsMail, 1, 1, file);
+	fwrite(&_playerLoyalty, 4, 1, file);
+	fwrite(&_completedTracer, 1, 1, file);
+	fwrite(&_completedTakeMeToYourLeader, 1, 1, file);
+	fwrite(&_completedArcInfiltration, 1, 1, file);
+	fwrite(&_completedDarwin, 1, 1, file);
+	fwrite(&_completedSaveItForTheJury, 1, 1, file);
+	fwrite(&_completedShinyHammer, 1, 1, file);
+	fwrite(&_specialMissionsCompleted, 4, 1, file);
+	SaveDynamicString(_saveItForTheJuryGuyToBeFramed, 0x80, file);
+	SaveDynamicString(_saveItForTheJuryTargetBankIp, 0x18, file);
+	SaveDynamicString(_tracerLastKnownIp, 0x18, file);
+	fwrite(&_numUsesRevelation, 4, 1, file);
+	fwrite(&_revelationReleaseUncontrolled, 1, 1, file);
+	fwrite(&_revelationReleaseFailed, 1, 1, file);
+	fwrite(&_revelationArcBusted, 1, 1, file);
+	fwrite(&_versionRevelation, 4, 1, file);
+	fwrite(&_versionFaith, 4, 1, file);
+	SaveLList(&_revelationInfected, file);
 }
 
 void PlotGenerator::Print()
 {
 	puts("Plot Generator");
-	printf("Act=%d, Scene=%d\n", act, scene);
-	printf("Act1Scene3Agent = %s\n", act1Scene3Agent);
-	printf("Act1Scene4Agent = %s\n", act1Scene4Agent);
-	printf("Act2Scene1Agent = %s\n", act2Scene1Agent);
-	printf("PlayerVisitsPlotSites = %d\n", playerVisitsPlotSites);
-	printf("PlayerCancelsMail = %d\n", playerCancelsMail);
-	printf("PlayerLoyalty = %d\n", playerLoyalty);
-	printf("NumUses_Revelation = %d\n", numUsesRevelation);
-	printf("Version Revelation = %f\n", versionRevelation);
-	printf("Version Faith = %f\n", versionFaith);
-	printf("Completed Tracer : %d\n", completedTracer);
-	printf("Completed TakeMeToYourLeader : %d\n", completedTakeMeToYourLeader);
-	printf("Completed ARC Infiltration : %d\n", completedArcInfiltration);
-	printf("Completed Darwin : %d\n", completedDarwin);
-	printf("Completed SaveItForTheJury : %d\n", completedSaveItForTheJury);
-	printf("Completed ShinyHammer : %d\n", completedShinyHammer);
-	printf("specialmissionscompleted : %d\n", specialMissionsCompleted);
-	printf("saveitforthejury_targetbankip : %s\n", saveItForTheJuryTargetBankIp);
-	printf("saveitforthejury_guytobeframed : %s\n", saveItForTheJuryGuyToBeFramed);
-	printf("tracer_lastknownip : %s\n", tracerLastKnownIp);
-	printf("revelation_releaseuncontrolled : %d\n", revelationReleaseUncontrolled);
-	printf("revelation_releasefailed : %d\n", revelationReleaseFailed);
-	printf("revelation_arcbusted : %d\n", revelationArcBusted);
+	printf("Act=%d, Scene=%d\n", _act, _scene);
+	printf("Act1Scene3Agent = %s\n", _act1Scene3Agent);
+	printf("Act1Scene4Agent = %s\n", _act1Scene4Agent);
+	printf("Act2Scene1Agent = %s\n", _act2Scene1Agent);
+	printf("PlayerVisitsPlotSites = %d\n", _playerVisitsPlotSites);
+	printf("PlayerCancelsMail = %d\n", _playerCancelsMail);
+	printf("PlayerLoyalty = %d\n", _playerLoyalty);
+	printf("NumUses_Revelation = %d\n", _numUsesRevelation);
+	printf("Version Revelation = %f\n", _versionRevelation);
+	printf("Version Faith = %f\n", _versionFaith);
+	printf("Completed Tracer : %d\n", _completedTracer);
+	printf("Completed TakeMeToYourLeader : %d\n", _completedTakeMeToYourLeader);
+	printf("Completed ARC Infiltration : %d\n", _completedArcInfiltration);
+	printf("Completed Darwin : %d\n", _completedDarwin);
+	printf("Completed SaveItForTheJury : %d\n", _completedSaveItForTheJury);
+	printf("Completed ShinyHammer : %d\n", _completedShinyHammer);
+	printf("specialmissionscompleted : %d\n", _specialMissionsCompleted);
+	printf("saveitforthejury_targetbankip : %s\n", _saveItForTheJuryTargetBankIp);
+	printf("saveitforthejury_guytobeframed : %s\n", _saveItForTheJuryGuyToBeFramed);
+	printf("tracer_lastknownip : %s\n", _tracerLastKnownIp);
+	printf("revelation_releaseuncontrolled : %d\n", _revelationReleaseUncontrolled);
+	printf("revelation_releasefailed : %d\n", _revelationReleaseFailed);
+	printf("revelation_arcbusted : %d\n", _revelationArcBusted);
 	puts("Infected IP addresses:");
-	PrintLList(&revelationInfected);
+	PrintLList(&_revelationInfected);
 }
 
 const char* PlotGenerator::GetID()

@@ -80,7 +80,7 @@ void Game::Update()
 	if (time(nullptr) > _lastAutosaveTime + 60)
 	{
 		const auto player = GetWorld()->GetPlayer();
-		app->SaveGame(player->handle);
+		app->SaveGame(player->GetHandle());
 		_lastAutosaveTime = time(nullptr);
 	}
 }
@@ -152,7 +152,7 @@ void Game::NewGame()
 	WorldGenerator::LoadDynamicsGatewayDefs();
 	NotificationEvent::ScheduleStartingEvents();
 	WorldGenerator::GenerateAll();
-	_world->plotGenerator.Initialise();
+	_world->GetPlotGenerator().Initialise();
 	SgPlaySound(RsArchiveFileOpen("sounds/ringout.wav"), "sounds/ringout.wav");
 
 	_view = new View();
@@ -165,12 +165,12 @@ void Game::NewGame()
 	Date date;
 	date.SetDate(0, 0, 0, 24, 3, 2010);
 
-	for (bool keepGen = true; keepGen; keepGen = Game::GetWorld()->currentDate.Before(&date))
+	for (bool keepGen = true; keepGen; keepGen = Game::GetWorld()->GetCurrentDate().Before(&date))
 	{
 		GetWorld()->Update();
-		GetWorld()->currentDate.AdvanceDay(1);
-		GetWorld()->currentDate.AdvanceHour(NumberGenerator::RandomNumber(12) - 6);
-		GetWorld()->currentDate.AdvanceMinute(NumberGenerator::RandomNumber(60));
+		GetWorld()->GetCurrentDate().AdvanceDay(1);
+		GetWorld()->GetCurrentDate().AdvanceHour(NumberGenerator::RandomNumber(12) - 6);
+		GetWorld()->GetCurrentDate().AdvanceMinute(NumberGenerator::RandomNumber(60));
 
 		if (NumberGenerator::RandomNumber(5) == 0)
 			WorldGenerator::GenerateSimpleStartingMissionA();

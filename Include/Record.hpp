@@ -5,7 +5,7 @@
 
 class Record : UplinkObject
 {
-	BTree<char*> fields;
+	BTree<char*> _fields;
 
 public:
 	~Record() override;
@@ -19,7 +19,7 @@ public:
 
 class RecordBank : UplinkObject
 {
-	LList<Record*> records;
+	LList<Record*> _records;
 
 public:
 	~RecordBank() override;

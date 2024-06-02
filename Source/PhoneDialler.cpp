@@ -9,20 +9,20 @@
 
 PhoneDialler::PhoneDialler()
 {
-	ip = nullptr;
-	info = nullptr;
-	nextScene = PhoneDiallerNextScene::Unknown;
-	lastUpdateTime = 0;
-	ipIndex = -1;
+	_ip = nullptr;
+	_info = nullptr;
+	_nextScene = PhoneDiallerNextScene::Unknown;
+	_lastUpdateTime = 0;
+	_ipIndex = -1;
 }
 
 PhoneDialler::~PhoneDialler()
 {
-	if (ip != nullptr)
-		delete[] ip;
+	if (_ip != nullptr)
+		delete[] _ip;
 
-	if (info != nullptr)
-		delete[] info;
+	if (_info != nullptr)
+		delete[] _info;
 }
 
 void PhoneDialler::Remove()
@@ -41,7 +41,7 @@ void PhoneDialler::Remove()
 		EclRemoveButton("nine");
 		EclRemoveButton("dialler_number");
 	}
-	ipIndex = -1;
+	_ipIndex = -1;
 }
 
 bool PhoneDialler::IsVisible()
@@ -51,17 +51,17 @@ bool PhoneDialler::IsVisible()
 
 bool PhoneDialler::UpdateSpecial()
 {
-	if (EclGetAccurateTime() - lastUpdateTime > 109)
+	if (EclGetAccurateTime() - _lastUpdateTime > 109)
 		UpdateDisplay();
 
-	return ipIndex == -1;
+	return _ipIndex == -1;
 }
 
 void PhoneDialler::UpdateDisplay()
 {
-	if (ipIndex == -1)
+	if (_ipIndex == -1)
 	{
-		lastUpdateTime = EclGetAccurateTime();
+		_lastUpdateTime = EclGetAccurateTime();
 		return;
 	}
 
@@ -69,15 +69,15 @@ void PhoneDialler::UpdateDisplay()
 
 	if (dialerNumberButton == nullptr)
 	{
-		ipIndex = -1;
-		lastUpdateTime = EclGetAccurateTime();
+		_ipIndex = -1;
+		_lastUpdateTime = EclGetAccurateTime();
 		return;
 	}
 
 	// Dialler animation done, run next scene
-	if (ipIndex >= 0 && static_cast<unsigned>(ipIndex) >= strlen(ip))
+	if (_ipIndex >= 0 && static_cast<unsigned>(_ipIndex) >= strlen(_ip))
 	{
-		switch (nextScene)
+		switch (_nextScene)
 		{
 			case PhoneDiallerNextScene::Script92:
 				ScriptLibrary::RunScript(92);
@@ -97,28 +97,28 @@ void PhoneDialler::UpdateDisplay()
 			default:
 			{
 				char s[0x40];
-				UplinkSnprintf(s, 0x40, "Unrecognised nextScene=%d", nextScene);
+				UplinkSnprintf(s, 0x40, "Unrecognised nextScene=%d", _nextScene);
 				UplinkAbort(s);
 			}
 		}
-		ipIndex = -1;
+		_ipIndex = -1;
 		return;
 	}
 
 	char c;
 	do
 	{
-		c = ip[ipIndex++];
-	} while (ipIndex >= 0 && static_cast<unsigned>(ipIndex) < strlen(ip) && (c < '1' || c > '9'));
+		c = _ip[_ipIndex++];
+	} while (_ipIndex >= 0 && static_cast<unsigned>(_ipIndex) < strlen(_ip) && (c < '1' || c > '9'));
 
 	if (c >= '1' && c <= '9')
 	{
-		EclHighlightButton(buttonNames[c - '1']);
+		EclHighlightButton(_buttonNames[c - '1']);
 
 		char s[0x40];
-		UplinkStrncpy(s, ip, 0x40);
+		UplinkStrncpy(s, _ip, 0x40);
 
-		s[ipIndex] = 0;
+		s[_ipIndex] = 0;
 		dialerNumberButton->SetCaption(s);
 
 		char soundFileName[0x100];
@@ -126,33 +126,33 @@ void PhoneDialler::UpdateDisplay()
 		SgPlaySound(RsArchiveFileOpen(soundFileName), soundFileName);
 	}
 
-	this->lastUpdateTime = EclGetAccurateTime();
+	this->_lastUpdateTime = EclGetAccurateTime();
 }
 
 void PhoneDialler::DialNumber(int x, int y, const char* ip, PhoneDiallerNextScene nextScene, const char* info)
 {
 	UplinkAssert(ip != nullptr);
-	if (this->ip != nullptr)
-		delete[] this->ip;
+	if (this->_ip != nullptr)
+		delete[] this->_ip;
 
-	this->ip = new char[strlen(ip) + 1];
-	strcpy(this->ip, ip);
+	this->_ip = new char[strlen(ip) + 1];
+	strcpy(this->_ip, ip);
 
-	if (this->info != nullptr)
+	if (this->_info != nullptr)
 	{
-		delete[] this->info;
-		this->info = nullptr;
+		delete[] this->_info;
+		this->_info = nullptr;
 	}
 
 	if (info != nullptr)
 	{
-		this->info = new char[strlen(info) + 1];
-		strcpy(this->info, info);
+		this->_info = new char[strlen(info) + 1];
+		strcpy(this->_info, info);
 	}
 
-	this->nextScene = nextScene;
-	lastUpdateTime = 0;
-	ipIndex = 0;
+	this->_nextScene = nextScene;
+	_lastUpdateTime = 0;
+	_ipIndex = 0;
 	app->RegisterPhoneDialler(this);
 	Create(x, y);
 }

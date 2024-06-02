@@ -14,13 +14,13 @@ enum class PhoneDiallerNextScene
 
 class PhoneDialler : LocalInterfaceScreen
 {
-	char* ip;
-	char* info;
-	PhoneDiallerNextScene nextScene;
-	int lastUpdateTime;
-	int ipIndex;
+	char* _ip;
+	char* _info;
+	PhoneDiallerNextScene _nextScene;
+	int _lastUpdateTime;
+	int _ipIndex;
 
-	static constexpr char buttonNames[][6] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+	static constexpr char _buttonNames[][6] = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
 
 public:
 	using LocalInterfaceScreen::Create;

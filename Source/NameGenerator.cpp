@@ -75,7 +75,7 @@ void NameGenerator::GenerateDataName(const char* companyName, int type)
 
 const char* NameGenerator::GeneratePassword()
 {
-	const auto& passwords = game->GetWorld()->passwords;
+	const auto& passwords = game->GetWorld()->GetPasswords();
 
 	while (true)
 	{

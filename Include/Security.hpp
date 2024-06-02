@@ -5,25 +5,26 @@
 
 class SecuritySystem : UplinkObject
 {
-public:
-	int type = 0;
-	int level = 0;
-	bool enabled = false;
-	bool bypassed = false;
+	int _type = 0;
+	int _level = 0;
+	bool _enabled = false;
+	bool _bypassed = false;
 
+public:
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void SetTYPE(int value);
-	void SetLevel(int value);
+	bool GetEnabled();
+	void SetTYPE(int type);
+	void SetLevel(int level);
 	void Enable();
 };
 
 class Security : UplinkObject
 {
-	DArray<SecuritySystem*> systems;
+	DArray<SecuritySystem*> _systems;
 
 public:
 	~Security() override;

@@ -4,7 +4,7 @@
 
 class Probability
 {
-	DArray<int> values;
+	DArray<int> _values;
 
 public:
 	Probability();

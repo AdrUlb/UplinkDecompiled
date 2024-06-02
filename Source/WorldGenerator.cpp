@@ -55,7 +55,7 @@ void WorldGenerator::UpdateSoftwareUpgrades()
 
 void WorldGenerator::LoadDynamicsGatewayDefs()
 {
-	game->Game::GetWorld()->gatewayDefs.Size();
+	game->Game::GetWorld()->GetGatewayDefs().Size();
 	const auto defFiles = ListDirectory("data/gateways/", ".txt");
 	for (auto i = 0; i < defFiles->Size(); i++)
 	{
@@ -347,7 +347,7 @@ VLocation* WorldGenerator::GenerateLocation()
 
 	struct VLocation* vlocation = new VLocation();
 	vlocation->SetPLocation(x, y);
-	vlocation->SetIP(ip);
+	vlocation->SetIp(ip);
 	game->GetWorld()->CreateVLocation(vlocation);
 
 	return vlocation;
@@ -368,7 +368,7 @@ Computer* WorldGenerator::GeneratePublicAccessServer(const char* name)
 	computer->SetName(value);
 	computer->SetCompanyName(name);
 	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(-1.0f, -0.1f));
-	computer->SetIP(vlocation->ip);
+	computer->SetIP(vlocation->GetIp());
 
 	const auto messageScreen = new MessageScreen();
 	messageScreen->SetMainTitle(name);
@@ -404,7 +404,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	computer->SetName(value);
 	computer->SetCompanyName(companyName);
 	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(15.0f, 1.5f));
-	computer->SetIP(vlocation->ip);
+	computer->SetIP(vlocation->GetIp());
 	const auto companySize = company->GetSize();
 	if (companySize > 1)
 	{
@@ -551,7 +551,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	{
 		const auto log = new AccessLog();
 		const auto loc = WorldGenerator::GetRandomLocation();
-		log->SetProperties(game->GetWorld()->currentDate, loc->ip, " ", 0, 1);
+		log->SetProperties(game->GetWorld()->GetCurrentDate(), loc->GetIp(), " ", 0, 1);
 		log->SetData1("Accessed File");
 		computer->GetLogBank().AddLog(log, -1);
 	}
@@ -585,7 +585,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	computer->SetIsExternallyOpen(false);
 	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(5.0f, 0.5f));
 	computer->SetTraceAction(9);
-	computer->SetIP(vlocation->ip);
+	computer->SetIP(vlocation->GetIp());
 
 	int level1 = (company->GetSize() - 1) / 3;
 	if (level1 > 5)
@@ -707,7 +707,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	{
 		const auto log = new AccessLog();
 		const auto loc = WorldGenerator::GetRandomLocation();
-		log->SetProperties(game->GetWorld()->currentDate, loc->ip, " ", 0, 1);
+		log->SetProperties(game->GetWorld()->GetCurrentDate(), loc->GetIp(), " ", 0, 1);
 		log->SetData1("Accessed File");
 		computer->GetLogBank().AddLog(log, -1);
 	}
@@ -739,7 +739,7 @@ void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)
 {
 	UplinkAssert(worldmapmask != nullptr);
 
-	const auto vlocations = game->GetWorld()->vlocations.ConvertToDArray();
+	const auto vlocations = game->GetWorld()->GetVLocations().ConvertToDArray();
 
 	auto x = 0;
 	auto y = 0;
@@ -767,7 +767,7 @@ void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)
 				break;
 
 			const auto vlocation = vlocations->GetData(i);
-			if (vlocation->x - x <= 1 && vlocation->y - y <= 1)
+			if (vlocation->GetX() - x <= 1 && vlocation->GetY() - y <= 1)
 			{
 				valid = true;
 				break;
@@ -927,7 +927,7 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 
 VLocation* WorldGenerator::GetRandomLocation()
 {
-	const auto indices = game->GetWorld()->vlocations.ConvertIndexToDArray();
+	const auto indices = game->GetWorld()->GetVLocations().ConvertIndexToDArray();
 
 	UplinkAssert(indices->Size() > 0);
 

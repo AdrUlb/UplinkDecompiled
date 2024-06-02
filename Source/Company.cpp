@@ -82,7 +82,7 @@ void Company::Grow(int amount)
 {
 	_size *= ((amount / 90.0 * this->_growth) + 100.0) / 100.0;
 
-	auto month = game->GetWorld()->currentDate.GetMonth();
+	auto month = game->GetWorld()->GetCurrentDate().GetMonth();
 
 	UplinkAssert(month >= 1 && month <= 12);
 

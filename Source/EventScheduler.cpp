@@ -4,23 +4,23 @@
 
 EventScheduler::~EventScheduler()
 {
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&events));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_events));
 }
 
 bool EventScheduler::Load(FILE* file)
 {
-	return LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&events), file);
+	return LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_events), file);
 }
 
 void EventScheduler::Save(FILE* file)
 {
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&events), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_events), file);
 }
 
 void EventScheduler::Print()
 {
 	puts("==== Event Scheduler : ===============================");
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&events));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_events));
 }
 
 void EventScheduler::Update()
@@ -37,38 +37,38 @@ const char* EventScheduler::GetID()
 
 Date* EventScheduler::GetDateOfNextEvent()
 {
-	const auto event = events.GetData(0);
+	const auto event = _events.GetData(0);
 	if (event == nullptr)
 		return nullptr;
-	return &event->runDate;
+	return &event->GetRunDate();
 }
 
 bool EventScheduler::UpdateProcessEvents()
 {
-	const auto eventCount = events.Size();
+	const auto eventCount = _events.Size();
 	LList<UplinkEvent*> runEvents;
 	auto runEventCount = 0;
 
-	if (events.Size() > 0)
+	if (_events.Size() > 0)
 	{
 		while (true)
 		{
-			auto event = events.GetData(0);
+			auto event = _events.GetData(0);
 
 			if (event == nullptr)
 				break;
 
-			if (!game->GetWorld()->currentDate.After(&event->runDate))
+			if (!game->GetWorld()->GetCurrentDate().After(&event->GetRunDate()))
 				break;
 
 			runEvents.PutData(event);
-			events.RemoveData(0);
+			_events.RemoveData(0);
 			runEventCount++;
 
-			if (!events.ValidIndex(0))
+			if (!_events.ValidIndex(0))
 				break;
 
-			event = events.GetData(0);
+			event = _events.GetData(0);
 		}
 	}
 
@@ -83,24 +83,24 @@ bool EventScheduler::UpdateProcessEvents()
 		delete event;
 	}
 
-	return (eventCount - runEventCount) != events.Size();
+	return (eventCount - runEventCount) != _events.Size();
 }
 
 void EventScheduler::ScheduleEvent(UplinkEvent* event)
 {
 	UplinkAssert(event != nullptr);
 
-	for (auto i = 0; i < events.Size(); i++)
+	for (auto i = 0; i < _events.Size(); i++)
 	{
-		const auto thisEvent = events.GetData(i);
+		const auto thisEvent = _events.GetData(i);
 		UplinkAssert(thisEvent != nullptr);
 
-		if (event->runDate.Before(&thisEvent->runDate))
+		if (event->GetRunDate().Before(&thisEvent->GetRunDate()))
 		{
-			events.PutDataAtIndex(event, i);
+			_events.PutDataAtIndex(event, i);
 			return;
 		}
 	}
 
-	events.PutDataAtEnd(event);
+	_events.PutDataAtEnd(event);
 }

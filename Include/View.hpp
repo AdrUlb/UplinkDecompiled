@@ -4,9 +4,9 @@
 
 class FrameRate
 {
-	int lastTime;
-	int ticks = 30;
-	float fps = 0.0f;
+	int _lastTime;
+	int _ticks = 30;
+	float _fps = 0.0f;
 
 public:
 	void Start();
@@ -14,7 +14,7 @@ public:
 
 class View : public UplinkObject
 {
-	FrameRate frameRate;
+	FrameRate _frameRate;
 
 public:
 	bool Load(FILE* file) override;

@@ -24,7 +24,7 @@ const char* TaskManager::GetID()
 void TaskManager::SetTargetProgram(int pid)
 {
     if (pid != -1)
-        unknown = 0;
-    lastTargetProgramPid = targetProgramPid;
-    targetProgramPid = pid;
+        _unknown = 0;
+    _lastTargetProgramPid = _targetProgramPid;
+    _targetProgramPid = pid;
 }

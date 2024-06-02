@@ -25,7 +25,7 @@ const char* Rating::GetID()
 	return "RATING";
 }
 
-void Rating::SetOwner(const char* value)
+void Rating::SetOwner(const char* owner)
 {
-	UplinkStrncpy(owner, value, 0x80);
+	UplinkStrncpy(_owner, owner, 0x80);
 }

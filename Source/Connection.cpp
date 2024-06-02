@@ -80,7 +80,7 @@ void Connection::Reset()
 {
 	DeleteLListData(&_vlocations);
 	_vlocations.Empty();
-	AddVLocation(GetOwner()->localHost);
+	AddVLocation(GetOwner()->GetLocalHostIp());
 	_traceInProgress = false;
 	_traceProgress = 0;
 }
@@ -111,7 +111,7 @@ void Connection::Connect()
 	GetOwner()->SetRemoteHost(target);
 	_traceProgress = 0;
 	_traceInProgress = false;
-	_connectionTime.SetDate(&game->GetWorld()->currentDate);
+	_connectionTime.SetDate(&game->GetWorld()->GetCurrentDate());
 
 	const auto vlocation = game->GetWorld()->GetVLocation(target);
 	UplinkAssert(vlocation != nullptr);
@@ -151,15 +151,15 @@ void Connection::Connect()
 
 		if (j == lastLoc)
 		{
-			accessLog->SetProperties(game->GetWorld()->currentDate, _vlocations.GetData(lastLoc - 1), _owner, 0, 2);
+			accessLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData(lastLoc - 1), _owner, 0, 2);
 			comp->GetLogBank().AddLog(accessLog, -1);
 			continue;
 		}
 
 		if (j == 0)
-			accessLog->SetProperties(game->GetWorld()->currentDate, "LOCAL", _owner, 0, 4);
+			accessLog->SetProperties(game->GetWorld()->GetCurrentDate(), "LOCAL", _owner, 0, 4);
 		else
-			accessLog->SetProperties(game->GetWorld()->currentDate, _vlocations.GetData(j - 1), _owner, 0, 5);
+			accessLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData(j - 1), _owner, 0, 5);
 
 		accessLog->SetData1(_vlocations.GetData(j + 1));
 

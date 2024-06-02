@@ -24,9 +24,9 @@ static Mix_Music* currentmod;
 
 SgPlaylist::~SgPlaylist()
 {
-	for (int i = 0; i < Songs.Size(); i++)
+	for (int i = 0; i < _songs.Size(); i++)
 	{
-		const auto song = Songs.GetData(i);
+		const auto song = _songs.GetData(i);
 
 		if (song == nullptr || song[0] == 0)
 			continue;
@@ -35,16 +35,26 @@ SgPlaylist::~SgPlaylist()
 	}
 }
 
+const char* SgPlaylist::GetName()
+{
+	return _name;
+}
+
+LList<char*>& SgPlaylist::GetSongs()
+{
+	return _songs;
+}
+
 void SgPlaylist::SetName(const char* const value)
 {
-	strcpy(Name, value);
+	strcpy(_name, value);
 }
 
 void SgPlaylist::AddSong(const char* const name)
 {
 	const auto str = new char[strlen(name) + 1];
 	sprintf(str, name);
-	Songs.PutData(str);
+	_songs.PutData(str);
 }
 
 static int musicVol()
@@ -221,10 +231,10 @@ void SgPlaylist_NextSong()
 
 	songindex++;
 
-	if (songindex >= playlist->Songs.Size())
+	if (songindex >= playlist->GetSongs().Size())
 		songindex = 0;
 
-	const auto filePath = playlist->Songs.GetData(songindex);
+	const auto filePath = playlist->GetSongs().GetData(songindex);
 	SgPlayMod(RsArchiveFileOpen(filePath));
 	strcpy(currentsong, filePath);
 }

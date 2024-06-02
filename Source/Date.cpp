@@ -112,7 +112,7 @@ void Date::Update()
 			UplinkAbort("Unrecognised Game Speed");
 	}
 
-	const auto nextEventDate = game->GetWorld()->eventScheduler.GetDateOfNextEvent();
+	const auto nextEventDate = game->GetWorld()->GetEventScheduler().GetDateOfNextEvent();
 
 	if (nextEventDate != 0 && nextEventDate->Before(&newDate))
 	{

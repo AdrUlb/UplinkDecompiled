@@ -4,9 +4,9 @@
 
 void FrameRate::Start()
 {
-	ticks = 30;
-	fps = 0.0f;
-	lastTime = EclGetAccurateTime();
+	_ticks = 30;
+	_fps = 0.0f;
+	_lastTime = EclGetAccurateTime();
 }
 
 bool View::Load(FILE* file)
@@ -34,5 +34,5 @@ const char* View::GetID()
 
 void View::Initialise()
 {
-	frameRate.Start();
+	_frameRate.Start();
 }

@@ -5,33 +5,33 @@
 #include <fstream>
 #include <sstream>
 
-static ColourOption getColourDefault = {.red = 0, .green = 0, .blue = 0};
+static ColourOption getColourDefault = {.Red = 0, .Green = 0, .Blue = 0};
 
-Option::Option() : name{0}, tooltip{0}, yesOrNo(false), visible(true), value(0) {}
+Option::Option() : _name{0}, _tooltip{0}, _yesOrNo(false), _visible(true), _value(0) {}
 
 bool Option::Load(FILE* file)
 {
-	if (FileReadData(name, OPTION_NAME_MAX, 1, file) == 0)
+	if (FileReadData(_name, OPTION_NAME_MAX, 1, file) == 0)
 	{
-		name[0] = 0;
+		_name[0] = 0;
 		return false;
 	}
-	name[OPTION_NAME_MAX - 1] = 0;
+	_name[OPTION_NAME_MAX - 1] = 0;
 
-	if (FileReadData(tooltip, OPTION_TOOLTIP_MAX, 1, file) == 0)
+	if (FileReadData(_tooltip, OPTION_TOOLTIP_MAX, 1, file) == 0)
 	{
-		tooltip[0] = 0;
+		_tooltip[0] = 0;
 		return false;
 	}
-	tooltip[OPTION_TOOLTIP_MAX - 1] = 0;
+	_tooltip[OPTION_TOOLTIP_MAX - 1] = 0;
 
-	if (FileReadData(&yesOrNo, 1, 1, file) == 0)
+	if (FileReadData(&_yesOrNo, 1, 1, file) == 0)
 		return false;
 
-	if (FileReadData(&visible, 1, 1, file) == 0)
+	if (FileReadData(&_visible, 1, 1, file) == 0)
 		return false;
 
-	if (FileReadData(&value, 4, 1, file) == 0)
+	if (FileReadData(&_value, 4, 1, file) == 0)
 		return false;
 
 	return true;
@@ -39,18 +39,18 @@ bool Option::Load(FILE* file)
 
 void Option::Save(FILE* file)
 {
-	fwrite(name, OPTION_NAME_MAX, 1, file);
-	fwrite(tooltip, OPTION_TOOLTIP_MAX, 1, file);
-	fwrite(&yesOrNo, 1, 1, file);
-	fwrite(&visible, 1, 1, file);
-	fwrite(&value, 4, 1, file);
+	fwrite(_name, OPTION_NAME_MAX, 1, file);
+	fwrite(_tooltip, OPTION_TOOLTIP_MAX, 1, file);
+	fwrite(&_yesOrNo, 1, 1, file);
+	fwrite(&_visible, 1, 1, file);
+	fwrite(&_value, 4, 1, file);
 }
 
 void Option::Print()
 {
 	printf("Option : name=%s, value=%d\n"
 		   "\tYesOrNo=%d, Visible=%d\n",
-		   name, value, yesOrNo, visible);
+		   _name, _value, _yesOrNo, _visible);
 }
 
 const char* Option::GetID()
@@ -65,13 +65,13 @@ UplinkObjectId Option::GetOBJECTID()
 
 Options::Options()
 {
-	strncpy(themeName, "graphics", OPTIONS_THEMENAME_MAX);
+	strncpy(_themeName, "graphics", OPTIONS_THEMENAME_MAX);
 }
 
 Options::~Options()
 {
-	DeleteBTreeData(&options);
-	auto array = colourOptions.ConvertToDArray();
+	DeleteBTreeData(&_options);
+	auto array = _colourOptions.ConvertToDArray();
 
 	for (int i = 0; i < array->Size(); i++)
 	{
@@ -87,7 +87,7 @@ bool Options::Load(FILE* file)
 	(void)file;
 	FILE* optionsFile;
 	char optionsFilePath[0x100];
-	char themeName[sizeof(this->themeName) + 4];
+	char themeName[sizeof(this->_themeName) + 4];
 	char saveVersion[0x20];
 
 	UplinkSnprintf(optionsFilePath, sizeof(optionsFilePath), "%soptions", app->UsersPath);
@@ -130,9 +130,9 @@ bool Options::Load(FILE* file)
 
 	puts("success");
 
-	if (!LoadBTree((BTree<UplinkObject*>*)&options, optionsFile))
+	if (!LoadBTree((BTree<UplinkObject*>*)&_options, optionsFile))
 	{
-		DeleteBTreeData((BTree<UplinkObject*>*)&options);
+		DeleteBTreeData((BTree<UplinkObject*>*)&_options);
 		return false;
 	}
 
@@ -156,7 +156,7 @@ bool Options::Load(FILE* file)
 			}
 
 			fixedThemeName[themeNameLength] = 0;
-			UplinkStrncpy(this->themeName, fixedThemeName, sizeof(this->themeName));
+			UplinkStrncpy(this->_themeName, fixedThemeName, sizeof(this->_themeName));
 		}
 	}
 
@@ -192,13 +192,13 @@ void Options::Save(FILE* file)
 
 	fwrite(latestSaveVersion, strlen(latestSaveVersion) + 1, 1, fp);
 
-	SaveBTree((BTree<UplinkObject*>*)&options, fp);
+	SaveBTree((BTree<UplinkObject*>*)&_options, fp);
 	fputc('t', fp);
-	const auto themeNameLength = strlen(themeName);
+	const auto themeNameLength = strlen(_themeName);
 
 	// The original game would save this with the native
 	fwrite(&themeNameLength, 4, 1, fp);
-	fwrite(themeName, themeNameLength, 1, fp);
+	fwrite(_themeName, themeNameLength, 1, fp);
 
 	fclose(fp);
 	RsEncryptFile(optionsFilePath);
@@ -207,7 +207,7 @@ void Options::Save(FILE* file)
 void Options::Print()
 {
 	puts("============== O P T I O N S ===============================");
-	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&options));
+	PrintBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_options));
 	puts("============================================================");
 }
 
@@ -220,12 +220,12 @@ void Options::ApplyShutdownChanges()
 {
 	while (true)
 	{
-		const auto change = optionChanges.GetData(0);
+		const auto change = _optionChanges.GetData(0);
 		if (change == nullptr)
 			break;
 
-		optionChanges.RemoveData(0);
-		SetOptionValue(change->name, change->value);
+		_optionChanges.RemoveData(0);
+		SetOptionValue(change->Name, change->Value);
 		delete change;
 	}
 }
@@ -320,7 +320,7 @@ LList<Option*>* Options::GetAllOptions(const char* search, bool getInvisible)
 {
 	LList<Option*>* list = new LList<Option*>();
 
-	DArray<Option*>* array = options.ConvertToDArray();
+	DArray<Option*>* array = _options.ConvertToDArray();
 	for (int i = 0; i < array->Size(); i++)
 	{
 		if (!array->ValidIndex(i))
@@ -347,7 +347,7 @@ LList<Option*>* Options::GetAllOptions(const char* search, bool getInvisible)
 
 ColourOption* Options::GetColour(const char* name)
 {
-	const auto ret = colourOptions.GetData(name);
+	const auto ret = _colourOptions.GetData(name);
 
 	if (ret == nullptr)
 	{
@@ -360,7 +360,7 @@ ColourOption* Options::GetColour(const char* name)
 
 Option* Options::GetOption(const char* name)
 {
-	return options.GetData(name);
+	return _options.GetData(name);
 }
 
 int Options::GetOptionValue(const char* name)
@@ -385,17 +385,17 @@ int Options::GetOptionValueOrDefault(const char* name, int defaultValue)
 
 const char* Options::GetThemeDescription()
 {
-	return themeDescription;
+	return _themeDescription;
 }
 
 const char* Options::GetThemeName()
 {
-	return themeName;
+	return _themeName;
 }
 
 const char* Options::GetThemeTitle()
 {
-	return themeTitle;
+	return _themeTitle;
 }
 
 bool Options::IsOptionEqualTo(const char* name, int value)
@@ -410,14 +410,14 @@ bool Options::IsOptionEqualTo(const char* name, int value)
 void Options::RequestShutdownChange(const char* name, int value)
 {
 	auto change = new OptionChange();
-	UplinkStrncpy(change->name, name, OPTIONCHANGE_NAME_MAX);
-	change->value = value;
-	optionChanges.PutData(change);
+	UplinkStrncpy(change->Name, name, OPTIONCHANGE_NAME_MAX);
+	change->Value = value;
+	_optionChanges.PutData(change);
 }
 
 void Options::SetOptionValue(char const* name, int value)
 {
-	auto tree = options.LookupTree(name);
+	auto tree = _options.LookupTree(name);
 
 	if (tree == nullptr)
 		printf("Tried to set unrecognised option: %s\n", name);
@@ -428,7 +428,7 @@ void Options::SetOptionValue(char const* name, int value)
 
 void Options::SetOptionValue(const char* name, int value, const char* tooltip, bool yesOrNo, bool visible)
 {
-	const auto tree = options.LookupTree(name);
+	const auto tree = _options.LookupTree(name);
 
 	if (tree == nullptr)
 	{
@@ -438,7 +438,7 @@ void Options::SetOptionValue(const char* name, int value, const char* tooltip, b
 		option->SetTooltip(tooltip);
 		option->SetYesOrNo(yesOrNo);
 		option->SetVisible(visible);
-		options.PutData(name, option);
+		_options.PutData(name, option);
 	}
 	else
 	{
@@ -454,7 +454,7 @@ void Options::SetOptionValue(const char* name, int value, const char* tooltip, b
 void Options::SetThemeName(const char* value)
 {
 	(void)value;
-	UplinkStrncpy(themeName, value, OPTIONS_THEMENAME_MAX);
+	UplinkStrncpy(_themeName, value, OPTIONS_THEMENAME_MAX);
 
 	const auto filePath = ThemeFilename("theme.txt");
 	const auto themeFile = RsArchiveFileOpen(filePath);
@@ -473,17 +473,17 @@ void Options::SetThemeName(const char* value)
 	char temp[0x68];
 
 	themeFileStream >> temp >> std::ws;
-	themeFileStream.getline(themeTitle, OPTIONS_THEMETITLE_MAX, '\r');
+	themeFileStream.getline(_themeTitle, OPTIONS_THEMETITLE_MAX, '\r');
 	if ((temp[0] = themeFileStream.get()) != '\n')
 		themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	themeFileStream >> temp >> std::ws;
-	themeFileStream.getline(themeAuthor, OPTIONS_THEMEAUTHOR_MAX, '\r');
+	themeFileStream.getline(_themeAuthor, OPTIONS_THEMEAUTHOR_MAX, '\r');
 	if ((temp[0] = themeFileStream.get()) != '\n')
 		themeFileStream.rdbuf()->sputbackc(temp[0]);
 
 	themeFileStream >> temp >> std::ws;
-	themeFileStream.getline(themeDescription, OPTIONS_THEMEDESCRIPTION_MAX, '\r');
+	themeFileStream.getline(_themeDescription, OPTIONS_THEMEDESCRIPTION_MAX, '\r');
 	if ((temp[0] = themeFileStream.get()) != '\n')
 		themeFileStream.rdbuf()->sputbackc(temp[0]);
 
@@ -506,16 +506,16 @@ void Options::SetThemeName(const char* value)
 
 		char colourName[0x40];
 		const auto colourOption = new ColourOption();
-		stream >> colourName >> std::ws >> colourOption->red >> colourOption->green >> colourOption->blue;
+		stream >> colourName >> std::ws >> colourOption->Red >> colourOption->Green >> colourOption->Blue;
 
-		const auto option = colourOptions.LookupTree(colourName);
+		const auto option = _colourOptions.LookupTree(colourName);
 		if (option != nullptr)
 		{
 			delete option->Data;
 			option->Data = colourOption;
 		}
 		else
-			colourOptions.PutData(colourName, colourOption);
+			_colourOptions.PutData(colourName, colourOption);
 	}
 
 	themeFileStream.close();
@@ -528,14 +528,14 @@ char* Options::ThemeFilename(const char* name)
 {
 	char* filename = new char[0x100];
 
-	if (strcmp(themeName, "graphics") == 0)
+	if (strcmp(_themeName, "graphics") == 0)
 	{
 		UplinkSnprintf(filename, 0x100, "graphics/%s", name);
 		return filename;
 	}
 
 	char tempPath[0x100];
-	UplinkSnprintf(tempPath, sizeof(tempPath), "%s%s/%s", app->Path, themeName, name);
+	UplinkSnprintf(tempPath, sizeof(tempPath), "%s%s/%s", app->Path, _themeName, name);
 
 	if (!DoesFileExist(tempPath))
 	{
@@ -543,6 +543,6 @@ char* Options::ThemeFilename(const char* name)
 		return filename;
 	}
 
-	UplinkSnprintf(filename, 0x100, "%s/%s", themeName, name);
+	UplinkSnprintf(filename, 0x100, "%s/%s", _themeName, name);
 	return filename;
 }

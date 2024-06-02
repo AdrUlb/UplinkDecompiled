@@ -5,26 +5,26 @@
 
 bool VLocation::Load(FILE* file)
 {
-	if (!LoadDynamicStringBuf(ip, 0x18, file))
+	if (!LoadDynamicStringBuf(_ip, 0x18, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(computer, 0x40, file))
+	if (!LoadDynamicStringBuf(_computer, 0x40, file))
 		return false;
 
-	if (!FileReadData(&x, 4, 1, file))
+	if (!FileReadData(&_x, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&y, 4, 1, file))
+	if (!FileReadData(&_y, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&listed, 1, 1, file))
+	if (!FileReadData(&_listed, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&displayed, 1, 1, file))
+	if (!FileReadData(&_displayed, 1, 1, file))
 		return false;
 
 	if (strcmp(game->GetLoadedSavefileVer(), "SAV60") >= 0)
-		if (!FileReadData(&colored, 1, 1, file))
+		if (!FileReadData(&_colored, 1, 1, file))
 			return false;
 
 	return true;
@@ -32,20 +32,20 @@ bool VLocation::Load(FILE* file)
 
 void VLocation::Save(FILE* file)
 {
-	SaveDynamicString(ip, 0x18, file);
-	SaveDynamicString(computer, 0x40, file);
-	fwrite(&x, 4, 1, file);
-	fwrite(&y, 4, 1, file);
-	fwrite(&listed, 1, 1, file);
-	fwrite(&displayed, 1, 1, file);
-	fwrite(&colored, 1, 1, file);
+	SaveDynamicString(_ip, 0x18, file);
+	SaveDynamicString(_computer, 0x40, file);
+	fwrite(&_x, 4, 1, file);
+	fwrite(&_y, 4, 1, file);
+	fwrite(&_listed, 1, 1, file);
+	fwrite(&_displayed, 1, 1, file);
+	fwrite(&_colored, 1, 1, file);
 }
 
 void VLocation::Print()
 {
 	printf("VLocation : ");
-	printf("\tIP = %s, Computer = %s, x = %d, y = %d\n", ip, computer, x, y);
-	printf("\tlisted = %d, displayed = %d, colored = %d\n", listed, displayed, colored);
+	printf("\tIP = %s, Computer = %s, x = %d, y = %d\n", _ip, _computer, _x, _y);
+	printf("\tlisted = %d, displayed = %d, colored = %d\n", _listed, _displayed, _colored);
 }
 
 const char* VLocation::GetID()
@@ -58,9 +58,24 @@ UplinkObjectId VLocation::GetOBJECTID()
 	return UplinkObjectId::VLocation;
 }
 
-void VLocation::SetIP(const char* value)
+const char* VLocation::GetIp()
 {
-	UplinkStrncpy(ip, value, 0x18);
+	return _ip;
+}
+
+int VLocation::GetX()
+{
+	return _x;
+}
+
+int VLocation::GetY()
+{
+	return _y;
+}
+
+void VLocation::SetIp(const char* ip)
+{
+	UplinkStrncpy(_ip, ip, 0x18);
 }
 
 void VLocation::SetPLocation(int x, int y)
@@ -68,34 +83,34 @@ void VLocation::SetPLocation(int x, int y)
 	UplinkAssert(x <= 593);
 	UplinkAssert(y <= 314);
 
-	this->x = x;
-	this->y = y;
+	this->_x = x;
+	this->_y = y;
 }
 
 void VLocation::SetComputer(const char* computerName)
 {
-	UplinkStrncpy(this->computer, computerName, 0x40);
+	UplinkStrncpy(this->_computer, computerName, 0x40);
 }
 
-void VLocation::SetListed(bool value)
+void VLocation::SetListed(bool listed)
 {
-	listed = value;
+	_listed = listed;
 }
 
 Computer* VLocation::GetComputer()
 {
-	auto tree = &game->GetWorld()->computers;
+	auto tree = &game->GetWorld()->GetComputers();
 
 	while (true)
 	{
-		const auto computerTree = tree->LookupTree(this->computer);
+		const auto computerTree = tree->LookupTree(this->_computer);
 		if (computerTree == nullptr)
 			break;
 
 		const auto comp = computerTree->Data;
 		if (comp != nullptr)
 		{
-			if (strcmp(comp->GetIp(), ip) == 0)
+			if (strcmp(comp->GetIp(), _ip) == 0)
 				return comp;
 
 			if (comp->GetType() == 64 && GetOBJECTID() == UplinkObjectId::VlocationSpecial)

@@ -7,7 +7,7 @@
 
 class EventScheduler : UplinkObject
 {
-	LList<UplinkEvent*> events;
+	LList<UplinkEvent*> _events;
 
 public:
 	~EventScheduler() override;

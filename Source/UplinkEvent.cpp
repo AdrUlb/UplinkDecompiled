@@ -4,18 +4,18 @@
 
 bool UplinkEvent::Load(FILE* file)
 {
-	return runDate.Load(file);
+	return _runDate.Load(file);
 }
 
 void UplinkEvent::Save(FILE* file)
 {
-	runDate.Save(file);
+	_runDate.Save(file);
 }
 
 void UplinkEvent::Print()
 {
 	puts("UplinkEvent:");
-	runDate.Print();
+	_runDate.Print();
 }
 
 const char* UplinkEvent::GetID()
@@ -28,12 +28,10 @@ UplinkObjectId UplinkEvent::GetOBJECTID()
 	UplinkAbort("This MUST be overridden");
 }
 
-void UplinkEvent::Run()
+Date& UplinkEvent::GetRunDate()
 {
-	UplinkAbort("This MUST be overridden");
+	return _runDate;
 }
-
-void UplinkEvent::RunWarning() {}
 
 char* UplinkEvent::GetShortString()
 {
@@ -52,5 +50,12 @@ char* UplinkEvent::GetLongString()
 void UplinkEvent::SetRunDate(Date* date)
 {
 	UplinkAssert(date != nullptr);
-	runDate.SetDate(date);
+	_runDate.SetDate(date);
 }
+
+void UplinkEvent::Run()
+{
+	UplinkAbort("This MUST be overridden");
+}
+
+void UplinkEvent::RunWarning() {}

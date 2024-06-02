@@ -3,31 +3,31 @@
 Probability::Probability()
 {
 	int val = 0;
-	values.PutData(val);
+	_values.PutData(val);
 }
 
 Probability::~Probability()
 {
-	values.Empty();
+	_values.Empty();
 }
 
 void Probability::InputProbability(int index, int value)
 {
-	if (index >= values.Size())
-		values.SetSize(index + 1);
-	values.PutData(value, index);
+	if (index >= _values.Size())
+		_values.SetSize(index + 1);
+	_values.PutData(value, index);
 }
 
 bool Probability::Validate()
 {
 	int total = 0;
 
-	for (auto i = 0; i < values.Size(); i++)
+	for (auto i = 0; i < _values.Size(); i++)
 	{
-		if (!values.ValidIndex(i))
+		if (!_values.ValidIndex(i))
 			return false;
 
-		const auto value = values.GetData(i);
+		const auto value = _values.GetData(i);
 
 		if (value > 100)
 			return false;

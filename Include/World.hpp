@@ -14,20 +14,20 @@
 
 class World : UplinkObject
 {
-public:
-	Date nextUpdateDate;
-	Date currentDate;
-	EventScheduler eventScheduler;
-	PlotGenerator plotGenerator;
-	DemoPlotGenerator demoPlotGenerator;
-	char unknown[80];
-	BTree<VLocation*> vlocations;
-	BTree<Company*> companies;
-	BTree<Computer*> computers;
-	BTree<Person*> people;
-	DArray<char*> passwords;
-	DArray<GatewayDef*> gatewayDefs;
+	Date _nextUpdateDate;
+	Date _currentDate;
+	EventScheduler _eventScheduler;
+	PlotGenerator _plotGenerator;
+	DemoPlotGenerator _demoPlotGenerator;
+	char _unknown[80];
+	BTree<VLocation*> _vlocations;
+	BTree<Company*> _companies;
+	BTree<Computer*> _computers;
+	BTree<Person*> _people;
+	DArray<char*> _passwords;
+	DArray<GatewayDef*> _gatewayDefs;
 
+public:
 	World();
 	~World() override;
 	bool Load(FILE* file) override;
@@ -36,6 +36,14 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	void ForceNextUpdate();
+	Date& GetCurrentDate();
+	EventScheduler& GetEventScheduler();
+	PlotGenerator& GetPlotGenerator();
+	BTree<VLocation*>& GetVLocations();
+	BTree<Company*>& GetCompanies();
+	BTree<Computer*>& GetComputers();
+	DArray<char*>& GetPasswords();
+	DArray<GatewayDef*>& GetGatewayDefs();
 	Player* GetPlayer();
 	VLocation* GetVLocation(const char* ip);
 	Computer* GetComputer(const char* name);

@@ -232,13 +232,14 @@ void WorldMapInterface::RemoveWorldMapInterface()
 		EclRemoveButton("worldmap_scrollright");
 		EclRemoveButton("worldmap_scrollup");
 		EclRemoveButton("worldmap_scrolldown");
-		const auto links = &game->GetWorld()->GetPlayer()->links;
+		const auto links = &game->GetWorld()->GetPlayer()->GetLinks();
+		;
 
 		for (auto i = 0; i < links->Size(); i++)
 		{
 			char* ip = links->GetData(i);
 			char str[0x80];
-			UplinkSnprintf(str, 0x80, "worldmap %s", game->GetWorld()->GetVLocation(ip)->ip);
+			UplinkSnprintf(str, 0x80, "worldmap %s", game->GetWorld()->GetVLocation(ip)->GetIp());
 			EclRemoveButton(str);
 		}
 		RemoveTempConnectionButton();

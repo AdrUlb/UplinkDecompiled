@@ -289,7 +289,7 @@ void SetColour(const char* name)
 		return;
 	}
 
-	glColor3f(colour->red, colour->green, colour->blue);
+	glColor3f(colour->Red, colour->Green, colour->Blue);
 }
 
 void border_draw(Button* button)

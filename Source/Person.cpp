@@ -4,67 +4,67 @@
 
 Person::~Person()
 {
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&messages));
-	DeleteLListData(&bankAccounts);
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_messages));
+	DeleteLListData(&_bankAccounts);
 }
 
 bool Person::Load(FILE* file)
 {
-	if (!LoadDynamicStringBuf(name, 0x80, file))
+	if (!LoadDynamicStringBuf(_name, 0x80, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(localHost, 0x18, file))
+	if (!LoadDynamicStringBuf(_localHostIp, 0x18, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(remoteHost, 0x18, file))
+	if (!LoadDynamicStringBuf(_remoteHostIp, 0x18, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(phoneNumber, 0x18, file))
+	if (!LoadDynamicStringBuf(_phoneNumber, 0x18, file))
 		return false;
 
 	// TODO: this does not seem right? it warns about an already existing thing when it *doesn't* find anything??
-	if (game->GetWorld()->vlocations.LookupTree(localHost) == nullptr)
+	if (game->GetWorld()->GetVLocations().LookupTree(_localHostIp) == nullptr)
 	{
 		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
-		printf("WARNING: Person::Load, Localhost IP '%s' already existing\n", localHost);
+		printf("WARNING: Person::Load, Localhost IP '%s' already existing\n", _localHostIp);
 		return false;
 	}
 
-	if (game->GetWorld()->vlocations.LookupTree(remoteHost) == nullptr)
+	if (game->GetWorld()->GetVLocations().LookupTree(_remoteHostIp) == nullptr)
 	{
 		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
-		printf("WARNING: Person::Load, Remotehost IP '%s' already existing\n", remoteHost);
+		printf("WARNING: Person::Load, Remotehost IP '%s' already existing\n", _remoteHostIp);
 		return false;
 	}
 
-	if (!FileReadData(&age, 4, 1, file))
+	if (!FileReadData(&_age, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&photoIndex, 4, 1, file))
+	if (!FileReadData(&_photoIndex, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&voiceIndex, 4, 1, file))
+	if (!FileReadData(&_voiceIndex, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&currentAccount, 4, 1, file))
+	if (!FileReadData(&_currentAccount, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&isTargetable, 1, 1, file))
+	if (!FileReadData(&_isTargetable, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&status, 4, 1, file))
+	if (!FileReadData(&_status, 4, 1, file))
 		return false;
 
-	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&messages), file))
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_messages), file))
 		return false;
 
-	if (!LoadLList(&bankAccounts, file))
+	if (!LoadLList(&_bankAccounts, file))
 		return false;
 
-	if (!connection.Load(file))
+	if (!_connection.Load(file))
 		return false;
 
-	if (!rating.Load(file))
+	if (!_rating.Load(file))
 		return false;
 
 	return true;
@@ -72,43 +72,43 @@ bool Person::Load(FILE* file)
 
 void Person::Save(FILE* file)
 {
-	SaveDynamicString(name, 0x80, file);
-	SaveDynamicString(localHost, 0x18, file);
-	SaveDynamicString(remoteHost, 0x18, file);
-	SaveDynamicString(phoneNumber, 0x18, file);
-	fwrite(&age, 4, 1, file);
-	fwrite(&photoIndex, 4, 1, file);
-	fwrite(&voiceIndex, 4, 1, file);
-	fwrite(&currentAccount, 4, 1, file);
-	fwrite(&isTargetable, 1, 1, file);
-	fwrite(&status, 4, 1, file);
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&messages), file);
-	SaveLList(&bankAccounts, file);
-	connection.Save(file);
-	rating.Save(file);
+	SaveDynamicString(_name, 0x80, file);
+	SaveDynamicString(_localHostIp, 0x18, file);
+	SaveDynamicString(_remoteHostIp, 0x18, file);
+	SaveDynamicString(_phoneNumber, 0x18, file);
+	fwrite(&_age, 4, 1, file);
+	fwrite(&_photoIndex, 4, 1, file);
+	fwrite(&_voiceIndex, 4, 1, file);
+	fwrite(&_currentAccount, 4, 1, file);
+	fwrite(&_isTargetable, 1, 1, file);
+	fwrite(&_status, 4, 1, file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_messages), file);
+	SaveLList(&_bankAccounts, file);
+	_connection.Save(file);
+	_rating.Save(file);
 }
 
 void Person::Print()
 {
 	printf("Person : ");
-	printf("name = %s, Age = %d, photoindex = %d, voiceindex = %d, status = %d\n", name, age, photoIndex, voiceIndex, status);
-	printf("LocalHost : %s, RemoteHost : %s, Phone : %s\n", localHost, remoteHost, phoneNumber);
+	printf("name = %s, Age = %d, photoindex = %d, voiceindex = %d, status = %d\n", _name, _age, _photoIndex, _voiceIndex, _status);
+	printf("LocalHost : %s, RemoteHost : %s, Phone : %s\n", _localHostIp, _remoteHostIp, _phoneNumber);
 	puts("Messages : ");
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&messages));
-	PrintLList(&bankAccounts);
-	printf("currentaccount:%d\n", currentAccount);
-	connection.Print();
-	rating.Print();
-	printf("Is Targetable? %d\n", isTargetable);
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_messages));
+	PrintLList(&_bankAccounts);
+	printf("currentaccount:%d\n", _currentAccount);
+	_connection.Print();
+	_rating.Print();
+	printf("Is Targetable? %d\n", _isTargetable);
 }
 
 void Person::Update()
 {
 
-	if (strcmp(name, "PLAYER") == 0)
+	if (strcmp(_name, "PLAYER") == 0)
 		return;
 
-	if (messages.Size() <= 0)
+	if (_messages.Size() <= 0)
 		return;
 
 	puts("TODO: implement Person::Update()");
@@ -124,9 +124,55 @@ UplinkObjectId Person::GetOBJECTID()
 	return UplinkObjectId::Person;
 }
 
+const char* Person::GetName()
+{
+	return _name;
+}
+
+const char* Person::GetLocalHostIp()
+{
+	return _localHostIp;
+}
+
+VLocation* Person::GetRemoteHost()
+{
+	const auto ret = game->GetWorld()->GetVLocation(_remoteHostIp);
+	UplinkAssert(ret != nullptr);
+	return ret;
+}
+
+Connection* Person::GetConnection()
+{
+	return &_connection;
+}
+
+void Person::SetName(const char* name)
+{
+	UplinkStrncpy(_name, name, 0x80);
+	_connection.SetOwner(_name);
+	_rating.SetOwner(_name);
+}
+
+void Person::SetLocalHost(const char* value)
+{
+	UplinkStrncpy(_localHostIp, value, 0x18);
+	UplinkAssert(game->GetWorld()->GetVLocation(_localHostIp) != nullptr);
+}
+
+void Person::SetRemoteHost(const char* remoteHost)
+{
+	UplinkStrncpy(_remoteHostIp, remoteHost, 0x18);
+	UplinkAssert(game->GetWorld()->GetVLocation(_remoteHostIp) != nullptr);
+}
+
+void Person::SetIsTargetable(bool isTargetable)
+{
+	_isTargetable = isTargetable;
+}
+
 void Person::GiveMessage(Message* message)
 {
-	messages.PutData(message);
+	_messages.PutData(message);
 }
 
 void Person::CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan)
@@ -139,47 +185,11 @@ void Person::CreateNewAccount(const char* bankIp, const char* owner, const char*
 	puts("TODO: implement Person::CreateNewAccount()");
 }
 
-void Person::SetName(const char* value)
-{
-	UplinkStrncpy(name, value, 0x80);
-	connection.SetOwner(name);
-	rating.SetOwner(name);
-}
-
-void Person::SetLocalHost(const char* value)
-{
-	UplinkStrncpy(localHost, value, 0x18);
-	UplinkAssert(game->GetWorld()->GetVLocation(localHost) != nullptr);
-}
-
-VLocation* Person::GetRemoteHost()
-{
-	const auto ret = game->GetWorld()->GetVLocation(remoteHost);
-	UplinkAssert(ret != nullptr);
-	return ret;
-}
-
-void Person::SetRemoteHost(const char* value)
-{
-	UplinkStrncpy(remoteHost, value, 0x18);
-	UplinkAssert(game->GetWorld()->GetVLocation(remoteHost) != nullptr);
-}
-
-void Person::SetIsTargetable(bool value)
-{
-	isTargetable = value;
-}
-
-Connection* Person::GetConnection()
-{
-	return &connection;
-}
-
 Agent::~Agent()
 {
-	DeleteLListData(&links);
-	DeleteBTreeData(&accessCodes);
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&missions));
+	DeleteLListData(&_links);
+	DeleteBTreeData(&_accessCodes);
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_missions));
 }
 
 bool Agent::Load(FILE* file)
@@ -216,6 +226,16 @@ UplinkObjectId Agent::GetOBJECTID()
 	return UplinkObjectId::Agent;
 }
 
+LList<char*>& Agent::GetLinks()
+{
+	return _links;
+}
+
+const char* Agent::GetHandle()
+{
+	return _handle;
+}
+
 void Agent::GiveMessage(Message* message)
 {
 	(void)message;
@@ -234,7 +254,7 @@ void Agent::CreateNewAccount(const char* bankIp, const char* owner, const char* 
 
 Player::~Player()
 {
-	DeleteBTreeData(&shares);
+	DeleteBTreeData(&_shares);
 }
 
 bool Player::Load(FILE* file)
@@ -273,6 +293,11 @@ const char* Player::GetID()
 UplinkObjectId Player::GetOBJECTID()
 {
 	return UplinkObjectId::Player;
+}
+
+Gateway& Player::GetGateway()
+{
+	return _gateway;
 }
 
 void Player::GiveMessage(Message* message)

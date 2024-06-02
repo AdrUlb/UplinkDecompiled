@@ -4,17 +4,13 @@
 
 class SgPlaylist
 {
+	char _name[0x40]{"New playlist"};
+	LList<char*> _songs;
+
 public:
-	char Name[0x40]{"New playlist"};
-	LList<char*> Songs;
-
 	~SgPlaylist();
-
-	const char* GetName()
-	{
-		return Name;
-	}
-
+	const char* GetName();
+	LList<char*>& GetSongs();
 	void SetName(const char* value);
 	void AddSong(const char* name);
 };

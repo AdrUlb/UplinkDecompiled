@@ -2,25 +2,25 @@
 
 Record::~Record()
 {
-	DeleteBTreeData(&fields);
+	DeleteBTreeData(&_fields);
 }
 
 bool Record::Load(FILE* file)
 {
-	return LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&fields), file);
+	return LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_fields), file);
 }
 
 void Record::Save(FILE* file)
 {
-	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&fields), file);
+	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_fields), file);
 }
 
 void Record::Print()
 {
 	puts("Record :");
 
-	const auto names = fields.ConvertIndexToDArray();
-	const auto values = fields.ConvertToDArray();
+	const auto names = _fields.ConvertIndexToDArray();
+	const auto values = _fields.ConvertToDArray();
 
 	for (auto i = 0; i < names->Size(); i++)
 	{
@@ -51,28 +51,28 @@ void Record::AddField(const char* name, const char* value)
 {
 	char* buf = new char[strlen(value) + 1];
 	strcpy(buf, value);
-	fields.PutData(name, buf);
+	_fields.PutData(name, buf);
 }
 
 RecordBank::~RecordBank()
 {
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&this->records));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&this->_records));
 }
 
 bool RecordBank::Load(FILE* file)
 {
-	return LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&this->records), file);
+	return LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&this->_records), file);
 }
 
 void RecordBank::Save(FILE* file)
 {
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&this->records), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&this->_records), file);
 }
 
 void RecordBank::Print()
 {
 	puts("RecordBank");
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&this->records));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&this->_records));
 }
 
 const char* RecordBank::GetID()
@@ -87,7 +87,7 @@ UplinkObjectId RecordBank::GetOBJECTID()
 
 void RecordBank::AddRecord(Record& record)
 {
-	records.PutData(&record);
+	_records.PutData(&record);
 }
 
 char* RecordBank::MakeSafeField(const char* name)

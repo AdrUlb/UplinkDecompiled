@@ -29,7 +29,7 @@ Computer* LanGenerator::GenerateLAN(const char* companyName, int level)
 	computer->SetTraceAction(9);
 	computer->GetSecurity().AddSystem(1, 5, -1);
 	computer->GetSecurity().AddSystem(4, 5, -1);
-	computer->SetIP(vlocation->ip);
+	computer->SetIP(vlocation->GetIp());
 	game->GetWorld()->CreateComputer(computer);
 	GenerateLANCluster(computer, level);
 
@@ -65,7 +65,7 @@ Computer* LanGenerator::GenerateLAN(const char* companyName, int level)
 	{
 		const auto log = new AccessLog();
 		const auto rax_10 = WorldGenerator::GetRandomLocation();
-		log->SetProperties(game->GetWorld()->currentDate, rax_10->ip, " ", 0, 1);
+		log->SetProperties(game->GetWorld()->GetCurrentDate(), rax_10->GetIp(), " ", 0, 1);
 		log->SetData1("Accessed File");
 		computer->GetLogBank().AddLog(log, -1);
 	}

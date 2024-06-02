@@ -4,16 +4,16 @@
 
 bool SecuritySystem::Load(FILE* file)
 {
-	if (!FileReadData(&type, 4, 1, file))
+	if (!FileReadData(&_type, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&enabled, 1, 1, file))
+	if (!FileReadData(&_enabled, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&bypassed, 1, 1, file))
+	if (!FileReadData(&_bypassed, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&level, 4, 1, file))
+	if (!FileReadData(&_level, 4, 1, file))
 		return false;
 
 	return true;
@@ -21,15 +21,15 @@ bool SecuritySystem::Load(FILE* file)
 
 void SecuritySystem::Save(FILE* file)
 {
-	fwrite(&type, 4, 1, file);
-	fwrite(&enabled, 1, 1, file);
-	fwrite(&bypassed, 1, 1, file);
-	fwrite(&level, 4, 1, file);
+	fwrite(&_type, 4, 1, file);
+	fwrite(&_enabled, 1, 1, file);
+	fwrite(&_bypassed, 1, 1, file);
+	fwrite(&_level, 4, 1, file);
 }
 
 void SecuritySystem::Print()
 {
-	printf("SecuritySystem : TYPE=%d, enabled=%d, bypassed=%d, level=%d\n", type, enabled, bypassed, level);
+	printf("SecuritySystem : TYPE=%d, enabled=%d, bypassed=%d, level=%d\n", _type, _enabled, _bypassed, _level);
 }
 
 const char* SecuritySystem::GetID()
@@ -42,40 +42,45 @@ UplinkObjectId SecuritySystem::GetOBJECTID()
 	return UplinkObjectId::SecuritySystem;
 }
 
-void SecuritySystem::SetTYPE(int value)
+bool SecuritySystem::GetEnabled()
 {
-	type = value;
+	return _enabled;
 }
 
-void SecuritySystem::SetLevel(int value)
+void SecuritySystem::SetTYPE(int type)
 {
-	level = value;
+	_type = type;
+}
+
+void SecuritySystem::SetLevel(int level)
+{
+	_level = level;
 }
 
 void SecuritySystem::Enable()
 {
-	enabled = true;
+	_enabled = true;
 }
 
 Security::~Security()
 {
-	DeleteDArrayDataD(&systems);
+	DeleteDArrayDataD(&_systems);
 }
 
 bool Security::Load(FILE* file)
 {
-	return LoadDArray(reinterpret_cast<DArray<UplinkObject*>*>(&systems), file);
+	return LoadDArray(reinterpret_cast<DArray<UplinkObject*>*>(&_systems), file);
 }
 
 void Security::Save(FILE* file)
 {
-	SaveDArray(reinterpret_cast<DArray<UplinkObject*>*>(&systems), file);
+	SaveDArray(reinterpret_cast<DArray<UplinkObject*>*>(&_systems), file);
 }
 
 void Security::Print()
 {
 	puts("Security : ");
-	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&systems));
+	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&_systems));
 }
 
 const char* Security::GetID()
@@ -87,11 +92,11 @@ void Security::AddSystem(SecuritySystem* system, int index)
 {
 	if (index == -1)
 	{
-		systems.PutData(system);
+		_systems.PutData(system);
 		return;
 	}
 
-	systems.PutData(system, index);
+	_systems.PutData(system, index);
 }
 
 void Security::AddSystem(int type, int level, int index)
@@ -105,8 +110,8 @@ void Security::AddSystem(int type, int level, int index)
 
 bool Security::IsAnythingDisabled()
 {
-	for (auto i = 0; i < systems.Size(); i++)
-		if (systems.ValidIndex(i) != 0 && systems.GetData(i) != nullptr && !systems.GetData(i)->enabled)
+	for (auto i = 0; i < _systems.Size(); i++)
+		if (_systems.ValidIndex(i) != 0 && _systems.GetData(i) != nullptr && !_systems.GetData(i)->GetEnabled())
 			return true;
 
 	return false;
