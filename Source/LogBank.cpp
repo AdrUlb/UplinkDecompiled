@@ -4,8 +4,8 @@
 
 LogBank::~LogBank()
 {
-	DeleteDArrayDataD(reinterpret_cast<DArray<UplinkObject*>*>(&accessLogs));
-	DeleteDArrayDataD(reinterpret_cast<DArray<UplinkObject*>*>(&accessLogsModified));
+	DeleteDArrayDataD(reinterpret_cast<DArray<UplinkObject*>*>(&_accessLogs));
+	DeleteDArrayDataD(reinterpret_cast<DArray<UplinkObject*>*>(&_accessLogsModified));
 }
 
 bool LogBank::Load(FILE* file)
@@ -21,8 +21,8 @@ bool LogBank::Load(FILE* file)
 		return false;
 	}
 
-	accessLogs.SetSize(count);
-	accessLogsModified.SetSize(count);
+	_accessLogs.SetSize(count);
+	_accessLogsModified.SetSize(count);
 
 	for (auto i = 0; i < count; i++)
 	{
@@ -45,7 +45,7 @@ bool LogBank::Load(FILE* file)
 				delete log;
 				return false;
 			}
-			accessLogs.PutData(log, index);
+			_accessLogs.PutData(log, index);
 		}
 
 		bool modified;
@@ -57,17 +57,17 @@ bool LogBank::Load(FILE* file)
 			if (index != -1)
 				continue;
 
-			if (!accessLogs.ValidIndex(index))
+			if (!_accessLogs.ValidIndex(index))
 			{
-				if (accessLogs.ValidIndex(index))
+				if (_accessLogs.ValidIndex(index))
 					printf("Print Assert: %s ln %d : %s\n", __FILE__, __LINE__, "!accessLogs.ValidIndex(index)");
 
 				return false;
 			}
 
 			const auto log = new AccessLog();
-			log->SetProperties(accessLogs.GetData(index));
-			accessLogsModified.PutData(log, index);
+			log->SetProperties(_accessLogs.GetData(index));
+			_accessLogsModified.PutData(log, index);
 		}
 		else
 		{
@@ -78,7 +78,7 @@ bool LogBank::Load(FILE* file)
 				return false;
 			}
 
-			accessLogsModified.PutData(log, index);
+			_accessLogsModified.PutData(log, index);
 		}
 	}
 
@@ -87,15 +87,15 @@ bool LogBank::Load(FILE* file)
 
 void LogBank::Save(FILE* file)
 {
-	const auto count = accessLogs.Size();
+	const auto count = _accessLogs.Size();
 	fwrite(&count, 4, 1, file);
 
 	for (auto i = 0; i < count; i++)
 	{
-		if (accessLogs.ValidIndex(i))
+		if (_accessLogs.ValidIndex(i))
 		{
 			fwrite(&i, 4, 1, file);
-			accessLogs.GetData(i)->Save(file);
+			_accessLogs.GetData(i)->Save(file);
 		}
 		else
 		{
@@ -107,8 +107,8 @@ void LogBank::Save(FILE* file)
 		fwrite(&modified, 1, 1, file);
 		if (modified)
 		{
-			UplinkAssert(accessLogsModified.ValidIndex(i));
-			accessLogsModified.GetData(i)->Save(file);
+			UplinkAssert(_accessLogsModified.ValidIndex(i));
+			_accessLogsModified.GetData(i)->Save(file);
 		}
 	}
 }
@@ -116,8 +116,8 @@ void LogBank::Save(FILE* file)
 void LogBank::Print()
 {
 	puts("LogBank : ");
-	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&accessLogs));
-	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&accessLogsModified));
+	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&_accessLogs));
+	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&_accessLogsModified));
 }
 
 const char* LogBank::GetID()
@@ -133,30 +133,30 @@ UplinkObjectId LogBank::GetOBJECTID()
 void LogBank::AddLog(AccessLog* log, int index)
 {
 	if (index == -1)
-		index = accessLogs.Size();
+		index = _accessLogs.Size();
 
-	if (index >= accessLogs.Size())
-		accessLogs.SetSize(index + 1);
+	if (index >= _accessLogs.Size())
+		_accessLogs.SetSize(index + 1);
 
-	accessLogs.PutData(log, index);
+	_accessLogs.PutData(log, index);
 
 	struct AccessLog* log2 = new AccessLog();
 	log2->SetProperties(log);
 
-	accessLogsModified.SetSize(accessLogs.Size());
-	accessLogsModified.PutData(log2, index);
+	_accessLogsModified.SetSize(_accessLogs.Size());
+	_accessLogsModified.PutData(log2, index);
 }
 
 bool LogBank::LogModified(int index)
 {
-	if (!accessLogs.ValidIndex(index))
+	if (!_accessLogs.ValidIndex(index))
 		return false;
 
-	if (!accessLogsModified.ValidIndex(index))
+	if (!_accessLogsModified.ValidIndex(index))
 		return false;
 
-	const auto log = accessLogs.GetData(index);
-	const auto logModified = accessLogsModified.GetData(index);
+	const auto log = _accessLogs.GetData(index);
+	const auto logModified = _accessLogsModified.GetData(index);
 
 	if (log->GetTYPE() != logModified->GetTYPE())
 		return true;

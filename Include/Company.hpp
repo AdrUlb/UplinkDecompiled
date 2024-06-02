@@ -27,20 +27,20 @@ public:
 	const char* GetName();
 	int GetSize();
 	void SetName(const char* name);
-	void SetSize(int value);
-	void SetTYPE(int value);
-	void SetGrowth(int value);
-	void SetAlignment(int value);
+	void SetSize(int size);
+	void SetTYPE(int type);
+	void SetGrowth(int growth);
+	void SetAlignment(int alignment);
 	void Grow(int amount);
 	void VaryGrowth();
 };
 
 class CompanyUplink : public Company
 {
-	LList<Mission*> missions;
-	LList<Sale*> hardwareSales;
-	LList<Sale*> softwareSales;
-	LList<News*> news;
+	LList<Mission*> _missions;
+	LList<Sale*> _hardwareSales;
+	LList<Sale*> _softwareSales;
+	LList<News*> _news;
 
 public:
 	CompanyUplink();

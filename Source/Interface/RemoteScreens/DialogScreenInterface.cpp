@@ -62,34 +62,39 @@ void DialogScreenInterface::Create(ComputerScreen* screen)
 
 		char buttonName[0x40];
 		char buttonNameWithIp[0x59];
-		UplinkSnprintf(buttonName, 0x40, "%s %d %d", widget->GetName(), widget->data1, widget->data2);
-		UplinkSnprintf(buttonNameWithIp, 0x59, "%s %d %d %s", widget->GetName(), widget->data1, widget->data2, computer->ip);
+		UplinkSnprintf(buttonName, 0x40, "%s %d %d", widget->GetName(), widget->GetData1(), widget->GetData2());
+		UplinkSnprintf(buttonNameWithIp, 0x59, "%s %d %d %s", widget->GetName(), widget->GetData1(), widget->GetData2(), computer->GetIp());
 
-		switch (widget->type)
+		switch (widget->GetType())
 		{
 			case 0:
 				puts("TODO: implement DialogScreenInterface::Create()	for widget type 0");
 				break;
 			case 1:
-				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButton(widget->GetX(), widget->GetY(), widget->GetWidth(), widget->GetHeight(), widget->GetCaption(), widget->GetTooltip(),
+								  buttonName);
 				EclRegisterButtonCallbacks(buttonName, button_draw, nullptr, nullptr, nullptr);
 				break;
 			case 2:
-				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButton(widget->GetX(), widget->GetY(), widget->GetWidth(), widget->GetHeight(), widget->GetCaption(), widget->GetTooltip(),
+								  buttonName);
 				EclRegisterButtonCallbacks(buttonName, textbutton_draw, nullptr, nullptr, nullptr);
 				break;
 			case 3:
-				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButton(widget->GetX(), widget->GetY(), widget->GetWidth(), widget->GetHeight(), widget->GetCaption(), widget->GetTooltip(),
+								  buttonName);
 				EclRegisterButtonCallbacks(buttonName, textbutton_draw, 0, button_click, button_highlight);
 				EclMakeButtonEditable(buttonName);
 				break;
 			case 4:
-				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonName);
+				EclRegisterButton(widget->GetX(), widget->GetY(), widget->GetWidth(), widget->GetHeight(), widget->GetCaption(), widget->GetTooltip(),
+								  buttonName);
 				EclRegisterButtonCallbacks(buttonName, PasswordBoxDraw, 0, button_click, button_highlight);
 				EclMakeButtonEditable(buttonName);
 				break;
 			case 5:
-				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonNameWithIp);
+				EclRegisterButton(widget->GetX(), widget->GetY(), widget->GetWidth(), widget->GetHeight(), widget->GetCaption(), widget->GetTooltip(),
+								  buttonNameWithIp);
 				EclRegisterButtonCallbacks(buttonNameWithIp, button_draw, NextPageClick, button_click, button_highlight);
 				break;
 			case 6:
@@ -99,7 +104,8 @@ void DialogScreenInterface::Create(ComputerScreen* screen)
 				puts("TODO: implement DialogScreenInterface::Create()	for widget type 7");
 				break;
 			case 8:
-				EclRegisterButton(widget->x, widget->y, widget->width, widget->height, widget->GetCaption(), widget->GetTooltip(), buttonNameWithIp);
+				EclRegisterButton(widget->GetX(), widget->GetY(), widget->GetWidth(), widget->GetHeight(), widget->GetCaption(), widget->GetTooltip(),
+								  buttonNameWithIp);
 				EclRegisterButtonCallbacks(buttonNameWithIp, button_draw, ScriptButtonClick, button_click, button_highlight);
 				break;
 			case 9:
@@ -128,11 +134,11 @@ bool DialogScreenInterface::ReturnKeyPressed()
 			continue;
 
 		char s[0x59];
-		UplinkSnprintf(s, 0x59, "%s %d %d", widget->GetName(), widget->data1, widget->data2);
+		UplinkSnprintf(s, 0x59, "%s %d %d", widget->GetName(), widget->GetData1(), widget->GetData2());
 		auto button = EclGetButton(s);
 		if (button == nullptr)
 		{
-			UplinkSnprintf(s, 0x59, "%s %d %d %s", widget->GetName(), widget->data1, widget->data2, screen->GetComputer()->ip);
+			UplinkSnprintf(s, 0x59, "%s %d %d %s", widget->GetName(), widget->GetData1(), widget->GetData2(), screen->GetComputer()->GetIp());
 			button = EclGetButton(s);
 		}
 		button->MouseUp();
@@ -161,11 +167,11 @@ void DialogScreenInterface::RemoveWidget(DialogScreenWidget* widget, Computer* c
 	UplinkAssert(computer != nullptr);
 
 	char buttonName[0x40];
-	UplinkSnprintf(buttonName, 0x40, "%s %d %d", widget->GetName(), widget->data1, widget->data2);
+	UplinkSnprintf(buttonName, 0x40, "%s %d %d", widget->GetName(), widget->GetData1(), widget->GetData2());
 	EclRemoveButton(buttonName);
 
 	char buttonNameWithIp[0x59];
-	UplinkSnprintf(buttonNameWithIp, 0x59, "%s %d %d %s", widget->GetName(), widget->data1, widget->data2, computer->ip);
+	UplinkSnprintf(buttonNameWithIp, 0x59, "%s %d %d %s", widget->GetName(), widget->GetData1(), widget->GetData2(), computer->GetIp());
 	EclRemoveButton(buttonNameWithIp);
 }
 

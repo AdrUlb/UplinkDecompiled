@@ -15,7 +15,7 @@ void MenuScreenInterface::Remove()
 	EclRemoveButton("menuscreen_maintitle");
 	EclRemoveButton("menuscreen_subtitle");
 
-	const auto ip = GetComputerScreen()->GetComputer()->ip;
+	const auto ip = GetComputerScreen()->GetComputer()->GetIp();
 
 	for (auto index = 0; index < GetComputerScreen()->NumOptions(); index++)
 	{
@@ -58,7 +58,7 @@ void MenuScreenInterface::Create(ComputerScreen* screen)
 	EclRegisterButton(80, 80, 350, 20, GetComputerScreen()->GetSubTitle(), "", "menuscreen_subtitle");
 	EclRegisterButtonCallbacks("menuscreen_subtitle", DrawSubTitle, nullptr, nullptr, nullptr);
 
-	const auto ip = GetComputerScreen()->GetComputer()->ip;
+	const auto ip = GetComputerScreen()->GetComputer()->GetIp();
 
 	int32_t yOffset = 0;
 	int32_t timeInc = 1000.0 / GetComputerScreen()->NumOptions();

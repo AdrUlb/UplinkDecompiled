@@ -128,24 +128,24 @@ void Company::SetName(const char* name)
 	UplinkStrncpy(this->_name, name, 0x40);
 }
 
-void Company::SetSize(int value)
+void Company::SetSize(int size)
 {
-	_size = value;
+	_size = size;
 }
 
-void Company::SetTYPE(int value)
+void Company::SetTYPE(int type)
 {
-	_type = value;
+	_type = type;
 }
 
-void Company::SetGrowth(int value)
+void Company::SetGrowth(int growth)
 {
-	_growth = value;
+	_growth = growth;
 }
 
-void Company::SetAlignment(int value)
+void Company::SetAlignment(int alignment)
 {
-	_alignment = value;
+	_alignment = alignment;
 }
 
 CompanyUplink::CompanyUplink()
@@ -155,10 +155,10 @@ CompanyUplink::CompanyUplink()
 
 CompanyUplink::~CompanyUplink()
 {
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&missions));
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales));
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales));
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&news));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_missions));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_softwareSales));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_hardwareSales));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_news));
 }
 
 bool CompanyUplink::Load(FILE* file)
@@ -166,16 +166,16 @@ bool CompanyUplink::Load(FILE* file)
 	if (!Company::Load(file))
 		return false;
 
-	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&missions), file))
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_missions), file))
 		return false;
 
-	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales), file))
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_hardwareSales), file))
 		return false;
 
-	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales), file))
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_softwareSales), file))
 		return false;
 
-	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&news), file))
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_news), file))
 		return false;
 
 	return true;
@@ -184,19 +184,19 @@ bool CompanyUplink::Load(FILE* file)
 void CompanyUplink::Save(FILE* file)
 {
 	Company::Save(file);
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&missions), file);
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales), file);
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales), file);
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&news), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_missions), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_hardwareSales), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_softwareSales), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_news), file);
 }
 
 void CompanyUplink::Print()
 {
 	Company::Print();
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&missions));
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&hardwareSales));
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&softwareSales));
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&news));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_missions));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_hardwareSales));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_softwareSales));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_news));
 }
 
 const char* CompanyUplink::GetID()

@@ -7,12 +7,12 @@ GatewayDef::~GatewayDef()
 {
 	for (auto i = 0; true; i++)
 	{
-		if (i >= cpuLocations.Size())
+		if (i >= _cpuLocations.Size())
 			break;
 
-		if (cpuLocations.ValidIndex(i))
+		if (_cpuLocations.ValidIndex(i))
 		{
-			const auto data = cpuLocations.GetData(i);
+			const auto data = _cpuLocations.GetData(i);
 			if (data != nullptr)
 				delete data;
 		}
@@ -20,12 +20,12 @@ GatewayDef::~GatewayDef()
 
 	for (auto i = 0; true; i++)
 	{
-		if (i >= memoryLocations.Size())
+		if (i >= _memoryLocations.Size())
 			break;
 
-		if (memoryLocations.ValidIndex(i))
+		if (_memoryLocations.ValidIndex(i))
 		{
-			const auto data = memoryLocations.GetData(i);
+			const auto data = _memoryLocations.GetData(i);
 			if (data != nullptr)
 				delete data;
 		}
@@ -33,11 +33,11 @@ GatewayDef::~GatewayDef()
 
 	for (auto i = 0; true; i++)
 	{
-		if (i >= securityLocations.Size())
+		if (i >= _securityLocations.Size())
 			break;
-		if (securityLocations.ValidIndex(i))
+		if (_securityLocations.ValidIndex(i))
 		{
-			const auto data = securityLocations.GetData(i);
+			const auto data = _securityLocations.GetData(i);
 			if (data != nullptr)
 				delete data;
 		}
@@ -46,64 +46,64 @@ GatewayDef::~GatewayDef()
 
 bool GatewayDef::Load(FILE* file)
 {
-	if (!LoadDynamicStringBuf(name, 0x80, file))
+	if (!LoadDynamicStringBuf(_name, 0x80, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(description, 0x100, file))
+	if (!LoadDynamicStringBuf(_description, 0x100, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(filename, 0x100, file))
+	if (!LoadDynamicStringBuf(_filename, 0x100, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(thumbnail, 0x100, file))
+	if (!LoadDynamicStringBuf(_thumbnail, 0x100, file))
 		return false;
 
-	if (!FileReadData(&cost, 4, 1, file))
+	if (!FileReadData(&_cost, 4, 1, file))
 		return false;
 
-	if (cost < 0)
-		cost = 0;
+	if (_cost < 0)
+		_cost = 0;
 
-	if (!FileReadData(&maxCpus, 4, 1, file))
+	if (!FileReadData(&_maxCpus, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&maxMemory, 4, 1, file))
+	if (!FileReadData(&_maxMemory, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&maxUpgrades, 4, 1, file))
+	if (!FileReadData(&_maxUpgrades, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&maxSecurity, 4, 1, file))
+	if (!FileReadData(&_maxSecurity, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&bandwidth, 4, 1, file))
+	if (!FileReadData(&_bandwidth, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&width, 4, 1, file))
+	if (!FileReadData(&_width, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&height, 4, 1, file))
+	if (!FileReadData(&_height, 4, 1, file))
 		return false;
 
-	if (!LoadDArrayGatewayDefLocation(&cpuLocations, file))
+	if (!LoadDArrayGatewayDefLocation(&_cpuLocations, file))
 		return false;
 
-	if (!LoadDArrayGatewayDefLocation(&memoryLocations, file))
+	if (!LoadDArrayGatewayDefLocation(&_memoryLocations, file))
 		return false;
 
-	if (!LoadDArrayGatewayDefLocation(&securityLocations, file))
+	if (!LoadDArrayGatewayDefLocation(&_securityLocations, file))
 		return false;
 
-	if (!FileReadData(&modemX, 4, 1, file))
+	if (!FileReadData(&_modemX, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&modemY, 4, 1, file))
+	if (!FileReadData(&_modemY, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&powerX, 4, 1, file))
+	if (!FileReadData(&_powerX, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&powerY, 4, 1, file))
+	if (!FileReadData(&_powerY, 4, 1, file))
 		return false;
 
 	return true;
@@ -111,25 +111,25 @@ bool GatewayDef::Load(FILE* file)
 
 void GatewayDef::Save(FILE* file)
 {
-	SaveDynamicString(name, 0x80, file);
-	SaveDynamicString(description, 0x100, file);
-	SaveDynamicString(filename, 0x100, file);
-	SaveDynamicString(thumbnail, 0x100, file);
-	fwrite(&cost, 4, 1, file);
-	fwrite(&maxCpus, 4, 1, file);
-	fwrite(&maxMemory, 4, 1, file);
-	fwrite(&maxUpgrades, 4, 1, file);
-	fwrite(&maxSecurity, 4, 1, file);
-	fwrite(&bandwidth, 4, 1, file);
-	fwrite(&width, 4, 1, file);
-	fwrite(&height, 4, 1, file);
-	SaveDArrayGatewayDefLocation(&cpuLocations, file);
-	SaveDArrayGatewayDefLocation(&memoryLocations, file);
-	SaveDArrayGatewayDefLocation(&securityLocations, file);
-	fwrite(&modemX, 4, 1, file);
-	fwrite(&modemY, 4, 1, file);
-	fwrite(&powerX, 4, 1, file);
-	fwrite(&powerY, 4, 1, file);
+	SaveDynamicString(_name, 0x80, file);
+	SaveDynamicString(_description, 0x100, file);
+	SaveDynamicString(_filename, 0x100, file);
+	SaveDynamicString(_thumbnail, 0x100, file);
+	fwrite(&_cost, 4, 1, file);
+	fwrite(&_maxCpus, 4, 1, file);
+	fwrite(&_maxMemory, 4, 1, file);
+	fwrite(&_maxUpgrades, 4, 1, file);
+	fwrite(&_maxSecurity, 4, 1, file);
+	fwrite(&_bandwidth, 4, 1, file);
+	fwrite(&_width, 4, 1, file);
+	fwrite(&_height, 4, 1, file);
+	SaveDArrayGatewayDefLocation(&_cpuLocations, file);
+	SaveDArrayGatewayDefLocation(&_memoryLocations, file);
+	SaveDArrayGatewayDefLocation(&_securityLocations, file);
+	fwrite(&_modemX, 4, 1, file);
+	fwrite(&_modemY, 4, 1, file);
+	fwrite(&_powerX, 4, 1, file);
+	fwrite(&_powerY, 4, 1, file);
 }
 
 const char* GatewayDef::GetID()
@@ -141,98 +141,98 @@ void GatewayDef::LoadGatewayDefinition(std::ifstream& stream)
 {
 	char temp[0x100];
 	stream >> std::ws;
-	stream.getline(name, 0x80, '\r');
+	stream.getline(_name, 0x80, '\r');
 	if ((temp[0] = stream.get()) != '\n')
 		stream.rdbuf()->sputbackc(temp[0]);
 
-	stream >> std::ws >> cost;
-	stream >> std::ws >> maxCpus;
-	stream >> std::ws >> maxMemory;
-	stream >> std::ws >> maxUpgrades;
-	stream >> std::ws >> maxSecurity;
-	stream >> std::ws >> bandwidth;
-	stream >> std::ws >> width;
-	stream >> std::ws >> height;
+	stream >> std::ws >> _cost;
+	stream >> std::ws >> _maxCpus;
+	stream >> std::ws >> _maxMemory;
+	stream >> std::ws >> _maxUpgrades;
+	stream >> std::ws >> _maxSecurity;
+	stream >> std::ws >> _bandwidth;
+	stream >> std::ws >> _width;
+	stream >> std::ws >> _height;
 
-	if (cost < 0)
-		cost = 0;
+	if (_cost < 0)
+		_cost = 0;
 
 	stream >> std::ws;
-	stream.getline(description, 0x100, '\r');
+	stream.getline(_description, 0x100, '\r');
 	if ((temp[0] = stream.get()) != '\n')
 		stream.rdbuf()->sputbackc(temp[0]);
 
 	// TODO: actually fix this properly
-	if (strstr(description,
+	if (strstr(_description,
 			   "An embedded broad-band radio transmitter provides total anonymity for the user - you cannot be caught with this gateway.") != nullptr)
 	{
-		strncpy(description, "A good small all rounder.", 0x100);
+		strncpy(_description, "A good small all rounder.", 0x100);
 	}
 
-	if (maxCpus > 0)
+	if (_maxCpus > 0)
 	{
-		cpuLocations.SetSize(maxCpus);
+		_cpuLocations.SetSize(_maxCpus);
 		stream >> std::ws >> temp;
 
-		for (auto i = 0; i < maxCpus; i++)
+		for (auto i = 0; i < _maxCpus; i++)
 		{
 			const auto loc = new GatewayDefLocation();
-			stream >> std::ws >> loc->x >> std::ws >> loc->y;
-			cpuLocations.PutData(loc, i);
+			stream >> std::ws >> loc->X >> std::ws >> loc->Y;
+			_cpuLocations.PutData(loc, i);
 		}
 	}
 
-	if (maxMemory > 0)
+	if (_maxMemory > 0)
 	{
-		memoryLocations.SetSize(maxMemory);
+		_memoryLocations.SetSize(_maxMemory);
 		stream >> std::ws >> temp;
 
-		for (auto i = 0; i < maxMemory; i++)
+		for (auto i = 0; i < _maxMemory; i++)
 		{
 			const auto loc = new GatewayDefLocation();
-			stream >> std::ws >> loc->x >> std::ws >> loc->y;
-			memoryLocations.PutData(loc, i);
+			stream >> std::ws >> loc->X >> std::ws >> loc->Y;
+			_memoryLocations.PutData(loc, i);
 		}
 	}
 
-	if (maxSecurity > 0)
+	if (_maxSecurity > 0)
 	{
-		securityLocations.SetSize(maxSecurity);
+		_securityLocations.SetSize(_maxSecurity);
 		stream >> std::ws >> temp;
 
-		for (auto i = 0; i < maxSecurity; i++)
+		for (auto i = 0; i < _maxSecurity; i++)
 		{
 			const auto loc = new GatewayDefLocation();
-			stream >> std::ws >> loc->x >> std::ws >> loc->y;
-			securityLocations.PutData(loc, i);
+			stream >> std::ws >> loc->X >> std::ws >> loc->Y;
+			_securityLocations.PutData(loc, i);
 		}
 	}
 
 	stream >> std::ws >> temp;
-	stream >> std::ws >> modemX >> std::ws >> modemY;
+	stream >> std::ws >> _modemX >> std::ws >> _modemY;
 
 	stream >> std::ws >> temp;
-	stream >> std::ws >> powerX >> std::ws >> powerY;
+	stream >> std::ws >> _powerX >> std::ws >> _powerY;
 }
 
 void GatewayDef::SetFilename(const char* filename)
 {
-	UplinkStrncpy(this->filename, filename, 0x100);
+	UplinkStrncpy(this->_filename, filename, 0x100);
 }
 
 void GatewayDef::SetThumbnail(const char* thumbnail)
 {
-	UplinkStrncpy(this->thumbnail, thumbnail, 0x100);
+	UplinkStrncpy(this->_thumbnail, thumbnail, 0x100);
 }
 
 bool GatewayDef::VerifyCorrectness()
 {
-	if (maxCpus > 0 && maxMemory > 0 && bandwidth > 0)
+	if (_maxCpus > 0 && _maxMemory > 0 && _bandwidth > 0)
 		return true;
 
 	printf("WARNING : GatewayDef::VerifyCorrectness, Gateway '%s' loaded from '%s' as invald values, "
 		   "(maxcpus <= %d || maxmemory <= %d || bandwidth <= %d )\n",
-		   name, filename, maxCpus, maxMemory, bandwidth);
+		   _name, _filename, _maxCpus, _maxMemory, _bandwidth);
 	return false;
 }
 
@@ -241,11 +241,11 @@ int GatewayDef::GatewayDefComparator(GatewayDef** a, GatewayDef** b)
 	const auto left = *a;
 	const auto right = *b;
 
-	if (left->cost > right->cost)
+	if (left->_cost > right->_cost)
 		return 1;
 
-	if (left->cost < right->cost)
+	if (left->_cost < right->_cost)
 		return -1;
 
-	return strcmp(left->name, right->name);
+	return strcmp(left->_name, right->_name);
 }

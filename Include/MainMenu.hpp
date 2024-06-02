@@ -5,8 +5,8 @@
 
 class MainMenu : UplinkObject
 {
-	MainMenuScreenCode screenCode;
-	MainMenuScreen* screen;
+	MainMenuScreenCode _screenCode;
+	MainMenuScreen* _screen;
 
 public:
 	MainMenu();

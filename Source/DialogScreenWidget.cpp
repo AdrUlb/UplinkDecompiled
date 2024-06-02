@@ -4,58 +4,58 @@
 
 DialogScreenWidget::~DialogScreenWidget()
 {
-	if (name != nullptr)
-		delete[] name;
+	if (_name != nullptr)
+		delete[] _name;
 
-	if (caption != nullptr)
-		delete[] caption;
+	if (_caption != nullptr)
+		delete[] _caption;
 
-	if (tooltip != nullptr)
-		delete[] tooltip;
+	if (_tooltip != nullptr)
+		delete[] _tooltip;
 
-	if (stringData1 != nullptr)
-		delete[] stringData1;
+	if (_stringData1 != nullptr)
+		delete[] _stringData1;
 
-	if (stringData2 != nullptr)
-		delete[] stringData2;
+	if (_stringData2 != nullptr)
+		delete[] _stringData2;
 }
 
 bool DialogScreenWidget::Load(FILE* file)
 {
-	if (!LoadDynamicString(name, file))
+	if (!LoadDynamicString(_name, file))
 		return false;
 
-	if (!FileReadData(&x, 4, 1, file))
+	if (!FileReadData(&_x, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&y, 4, 1, file))
+	if (!FileReadData(&_y, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&width, 4, 1, file))
+	if (!FileReadData(&_width, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&height, 4, 1, file))
+	if (!FileReadData(&_height, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&type, 4, 1, file))
+	if (!FileReadData(&_type, 4, 1, file))
 		return false;
 
-	if (!LoadDynamicString(caption, file))
+	if (!LoadDynamicString(_caption, file))
 		return false;
 
-	if (!LoadDynamicString(tooltip, file))
+	if (!LoadDynamicString(_tooltip, file))
 		return false;
 
-	if (!FileReadData(&data1, 4, 1, file))
+	if (!FileReadData(&_data1, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&data2, 4, 1, file))
+	if (!FileReadData(&_data2, 4, 1, file))
 		return false;
 
-	if (!LoadDynamicString(stringData1, file))
+	if (!LoadDynamicString(_stringData1, file))
 		return false;
 
-	if (!LoadDynamicString(stringData2, file))
+	if (!LoadDynamicString(_stringData2, file))
 		return false;
 
 	return true;
@@ -63,26 +63,26 @@ bool DialogScreenWidget::Load(FILE* file)
 
 void DialogScreenWidget::Save(FILE* file)
 {
-	SaveDynamicString(name, file);
-	fwrite(&x, 4, 1, file);
-	fwrite(&y, 4, 1, file);
-	fwrite(&width, 4, 1, file);
-	fwrite(&height, 4, 1, file);
-	fwrite(&type, 4, 1, file);
-	SaveDynamicString(caption, file);
-	SaveDynamicString(tooltip, file);
-	fwrite(&data1, 4, 1, file);
-	fwrite(&data2, 4, 1, file);
-	SaveDynamicString(stringData1, file);
-	SaveDynamicString(stringData2, file);
+	SaveDynamicString(_name, file);
+	fwrite(&_x, 4, 1, file);
+	fwrite(&_y, 4, 1, file);
+	fwrite(&_width, 4, 1, file);
+	fwrite(&_height, 4, 1, file);
+	fwrite(&_type, 4, 1, file);
+	SaveDynamicString(_caption, file);
+	SaveDynamicString(_tooltip, file);
+	fwrite(&_data1, 4, 1, file);
+	fwrite(&_data2, 4, 1, file);
+	SaveDynamicString(_stringData1, file);
+	SaveDynamicString(_stringData2, file);
 }
 
 void DialogScreenWidget::Print()
 {
-	printf("DialogScreenWidget : Name:%s\n", name);
-	printf("\tTYPE:%d, x:%d, y:%d, width:%d, height:%d\n", type, x, y, width, height);
-	printf("\tcaption:%s, tooltip:%s\n", caption, tooltip);
-	printf("\tdata1:%d, data2:%d, stringdata1:%s, stringdata2:%s\n", data1, data2, stringData1, stringData2);
+	printf("DialogScreenWidget : Name:%s\n", _name);
+	printf("\tTYPE:%d, x:%d, y:%d, width:%d, height:%d\n", _type, _x, _y, _width, _height);
+	printf("\tcaption:%s, tooltip:%s\n", _caption, _tooltip);
+	printf("\tdata1:%d, data2:%d, stringdata1:%s, stringdata2:%s\n", _data1, _data2, _stringData1, _stringData2);
 }
 
 const char* DialogScreenWidget::GetID()
@@ -95,94 +95,129 @@ UplinkObjectId DialogScreenWidget::GetOBJECTID()
 	return UplinkObjectId::DialogScreenWidget;
 }
 
+int DialogScreenWidget::GetX()
+{
+	return _x;
+}
+
+int DialogScreenWidget::GetY()
+{
+	return _y;
+}
+
+int DialogScreenWidget::GetWidth()
+{
+	return _width;
+}
+
+int DialogScreenWidget::GetHeight()
+{
+	return _height;
+}
+
+int DialogScreenWidget::GetType()
+{
+	return _type;
+}
+
+int DialogScreenWidget::GetData1()
+{
+	return _data1;
+}
+
+int DialogScreenWidget::GetData2()
+{
+	return _data2;
+}
+
 void DialogScreenWidget::SetName(const char* value)
 {
-	if (name != nullptr)
-		delete[] name;
+	if (_name != nullptr)
+		delete[] _name;
 
-	name = new char[strlen(value) + 1];
-	strcpy(name, value);
+	_name = new char[strlen(value) + 1];
+	strcpy(_name, value);
 }
 
 void DialogScreenWidget::SetTYPE(int value)
 {
-	type = value;
+	_type = value;
 }
 
 void DialogScreenWidget::SetPosition(int x, int y)
 {
-	this->x = x;
-	this->y = y;
+	this->_x = x;
+	this->_y = y;
 }
 
 void DialogScreenWidget::SetSize(int width, int height)
 {
-	this->width = width;
-	this->height = height;
+	this->_width = width;
+	this->_height = height;
 }
 
 void DialogScreenWidget::SetCaption(const char* value)
 {
-	if (caption != nullptr)
-		delete[] caption;
+	if (_caption != nullptr)
+		delete[] _caption;
 
-	caption = new char[strlen(value) + 1];
-	strcpy(caption, value);
+	_caption = new char[strlen(value) + 1];
+	strcpy(_caption, value);
 }
 
 void DialogScreenWidget::SetTooltip(const char* value)
 {
-	if (tooltip != nullptr)
-		delete[] tooltip;
+	if (_tooltip != nullptr)
+		delete[] _tooltip;
 
-	tooltip = new char[strlen(value) + 1];
-	strcpy(tooltip, value);
+	_tooltip = new char[strlen(value) + 1];
+	strcpy(_tooltip, value);
 }
 
 void DialogScreenWidget::SetData(int data1, int data2)
 {
-	this->data1 = data1;
-	this->data2 = data2;
+	this->_data1 = data1;
+	this->_data2 = data2;
 }
 
 void DialogScreenWidget::SetStringData(const char* stringData1, const char* stringData2)
 {
-	if (this->stringData1 != nullptr)
+	if (this->_stringData1 != nullptr)
 	{
-		delete[] this->stringData1;
-		this->stringData1 = nullptr;
+		delete[] this->_stringData1;
+		this->_stringData1 = nullptr;
 	}
 
 	if (stringData1 != nullptr)
 	{
-		this->stringData1 = new char[strlen(stringData1) + 1];
-		strcpy(this->stringData1, stringData1);
+		this->_stringData1 = new char[strlen(stringData1) + 1];
+		strcpy(this->_stringData1, stringData1);
 	}
 
-	if (this->stringData2 != 0)
+	if (this->_stringData2 != 0)
 	{
-		delete[] this->stringData2;
-		this->stringData2 = nullptr;
+		delete[] this->_stringData2;
+		this->_stringData2 = nullptr;
 	}
 
 	if (stringData2 != nullptr)
 	{
-		this->stringData2 = new char[strlen(stringData2) + 1];
-		strcpy(this->stringData2, stringData2);
+		this->_stringData2 = new char[strlen(stringData2) + 1];
+		strcpy(this->_stringData2, stringData2);
 	}
 }
 
 const char* DialogScreenWidget::GetName()
 {
-	return name;
+	return _name;
 }
 
 const char* DialogScreenWidget::GetCaption()
 {
-	return caption;
+	return _caption;
 }
 
 const char* DialogScreenWidget::GetTooltip()
 {
-	return tooltip;
+	return _tooltip;
 }

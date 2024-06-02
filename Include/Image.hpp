@@ -2,20 +2,21 @@
 
 #include <cstdint>
 
-struct Image
+class Image
 {
-	int width;
-	int height;
-	uint32_t alpha;
-	uint8_t* rgbPixels = nullptr;
-	uint32_t* raster = nullptr;
+	int _width;
+	int _height;
+	uint32_t _alpha;
+	uint8_t* _rgbPixels = nullptr;
+	uint32_t* _raster = nullptr;
 
+public:
 	virtual ~Image();
 	void LoadTIF(const char* path);
 	void CreateErrorBitmap();
 	void SetAlpha(float value);
 	void Draw(int x, int y);
-	void Scale(int32_t newWidth, int32_t newHeight);
+	void Scale(int newWidth, int newHeight);
 	void FlipAroundH();
 	int GetPixelR(int x, int y);
 };

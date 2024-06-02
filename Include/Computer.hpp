@@ -12,27 +12,27 @@ class ComputerScreen;
 
 class Computer : public UplinkObject
 {
-public:
-	int recentHacks = 0;
-	int recentHacksThisMonth = 0;
-	int recentHacksLastMonth = 0;
-	int type = 0;
-	char name[0x40] = {0};
-	char companyName[0x40] = {0};
-	char ip[0x18] = {0};
-	int traceSpeed = 0;
-	int traceAction = 0;
-	char targetable = true;
-	char externallyOpen = true;
-	char running = true;
-	float revelationInfectedVersion = 0.0f;
-	Date revelationInfectedDate;
-	DArray<ComputerScreen*> screens;
-	DataBank dataBank;
-	LogBank logBank;
-	RecordBank recordBank;
-	Security security;
+	int _recentHacks = 0;
+	int _recentHacksThisMonth = 0;
+	int _recentHacksLastMonth = 0;
+	int _type = 0;
+	char _name[0x40] = {0};
+	char _companyName[0x40] = {0};
+	char _ip[0x18] = {0};
+	int _traceSpeed = 0;
+	int _traceAction = 0;
+	char _isTargetable = true;
+	char _isExternallyOpen = true;
+	char _running = true;
+	float _revelationInfectedVersion = 0.0f;
+	Date _revelationInfectedDate;
+	DArray<ComputerScreen*> _screens;
+	DataBank _dataBank;
+	LogBank _logBank;
+	RecordBank _recordBank;
+	Security _security;
 
+public:
 	~Computer() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -40,14 +40,22 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void SetName(const char* value);
-	void SetCompanyName(const char* value);
-	void SetIP(const char* value);
-	void SetIsTargetable(bool value);
+	int GetType();
+	const char* GetName();
+	const char* GetIp();
+	int GetTraceAction();
+	DataBank& GetDataBank();
+	LogBank& GetLogBank();
+	RecordBank& GetRecordBank();
+	Security& GetSecurity();
+	void SetTYPE(int type);
+	void SetName(const char* name);
+	void SetCompanyName(const char* companyName);
+	void SetIP(const char* ip);
+	void SetTraceSpeed(int traceSpeed);
+	void SetTraceAction(int traceAction);
+	void SetIsTargetable(bool isTargetable);
+	void SetIsExternallyOpen(bool isExternallyOpen);
 	void AddComputerScreen(ComputerScreen* screen, int index);
-	void SetTYPE(int value);
-	void SetTraceSpeed(int value);
-	void SetIsExternallyOpen(bool value);
-	void SetTraceAction(int value);
 	ComputerScreen* GetComputerScreen(int index);
 };

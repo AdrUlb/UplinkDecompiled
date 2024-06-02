@@ -23,7 +23,7 @@ enum class NotificationType
 
 class NotificationEvent : public UplinkEvent
 {
-	NotificationType type = NotificationType::Unknown;
+	NotificationType _type = NotificationType::Unknown;
 
 public:
 	bool Load(FILE* file) override;

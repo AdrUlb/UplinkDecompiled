@@ -2,12 +2,12 @@
 
 Gateway::~Gateway()
 {
-	DeleteLListData(&hardware);
-	if (currentGatewayDef != 0)
-		delete currentGatewayDef;
+	DeleteLListData(&_hardware);
+	if (_currentGatewayDef != 0)
+		delete _currentGatewayDef;
 
-	if (exchangeGateway != 0)
-		delete exchangeGateway;
+	if (_exchangeGateway != 0)
+		delete _exchangeGateway;
 }
 bool Gateway::Load(FILE* file)
 {
@@ -29,10 +29,15 @@ void Gateway::Print()
 
 void Gateway::Update()
 {
-	dataBank.Update();
+	_dataBank.Update();
 }
 
 const char* Gateway::GetID()
 {
 	return "GATEWAY";
+}
+
+bool Gateway::GetNuked()
+{
+	return _nuked;
 }

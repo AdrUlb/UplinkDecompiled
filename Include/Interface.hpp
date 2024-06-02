@@ -9,9 +9,9 @@
 
 class Interface : UplinkObject
 {
-	LocalInterface* localInterface = new LocalInterface();
-	RemoteInterface* remoteInterface = new RemoteInterface();
-	TaskManager* taskManager = new TaskManager();
+	LocalInterface* _localInterface = new LocalInterface();
+	RemoteInterface* _remoteInterface = new RemoteInterface();
+	TaskManager* _taskManager = new TaskManager();
 
 public:
 	~Interface() override;

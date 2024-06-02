@@ -5,34 +5,34 @@
 
 Connection::~Connection()
 {
-	DeleteLListData(&vlocations);
+	DeleteLListData(&_vlocations);
 }
 
 bool Connection::Load(FILE* file)
 {
 	if (strcmp(game->GetLoadedSavefileVer(), "SAV59") >= 0)
 	{
-		if (!LoadDynamicStringBuf(owner, 0x40, file))
+		if (!LoadDynamicStringBuf(_owner, 0x40, file))
 			return false;
 	}
 	else
 	{
-		auto success = FileReadData(owner, 0x40, 1, file);
-		this->owner[0x3F] = 0;
+		auto success = FileReadData(_owner, 0x40, 1, file);
+		this->_owner[0x3F] = 0;
 		if (!success)
 			return false;
 	}
 
-	if (!LoadDynamicStringBuf(owner, 0x40, file))
+	if (!LoadDynamicStringBuf(_owner, 0x40, file))
 		return false;
 
-	if (!FileReadData(&traceInProgress, 1, 1, file))
+	if (!FileReadData(&_traceInProgress, 1, 1, file))
 		return false;
 
-	if (!FileReadData(&traceProgress, 4, 1, file))
+	if (!FileReadData(&_traceProgress, 4, 1, file))
 		return false;
 
-	if (!LoadLList(&this->vlocations, file))
+	if (!LoadLList(&this->_vlocations, file))
 		return false;
 
 	return true;
@@ -40,16 +40,16 @@ bool Connection::Load(FILE* file)
 
 void Connection::Save(FILE* file)
 {
-	SaveDynamicString(owner, 0x40, file);
-	fwrite(&traceInProgress, 1, 1, file);
-	fwrite(&traceProgress, 4, 1, file);
-	SaveLList(&vlocations, file);
+	SaveDynamicString(_owner, 0x40, file);
+	fwrite(&_traceInProgress, 1, 1, file);
+	fwrite(&_traceProgress, 4, 1, file);
+	SaveLList(&_vlocations, file);
 }
 
 void Connection::Print()
 {
-	printf("Connection : Owner = %s, TraceInProgress = %d, TraceProgress = %d\n", owner, traceInProgress, traceProgress);
-	PrintLList(&this->vlocations);
+	printf("Connection : Owner = %s, TraceInProgress = %d, TraceProgress = %d\n", _owner, _traceInProgress, _traceProgress);
+	PrintLList(&this->_vlocations);
 }
 
 const char* Connection::GetID()
@@ -58,31 +58,31 @@ const char* Connection::GetID()
 }
 const char* Connection::GetTarget()
 {
-	if (vlocations.ValidIndex(0))
-		return vlocations.GetData(vlocations.Size() - 1);
+	if (_vlocations.ValidIndex(0))
+		return _vlocations.GetData(_vlocations.Size() - 1);
 
 	return nullptr;
 }
 
 Person* Connection::GetOwner()
 {
-	const auto ret = game->GetWorld()->GetPerson(owner);
+	const auto ret = game->GetWorld()->GetPerson(_owner);
 	UplinkAssert(ret != nullptr);
 	return ret;
 }
 
-void Connection::SetOwner(const char* value)
+void Connection::SetOwner(const char* owner)
 {
-	UplinkStrncpy(owner, value, 0x80);
+	UplinkStrncpy(_owner, owner, 0x80);
 }
 
 void Connection::Reset()
 {
-	DeleteLListData(&vlocations);
-	vlocations.Empty();
+	DeleteLListData(&_vlocations);
+	_vlocations.Empty();
 	AddVLocation(GetOwner()->localHost);
-	traceInProgress = false;
-	traceProgress = 0;
+	_traceInProgress = false;
+	_traceProgress = 0;
 }
 
 void Connection::AddVLocation(const char* ip)
@@ -92,13 +92,13 @@ void Connection::AddVLocation(const char* ip)
 
 	char* str = new char[0x18];
 	UplinkStrncpy(str, ip, 0x18);
-	vlocations.PutDataAtEnd(str);
+	_vlocations.PutDataAtEnd(str);
 }
 
 bool Connection::LocationIncluded(const char* ip)
 {
-	for (auto i = 0; i < vlocations.Size(); i++)
-		if (strcmp(vlocations.GetData(i), ip) == 0)
+	for (auto i = 0; i < _vlocations.Size(); i++)
+		if (strcmp(_vlocations.GetData(i), ip) == 0)
 			return true;
 
 	return false;
@@ -109,9 +109,9 @@ void Connection::Connect()
 	const auto target = GetTarget();
 
 	GetOwner()->SetRemoteHost(target);
-	traceProgress = 0;
-	traceInProgress = false;
-	connectionTime.SetDate(&game->GetWorld()->currentDate);
+	_traceProgress = 0;
+	_traceInProgress = false;
+	_connectionTime.SetDate(&game->GetWorld()->currentDate);
 
 	const auto vlocation = game->GetWorld()->GetVLocation(target);
 	UplinkAssert(vlocation != nullptr);
@@ -119,19 +119,19 @@ void Connection::Connect()
 	const auto computer = vlocation->GetComputer();
 	UplinkAssert(computer != nullptr);
 
-	const auto rax_5 = computer->security.IsAnythingDisabled();
+	const auto rax_5 = computer->GetSecurity().IsAnythingDisabled();
 	if (rax_5)
 		BeginTrace();
 
-	if (strcmp("PLAYER", owner) == 0) // cond3
+	if (strcmp("PLAYER", _owner) == 0) // cond3
 	{
 		// SecurityMonitor::BeginAttack(); and so on
 		puts("TODO: Connection::Connect()");
 	}
 
-	for (auto j = 0; j < vlocations.Size(); j++)
+	for (auto j = 0; j < _vlocations.Size(); j++)
 	{
-		const auto vloc = game->GetWorld()->GetVLocation(vlocations.GetData(j));
+		const auto vloc = game->GetWorld()->GetVLocation(_vlocations.GetData(j));
 		UplinkAssert(vloc != nullptr);
 
 		const auto comp = vloc->GetComputer();
@@ -147,29 +147,29 @@ void Connection::Connect()
 
 		const auto accessLog = new AccessLog();
 
-		const auto lastLoc = vlocations.Size() - 1;
+		const auto lastLoc = _vlocations.Size() - 1;
 
 		if (j == lastLoc)
 		{
-			accessLog->SetProperties(game->GetWorld()->currentDate, vlocations.GetData(lastLoc - 1), owner, 0, 2);
-			comp->logBank.AddLog(accessLog, -1);
+			accessLog->SetProperties(game->GetWorld()->currentDate, _vlocations.GetData(lastLoc - 1), _owner, 0, 2);
+			comp->GetLogBank().AddLog(accessLog, -1);
 			continue;
 		}
 
 		if (j == 0)
-			accessLog->SetProperties(game->GetWorld()->currentDate, "LOCAL", owner, 0, 4);
+			accessLog->SetProperties(game->GetWorld()->currentDate, "LOCAL", _owner, 0, 4);
 		else
-			accessLog->SetProperties(game->GetWorld()->currentDate, vlocations.GetData(j - 1), owner, 0, 5);
+			accessLog->SetProperties(game->GetWorld()->currentDate, _vlocations.GetData(j - 1), _owner, 0, 5);
 
-		accessLog->SetData1(vlocations.GetData(j + 1));
+		accessLog->SetData1(_vlocations.GetData(j + 1));
 
-		comp->logBank.AddLog(accessLog, -1);
+		comp->GetLogBank().AddLog(accessLog, -1);
 	}
 }
 
 void Connection::BeginTrace()
 {
-	if (this->traceInProgress)
+	if (this->_traceInProgress)
 		return;
 
 	struct VLocation* vlocation = game->GetWorld()->GetVLocation(GetTarget());
@@ -178,9 +178,9 @@ void Connection::BeginTrace()
 	struct Computer* computer = vlocation->GetComputer();
 	UplinkAssert(computer != nullptr);
 
-	if (computer->traceAction > 0)
+	if (computer->GetTraceAction() > 0)
 	{
-		traceInProgress = true;
-		traceProgress = 0;
+		_traceInProgress = true;
+		_traceProgress = 0;
 	}
 }

@@ -4,18 +4,18 @@
 
 class GameObituary : UplinkObject
 {
-	const char* gameOverReason;
-	char name[0x80];
-	int money;
-	int uplinkRating;
-	int neuromancerRating;
-	int specialMissionsCompleted;
-	int livesRuined;
-	int systemsDestroyed;
-	int highSecurityHacks;
-	int score;
-	bool demoGameOver;
-	bool warezGameOver;
+	const char* _gameOverReason;
+	char _name[0x80];
+	int _money;
+	int _uplinkRating;
+	int _neuromancerRating;
+	int _specialMissionsCompleted;
+	int _livesRuined;
+	int _systemsDestroyed;
+	int _highSecurityHacks;
+	int _score;
+	bool _demoGameOver;
+	bool _warezGameOver;
 
 public:
 	GameObituary();

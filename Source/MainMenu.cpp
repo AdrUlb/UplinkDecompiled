@@ -17,37 +17,37 @@ void MainMenu::Remove()
 	if (!IsVisible())
 		return;
 
-	if (screen == nullptr)
+	if (_screen == nullptr)
 		return;
 
-	screen->Remove();
-	delete screen;
-	screen = nullptr;
+	_screen->Remove();
+	delete _screen;
+	_screen = nullptr;
 }
 
 void MainMenu::RunScreen(MainMenuScreenCode code)
 {
 	(void)code;
 
-	if (screen != nullptr)
+	if (_screen != nullptr)
 	{
-		screen->Remove();
-		delete screen;
-		screen = nullptr;
+		_screen->Remove();
+		delete _screen;
+		_screen = nullptr;
 	}
 
 	app->CloseGame();
-	screenCode = code;
+	_screenCode = code;
 
 	switch (code)
 	{
 		case MainMenuScreenCode::FirstTimeLoading:
-			screen = new FirstTimeLoadingInterface();
+			_screen = new FirstTimeLoadingInterface();
 			break;
 		default:
 			printf("TODO: implement MainMenu::RunScreen(%d)\n", static_cast<int>(code));
 			UplinkAbort("Tried to create a local screen with unknown SCREENCODE");
 	}
 
-	screen->Create();
+	_screen->Create();
 }

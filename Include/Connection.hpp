@@ -8,11 +8,11 @@ class Person;
 
 class Connection : public UplinkObject
 {
-	char owner[0x40] = {0};
-	LList<char*> vlocations;
-	bool traceInProgress = false;
-	int traceProgress = 0;
-	Date connectionTime;
+	char _owner[0x40] = {0};
+	LList<char*> _vlocations;
+	bool _traceInProgress = false;
+	int _traceProgress = 0;
+	Date _connectionTime;
 
 public:
 	~Connection();
@@ -22,10 +22,10 @@ public:
 	const char* GetID();
 	const char* GetTarget();
 	Person* GetOwner();
-	void SetOwner(const char* value);
+	void SetOwner(const char* owner);
+	void Connect();
 	void Reset();
 	void AddVLocation(const char* ip);
 	bool LocationIncluded(const char* ip);
-	void Connect();
 	void BeginTrace();
 };

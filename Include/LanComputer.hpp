@@ -8,8 +8,8 @@ typedef void LanComputerLink;
 
 class LanComputer : public Computer
 {
-	DArray<LanComputerSystem*> systems;
-	DArray<LanComputerLink*> links;
+	DArray<LanComputerSystem*> _systems;
+	DArray<LanComputerLink*> _links;
 
 	~LanComputer() override;
 	bool Load(FILE* file) override;

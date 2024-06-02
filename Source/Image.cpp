@@ -6,11 +6,11 @@
 
 Image::~Image()
 {
-	if (raster != nullptr)
-		delete[] raster;
+	if (_raster != nullptr)
+		delete[] _raster;
 
-	if (rgbPixels != nullptr)
-		delete[] rgbPixels;
+	if (_rgbPixels != nullptr)
+		delete[] _rgbPixels;
 }
 
 void Image::LoadTIF(const char* path)
@@ -32,18 +32,18 @@ void Image::LoadTIF(const char* path)
 	// TODO: don't assume that TIFFRGBAImageGet() will always succeed
 	TIFFRGBAImageGet(&img, raster, img.width, img.height);
 
-	width = img.width;
-	height = img.height;
+	_width = img.width;
+	_height = img.height;
 
-	if (rgbPixels != nullptr)
+	if (_rgbPixels != nullptr)
 	{
-		delete[] rgbPixels;
-		this->rgbPixels = nullptr;
+		delete[] _rgbPixels;
+		this->_rgbPixels = nullptr;
 	}
 
-	if (this->raster != 0)
-		delete[] this->raster;
-	this->raster = raster;
+	if (this->_raster != 0)
+		delete[] this->_raster;
+	this->_raster = raster;
 
 	TIFFRGBAImageEnd(&img);
 	TIFFClose(tif);
@@ -51,109 +51,109 @@ void Image::LoadTIF(const char* path)
 
 void Image::CreateErrorBitmap()
 {
-	width = 32;
-	height = 32;
+	_width = 32;
+	_height = 32;
 
-	const auto raster = new uint32_t[width * height];
+	const auto raster = new uint32_t[_width * _height];
 
-	for (auto x = 0; x < width; x++)
+	for (auto x = 0; x < _width; x++)
 	{
-		for (auto y = 0; y < height; y++)
+		for (auto y = 0; y < _height; y++)
 		{
-			if (x != 0 && y != 0 && x != width - 1 && y != height - 1 && x != y && x + y != width)
+			if (x != 0 && y != 0 && x != _width - 1 && y != _height - 1 && x != y && x + y != _width)
 			{
-				raster[x + (y * width)] = 0xFF000000;
+				raster[x + (y * _width)] = 0xFF000000;
 				continue;
 			}
-			raster[x + (y * width)] = 0xFFFFFFFF;
+			raster[x + (y * _width)] = 0xFFFFFFFF;
 		}
 	}
 
-	if (rgbPixels != nullptr)
+	if (_rgbPixels != nullptr)
 	{
-		delete[] rgbPixels;
-		rgbPixels = nullptr;
+		delete[] _rgbPixels;
+		_rgbPixels = nullptr;
 	}
 
-	if (this->raster != 0)
-		delete[] this->raster;
-	this->raster = raster;
+	if (this->_raster != 0)
+		delete[] this->_raster;
+	this->_raster = raster;
 }
 
 void Image::SetAlpha(float value)
 {
-	alpha = value * 256.0f;
-	if (raster == nullptr)
+	_alpha = value * 256.0f;
+	if (_raster == nullptr)
 		return;
 
-	for (auto x = 0; x < width; x++)
-		for (auto y = 0; y < height; y++)
-			raster[x + (y * width)] = (raster[x + (y * width)] & 0x00FFFFFF) | (alpha << 24);
+	for (auto x = 0; x < _width; x++)
+		for (auto y = 0; y < _height; y++)
+			_raster[x + (y * _width)] = (_raster[x + (y * _width)] & 0x00FFFFFF) | (_alpha << 24);
 }
 
 #include <cstring>
 
 void Image::Draw(int x, int y)
 {
-	if (raster == 0)
+	if (_raster == 0)
 		return;
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_BLEND);
-	glRasterPos2i(x, y + height);
-	glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, raster);
+	glRasterPos2i(x, y + _height);
+	glDrawPixels(_width, _height, GL_RGBA, GL_UNSIGNED_BYTE, _raster);
 	glPopAttrib();
 }
 
 void Image::Scale(int newWidth, int newHeight)
 {
-	if (this->raster == nullptr)
+	if (this->_raster == nullptr)
 		return;
 
 	const auto newRaster = new uint32_t[newWidth * newHeight];
-	gluScaleImage(GL_RGBA, width, height, GL_UNSIGNED_BYTE, raster, newWidth, newHeight, GL_UNSIGNED_BYTE, newRaster);
+	gluScaleImage(GL_RGBA, _width, _height, GL_UNSIGNED_BYTE, _raster, newWidth, newHeight, GL_UNSIGNED_BYTE, newRaster);
 
-	if (rgbPixels != nullptr)
+	if (_rgbPixels != nullptr)
 	{
-		delete[] rgbPixels;
-		rgbPixels = nullptr;
+		delete[] _rgbPixels;
+		_rgbPixels = nullptr;
 	}
 
-	delete[] raster;
+	delete[] _raster;
 
-	raster = newRaster;
-	width = newWidth;
-	height = newHeight;
+	_raster = newRaster;
+	_width = newWidth;
+	_height = newHeight;
 }
 
 void Image::FlipAroundH()
 {
-	if (raster == nullptr)
+	if (_raster == nullptr)
 		return;
 
-	const auto newRaster = new uint32_t[width * height];
+	const auto newRaster = new uint32_t[_width * _height];
 
-	const auto bytesPerRow = width * 4;
-	for (auto i = 0; i < height; i++)
+	const auto bytesPerRow = _width * 4;
+	for (auto i = 0; i < _height; i++)
 	{
 		const auto offset = i * bytesPerRow;
-		memcpy((char*)newRaster + (height * bytesPerRow) - bytesPerRow - offset, (char*)raster + offset, bytesPerRow);
+		memcpy((char*)newRaster + (_height * bytesPerRow) - bytesPerRow - offset, (char*)_raster + offset, bytesPerRow);
 	}
 
-	if (rgbPixels != nullptr)
+	if (_rgbPixels != nullptr)
 	{
-		delete[] rgbPixels;
-		rgbPixels = nullptr;
+		delete[] _rgbPixels;
+		_rgbPixels = nullptr;
 	}
 
-	delete[] raster;
-	raster = newRaster;
+	delete[] _raster;
+	_raster = newRaster;
 }
 
 int Image::GetPixelR(int x, int y)
 {
-	if (raster == nullptr || x < 0 || y < 0 || x >= width || y >= height)
+	if (_raster == nullptr || x < 0 || y < 0 || x >= _width || y >= _height)
 		return -1;
 
-	return raster[x + (y * width)] & 0xFF;
+	return _raster[x + (y * _width)] & 0xFF;
 }

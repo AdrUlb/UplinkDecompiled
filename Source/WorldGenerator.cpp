@@ -328,7 +328,7 @@ Company* WorldGenerator::GenerateCompany(const char* name, int size, int type, i
 
 	char s[0x80];
 	UplinkSnprintf(s, 0x80, "internal@%s.net", name);
-	game->GetWorld()->CreatePerson(s, computer->ip)->SetIsTargetable(false);
+	game->GetWorld()->CreatePerson(s, computer->GetIp())->SetIsTargetable(false);
 	company->Grow(0);
 	return company;
 }
@@ -415,7 +415,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 		else if (level > 5)
 			level = 5;
 
-		computer->security.AddSystem(4, level, -1);
+		computer->GetSecurity().AddSystem(4, level, -1);
 	}
 
 	if (companySize > 8)
@@ -427,7 +427,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 		else if (level > 5)
 			level = 5;
 
-		computer->security.AddSystem(1, level, -1);
+		computer->GetSecurity().AddSystem(1, level, -1);
 	}
 
 	if (companySize > 10)
@@ -439,7 +439,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 		else if (level > 5)
 			level = 5;
 
-		computer->security.AddSystem(2, level, -1);
+		computer->GetSecurity().AddSystem(2, level, -1);
 	}
 	if (companySize <= 4)
 		computer->SetTraceAction(3);
@@ -520,7 +520,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	consoleScreen->SetSubTitle("Console");
 	consoleScreen->SetNextPage(7);
 	computer->AddComputerScreen(consoleScreen, 8);
-	computer->dataBank.SetSize(NumberGenerator::RandomNormalNumber(100.0f, 40.0f));
+	computer->GetDataBank().SetSize(NumberGenerator::RandomNormalNumber(100.0f, 40.0f));
 
 	const auto fileCount = NumberGenerator::RandomNormalNumber(10.0f, 5.0f);
 
@@ -542,7 +542,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 			encrypted = NumberGenerator::RandomNumber(5);
 
 		data->SetDetails(type, size, encrypted, compressed, 1.0f, 0);
-		computer->dataBank.PutData(data);
+		computer->GetDataBank().PutData(data);
 	}
 
 	const auto logCount = NumberGenerator::RandomNumber(10);
@@ -553,14 +553,14 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 		const auto loc = WorldGenerator::GetRandomLocation();
 		log->SetProperties(game->GetWorld()->currentDate, loc->ip, " ", 0, 1);
 		log->SetData1("Accessed File");
-		computer->logBank.AddLog(log, -1);
+		computer->GetLogBank().AddLog(log, -1);
 	}
 
 	const auto record = new Record();
 	record->AddField("Name", "admin");
 	record->AddField("Password", NameGenerator::GeneratePassword());
 	record->AddField("Security", "1");
-	computer->recordBank.AddRecord(*record);
+	computer->GetRecordBank().AddRecord(*record);
 
 	return computer;
 }
@@ -596,7 +596,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	{
 		level1 = 1;
 	}
-	computer->security.AddSystem(4, level1, -1);
+	computer->GetSecurity().AddSystem(4, level1, -1);
 
 	int level2 = (company->GetSize() - 8) / 3;
 	if (level2 > 5)
@@ -607,7 +607,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	{
 		level2 = 1;
 	}
-	computer->security.AddSystem(1, level2, -1);
+	computer->GetSecurity().AddSystem(1, level2, -1);
 
 	int level3 = (company->GetSize() - 10) / 3;
 	if (level3 > 5)
@@ -618,7 +618,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	{
 		level3 = 1;
 	}
-	computer->security.AddSystem(2, level3, -1);
+	computer->GetSecurity().AddSystem(2, level3, -1);
 
 	if (strcmp(companyName, "Government") == 0)
 		computer->SetIsTargetable(false);
@@ -676,7 +676,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	consoleScreen->SetNextPage(3);
 	computer->AddComputerScreen(consoleScreen, 6);
 
-	computer->dataBank.SetSize(NumberGenerator::RandomNormalNumber(100.0f, 40.0f));
+	computer->GetDataBank().SetSize(NumberGenerator::RandomNormalNumber(100.0f, 40.0f));
 
 	const auto fileCount = NumberGenerator::RandomNormalNumber(10.0f, 5.0f);
 
@@ -698,7 +698,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 			encrypted = NumberGenerator::RandomNumber(5);
 
 		data->SetDetails(type, size, encrypted, compressed, 1.0f, 0);
-		computer->dataBank.PutData(data);
+		computer->GetDataBank().PutData(data);
 	}
 
 	const auto logCount = NumberGenerator::RandomNumber(10);
@@ -709,7 +709,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 		const auto loc = WorldGenerator::GetRandomLocation();
 		log->SetProperties(game->GetWorld()->currentDate, loc->ip, " ", 0, 1);
 		log->SetData1("Accessed File");
-		computer->logBank.AddLog(log, -1);
+		computer->GetLogBank().AddLog(log, -1);
 	}
 
 	const auto record = new Record();
@@ -717,7 +717,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	NameGenerator::GenerateComplexPassword();
 	record->AddField("Password", tempname);
 	record->AddField("Security", "1");
-	computer->recordBank.AddRecord(*record);
+	computer->GetRecordBank().AddRecord(*record);
 
 	return computer;
 }

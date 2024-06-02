@@ -95,10 +95,10 @@ Computer* VLocation::GetComputer()
 		const auto comp = computerTree->Data;
 		if (comp != nullptr)
 		{
-			if (strcmp(comp->ip, ip) == 0)
+			if (strcmp(comp->GetIp(), ip) == 0)
 				return comp;
 
-			if (comp->type == 64 && GetOBJECTID() == UplinkObjectId::VlocationSpecial)
+			if (comp->GetType() == 64 && GetOBJECTID() == UplinkObjectId::VlocationSpecial)
 				return comp;
 		}
 

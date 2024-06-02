@@ -4,14 +4,14 @@
 
 class Date : UplinkObject
 {
-	int second;
-	int minute;
-	int hour;
-	int day;
-	int month;
-	int year;
-	int lastUpdateTime;
-	bool active;
+	int _second;
+	int _minute;
+	int _hour;
+	int _day;
+	int _month;
+	int _year;
+	int _lastUpdateTime;
+	bool _active;
 
 public:
 	Date();

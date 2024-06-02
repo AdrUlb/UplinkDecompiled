@@ -54,18 +54,18 @@ void MainMenuScreen::RegisterButton(int x, int y, int width, int height, const c
 	buttons->PutData(data);
 }
 
-MainMenu::MainMenu() : screenCode(MainMenuScreenCode::Unknown), screen(nullptr) {}
+MainMenu::MainMenu() : _screenCode(MainMenuScreenCode::Unknown), _screen(nullptr) {}
 
 MainMenu::~MainMenu()
 {
-	if (screen)
-		delete screen;
+	if (_screen)
+		delete _screen;
 }
 
 void MainMenu::Update()
 {
-	if (screen != nullptr)
-		screen->Update();
+	if (_screen != nullptr)
+		_screen->Update();
 }
 
 const char* MainMenu::GetID()
@@ -85,8 +85,8 @@ MainMenuScreen* MainMenu::GetMenuScreen()
 
 MainMenuScreenCode MainMenu::InScreen()
 {
-	if (screen == nullptr)
+	if (_screen == nullptr)
 		return MainMenuScreenCode::Unknown;
 
-	return screen->ScreenID();
+	return _screen->ScreenID();
 }

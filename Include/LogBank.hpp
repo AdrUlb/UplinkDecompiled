@@ -6,8 +6,8 @@
 
 class LogBank : public UplinkObject
 {
-	DArray<AccessLog*> accessLogs;
-	DArray<AccessLog*> accessLogsModified;
+	DArray<AccessLog*> _accessLogs;
+	DArray<AccessLog*> _accessLogsModified;
 
 public:
 	~LogBank() override;
@@ -16,6 +16,6 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void AddLog(AccessLog* value, int index);
+	void AddLog(AccessLog* log, int index);
 	bool LogModified(int index);
 };

@@ -281,11 +281,11 @@ Computer* World::CreateComputer(const char* computerName, const char* companyNam
 void World::CreateComputer(Computer* computer)
 {
 	UplinkAssert(computer != nullptr);
-	computers.PutData(computer->name, computer);
+	computers.PutData(computer->GetName(), computer);
 
-	const auto vlocation = GetVLocation(computer->ip);
+	const auto vlocation = GetVLocation(computer->GetIp());
 	UplinkAssert(vlocation != nullptr);
-	vlocation->SetComputer(computer->name);
+	vlocation->SetComputer(computer->GetName());
 }
 
 void World::CreatePassword(const char* password)

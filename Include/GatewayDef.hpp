@@ -6,31 +6,31 @@
 
 struct GatewayDefLocation
 {
-	int x = 0;
-	int y = 0;
+	int X = 0;
+	int Y = 0;
 };
 
 class GatewayDef : UplinkObject
 {
-	char name[0x80] = "UnNamed";
-	char description[0x100] = "UnDescribed ;)";
-	char filename[0x100] = "None";
-	char thumbnail[0x100] = "None";
-	int cost;
-	int maxCpus;
-	int maxMemory;
-	int maxUpgrades;
-	int maxSecurity;
-	int bandwidth;
-	int width;
-	int height;
-	DArray<GatewayDefLocation*> cpuLocations;
-	DArray<GatewayDefLocation*> memoryLocations;
-	DArray<GatewayDefLocation*> securityLocations;
-	int modemX = 0;
-	int modemY = 0;
-	int powerX = 0;
-	int powerY = 0;
+	char _name[0x80] = "UnNamed";
+	char _description[0x100] = "UnDescribed ;)";
+	char _filename[0x100] = "None";
+	char _thumbnail[0x100] = "None";
+	int _cost;
+	int _maxCpus;
+	int _maxMemory;
+	int _maxUpgrades;
+	int _maxSecurity;
+	int _bandwidth;
+	int _width;
+	int _height;
+	DArray<GatewayDefLocation*> _cpuLocations;
+	DArray<GatewayDefLocation*> _memoryLocations;
+	DArray<GatewayDefLocation*> _securityLocations;
+	int _modemX = 0;
+	int _modemY = 0;
+	int _powerX = 0;
+	int _powerY = 0;
 
 public:
 	~GatewayDef() override;

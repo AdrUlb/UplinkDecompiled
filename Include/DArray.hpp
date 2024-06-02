@@ -7,10 +7,10 @@
 
 template <class T> class DArray
 {
-	int grow;
-	int size;
-	T* data;
-	bool* dataValid;
+	int _grow;
+	int _size;
+	T* _data;
+	bool* _dataValid;
 
 public:
 	typedef int (*ComparatorFunc)(T* a, T* b);
@@ -31,17 +31,17 @@ public:
 
 	int Size() const
 	{
-		return size;
+		return _size;
 	}
 
 	T& operator[](int index)
 	{
-		assert(index >= 0 && index < size);
+		assert(index >= 0 && index < _size);
 
-		if (!dataValid[index])
+		if (!_dataValid[index])
 			std::cout << "DArray error : DArray::[] called, referenced unused data.  (Index = " << index << ")\n";
 
-		return this->data[index];
+		return this->_data[index];
 	}
 };
 

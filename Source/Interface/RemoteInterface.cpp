@@ -101,7 +101,7 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 	{
 		printf(
 			"RemoteInterface warning : Trying to run a screen on a different computer ('%s', %s) then the one currently connected to ('%s', %s).\n",
-			computer->name, computer->ip, remoteComputer->name, remoteComputer->ip);
+			computer->GetName(), computer->GetIp(), remoteComputer->GetName(), remoteComputer->GetIp());
 		return;
 	}
 
@@ -135,7 +135,7 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 			_screen = new DialogScreenInterface();
 			break;
 		default:
-			UplinkAbort("Unrecognised ComputerScreen %d, computer '%s' (%s)", screenObjId, remoteComputer->name, remoteComputer->ip);
+			UplinkAbort("Unrecognised ComputerScreen %d, computer '%s' (%s)", screenObjId, remoteComputer->GetName(), remoteComputer->GetIp());
 	}
 	UplinkAssert(_screen != nullptr);
 

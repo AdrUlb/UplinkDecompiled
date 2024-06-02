@@ -6,12 +6,12 @@
 
 Interface::~Interface()
 {
-	if (localInterface != 0)
-		delete localInterface;
-	if (remoteInterface != 0)
-		delete remoteInterface;
-	if (taskManager != 0)
-		delete taskManager;
+	if (_localInterface != 0)
+		delete _localInterface;
+	if (_remoteInterface != 0)
+		delete _remoteInterface;
+	if (_taskManager != 0)
+		delete _taskManager;
 }
 
 bool Interface::Load(FILE* file)
@@ -62,18 +62,18 @@ void Interface::Create()
 
 LocalInterface* Interface::GetLocalInterface()
 {
-	UplinkAssert(localInterface != nullptr);
-	return localInterface;
+	UplinkAssert(_localInterface != nullptr);
+	return _localInterface;
 }
 
 RemoteInterface* Interface::GetRemoteInterface()
 {
-	UplinkAssert(remoteInterface != nullptr);
-	return remoteInterface;
+	UplinkAssert(_remoteInterface != nullptr);
+	return _remoteInterface;
 }
 
 TaskManager* Interface::GetTaskManager()
 {
-	UplinkAssert(taskManager != nullptr);
-	return taskManager;
+	UplinkAssert(_taskManager != nullptr);
+	return _taskManager;
 }

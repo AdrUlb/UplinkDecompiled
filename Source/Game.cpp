@@ -10,45 +10,45 @@
 
 Game::Game()
 {
-	interface = nullptr;
-	view = nullptr;
-	world = nullptr;
-	speed = 0;
-	obituary = nullptr;
-	loadedSaveFileVer = nullptr;
-	createdSaveFileVer = nullptr;
-	field_48 = 0;
-	winCodeDesc = nullptr;
-	field_58 = nullptr;
-	field_60 = 0;
-	worldMapType = 1;
+	_interface = nullptr;
+	_view = nullptr;
+	_world = nullptr;
+	_speed = 0;
+	_obituary = nullptr;
+	_loadedSaveFileVer = nullptr;
+	_createdSaveFileVer = nullptr;
+	_field_48 = 0;
+	_winCodeDesc = nullptr;
+	_field_58 = nullptr;
+	_field_60 = 0;
+	_worldMapType = 1;
 }
 
 Game::~Game()
 {
-	if (interface != nullptr)
-		delete interface;
+	if (_interface != nullptr)
+		delete _interface;
 
-	if (view != nullptr)
-		delete view;
+	if (_view != nullptr)
+		delete _view;
 
-	if (world != nullptr)
-		delete world;
+	if (_world != nullptr)
+		delete _world;
 
-	if (obituary != nullptr)
-		delete obituary;
+	if (_obituary != nullptr)
+		delete _obituary;
 
-	if (loadedSaveFileVer != nullptr)
-		delete[] loadedSaveFileVer;
+	if (_loadedSaveFileVer != nullptr)
+		delete[] _loadedSaveFileVer;
 
-	if (createdSaveFileVer != nullptr)
-		delete[] createdSaveFileVer;
+	if (_createdSaveFileVer != nullptr)
+		delete[] _createdSaveFileVer;
 
-	if (winCodeDesc != nullptr)
-		delete[] winCodeDesc;
+	if (_winCodeDesc != nullptr)
+		delete[] _winCodeDesc;
 
-	if (field_58 != nullptr)
-		delete[] field_58;
+	if (_field_58 != nullptr)
+		delete[] _field_58;
 }
 
 bool Game::Load(FILE* file)
@@ -70,18 +70,18 @@ void Game::Print()
 
 void Game::Update()
 {
-	if (speed > 0)
+	if (_speed > 0)
 	{
 		GetWorld()->Update();
 		GetView()->Update();
 		GetInterface()->Update();
 	}
 
-	if (time(nullptr) > lastAutosaveTime + 60)
+	if (time(nullptr) > _lastAutosaveTime + 60)
 	{
 		const auto player = GetWorld()->GetPlayer();
 		app->SaveGame(player->handle);
-		lastAutosaveTime = time(nullptr);
+		_lastAutosaveTime = time(nullptr);
 	}
 }
 
@@ -92,75 +92,75 @@ const char* Game::GetID()
 
 int Game::GameSpeed()
 {
-	return speed;
+	return _speed;
 }
 
 World* Game::GetWorld()
 {
-	UplinkAssert(world != nullptr);
-	return world;
+	UplinkAssert(_world != nullptr);
+	return _world;
 }
 
 View* Game::GetView()
 {
-	UplinkAssert(view != nullptr);
-	return view;
+	UplinkAssert(_view != nullptr);
+	return _view;
 }
 
 Interface* Game::GetInterface()
 {
-	UplinkAssert(interface != nullptr);
-	return interface;
+	UplinkAssert(_interface != nullptr);
+	return _interface;
 }
 
 bool Game::IsRunning()
 {
-	return speed > 0;
+	return _speed > 0;
 }
 
 void Game::NewGame()
 {
-	if (interface != nullptr)
-		delete interface;
+	if (_interface != nullptr)
+		delete _interface;
 
-	if (view != nullptr)
-		delete view;
+	if (_view != nullptr)
+		delete _view;
 
-	if (world != nullptr)
-		delete world;
+	if (_world != nullptr)
+		delete _world;
 
-	if (obituary != nullptr)
-		delete obituary;
+	if (_obituary != nullptr)
+		delete _obituary;
 
-	if (createdSaveFileVer != nullptr)
-		delete[] createdSaveFileVer;
+	if (_createdSaveFileVer != nullptr)
+		delete[] _createdSaveFileVer;
 
-	createdSaveFileVer = new char[strlen(latestSaveVersion) + 1];
-	strcpy(createdSaveFileVer, latestSaveVersion);
-	field_60 = 0;
+	_createdSaveFileVer = new char[strlen(latestSaveVersion) + 1];
+	strcpy(_createdSaveFileVer, latestSaveVersion);
+	_field_60 = 0;
 
 	for (auto i = 0; i < 32; i += 8)
-		field_60 |= (NumberGenerator::RandomNumber(254) + 1) << i;
+		_field_60 |= (NumberGenerator::RandomNumber(254) + 1) << i;
 
-	obituary = nullptr;
-	worldMapType = 1;
+	_obituary = nullptr;
+	_worldMapType = 1;
 	if ((app->GetOptions()->GetOption("graphics_defaultworldmap") != nullptr &&
 		 app->GetOptions()->GetOption("graphics_defaultworldmap")->GetValue() != 0))
-		worldMapType = 0;
+		_worldMapType = 0;
 
-	world = new World();
+	_world = new World();
 	WorldGenerator::LoadDynamicsGatewayDefs();
 	NotificationEvent::ScheduleStartingEvents();
 	WorldGenerator::GenerateAll();
-	world->plotGenerator.Initialise();
+	_world->plotGenerator.Initialise();
 	SgPlaySound(RsArchiveFileOpen("sounds/ringout.wav"), "sounds/ringout.wav");
 
-	view = new View();
-	view->Initialise();
+	_view = new View();
+	_view->Initialise();
 
-	interface = new Interface();
+	_interface = new Interface();
 	GetInterface()->Create();
-	speed = 1;
+	_speed = 1;
 
 	Date date;
 	date.SetDate(0, 0, 0, 24, 3, 2010);
@@ -182,15 +182,15 @@ void Game::NewGame()
 
 const char* Game::GetLoadedSavefileVer()
 {
-	if (loadedSaveFileVer == nullptr)
+	if (_loadedSaveFileVer == nullptr)
 		return latestSaveVersion;
 
-	return loadedSaveFileVer;
+	return _loadedSaveFileVer;
 }
 
 int Game::GetWorldMapType()
 {
-	return worldMapType;
+	return _worldMapType;
 }
 
 void Game::ExitGame()

@@ -4,20 +4,18 @@
 
 template <class T> struct LListItem
 {
-	T value;
-	LListItem<T>* next;
-	LListItem<T>* prev;
-
-	LListItem();
+	T _value;
+	LListItem<T>* _next = nullptr;
+	LListItem<T>* _prev = nullptr;
 };
 
 template <class T> class LList
 {
-	LListItem<T>* first;
-	LListItem<T>* last;
-	LListItem<T>* cachedItem;
-	int cachedIndex;
-	int length;
+	LListItem<T>* _first;
+	LListItem<T>* _last;
+	LListItem<T>* _cachedItem;
+	int _cachedIndex;
+	int _length;
 
 public:
 	LList();
@@ -34,7 +32,7 @@ public:
 
 	int Size()
 	{
-		return length;
+		return _length;
 	}
 
 	T operator[](int index)

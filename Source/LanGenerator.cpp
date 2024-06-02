@@ -27,13 +27,13 @@ Computer* LanGenerator::GenerateLAN(const char* companyName, int level)
 	computer->SetCompanyName(companyName);
 	computer->SetTraceSpeed(5);
 	computer->SetTraceAction(9);
-	computer->security.AddSystem(1, 5, -1);
-	computer->security.AddSystem(4, 5, -1);
+	computer->GetSecurity().AddSystem(1, 5, -1);
+	computer->GetSecurity().AddSystem(4, 5, -1);
 	computer->SetIP(vlocation->ip);
 	game->GetWorld()->CreateComputer(computer);
 	GenerateLANCluster(computer, level);
 
-	computer->dataBank.SetSize(NumberGenerator::RandomNormalNumber(100.0f, 40.0f));
+	computer->GetDataBank().SetSize(NumberGenerator::RandomNormalNumber(100.0f, 40.0f));
 
 	const auto fileCount = NumberGenerator::RandomNormalNumber(10.0f, 5.0f);
 
@@ -56,7 +56,7 @@ Computer* LanGenerator::GenerateLAN(const char* companyName, int level)
 			encrypted = NumberGenerator::RandomNumber(5);
 
 		data->SetDetails(type, size, encrypted, compressed, 1.0f, 0);
-		computer->dataBank.PutData(data);
+		computer->GetDataBank().PutData(data);
 	}
 
 	const auto logCount = NumberGenerator::RandomNumber(10);
@@ -67,7 +67,7 @@ Computer* LanGenerator::GenerateLAN(const char* companyName, int level)
 		const auto rax_10 = WorldGenerator::GetRandomLocation();
 		log->SetProperties(game->GetWorld()->currentDate, rax_10->ip, " ", 0, 1);
 		log->SetData1("Accessed File");
-		computer->logBank.AddLog(log, -1);
+		computer->GetLogBank().AddLog(log, -1);
 	}
 
 	const auto record = new Record();
@@ -75,7 +75,7 @@ Computer* LanGenerator::GenerateLAN(const char* companyName, int level)
 	NameGenerator::GenerateComplexPassword();
 	record->AddField("Password", tempname);
 	record->AddField("Security", "1");
-	computer->recordBank.AddRecord(*record);
+	computer->GetRecordBank().AddRecord(*record);
 
 	return computer;
 }

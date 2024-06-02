@@ -9,7 +9,7 @@ bool NotificationEvent::Load(FILE* file)
 	if (!UplinkEvent::Load(file))
 		return false;
 
-	if (!FileReadData(&type, 4, 1, file))
+	if (!FileReadData(&_type, 4, 1, file))
 		return false;
 
 	return true;
@@ -18,12 +18,12 @@ bool NotificationEvent::Load(FILE* file)
 void NotificationEvent::Save(FILE* file)
 {
 	UplinkEvent::Save(file);
-	fwrite(&type, 4, 1, file);
+	fwrite(&_type, 4, 1, file);
 }
 
 void NotificationEvent::Print()
 {
-	printf("NotificationEvent : TYPE = %d\n", static_cast<int>(type));
+	printf("NotificationEvent : TYPE = %d\n", static_cast<int>(_type));
 	UplinkEvent::Print();
 }
 
@@ -39,7 +39,7 @@ UplinkObjectId NotificationEvent::GetOBJECTID()
 
 void NotificationEvent::Run()
 {
-	switch (type)
+	switch (_type)
 	{
 		case NotificationType::GrowCompanies:
 			ApplyMonthlyGrowth();
@@ -84,7 +84,7 @@ void NotificationEvent::Run()
 			WarezGameOver();
 			return;
 		default:
-			UplinkAbort("Unrecognised notification type: %d", type);
+			UplinkAbort("Unrecognised notification type: %d", _type);
 	}
 }
 
@@ -92,7 +92,7 @@ char* NotificationEvent::GetShortString()
 {
 	const char* str;
 
-	switch (type)
+	switch (_type)
 	{
 		case NotificationType::Unknown:
 			str = "Unknown notification";
@@ -140,7 +140,7 @@ char* NotificationEvent::GetShortString()
 			str = "Warez Game Over";
 			break;
 		default:
-			UplinkAbort("Unrecognised notification type: %d", type);
+			UplinkAbort("Unrecognised notification type: %d", _type);
 	}
 
 	const auto ret = new char[strlen(str) + 1];
@@ -156,7 +156,7 @@ char* NotificationEvent::GetLongString()
 
 void NotificationEvent::SetTYPE(NotificationType type)
 {
-	this->type = type;
+	this->_type = type;
 }
 
 void NotificationEvent::ScheduleStartingEvents()
