@@ -4,11 +4,11 @@
 
 MessageScreen::~MessageScreen()
 {
-	if (textMessage != nullptr)
-		delete[] textMessage;
+	if (_textMessage != nullptr)
+		delete[] _textMessage;
 
-	if (buttonMessage != nullptr)
-		delete[] buttonMessage;
+	if (_buttonMessage != nullptr)
+		delete[] _buttonMessage;
 }
 
 bool MessageScreen::Load(FILE* file)
@@ -16,16 +16,16 @@ bool MessageScreen::Load(FILE* file)
 	if (!ComputerScreen::Load(file))
 		return false;
 
-	if (!FileReadData(&nextPage, 4, 1, file))
+	if (!FileReadData(&_nextPage, 4, 1, file))
 		return false;
 
-	if (!LoadDynamicString(textMessage, file))
+	if (!LoadDynamicString(_textMessage, file))
 		return false;
 
-	if (!LoadDynamicString(buttonMessage, file))
+	if (!LoadDynamicString(_buttonMessage, file))
 		return false;
 
-	if (!FileReadData(&mailThisToMe, 1, 1, file))
+	if (!FileReadData(&_mailThisToMe, 1, 1, file))
 		return false;
 
 	return true;
@@ -34,17 +34,17 @@ bool MessageScreen::Load(FILE* file)
 void MessageScreen::Save(FILE* file)
 {
 	ComputerScreen::Save(file);
-	fwrite(&nextPage, 4, 1, file);
-	SaveDynamicString(textMessage, file);
-	SaveDynamicString(buttonMessage, file);
-	fwrite(&mailThisToMe, 1, 1, file);
+	fwrite(&_nextPage, 4, 1, file);
+	SaveDynamicString(_textMessage, file);
+	SaveDynamicString(_buttonMessage, file);
+	fwrite(&_mailThisToMe, 1, 1, file);
 }
 
 void MessageScreen::Print()
 {
 	puts("MessageScreen : ");
 	ComputerScreen::Print();
-	printf("NextPage = %d, TextMessage = %s, ButtonMessage = %s, MailThisToMe = %d\n", nextPage, textMessage, buttonMessage, mailThisToMe);
+	printf("NextPage = %d, TextMessage = %s, ButtonMessage = %s, MailThisToMe = %d\n", _nextPage, _textMessage, _buttonMessage, _mailThisToMe);
 }
 
 const char* MessageScreen::GetID()
@@ -57,25 +57,25 @@ UplinkObjectId MessageScreen::GetOBJECTID()
 	return UplinkObjectId::MessageScreen;
 }
 
-void MessageScreen::SetTextMessage(const char* value)
+void MessageScreen::SetTextMessage(const char* textMessage)
 {
-	if (textMessage != nullptr)
-		delete[] textMessage;
+	if (_textMessage != nullptr)
+		delete[] _textMessage;
 
-	textMessage = new char[strlen(value) + 1];
-	strcpy(textMessage, value);
+	_textMessage = new char[strlen(textMessage) + 1];
+	strcpy(_textMessage, textMessage);
 }
 
-void MessageScreen::SetButtonMessage(const char* value)
+void MessageScreen::SetButtonMessage(const char* buttonMessage)
 {
-	if (buttonMessage != nullptr)
-		delete[] buttonMessage;
+	if (_buttonMessage != nullptr)
+		delete[] _buttonMessage;
 
-	buttonMessage = new char[strlen(value) + 1];
-	strcpy(buttonMessage, value);
+	_buttonMessage = new char[strlen(buttonMessage) + 1];
+	strcpy(_buttonMessage, buttonMessage);
 }
 
-void MessageScreen::SetNextPage(int value)
+void MessageScreen::SetNextPage(int nextPage)
 {
-	nextPage = value;
+	_nextPage = nextPage;
 }

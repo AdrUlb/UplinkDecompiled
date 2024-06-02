@@ -7,10 +7,10 @@ bool LinksScreen::Load(FILE* file)
 	if (!ComputerScreen::Load(file))
 		return false;
 
-	if (!FileReadData(&nextPage, 4, 1, file))
+	if (!FileReadData(&_nextPage, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&type, 4, 1, file))
+	if (!FileReadData(&_type, 4, 1, file))
 		return false;
 
 	return true;
@@ -19,15 +19,15 @@ bool LinksScreen::Load(FILE* file)
 void LinksScreen::Save(FILE* file)
 {
 	ComputerScreen::Save(file);
-	fwrite(&this->nextPage, 4, 1, file);
-	fwrite(&this->type, 4, 1, file);
+	fwrite(&this->_nextPage, 4, 1, file);
+	fwrite(&this->_type, 4, 1, file);
 }
 
 void LinksScreen::Print()
 {
 	puts("LinksScreen :");
 	ComputerScreen::Print();
-	printf("TYPE=%d, nextpage=%d\n", type, nextPage);
+	printf("TYPE=%d, nextpage=%d\n", _type, _nextPage);
 }
 
 const char* LinksScreen::GetID()
@@ -40,12 +40,12 @@ UplinkObjectId LinksScreen::GetOBJECTID()
 	return UplinkObjectId::LinksScreen;
 }
 
-void LinksScreen::SetNextPage(int value)
+void LinksScreen::SetNextPage(int nextPage)
 {
-	nextPage = value;
+	_nextPage = nextPage;
 }
 
-void LinksScreen::SetScreenType(int value)
+void LinksScreen::SetScreenType(int type)
 {
-	type = value;
+	_type = type;
 }

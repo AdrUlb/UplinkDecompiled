@@ -4,16 +4,16 @@
 
 bool MenuScreenOption::Load(FILE* file)
 {
-	if (!LoadDynamicStringBuf(caption, 0x40, file))
+	if (!LoadDynamicStringBuf(_caption, 0x40, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(tooltip, 0x80, file))
+	if (!LoadDynamicStringBuf(_tooltip, 0x80, file))
 		return false;
 
-	if (!FileReadData(&nextPage, 4, 1, file))
+	if (!FileReadData(&_nextPage, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&security, 4, 1, file))
+	if (!FileReadData(&_security, 4, 1, file))
 		return false;
 
 	return true;
@@ -21,17 +21,17 @@ bool MenuScreenOption::Load(FILE* file)
 
 void MenuScreenOption::Save(FILE* file)
 {
-	SaveDynamicString(caption, 0x40, file);
-	SaveDynamicString(tooltip, 0x80, file);
-	fwrite(&nextPage, 4, 1, file);
-	fwrite(&security, 4, 1, file);
+	SaveDynamicString(_caption, 0x40, file);
+	SaveDynamicString(_tooltip, 0x80, file);
+	fwrite(&_nextPage, 4, 1, file);
+	fwrite(&_security, 4, 1, file);
 }
 
 void MenuScreenOption::Print()
 {
 	puts("MenuScreenOption : ");
-	printf("\tNextPage = %d, Caption = %s\n", nextPage, caption);
-	printf("\tTooltip = %s, security = %d\n", tooltip, security);
+	printf("\tNextPage = %d, Caption = %s\n", _nextPage, _caption);
+	printf("\tTooltip = %s, security = %d\n", _tooltip, _security);
 }
 
 const char* MenuScreenOption::GetID()
@@ -44,22 +44,42 @@ UplinkObjectId MenuScreenOption::GetOBJECTID()
 	return UplinkObjectId::MenuScreenOption;
 }
 
-void MenuScreenOption::SetCaption(const char* value)
+const char* MenuScreenOption::GetCaption()
 {
-	UplinkStrncpy(caption, value, 0x40);
+	return _caption;
 }
 
-void MenuScreenOption::SetTooltip(const char* value)
+const char* MenuScreenOption::GetTooltip()
 {
-	UplinkStrncpy(tooltip, value, 0x80);
+	return _tooltip;
 }
 
-void MenuScreenOption::SetNextPage(int value)
+int MenuScreenOption::GetNextPage()
 {
-	nextPage = value;
+	return _nextPage;
 }
 
-void MenuScreenOption::SetSecurity(int value)
+int MenuScreenOption::GetSecurity()
 {
-	security = value;
+	return _security;
+}
+
+void MenuScreenOption::SetCaption(const char* caption)
+{
+	UplinkStrncpy(_caption, caption, 0x40);
+}
+
+void MenuScreenOption::SetTooltip(const char* tooltip)
+{
+	UplinkStrncpy(_tooltip, tooltip, 0x80);
+}
+
+void MenuScreenOption::SetNextPage(int nextPage)
+{
+	_nextPage = nextPage;
+}
+
+void MenuScreenOption::SetSecurity(int security)
+{
+	_security = security;
 }

@@ -52,10 +52,10 @@ void MenuScreenInterface::Create(ComputerScreen* screen)
 	EclRegisterButton(0, 0, 0, 0, "", "", "menuscreeninterface");
 	EclRegisterButtonCallbacks("menuscreeninterface", nullptr, nullptr, nullptr, nullptr);
 
-	EclRegisterButton(80, 60, 350, 25, GetComputerScreen()->mainTitle, "", "menuscreen_maintitle");
+	EclRegisterButton(80, 60, 350, 25, GetComputerScreen()->GetMainTitle(), "", "menuscreen_maintitle");
 	EclRegisterButtonCallbacks("menuscreen_maintitle", DrawMainTitle, nullptr, nullptr, nullptr);
 
-	EclRegisterButton(80, 80, 350, 20, GetComputerScreen()->subTitle, "", "menuscreen_subtitle");
+	EclRegisterButton(80, 80, 350, 20, GetComputerScreen()->GetSubTitle(), "", "menuscreen_subtitle");
 	EclRegisterButtonCallbacks("menuscreen_subtitle", DrawSubTitle, nullptr, nullptr, nullptr);
 
 	const auto ip = GetComputerScreen()->GetComputer()->ip;

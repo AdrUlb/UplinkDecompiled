@@ -16,7 +16,7 @@ void MessageScreenInterface::Remove()
 	EclRemoveButton("messagescreen_subtitle");
 	const auto computer = GetComputerScreen()->GetComputer();
 	char buf[0x99];
-	UplinkSnprintf(buf, 0x99, "messagescreen_click %d %s", GetComputerScreen()->nextPage, computer->ip);
+	UplinkSnprintf(buf, 0x99, "messagescreen_click %d %s", GetComputerScreen()->_nextPage, computer->ip);
 
 	EclRemoveButton(buf);
 	EclRemoveButton("messagescreen_mailme");
@@ -41,30 +41,30 @@ void MessageScreenInterface::Create(ComputerScreen* screen)
 	if (IsVisible())
 		return;
 
-	EclRegisterButton(80, 60, 350, 25, GetComputerScreen()->mainTitle, "", "messagescreen_maintitle");
+	EclRegisterButton(80, 60, 350, 25, GetComputerScreen()->GetMainTitle(), "", "messagescreen_maintitle");
 	EclRegisterButtonCallbacks("messagescreen_maintitle", DrawMainTitle, 0, 0, nullptr);
-	EclRegisterButton(80, 80, 350, 20, GetComputerScreen()->subTitle, "", "messagescreen_subtitle");
+	EclRegisterButton(80, 80, 350, 20, GetComputerScreen()->GetSubTitle(), "", "messagescreen_subtitle");
 	EclRegisterButtonCallbacks("messagescreen_subtitle", DrawSubTitle, 0, 0, nullptr);
 	EclRegisterButton(50, 120, 400, 245, "", "", "messagescreen_message");
 	EclRegisterButtonCallbacks("messagescreen_message", textbutton_draw, 0, 0, nullptr);
-	EclRegisterCaptionChange("messagescreen_message", GetComputerScreen()->textMessage, 2000, nullptr);
+	EclRegisterCaptionChange("messagescreen_message", GetComputerScreen()->_textMessage, 2000, nullptr);
 
 	char s[0x99];
-	if (GetComputerScreen()->buttonMessage != nullptr)
+	if (GetComputerScreen()->_buttonMessage != nullptr)
 	{
-		const auto buttonMessageLength = strlen(GetComputerScreen()->buttonMessage);
+		const auto buttonMessageLength = strlen(GetComputerScreen()->_buttonMessage);
 		const auto widthStuff = buttonMessageLength + (buttonMessageLength * 4);
-		UplinkSnprintf(s, 0x99, "messagescreen_click %d %s", GetComputerScreen()->nextPage, GetComputerScreen()->GetComputer()->ip);
-		char* buttonMessage = GetComputerScreen()->buttonMessage;
-		EclRegisterButton(320 - (((widthStuff * 2) + 0x14) / 2), 370, ((widthStuff * 2) + 20), 20, GetComputerScreen()->buttonMessage, buttonMessage,
+		UplinkSnprintf(s, 0x99, "messagescreen_click %d %s", GetComputerScreen()->_nextPage, GetComputerScreen()->GetComputer()->ip);
+		char* buttonMessage = GetComputerScreen()->_buttonMessage;
+		EclRegisterButton(320 - (((widthStuff * 2) + 0x14) / 2), 370, ((widthStuff * 2) + 20), 20, GetComputerScreen()->_buttonMessage, buttonMessage,
 						  s);
 		EclRegisterButtonCallback(s, Click);
 	}
 
-	if (GetComputerScreen()->mailThisToMe)
+	if (GetComputerScreen()->_mailThisToMe)
 	{
 		const auto computer = GetComputerScreen()->GetComputer();
-		UplinkSnprintf(s, 0x99, "messagescreen_click %d %s", GetComputerScreen()->nextPage, computer->ip);
+		UplinkSnprintf(s, 0x99, "messagescreen_click %d %s", GetComputerScreen()->_nextPage, computer->ip);
 		const auto rax_22 = EclGetButton(s);
 		UplinkAssert(rax_22 != nullptr);
 		EclRegisterButton(rax_22->X - 120, rax_22->Y, 100, 20, "Mail this to me", "Click to send this information to yourself in an email",
@@ -75,10 +75,10 @@ void MessageScreenInterface::Create(ComputerScreen* screen)
 
 bool MessageScreenInterface::ReturnKeyPressed()
 {
-	if (GetComputerScreen()->nextPage != -1)
+	if (GetComputerScreen()->_nextPage != -1)
 	{
 		struct Computer* computer = GetComputerScreen()->GetComputer();
-		game->GetInterface()->GetRemoteInterface()->RunScreen(GetComputerScreen()->nextPage, computer);
+		game->GetInterface()->GetRemoteInterface()->RunScreen(GetComputerScreen()->_nextPage, computer);
 	}
 	return true;
 }

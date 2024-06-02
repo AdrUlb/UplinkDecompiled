@@ -7,10 +7,10 @@ bool LogScreen::Load(FILE* file)
 	if (!ComputerScreen::Load(file))
 		return false;
 
-	if (!FileReadData(&nextPage, 4, 1, file))
+	if (!FileReadData(&_nextPage, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&target, 4, 1, file))
+	if (!FileReadData(&_target, 4, 1, file))
 		return false;
 
 	return true;
@@ -18,15 +18,15 @@ bool LogScreen::Load(FILE* file)
 
 void LogScreen::Save(FILE* file)
 {
-	fwrite(&nextPage, 4, 1, file);
-	fwrite(&target, 4, 1, file);
+	fwrite(&_nextPage, 4, 1, file);
+	fwrite(&_target, 4, 1, file);
 }
 
 void LogScreen::Print()
 {
 	puts("LogScreen : ");
 	ComputerScreen::Print();
-	printf("\tNextPage = %d, TARGET = %d\n", nextPage, target);
+	printf("\tNextPage = %d, TARGET = %d\n", _nextPage, _target);
 }
 
 const char* LogScreen::GetID()
@@ -34,12 +34,12 @@ const char* LogScreen::GetID()
 	return "SCR_LOGS";
 }
 
-void LogScreen::SetNextPage(int value)
+void LogScreen::SetNextPage(int nextPage)
 {
-	nextPage = value;
+	_nextPage = nextPage;
 }
 
-void LogScreen::SetTARGET(int value)
+void LogScreen::SetTARGET(int type)
 {
-	target = value;
+	_target = type;
 }

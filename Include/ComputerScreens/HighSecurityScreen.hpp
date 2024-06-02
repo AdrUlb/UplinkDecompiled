@@ -6,8 +6,8 @@
 
 class HighSecurityScreen : public ComputerScreen
 {
-	LList<MenuScreenOption*> options;
-	int nextPage = -1;
+	LList<MenuScreenOption*> _options;
+	int _nextPage = -1;
 
 public:
 	~HighSecurityScreen() override;

@@ -4,14 +4,14 @@
 
 class GenericScreen : public ComputerScreen
 {
-	int nextPage = -1;
-	int type = 0;
+	int _nextPage = -1;
+	int _type = 0;
 
 public:
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
-	void SetNextPage(int value);
-	void SetScreenType(int value);
+	void SetNextPage(int nextPage);
+	void SetScreenType(int type);
 };

@@ -4,8 +4,8 @@
 
 DisconnectedScreen::~DisconnectedScreen()
 {
-	if (textMessage != nullptr)
-		delete[] textMessage;
+	if (_textMessage != nullptr)
+		delete[] _textMessage;
 }
 
 bool DisconnectedScreen::Load(FILE* file)
@@ -13,10 +13,10 @@ bool DisconnectedScreen::Load(FILE* file)
 	if (!ComputerScreen::Load(file))
 		return false;
 
-	if (!FileReadData(&nextPage, 4, 1, file))
+	if (!FileReadData(&_nextPage, 4, 1, file))
 		return false;
 
-	if (!LoadDynamicString(textMessage, file))
+	if (!LoadDynamicString(_textMessage, file))
 		return false;
 
 	return true;
@@ -25,15 +25,15 @@ bool DisconnectedScreen::Load(FILE* file)
 void DisconnectedScreen::Save(FILE* file)
 {
 	ComputerScreen::Save(file);
-	fwrite(&nextPage, 4, 1, file);
-	SaveDynamicString(textMessage, file);
+	fwrite(&_nextPage, 4, 1, file);
+	SaveDynamicString(_textMessage, file);
 }
 
 void DisconnectedScreen::Print()
 {
 	puts("DisconnectedScreen : ");
 	ComputerScreen::Print();
-	printf("NextPage = %d, TextMessage = %s\n", nextPage, textMessage);
+	printf("NextPage = %d, TextMessage = %s\n", _nextPage, _textMessage);
 }
 
 const char* DisconnectedScreen::GetID()
@@ -46,16 +46,16 @@ UplinkObjectId DisconnectedScreen::GetOBJECTID()
 	return UplinkObjectId::DisconnectedScreen;
 }
 
-void DisconnectedScreen::SetTextMessage(const char* value)
+void DisconnectedScreen::SetTextMessage(const char* textMessage)
 {
-	if (textMessage != nullptr)
+	if (_textMessage != nullptr)
 		delete[] textMessage;
 
-	textMessage = new char[strlen(value) + 1];
-	strcpy(textMessage, value);
+	_textMessage = new char[strlen(textMessage) + 1];
+	strcpy(_textMessage, textMessage);
 }
 
-void DisconnectedScreen::SetNextPage(int value)
+void DisconnectedScreen::SetNextPage(int nextPage)
 {
-	nextPage = value;
+	_nextPage = nextPage;
 }

@@ -23,8 +23,8 @@ void DialogScreenInterface::Remove()
 	EclRemoveButton("dialogscreen_maintitle");
 	EclRemoveButton("dialogscreen_subtitle");
 
-	for (auto i = 0; i < screen->widgets.Size(); i++)
-		RemoveWidget(screen->widgets.GetData(i), computer);
+	for (auto i = 0; i < screen->GetWidgets()->Size(); i++)
+		RemoveWidget(screen->GetWidgets()->GetData(i), computer);
 }
 
 bool DialogScreenInterface::IsVisible()
@@ -48,16 +48,16 @@ void DialogScreenInterface::Create(ComputerScreen* screen)
 
 	EclRegisterButton(0, 0, 0, 0, " ", " ", "dialogscreen");
 	EclRegisterButtonCallbacks("dialogscreen", nullptr, nullptr, nullptr, nullptr);
-	EclRegisterButton(80, 60, 350, 25, GetComputerScreen()->mainTitle, "", "dialogscreen_maintitle");
+	EclRegisterButton(80, 60, 350, 25, GetComputerScreen()->GetMainTitle(), "", "dialogscreen_maintitle");
 	EclRegisterButtonCallbacks("dialogscreen_maintitle", RemoteInterfaceScreen::DrawMainTitle, nullptr, nullptr, nullptr);
-	EclRegisterButton(80, 80, 350, 20, GetComputerScreen()->subTitle, "", "dialogscreen_subtitle");
+	EclRegisterButton(80, 80, 350, 20, GetComputerScreen()->GetSubTitle(), "", "dialogscreen_subtitle");
 	EclRegisterButtonCallbacks("dialogscreen_subtitle", RemoteInterfaceScreen::DrawSubTitle, nullptr, nullptr, nullptr);
 	const auto dialogScreen = GetComputerScreen();
 	const auto computer = dialogScreen->GetComputer();
 
-	for (auto i = 0; i < dialogScreen->widgets.Size(); i++)
+	for (auto i = 0; i < dialogScreen->GetWidgets()->Size(); i++)
 	{
-		const auto widget = dialogScreen->widgets[i];
+		const auto widget = dialogScreen->GetWidgets()->GetData(i);
 		UplinkAssert(widget != nullptr);
 
 		char buttonName[0x40];
@@ -113,14 +113,14 @@ bool DialogScreenInterface::ReturnKeyPressed()
 {
 	const auto screen = GetComputerScreen();
 	UplinkAssert(screen != nullptr);
-	char* returnKeyButton = screen->returnKeyButton;
+	char* returnKeyButton = screen->_returnKeyButtonName;
 
 	if (returnKeyButton == nullptr)
 		return false;
 
-	for (auto i = 0; i < screen->widgets.Size(); i++)
+	for (auto i = 0; i < screen->GetWidgets()->Size(); i++)
 	{
-		const auto widget = screen->widgets.GetData(i);
+		const auto widget = screen->GetWidgets()->GetData(i);
 
 		UplinkAssert(widget != nullptr);
 

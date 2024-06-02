@@ -6,7 +6,7 @@
 
 class MenuScreen : public ComputerScreen
 {
-	LList<MenuScreenOption*> options;
+	LList<MenuScreenOption*> _options;
 
 public:
 	~MenuScreen() override;

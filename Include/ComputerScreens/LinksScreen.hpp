@@ -4,8 +4,8 @@
 
 class LinksScreen : public ComputerScreen
 {
-	int nextPage = -1;
-	int type = 0;
+	int _nextPage = -1;
+	int _type = 0;
 
 public:
 	bool Load(FILE* file) override;
@@ -13,6 +13,6 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void SetNextPage(int value);
-	void SetScreenType(int value);
+	void SetNextPage(int nextPage);
+	void SetScreenType(int type);
 };

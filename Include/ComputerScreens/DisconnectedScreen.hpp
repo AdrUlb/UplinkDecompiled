@@ -4,8 +4,8 @@
 
 class DisconnectedScreen : public ComputerScreen
 {
-	int nextPage = -1;
-	char* textMessage = nullptr;
+	int _nextPage = -1;
+	char* _textMessage = nullptr;
 
 public:
 	~DisconnectedScreen() override;
@@ -14,6 +14,6 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void SetTextMessage(const char* value);
+	void SetTextMessage(const char* textMessage);
 	void SetNextPage(int value);
 };

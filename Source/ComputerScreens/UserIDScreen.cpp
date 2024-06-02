@@ -7,10 +7,10 @@ bool UserIDScreen::Load(FILE* file)
 	if (!ComputerScreen::Load(file))
 		return false;
 
-	if (!FileReadData(&nextPage, 4, 1, file))
+	if (!FileReadData(&_nextPage, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&difficulty, 4, 1, file))
+	if (!FileReadData(&_difficulty, 4, 1, file))
 		return false;
 
 	return true;
@@ -19,15 +19,15 @@ bool UserIDScreen::Load(FILE* file)
 void UserIDScreen::Save(FILE* file)
 {
 	ComputerScreen::Save(file);
-	fwrite(&nextPage, 4, 1, file);
-	fwrite(&difficulty, 4, 1, file);
+	fwrite(&_nextPage, 4, 1, file);
+	fwrite(&_difficulty, 4, 1, file);
 }
 
 void UserIDScreen::Print()
 {
 	puts("UserIDScreen : ");
 	ComputerScreen::Print();
-	printf("\tNextPage:%d, Difficulty:%d\n", nextPage, difficulty);
+	printf("\tNextPage:%d, Difficulty:%d\n", _nextPage, _difficulty);
 }
 
 const char* UserIDScreen::GetID()
@@ -40,12 +40,12 @@ UplinkObjectId UserIDScreen::GetOBJECTID()
 	return UplinkObjectId::UserIDScreen;
 }
 
-void UserIDScreen::SetDifficulty(int value)
+void UserIDScreen::SetDifficulty(int difficulty)
 {
-	difficulty = value;
+	_difficulty = difficulty;
 }
 
-void UserIDScreen::SetNextPage(int value)
+void UserIDScreen::SetNextPage(int nextPage)
 {
-	nextPage = value;
+	_nextPage = nextPage;
 }

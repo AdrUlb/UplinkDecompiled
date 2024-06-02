@@ -4,13 +4,13 @@
 
 DialogScreen::~DialogScreen()
 {
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&this->widgets));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_widgets));
 
-	if (returnKeyButton != nullptr)
-		delete[] returnKeyButton;
+	if (_returnKeyButtonName != nullptr)
+		delete[] _returnKeyButtonName;
 
-	if (escapeKeyButton != nullptr)
-		delete[] escapeKeyButton;
+	if (_escapeKeyButtonName != nullptr)
+		delete[] _escapeKeyButtonName;
 }
 
 bool DialogScreen::Load(FILE* file)
@@ -18,13 +18,13 @@ bool DialogScreen::Load(FILE* file)
 	if (!ComputerScreen::Load(file))
 		return false;
 
-	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&widgets), file))
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_widgets), file))
 		return false;
 
-	if (!LoadDynamicString(returnKeyButton, file))
+	if (!LoadDynamicString(_returnKeyButtonName, file))
 		return false;
 
-	if (!LoadDynamicString(escapeKeyButton, file))
+	if (!LoadDynamicString(_escapeKeyButtonName, file))
 		return false;
 
 	return true;
@@ -33,18 +33,18 @@ bool DialogScreen::Load(FILE* file)
 void DialogScreen::Save(FILE* file)
 {
 	ComputerScreen::Save(file);
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&widgets), file);
-	SaveDynamicString(returnKeyButton, file);
-	SaveDynamicString(escapeKeyButton, file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_widgets), file);
+	SaveDynamicString(_returnKeyButtonName, file);
+	SaveDynamicString(_escapeKeyButtonName, file);
 }
 
 void DialogScreen::Print()
 {
 	puts("DialogScreen");
 	ComputerScreen::Print();
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&widgets));
-	printf("ReturnKeyButton = %s\n", returnKeyButton);
-	printf("EscapeKeyButton = %s\n", escapeKeyButton);
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_widgets));
+	printf("ReturnKeyButton = %s\n", _returnKeyButtonName);
+	printf("EscapeKeyButton = %s\n", _escapeKeyButtonName);
 }
 
 const char* DialogScreen::GetID()
@@ -57,6 +57,11 @@ UplinkObjectId DialogScreen::GetOBJECTID()
 	return UplinkObjectId::DialogScreen;
 }
 
+LList<DialogScreenWidget*>* DialogScreen::GetWidgets()
+{
+	return &_widgets;
+}
+
 void DialogScreen::AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip)
 {
 	const auto widget = new DialogScreenWidget();
@@ -66,7 +71,7 @@ void DialogScreen::AddWidget(const char* name, int type, int x, int y, int width
 	widget->SetSize(width, height);
 	widget->SetCaption(caption);
 	widget->SetTooltip(tooltip);
-	widgets.PutData(widget);
+	_widgets.PutData(widget);
 }
 
 void DialogScreen::AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip, int data1,
@@ -81,14 +86,14 @@ void DialogScreen::AddWidget(const char* name, int type, int x, int y, int width
 	widget->SetTooltip(tooltip);
 	widget->SetData(data1, data2);
 	widget->SetStringData(stringData1, stringData2);
-	widgets.PutData(widget);
+	_widgets.PutData(widget);
 }
 
 void DialogScreen::SetReturnKeyButton(const char* button)
 {
-	if (returnKeyButton != nullptr)
-		delete[] returnKeyButton;
+	if (_returnKeyButtonName != nullptr)
+		delete[] _returnKeyButtonName;
 
-	returnKeyButton = new char[strlen(button) + 1];
-	strcpy(returnKeyButton, button);
+	_returnKeyButtonName = new char[strlen(button) + 1];
+	strcpy(_returnKeyButtonName, button);
 }

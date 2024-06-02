@@ -4,8 +4,8 @@
 
 class UserIDScreen : public ComputerScreen
 {
-	int nextPage = -1;
-	int difficulty = 1;
+	int _nextPage = -1;
+	int _difficulty = 1;
 
 public:
 	bool Load(FILE* file) override;
@@ -13,6 +13,6 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void SetDifficulty(int value);
-	void SetNextPage(int value);
+	void SetDifficulty(int difficulty);
+	void SetNextPage(int nextPage);
 };

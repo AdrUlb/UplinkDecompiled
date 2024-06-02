@@ -4,7 +4,7 @@
 
 MenuScreen::~MenuScreen()
 {
-	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&options));
+	DeleteLListData(reinterpret_cast<LList<UplinkObject*>*>(&_options));
 }
 
 bool MenuScreen::Load(FILE* file)
@@ -12,7 +12,7 @@ bool MenuScreen::Load(FILE* file)
 	if (!ComputerScreen::Load(file))
 		return false;
 
-	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&options), file))
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_options), file))
 		return false;
 
 	return true;
@@ -21,14 +21,14 @@ bool MenuScreen::Load(FILE* file)
 void MenuScreen::Save(FILE* file)
 {
 	ComputerScreen::Save(file);
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&options), file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_options), file);
 }
 
 void MenuScreen::Print()
 {
 	puts("MenuScreen : ");
 	ComputerScreen::Print();
-	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&options));
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_options));
 }
 
 const char* MenuScreen::GetID()
@@ -52,38 +52,38 @@ void MenuScreen::AddOption(const char* caption, const char* tooltip, int nextPag
 
 	if (index == -1)
 	{
-		options.PutData(option);
+		_options.PutData(option);
 		return;
 	}
 
-	options.PutDataAtIndex(option, index);
+	_options.PutDataAtIndex(option, index);
 }
 
 int MenuScreen::NumOptions()
 {
-	return options.Size();
+	return _options.Size();
 }
 
 int MenuScreen::GetNextPage(int index)
 {
-	UplinkAssert(options.ValidIndex(index));
-	return options.GetData(index)->nextPage;
+	UplinkAssert(_options.ValidIndex(index));
+	return _options.GetData(index)->GetNextPage();
 }
 
 int MenuScreen::GetSecurity(int index)
 {
-	UplinkAssert(options.ValidIndex(index));
-	return options.GetData(index)->security;
+	UplinkAssert(_options.ValidIndex(index));
+	return _options.GetData(index)->GetSecurity();
 }
 
 const char* MenuScreen::GetTooltip(int index)
 {
-	UplinkAssert(options.ValidIndex(index));
-	return options.GetData(index)->tooltip;
+	UplinkAssert(_options.ValidIndex(index));
+	return _options.GetData(index)->GetTooltip();
 }
 
 const char* MenuScreen::GetCaption(int index)
 {
-	UplinkAssert(options.ValidIndex(index));
-	return options.GetData(index)->caption;
+	UplinkAssert(_options.ValidIndex(index));
+	return _options.GetData(index)->GetCaption();
 }

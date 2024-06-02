@@ -7,10 +7,10 @@ bool GenericScreen::Load(FILE* file)
 	if (!ComputerScreen::Load(file))
 		return false;
 
-	if (!FileReadData(&nextPage, 4, 1, file))
+	if (!FileReadData(&_nextPage, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&type, 4, 1, file))
+	if (!FileReadData(&_type, 4, 1, file))
 		return false;
 
 	return true;
@@ -19,15 +19,15 @@ bool GenericScreen::Load(FILE* file)
 void GenericScreen::Save(FILE* file)
 {
 	ComputerScreen::Save(file);
-	fwrite(&nextPage, 4, 1, file);
-	fwrite(&type, 4, 1, file);
+	fwrite(&_nextPage, 4, 1, file);
+	fwrite(&_type, 4, 1, file);
 }
 
 void GenericScreen::Print()
 {
 	puts("GenericScreen :");
 	ComputerScreen::Print();
-	printf("TYPE=%d, nextpage=%d\n", type, nextPage);
+	printf("TYPE=%d, nextpage=%d\n", _type, _nextPage);
 }
 
 const char* GenericScreen::GetID()
@@ -35,12 +35,12 @@ const char* GenericScreen::GetID()
 	return "SCR_GEN";
 }
 
-void GenericScreen::SetNextPage(int value)
+void GenericScreen::SetNextPage(int nextPage)
 {
-	nextPage = value;
+	_nextPage = nextPage;
 }
 
-void GenericScreen::SetScreenType(int value)
+void GenericScreen::SetScreenType(int type)
 {
-	type = value;
+	_type = type;
 }
