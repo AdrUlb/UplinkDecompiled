@@ -73,7 +73,7 @@ void MenuScreenInterface::Create(ComputerScreen* screen)
 
 		time += timeInc;
 
-		if (game->GetInterface()->GetRemoteInterface()->securityLevel < GetComputerScreen()->GetSecurity(i))
+		if (game->GetInterface()->GetRemoteInterface()->GetSecurityLevel() < GetComputerScreen()->GetSecurity(i))
 		{
 			EclRegisterButton(-350, 120 + yOffset, 16, 16, "", GetComputerScreen()->GetTooltip(i), text);
 			button_assignbitmap(text, "menuscreenoption.tif");

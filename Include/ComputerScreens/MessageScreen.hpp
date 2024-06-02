@@ -16,6 +16,10 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
+	int GetNextPage();
+	const char* GetTextMessage();
+	const char* GetButtonMessage();
+	bool GetMailThisToMe();
 	void SetTextMessage(const char* textMessage);
 	void SetButtonMessage(const char* buttonMessage);
 	void SetNextPage(int nextPage);

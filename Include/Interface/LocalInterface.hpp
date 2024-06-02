@@ -78,10 +78,10 @@ public:
 
 class LocalInterface : UplinkObject
 {
-	LocalInterfaceScreen* screen = nullptr;
-	HUDInterface* hud = new HUDInterface();
-	int screenCode = 0;
-	int screenIndex = 0;
+	LocalInterfaceScreen* _screen = nullptr;
+	HUDInterface* _hud = new HUDInterface();
+	int _screenCode = 0;
+	int _screenIndex = 0;
 
 public:
 	~LocalInterface() override;

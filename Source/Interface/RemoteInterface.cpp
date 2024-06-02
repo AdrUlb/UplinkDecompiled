@@ -9,38 +9,38 @@
 
 RemoteInterface::~RemoteInterface()
 {
-	if (screen != nullptr)
-		delete screen;
+	if (_screen != nullptr)
+		delete _screen;
 }
 
 bool RemoteInterface::Load(FILE* file)
 {
-	if (FileReadData(&previousScreenIndex, 4, 1, file) == 0)
+	if (FileReadData(&_previousScreenIndex, 4, 1, file) == 0)
 		return false;
 
-	if (!FileReadData(&screenIndex, 4, 1, file))
+	if (!FileReadData(&_screenIndex, 4, 1, file))
 		return false;
 
 	if (strcmp(game->GetLoadedSavefileVer(), "SAV59") < 0)
 	{
-		const auto success = FileReadData(&securityName, 0x80, 1, file);
-		this->securityName[0x7f] = 0;
+		const auto success = FileReadData(&_securityName, 0x80, 1, file);
+		this->_securityName[0x7f] = 0;
 		if (!success)
 			return false;
 	}
 	else
 	{
-		if (!LoadDynamicStringBuf(securityName, 0x80, file))
+		if (!LoadDynamicStringBuf(_securityName, 0x80, file))
 			return false;
 	}
 
-	if (!FileReadData(&securityLevel, 4, 1, file))
+	if (!FileReadData(&_securityLevel, 4, 1, file))
 		return false;
 
-	if (!VerifyScreen(screenIndex))
+	if (!VerifyScreen(_screenIndex))
 		return false;
 
-	if (previousScreenIndex != 0 && !VerifyScreen(previousScreenIndex))
+	if (_previousScreenIndex != 0 && !VerifyScreen(_previousScreenIndex))
 		return false;
 
 	Create();
@@ -49,22 +49,22 @@ bool RemoteInterface::Load(FILE* file)
 
 void RemoteInterface::Save(FILE* file)
 {
-	fwrite(&previousScreenIndex, 4, 1, file);
-	fwrite(&screenIndex, 4, 1, file);
-	SaveDynamicString(securityName, 0x80, file);
-	fwrite(&securityLevel, 4, 1, file);
+	fwrite(&_previousScreenIndex, 4, 1, file);
+	fwrite(&_screenIndex, 4, 1, file);
+	SaveDynamicString(_securityName, 0x80, file);
+	fwrite(&_securityLevel, 4, 1, file);
 }
 
 void RemoteInterface::Print()
 {
-	printf("RemoteInterface : CurrentScreenIndex = %d\n, PreviousScreenIndex = %d\n, Security_Name = %s, Security_Level = %d\n", screenIndex,
-		   previousScreenIndex, securityName, securityLevel);
+	printf("RemoteInterface : CurrentScreenIndex = %d\n, PreviousScreenIndex = %d\n, Security_Name = %s, Security_Level = %d\n", _screenIndex,
+		   _previousScreenIndex, _securityName, _securityLevel);
 }
 
 void RemoteInterface::Update()
 {
-	if (screen != nullptr)
-		screen->Update();
+	if (_screen != nullptr)
+		_screen->Update();
 }
 
 const char* RemoteInterface::GetID()
@@ -75,7 +75,7 @@ const char* RemoteInterface::GetID()
 void RemoteInterface::Create()
 {
 	if (!IsVisible())
-		RunScreen(screenIndex, nullptr);
+		RunScreen(_screenIndex, nullptr);
 }
 
 bool RemoteInterface::VerifyScreen(int index)
@@ -87,7 +87,7 @@ bool RemoteInterface::VerifyScreen(int index)
 
 bool RemoteInterface::IsVisible()
 {
-	if (screen != nullptr)
+	if (_screen != nullptr)
 		return GetInterfaceScreen()->IsVisible();
 
 	return false;
@@ -105,18 +105,18 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 		return;
 	}
 
-	if (screen != nullptr)
+	if (_screen != nullptr)
 	{
-		screen->Remove();
-		delete screen;
-		screen = nullptr;
+		_screen->Remove();
+		delete _screen;
+		_screen = nullptr;
 	}
 
 	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
 		WorldMapInterface::CloseWorldMapInterface_Large();
 
-	previousScreenIndex = this->screenIndex;
-	this->screenIndex = screenIndex;
+	_previousScreenIndex = this->_screenIndex;
+	this->_screenIndex = screenIndex;
 
 	const auto computerScreen = remoteComputer->GetComputerScreen(screenIndex);
 	UplinkAssert(computerScreen != nullptr);
@@ -126,25 +126,30 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 	switch (screenObjId)
 	{
 		case UplinkObjectId::MessageScreen:
-			screen = new MessageScreenInterface();
+			_screen = new MessageScreenInterface();
 			break;
 		case UplinkObjectId::MenuScreen:
-			screen = new MenuScreenInterface();
+			_screen = new MenuScreenInterface();
 			break;
 		case UplinkObjectId::DialogScreen:
-			screen = new DialogScreenInterface();
+			_screen = new DialogScreenInterface();
 			break;
 		default:
 			UplinkAbort("Unrecognised ComputerScreen %d, computer '%s' (%s)", screenObjId, remoteComputer->name, remoteComputer->ip);
 	}
-	UplinkAssert(screen != nullptr);
+	UplinkAssert(_screen != nullptr);
 
-	screen->Create(computerScreen);
+	_screen->Create(computerScreen);
 	SvbShowAllTasks();
+}
+
+int RemoteInterface::GetSecurityLevel()
+{
+	return _securityLevel;
 }
 
 RemoteInterfaceScreen* RemoteInterface::GetInterfaceScreen()
 {
-	UplinkAssert(screen != 0);
-	return screen;
+	UplinkAssert(_screen != 0);
+	return _screen;
 }

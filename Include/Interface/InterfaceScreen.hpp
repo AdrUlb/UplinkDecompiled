@@ -5,7 +5,7 @@
 
 class InterfaceScreen : public UplinkObject
 {
-	DArray<char*>* buttonNames;
+	DArray<char*>* _buttonNames;
 
 public:
 	InterfaceScreen();

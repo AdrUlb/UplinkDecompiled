@@ -42,7 +42,7 @@ void LocalInterfaceScreen::BackgroundDraw(Button* button, bool highlighted, bool
 	border_draw(button);
 }
 
-void LocalInterfaceScreen::CreateHeight(int value)
+void LocalInterfaceScreen::CreateHeight(int height)
 {
 	if (IsVisible())
 		return;
@@ -52,10 +52,10 @@ void LocalInterfaceScreen::CreateHeight(int value)
 	double zmm1 = screenWidth * 0.29;
 	int width = zmm1;
 
-	if (value == -1)
-		value = GetScaledYPosition(300);
+	if (height == -1)
+		height = GetScaledYPosition(300);
 
-	EclRegisterButton(screenWidth - width - 3, (zmm1 / 188.0 * 100.0) + 30.0, width, value, "", "", "localint_background");
+	EclRegisterButton(screenWidth - width - 3, (zmm1 / 188.0 * 100.0) + 30.0, width, height, "", "", "localint_background");
 
 	EclRegisterButtonCallbacks("localint_background", BackgroundDraw, 0, 0, nullptr);
 }

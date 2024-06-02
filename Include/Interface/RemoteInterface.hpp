@@ -5,13 +5,13 @@
 
 class RemoteInterface : UplinkObject
 {
-public:
-	RemoteInterfaceScreen* screen = nullptr;
-	int previousScreenIndex = 0;
-	int screenIndex = 0;
-	char securityName[0x80] = " ";
-	int securityLevel = 10;
+	RemoteInterfaceScreen* _screen = nullptr;
+	int _previousScreenIndex = 0;
+	int _screenIndex = 0;
+	char _securityName[0x80] = " ";
+	int _securityLevel = 10;
 
+public:
 	~RemoteInterface() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
@@ -22,5 +22,6 @@ public:
 	bool VerifyScreen(int index);
 	bool IsVisible();
 	void RunScreen(int screenIndex, Computer* computer);
+	int GetSecurityLevel();
 	RemoteInterfaceScreen* GetInterfaceScreen();
 };

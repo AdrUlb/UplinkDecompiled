@@ -11,6 +11,6 @@ public:
 	bool IsVisible() override;
 
 	static void BackgroundDraw(Button* button, bool highlighted, bool clicked);
-	void CreateHeight(int value);
+	void CreateHeight(int height);
 	int ScreenID();
 };

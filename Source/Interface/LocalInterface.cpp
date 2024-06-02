@@ -304,58 +304,58 @@ int HUDInterface::ScreenID()
 
 LocalInterface::~LocalInterface()
 {
-	if (screen != nullptr)
-		delete screen;
-	if (hud != nullptr)
-		delete hud;
+	if (_screen != nullptr)
+		delete _screen;
+	if (_hud != nullptr)
+		delete _hud;
 }
 
 bool LocalInterface::Load(FILE* file)
 {
-	if (!FileReadData(&screenCode, 4, 1, file))
+	if (!FileReadData(&_screenCode, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&screenIndex, 4, 1, file))
+	if (!FileReadData(&_screenIndex, 4, 1, file))
 		return false;
 
-	if (!VerifyScreen(screenCode, screenIndex))
+	if (!VerifyScreen(_screenCode, _screenIndex))
 		return false;
 
 	if (!GetHUD()->Load(file))
 		return false;
 
 	GetHUD()->Create();
-	RunScreen(screenCode, screenIndex);
+	RunScreen(_screenCode, _screenIndex);
 
 	return true;
 }
 
 void LocalInterface::Save(FILE* file)
 {
-	if (screenCode <= 17)
+	if (_screenCode <= 17)
 	{
 		auto buf = 0;
 		fwrite(&buf, 4, 1, file);
 	}
 	else
 	{
-		fwrite(&screenCode, 4, 1, file);
+		fwrite(&_screenCode, 4, 1, file);
 	}
 
-	fwrite(&screenIndex, 4, 1, file);
+	fwrite(&_screenIndex, 4, 1, file);
 	GetHUD()->Save(file);
 }
 
 void LocalInterface::Print()
 {
-	printf("Local Interface : Current Screen Code = %d, Screen index = %d\n", screenCode, screenIndex);
+	printf("Local Interface : Current Screen Code = %d, Screen index = %d\n", _screenCode, _screenIndex);
 }
 
 void LocalInterface::Update()
 {
 	GetHUD()->Update();
-	if (screen != nullptr)
-		screen->Update();
+	if (_screen != nullptr)
+		_screen->Update();
 }
 
 const char* LocalInterface::GetID()
@@ -365,8 +365,8 @@ const char* LocalInterface::GetID()
 
 HUDInterface* LocalInterface::GetHUD()
 {
-	UplinkAssert(hud != nullptr);
-	return hud;
+	UplinkAssert(_hud != nullptr);
+	return _hud;
 }
 
 bool LocalInterface::VerifyScreen(int screenCode, int screenIndex)
@@ -392,14 +392,14 @@ void LocalInterface::RunScreen(int code, int index)
 
 int LocalInterface::InScreen()
 {
-	if (screen == nullptr)
+	if (_screen == nullptr)
 		return 0;
 
-	return screen->ScreenID();
+	return _screen->ScreenID();
 }
 
 LocalInterfaceScreen* LocalInterface::GetInterfaceScreen()
 {
-	UplinkAssert(screen != nullptr);
-	return screen;
+	UplinkAssert(_screen != nullptr);
+	return _screen;
 }

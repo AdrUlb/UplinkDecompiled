@@ -57,6 +57,26 @@ UplinkObjectId MessageScreen::GetOBJECTID()
 	return UplinkObjectId::MessageScreen;
 }
 
+int MessageScreen::GetNextPage()
+{
+	return _nextPage;
+}
+
+const char* MessageScreen::GetTextMessage()
+{
+	return _textMessage;
+}
+
+const char* MessageScreen::GetButtonMessage()
+{
+	return _buttonMessage;
+}
+
+bool MessageScreen::GetMailThisToMe()
+{
+	return _mailThisToMe;
+}
+
 void MessageScreen::SetTextMessage(const char* textMessage)
 {
 	if (_textMessage != nullptr)
