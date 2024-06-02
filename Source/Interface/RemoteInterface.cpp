@@ -101,7 +101,7 @@ bool RemoteInterface::IsVisible()
 ComputerScreen* RemoteInterface::GetComputerScreen()
 {
 	UplinkAssert(_screen != nullptr);
-	_screen->GetComputerScreen();
+	return _screen->GetComputerScreen();
 }
 
 int RemoteInterface::GetSecurityLevel()
