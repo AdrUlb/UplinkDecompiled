@@ -44,3 +44,8 @@ UplinkObjectId LanComputer::GetOBJECTID()
 {
 	return UplinkObjectId::LanComputer;
 }
+
+DArray<LanComputerSystem*>& LanComputer::GetSystems()
+{
+	return _systems;
+}

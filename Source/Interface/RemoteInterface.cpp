@@ -2,10 +2,13 @@
 
 #include <ComputerScreens/GenericScreen.hpp>
 #include <Globals.hpp>
+#include <Interface/RemoteScreens/CodeCardScreenInterface.hpp>
 #include <Interface/RemoteScreens/DialogScreenInterface.hpp>
 #include <Interface/RemoteScreens/MenuScreenInterface.hpp>
 #include <Interface/RemoteScreens/MessageScreenInterface.hpp>
 #include <Interface/RemoteScreens/NearestGatewayScreenInterface.hpp>
+#include <LanComputer.hpp>
+#include <LanMonitor.hpp>
 #include <Svb.hpp>
 #include <Util.hpp>
 
@@ -95,6 +98,23 @@ bool RemoteInterface::IsVisible()
 	return false;
 }
 
+ComputerScreen* RemoteInterface::GetComputerScreen()
+{
+	UplinkAssert(_screen != nullptr);
+	_screen->GetComputerScreen();
+}
+
+int RemoteInterface::GetSecurityLevel()
+{
+	return _securityLevel;
+}
+
+RemoteInterfaceScreen* RemoteInterface::GetInterfaceScreen()
+{
+	UplinkAssert(_screen != 0);
+	return _screen;
+}
+
 void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 {
 	const auto remoteComputer = game->GetWorld()->GetPlayer()->GetRemoteHost()->GetComputer();
@@ -135,6 +155,9 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 				case 31:
 					_screen = new NearestGatewayScreenInterface();
 					break;
+				case 33:
+					_screen = new CodeCardScreenInterface();
+					break;
 				default:
 					UplinkAbort("Unrecognised GenericScreen %d, computer '%s' (%s)", type, remoteComputer->GetName(), remoteComputer->GetIp());
 					break;
@@ -159,13 +182,66 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 	SvbShowAllTasks();
 }
 
-int RemoteInterface::GetSecurityLevel()
+void RemoteInterface::RunNewLocation()
 {
-	return _securityLevel;
-}
+	if (_screen != nullptr)
+	{
+		_screen->Remove();
+		delete _screen;
+		_screen = nullptr;
+	}
 
-RemoteInterfaceScreen* RemoteInterface::GetInterfaceScreen()
-{
-	UplinkAssert(_screen != 0);
-	return _screen;
+	_previousScreenIndex = 0;
+	_screenIndex = 0;
+	strncpy(_securityName, "Guest", 0x80);
+	_securityLevel = 10;
+
+	const auto vlocation = game->GetWorld()->GetPlayer()->GetRemoteHost();
+	if (vlocation->GetOBJECTID() == UplinkObjectId::VlocationSpecial)
+	{
+		_screenIndex = dynamic_cast<VLocationSpecial*>(game->GetWorld()->GetPlayer()->GetRemoteHost())->GetScreenIndex();
+	}
+	else
+	{
+		const auto computer = game->GetWorld()->GetComputer(vlocation->GetComputerName());
+		if (computer != nullptr && computer->GetOBJECTID() == UplinkObjectId::LanComputer)
+		{
+			const auto lanComputer = dynamic_cast<LanComputer*>(computer);
+			if (lanComputer->GetSystems().ValidIndex(LanMonitor::GetCurrentSelected()))
+			{
+				int32_t screenIndex = lanComputer->GetSystems().GetData(LanMonitor::GetCurrentSelected())->ScreenIndex;
+				if (screenIndex != -1)
+					_screenIndex = screenIndex;
+			}
+		}
+	}
+
+	Create();
+
+	if (!GetComputerScreen()->GetComputer()->GetRunning())
+	{
+		game->GetWorld()->GetPlayer()->GetConnection().Disconnect();
+		game->GetWorld()->GetPlayer()->GetConnection().Reset();
+		game->GetInterface()->GetRemoteInterface()->RunNewLocation();
+		game->GetInterface()->GetRemoteInterface()->RunScreen(8, nullptr);
+	}
+
+	if (!GetComputerScreen()->GetComputer()->GetIsExternallyOpen())
+	{
+		const auto ghostVlocation = game->GetWorld()->GetVLocation(game->GetWorld()->GetPlayer()->GetConnection().GetGhost());
+		UplinkAssert(ghostVlocation != nullptr);
+
+		const auto ghostComputer = ghostVlocation->GetComputer();
+		UplinkAssert(ghostComputer != nullptr);
+
+		if (strcmp(ghostComputer->GetCompanyName(), GetComputerScreen()->GetComputer()->GetCompanyName()) != 0)
+		{
+			game->GetWorld()->GetPlayer()->GetConnection().Disconnect();
+			game->GetWorld()->GetPlayer()->GetConnection().Reset();
+			game->GetInterface()->GetRemoteInterface()->RunNewLocation();
+			game->GetInterface()->GetRemoteInterface()->RunScreen(9, nullptr);
+		}
+	}
+
+	puts("TODO: implement RemoteInterface::RunNewLocation()");
 }

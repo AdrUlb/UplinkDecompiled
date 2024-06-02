@@ -6,7 +6,7 @@
 
 struct RemoteInterfaceScreen : InterfaceScreen
 {
-	ComputerScreen* computerScreen = nullptr;
+	ComputerScreen* _computerScreen = nullptr;
 
 	void Create() override;
 	void Remove() override;
@@ -15,4 +15,5 @@ struct RemoteInterfaceScreen : InterfaceScreen
 	virtual bool EscapeKeyPressed();
 	static void DrawMainTitle(Button* button, bool highlighted, bool clicked);
 	static void DrawSubTitle(Button* button, bool highlighted, bool clicked);
+	ComputerScreen* GetComputerScreen();
 };

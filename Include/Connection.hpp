@@ -22,10 +22,15 @@ public:
 	const char* GetID();
 	const char* GetTarget();
 	Person* GetOwner();
+	int GetSize();
 	void SetOwner(const char* owner);
+	const char* GetGhost();
 	void Connect();
+	void Disconnect();
 	void Reset();
 	void AddVLocation(const char* ip);
 	bool LocationIncluded(const char* ip);
 	void BeginTrace();
+	bool TraceInProgress();
+	bool Traced();
 };

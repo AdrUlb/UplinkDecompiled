@@ -44,7 +44,7 @@ void DialogScreenInterface::Create(ComputerScreen* screen)
 	if (IsVisible())
 		return;
 
-	computerScreen = screen;
+	_computerScreen = screen;
 
 	EclRegisterButton(0, 0, 0, 0, " ", " ", "dialogscreen");
 	EclRegisterButtonCallbacks("dialogscreen", nullptr, nullptr, nullptr, nullptr);
@@ -157,8 +157,8 @@ bool DialogScreenInterface::EscapeKeyPressed()
 
 DialogScreen* DialogScreenInterface::GetComputerScreen()
 {
-	UplinkAssert(computerScreen != nullptr);
-	return dynamic_cast<DialogScreen*>(computerScreen);
+	UplinkAssert(_computerScreen != nullptr);
+	return dynamic_cast<DialogScreen*>(_computerScreen);
 }
 
 void DialogScreenInterface::RemoveWidget(DialogScreenWidget* widget, Computer* computer)

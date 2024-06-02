@@ -43,8 +43,11 @@ public:
 	UplinkObjectId GetOBJECTID() override;
 	int GetType();
 	const char* GetName();
+	const char* GetCompanyName();
 	const char* GetIp();
 	int GetTraceAction();
+	bool GetIsExternallyOpen();
+	bool GetRunning();
 	DataBank& GetDataBank();
 	LogBank& GetLogBank();
 	RecordBank& GetRecordBank();

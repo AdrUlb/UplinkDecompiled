@@ -44,24 +44,20 @@ public:
 	const char* GetID() override;
 	void Print() override;
 	void Update() override;
-
 	void Initialise();
 	void Set(const char* newPath, const char* newVersion, const char* newType, const char* newDate, const char* newTitle);
-
 	void Close();
 	void CloseGame();
 	bool Closed();
-
 	void SetNextLoadGame(char const* name);
 	void LoadGame();
 	void LoadGame(const char* name);
 	void SaveGame(char const* name);
 	void RetireGame(const char* name);
-
 	MainMenu* GetMainMenu();
 	Network* GetNetwork();
 	Options* GetOptions();
-
+	bool GetCheckCodeCard();
 	void RegisterPhoneDialler(PhoneDialler* phoneDiallerScreen);
 	void UnRegisterPhoneDialler(PhoneDialler* phoneDiallerScreen);
 

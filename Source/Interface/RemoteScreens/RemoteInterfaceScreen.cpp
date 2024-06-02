@@ -7,20 +7,20 @@
 
 void RemoteInterfaceScreen::Create()
 {
-	if (computerScreen == nullptr)
+	if (_computerScreen == nullptr)
 	{
 		printf("Error : RemoteInterfaceScreen::Create, cs==NULL, ScreenID=%d\n", ScreenID());
 		return;
 	}
 
-	Create(computerScreen);
+	Create(_computerScreen);
 }
 
 void RemoteInterfaceScreen::Remove() {}
 
 void RemoteInterfaceScreen::Create(ComputerScreen* screen)
 {
-	computerScreen = screen;
+	_computerScreen = screen;
 }
 
 bool RemoteInterfaceScreen::ReturnKeyPressed()
@@ -44,7 +44,7 @@ void RemoteInterfaceScreen::DrawMainTitle(Button* button, bool highlighted, bool
 
 	// FIXME: sometimes text doesn't render correctly when scissor test is enabled, even when it is contained within the scissor box
 	glDisable(GL_SCISSOR_TEST);
-	
+
 	GciDrawText(button->X, button->Y + (button->Height / 2) + 5, button->Caption, 7);
 	glDisable(GL_SCISSOR_TEST);
 }
@@ -63,4 +63,9 @@ void RemoteInterfaceScreen::DrawSubTitle(Button* button, bool highlighted, bool 
 
 	GciDrawText(button->X, button->Y + (button->Height / 2) + 5, button->Caption, 6);
 	glDisable(GL_SCISSOR_TEST);
+}
+
+ComputerScreen* RemoteInterfaceScreen::GetComputerScreen()
+{
+	return _computerScreen;
 }

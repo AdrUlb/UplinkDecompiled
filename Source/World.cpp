@@ -313,7 +313,7 @@ Computer* World::CreateComputer(const char* computerName, const char* companyNam
 
 	const auto vlocation = World::GetVLocation(ip);
 	UplinkAssert(vlocation != nullptr);
-	vlocation->SetComputer(computerName);
+	vlocation->SetComputerName(computerName);
 
 	return computer;
 }
@@ -325,7 +325,7 @@ void World::CreateComputer(Computer* computer)
 
 	const auto vlocation = GetVLocation(computer->GetIp());
 	UplinkAssert(vlocation != nullptr);
-	vlocation->SetComputer(computer->GetName());
+	vlocation->SetComputerName(computer->GetName());
 }
 
 void World::CreatePassword(const char* password)

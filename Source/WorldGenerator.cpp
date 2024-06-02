@@ -115,9 +115,9 @@ void WorldGenerator::GeneratePlayer(const char* handle)
 	player->gateway.GiveStartingHardware();
 	player->gateway.GiveStartingSoftware();*/
 	game->GetWorld()->CreatePerson(player);
-	player->GetConnection()->Reset();
-	player->GetConnection()->AddVLocation("234.773.0.666");
-	player->GetConnection()->Connect();
+	player->GetConnection().Reset();
+	player->GetConnection().AddVLocation("234.773.0.666");
+	player->GetConnection().Connect();
 	/*player->GiveLink("234.773.0.666");
 	player->GiveLink("458.615.48.651");*/
 

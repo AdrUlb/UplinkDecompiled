@@ -166,6 +166,11 @@ Options* App::GetOptions()
 	return _options;
 }
 
+bool App::GetCheckCodeCard()
+{
+	return _checkCodecard;
+}
+
 void App::Initialise()
 {
 	_options = new Options();

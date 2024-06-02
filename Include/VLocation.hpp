@@ -6,7 +6,7 @@
 class VLocation : UplinkObject
 {
 	char _ip[0x18] = "0.0.0.0";
-	char _computer[0x40];
+	char _computerName[0x40];
 	int _x;
 	int _y;
 	bool _listed = true;
@@ -20,11 +20,27 @@ public:
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 	const char* GetIp();
+	const char* GetComputerName();
 	int GetX();
 	int GetY();
 	void SetIp(const char* ip);
 	void SetPLocation(int x, int y);
-	void SetComputer(const char* computer);
+	void SetComputerName(const char* computer);
 	void SetListed(bool listed);
 	Computer* GetComputer();
+};
+
+class VLocationSpecial : public VLocation
+{
+	int _screenIndex = 0;
+	int _securitySystemIndex = -1;
+
+public:
+	bool Load(FILE* file) override;
+	void Save(FILE* file) override;
+	void Print() override;
+	const char* GetID() override;
+	UplinkObjectId GetOBJECTID() override;
+	int GetScreenIndex();
+	int GetSecuritySystemIndex();
 };

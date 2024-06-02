@@ -40,7 +40,7 @@ public:
 	const char* GetLocalHostIp();
 	VLocation* GetLocalHost();
 	VLocation* GetRemoteHost();
-	Connection* GetConnection();
+	Connection& GetConnection();
 	void SetName(const char* name);
 	void SetAge(int age);
 	void SetLocalHost(const char* localHost);

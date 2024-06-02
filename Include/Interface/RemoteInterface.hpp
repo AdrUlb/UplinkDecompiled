@@ -21,7 +21,9 @@ public:
 	void Create();
 	bool VerifyScreen(int index);
 	bool IsVisible();
-	void RunScreen(int screenIndex, Computer* computer);
+	ComputerScreen* GetComputerScreen();
 	int GetSecurityLevel();
 	RemoteInterfaceScreen* GetInterfaceScreen();
+	void RunScreen(int screenIndex, Computer* computer);
+	void RunNewLocation();
 };

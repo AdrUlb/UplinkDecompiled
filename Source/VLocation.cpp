@@ -8,7 +8,7 @@ bool VLocation::Load(FILE* file)
 	if (!LoadDynamicStringBuf(_ip, 0x18, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(_computer, 0x40, file))
+	if (!LoadDynamicStringBuf(_computerName, 0x40, file))
 		return false;
 
 	if (!FileReadData(&_x, 4, 1, file))
@@ -33,7 +33,7 @@ bool VLocation::Load(FILE* file)
 void VLocation::Save(FILE* file)
 {
 	SaveDynamicString(_ip, 0x18, file);
-	SaveDynamicString(_computer, 0x40, file);
+	SaveDynamicString(_computerName, 0x40, file);
 	fwrite(&_x, 4, 1, file);
 	fwrite(&_y, 4, 1, file);
 	fwrite(&_listed, 1, 1, file);
@@ -44,7 +44,7 @@ void VLocation::Save(FILE* file)
 void VLocation::Print()
 {
 	printf("VLocation : ");
-	printf("\tIP = %s, Computer = %s, x = %d, y = %d\n", _ip, _computer, _x, _y);
+	printf("\tIP = %s, Computer = %s, x = %d, y = %d\n", _ip, _computerName, _x, _y);
 	printf("\tlisted = %d, displayed = %d, colored = %d\n", _listed, _displayed, _colored);
 }
 
@@ -61,6 +61,11 @@ UplinkObjectId VLocation::GetOBJECTID()
 const char* VLocation::GetIp()
 {
 	return _ip;
+}
+
+const char* VLocation::GetComputerName()
+{
+	return _computerName;
 }
 
 int VLocation::GetX()
@@ -87,9 +92,9 @@ void VLocation::SetPLocation(int x, int y)
 	_y = y;
 }
 
-void VLocation::SetComputer(const char* computer)
+void VLocation::SetComputerName(const char* computerName)
 {
-	UplinkStrncpy(_computer, computer, 0x40);
+	UplinkStrncpy(_computerName, computerName, 0x40);
 }
 
 void VLocation::SetListed(bool listed)
@@ -103,7 +108,7 @@ Computer* VLocation::GetComputer()
 
 	while (true)
 	{
-		const auto computerTree = tree->LookupTree(this->_computer);
+		const auto computerTree = tree->LookupTree(this->_computerName);
 		if (computerTree == nullptr)
 			break;
 
@@ -123,4 +128,53 @@ Computer* VLocation::GetComputer()
 	}
 
 	return nullptr;
+}
+
+bool VLocationSpecial::Load(FILE* file)
+{
+	if (!VLocation::Load(file))
+		return false;
+
+	if (!FileReadData(&_screenIndex, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&_securitySystemIndex, 4, 1, file))
+		return false;
+
+	return true;
+}
+
+void VLocationSpecial::Save(FILE* file)
+{
+	VLocation::Save(file);
+	fwrite(&_screenIndex, 4, 1, file);
+	fwrite(&_securitySystemIndex, 4, 1, file);
+}
+
+void VLocationSpecial::Print()
+{
+	puts("VLocationSpecial:");
+	printf("screenIndex = %d\n", _screenIndex);
+	printf("securitySystemIndex = %d\n", _securitySystemIndex);
+	VLocation::Print();
+}
+
+const char* VLocationSpecial::GetID()
+{
+	return "VLOCSPEC";
+}
+
+UplinkObjectId VLocationSpecial::GetOBJECTID()
+{
+	return UplinkObjectId::VlocationSpecial;
+}
+
+int VLocationSpecial::GetScreenIndex()
+{
+	return _screenIndex;
+}
+
+int VLocationSpecial::GetSecuritySystemIndex()
+{
+	return _securitySystemIndex;
 }

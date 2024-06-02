@@ -130,6 +130,16 @@ UplinkObjectId LogBank::GetOBJECTID()
 	return UplinkObjectId::LogBank;
 }
 
+DArray<AccessLog*>& LogBank::GetAccessLogs()
+{
+	return _accessLogs;
+}
+
+DArray<AccessLog*>& LogBank::GetAccessLogsModified()
+{
+	return _accessLogsModified;
+}
+
 void LogBank::AddLog(AccessLog* log, int index)
 {
 	if (index == -1)

@@ -71,9 +71,22 @@ Person* Connection::GetOwner()
 	return ret;
 }
 
+int Connection::GetSize()
+{
+	return _vlocations.Size();
+}
+
 void Connection::SetOwner(const char* owner)
 {
 	UplinkStrncpy(_owner, owner, 0x80);
+}
+
+const char* Connection::GetGhost()
+{
+	if (_vlocations.Size() < 2)
+		return nullptr;
+
+	return _vlocations.GetData(_vlocations.Size() - 2);
 }
 
 void Connection::Reset()
@@ -145,26 +158,85 @@ void Connection::Connect()
 			called = true;
 		}
 
-		const auto accessLog = new AccessLog();
+		const auto connectLog = new AccessLog();
 
 		const auto lastLoc = _vlocations.Size() - 1;
 
 		if (j == lastLoc)
 		{
-			accessLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData(lastLoc - 1), _owner, 0, 2);
-			comp->GetLogBank().AddLog(accessLog, -1);
+			connectLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData(lastLoc - 1), _owner, 0, 2);
+			comp->GetLogBank().AddLog(connectLog, -1);
 			continue;
 		}
 
 		if (j == 0)
-			accessLog->SetProperties(game->GetWorld()->GetCurrentDate(), "LOCAL", _owner, 0, 4);
+			connectLog->SetProperties(game->GetWorld()->GetCurrentDate(), "LOCAL", _owner, 0, 4);
 		else
-			accessLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData(j - 1), _owner, 0, 5);
+			connectLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData(j - 1), _owner, 0, 5);
 
-		accessLog->SetData1(_vlocations.GetData(j + 1));
+		connectLog->SetData1(_vlocations.GetData(j + 1));
 
-		comp->GetLogBank().AddLog(accessLog, -1);
+		comp->GetLogBank().AddLog(connectLog, -1);
 	}
+}
+
+void Connection::Disconnect()
+{
+	const auto targetVlocation = game->GetWorld()->GetVLocation(GetTarget());
+	UplinkAssert(targetVlocation != nullptr);
+
+	const auto targetComputer = targetVlocation->GetComputer();
+	UplinkAssert(targetComputer != nullptr);
+
+	bool rbp_1 = TraceInProgress() && !Traced();
+
+	const auto disconnectLog = new AccessLog();
+	disconnectLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData((_vlocations.Size() - 2)), _owner, 0, 3);
+
+	if (rbp_1 != 0)
+	{
+		auto setsus = true;
+
+		for (auto i = targetComputer->GetLogBank().GetAccessLogs().Size(); i >= 0; i--)
+		{
+			if (!targetComputer->GetLogBank().GetAccessLogs().ValidIndex(i))
+				continue;
+
+			const auto log = targetComputer->GetLogBank().GetAccessLogs().GetData(i);
+			UplinkAssert(log != nullptr);
+
+			Date date;
+			date.SetDate(&log->GetDate());
+			date.AdvanceMinute(5);
+
+			if (date.Before(&disconnectLog->GetDate()))
+				break;
+
+			if (log->GetTYPE() == 2 && strcmp(log->GetFromName(), _owner) == 0 && strcmp(log->GetFromIp(), disconnectLog->GetFromIp()) == 0)
+			{
+				log->SetSuspicious(1);
+				if (targetComputer->GetLogBank().GetAccessLogsModified().ValidIndex(i) != 0)
+					targetComputer->GetLogBank().GetAccessLogsModified().GetData(i)->SetSuspicious(1);
+				setsus = false;
+				break;
+			}
+		}
+
+		if (setsus)
+			disconnectLog->SetSuspicious(1);
+	}
+
+	targetComputer->GetLogBank().AddLog(disconnectLog, -1);
+
+	if (strcmp(_owner, "PLAYER") == 0)
+	{
+		// SecurityMonitor::EndAttack(); and so on
+		puts("TODO: Connection::Disconnect()");
+	}
+	const auto owner = GetOwner();
+	owner->SetRemoteHost(owner->GetLocalHostIp());
+	_traceProgress = 0;
+	_traceInProgress = false;
 }
 
 void Connection::BeginTrace()
@@ -183,4 +255,17 @@ void Connection::BeginTrace()
 		_traceInProgress = true;
 		_traceProgress = 0;
 	}
+}
+
+bool Connection::TraceInProgress()
+{
+	return _traceInProgress;
+}
+
+bool Connection::Traced()
+{
+	if (!_traceInProgress)
+		return 0;
+
+	return _traceProgress == GetSize() - 1;
 }

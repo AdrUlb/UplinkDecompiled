@@ -16,6 +16,8 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
+	DArray<AccessLog*>& GetAccessLogs();
+	DArray<AccessLog*>& GetAccessLogsModified();
 	void AddLog(AccessLog* log, int index);
 	bool LogModified(int index);
 };

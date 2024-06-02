@@ -148,9 +148,9 @@ VLocation* Person::GetRemoteHost()
 	return ret;
 }
 
-Connection* Person::GetConnection()
+Connection& Person::GetConnection()
 {
-	return &_connection;
+	return _connection;
 }
 
 void Person::SetName(const char* name)

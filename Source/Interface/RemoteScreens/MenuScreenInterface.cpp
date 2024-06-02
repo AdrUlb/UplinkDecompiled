@@ -44,7 +44,7 @@ void MenuScreenInterface::Create(ComputerScreen* screen)
 {
 	UplinkAssert(screen != nullptr);
 
-	computerScreen = screen;
+	_computerScreen = screen;
 
 	if (IsVisible())
 		return;
@@ -103,8 +103,8 @@ void MenuScreenInterface::Create(ComputerScreen* screen)
 
 MenuScreen* MenuScreenInterface::GetComputerScreen()
 {
-	UplinkAssert(computerScreen != nullptr);
-	return dynamic_cast<MenuScreen*>(computerScreen);
+	UplinkAssert(_computerScreen != nullptr);
+	return dynamic_cast<MenuScreen*>(_computerScreen);
 }
 
 void MenuScreenInterface::DrawMenuOptionDimmed(Button* button, bool highlighted, bool clicked)

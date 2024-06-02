@@ -182,6 +182,11 @@ const char* Computer::GetName()
 	return _name;
 }
 
+const char* Computer::GetCompanyName()
+{
+	return _companyName;
+}
+
 const char* Computer::GetIp()
 {
 	return _ip;
@@ -190,6 +195,16 @@ const char* Computer::GetIp()
 int Computer::GetTraceAction()
 {
 	return _traceAction;
+}
+
+bool Computer::GetIsExternallyOpen()
+{
+	return _isExternallyOpen;
+}
+
+bool Computer::GetRunning()
+{
+	return _running;
 }
 
 DataBank& Computer::GetDataBank()
