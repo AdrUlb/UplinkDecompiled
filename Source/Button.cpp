@@ -58,9 +58,9 @@ void Button::SetProperties(int x, int y, int width, int height, const char* capt
 	SetCaption(caption);
 }
 
-void Button::SetCaption(const char* value)
+void Button::SetCaption(const char* caption)
 {
-	if (Caption != nullptr && strcmp(value, Caption) == 0)
+	if (Caption != nullptr && strcmp(caption, Caption) == 0)
 		return;
 
 	Dirty = true;
@@ -68,15 +68,15 @@ void Button::SetCaption(const char* value)
 	if (Caption != nullptr)
 		delete[] Caption;
 
-	Caption = new char[strlen(value) + 1];
-	strcpy(Caption, value);
+	Caption = new char[strlen(caption) + 1];
+	strcpy(Caption, caption);
 }
 
-void Button::SetStandardImage(Image* value)
+void Button::SetStandardImage(Image* image)
 {
 	if (ImageNormal != nullptr)
 		delete ImageNormal;
-	ImageNormal = value;
+	ImageNormal = image;
 }
 
 void Button::RegisterDrawFunction(ButtonDrawFunc func)
@@ -99,13 +99,13 @@ void Button::RegisterMouseMoveFunction(ButtonMouseMoveFunc func)
 	MouseMoveFunc = func;
 }
 
-void Button::SetTooltip(const char* value)
+void Button::SetTooltip(const char* tooltip)
 {
 	if (Tooltip != nullptr)
 		delete[] Tooltip;
 
-	Tooltip = new char[strlen(value) + 1];
-	strcpy(Tooltip, value);
+	Tooltip = new char[strlen(tooltip) + 1];
+	strcpy(Tooltip, tooltip);
 }
 
 void Button::Draw(bool highlighted, bool clicked)

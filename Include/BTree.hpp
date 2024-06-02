@@ -4,9 +4,9 @@
 
 template <class T> class BTree
 {
-	BTree<T>* left;
-	BTree<T>* right;
-	char* name;
+	BTree<T>* _left;
+	BTree<T>* _right;
+	char* _name;
 
 public:
 	T Data;

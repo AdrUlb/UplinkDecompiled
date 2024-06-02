@@ -288,7 +288,7 @@ DArray<char*>* ListDirectory(const char* dir, const char* ext)
 {
 	const auto files = RsListArchive(dir, ext);
 	char dirPath[0x100];
-	UplinkSnprintf(dirPath, 0x100, "%s%s", app->path, dir);
+	UplinkSnprintf(dirPath, 0x100, "%s%s", app->Path, dir);
 
 	const auto dirp = opendir(dirPath);
 	if (dirp != nullptr)

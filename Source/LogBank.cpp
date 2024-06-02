@@ -158,19 +158,19 @@ bool LogBank::LogModified(int index)
 	const auto log = accessLogs.GetData(index);
 	const auto logModified = accessLogsModified.GetData(index);
 
-	if (log->type != logModified->type)
+	if (log->GetTYPE() != logModified->GetTYPE())
 		return true;
 
-	if (log->suspicious != logModified->suspicious)
+	if (log->GetSuspicious() != logModified->GetSuspicious())
 		return true;
 
-	if (strcmp(log->fromIp, logModified->fromIp) != 0)
+	if (strcmp(log->GetFromIp(), logModified->GetFromIp()) != 0)
 		return true;
 
-	if (strcmp(log->fromName, logModified->fromName) != 0)
+	if (strcmp(log->GetFromName(), logModified->GetFromName()) != 0)
 		return true;
 
-	if (!log->date.Equal(logModified->date))
+	if (!log->GetDate().Equal(logModified->GetDate()))
 		return true;
 
 	return false;

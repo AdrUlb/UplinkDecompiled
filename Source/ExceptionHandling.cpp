@@ -29,9 +29,9 @@
 	{
 		fputs("\nAn (unrecognised) Uplink Internal Error has occured\n", file_stdout);
 		fputs("===================================================\n", file_stdout);
-		if (app != nullptr && strcmp(app->usersPath, "c:/") != 0)
+		if (app != nullptr && strcmp(app->UsersPath, "c:/") != 0)
 		{
-			fprintf(file_stdout, "See the %sdebug.log file for more informations on the error\n", app->usersPath);
+			fprintf(file_stdout, "See the %sdebug.log file for more informations on the error\n", app->UsersPath);
 		}
 		else
 			fputs("See the debug.log file for more informations on the error\n", file_stdout);

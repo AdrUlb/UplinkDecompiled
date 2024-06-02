@@ -405,7 +405,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	computer->SetCompanyName(companyName);
 	computer->SetTraceSpeed(NumberGenerator::RandomNormalNumber(15.0f, 1.5f));
 	computer->SetIP(vlocation->ip);
-	const auto companySize = company->size;
+	const auto companySize = company->GetSize();
 	if (companySize > 1)
 	{
 		auto level = (companySize - 1) / 3;
@@ -587,7 +587,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	computer->SetTraceAction(9);
 	computer->SetIP(vlocation->ip);
 
-	int level1 = (company->size - 1) / 3;
+	int level1 = (company->GetSize() - 1) / 3;
 	if (level1 > 5)
 	{
 		level1 = 5;
@@ -598,7 +598,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	}
 	computer->security.AddSystem(4, level1, -1);
 
-	int level2 = (company->size - 8) / 3;
+	int level2 = (company->GetSize() - 8) / 3;
 	if (level2 > 5)
 	{
 		level2 = 5;
@@ -609,7 +609,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	}
 	computer->security.AddSystem(1, level2, -1);
 
-	int level3 = (company->size - 10) / 3;
+	int level3 = (company->GetSize() - 10) / 3;
 	if (level3 > 5)
 	{
 		level3 = 5;
@@ -729,10 +729,10 @@ Computer* WorldGenerator::GenerateLAN(const char* companyName)
 	if (company == nullptr)
 		return nullptr;
 
-	if (company->size > 40)
+	if (company->GetSize() > 40)
 		return LanGenerator::GenerateLAN(companyName, 4);
 
-	return LanGenerator::GenerateLAN(companyName, (company->size / 10));
+	return LanGenerator::GenerateLAN(companyName, (company->GetSize() / 10));
 }
 
 void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)

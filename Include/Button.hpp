@@ -9,9 +9,8 @@ typedef void (*ButtonMouseDownFunc)(Button* button);
 typedef void (*ButtonMouseUpFunc)(Button* button);
 typedef void (*ButtonMouseMoveFunc)(Button* button);
 
-class Button
+struct Button
 {
-public:
 	int X;
 	int Y;
 	int Width;
@@ -32,13 +31,13 @@ public:
 	Button(int x, int y, int width, int height, const char* caption, const char* name);
 	virtual ~Button();
 	void SetProperties(int x, int y, int width, int height, const char* caption, const char* name);
-	void SetCaption(const char* value);
+	void SetCaption(const char* caption);
 	void SetStandardImage(Image* value);
 	void RegisterDrawFunction(ButtonDrawFunc func);
 	void RegisterMouseUpFunction(ButtonMouseUpFunc func);
 	void RegisterMouseDownFunction(ButtonMouseDownFunc func);
 	void RegisterMouseMoveFunction(ButtonMouseMoveFunc func);
-	void SetTooltip(const char* value);
+	void SetTooltip(const char* tooltip);
 	void Draw(bool highlighted, bool clicked);
 	void SetImages(Image* imageNormal, Image* imageHighlighted, Image* imageClicked);
 	void MouseMove();

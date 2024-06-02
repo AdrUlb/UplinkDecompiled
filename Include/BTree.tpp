@@ -4,12 +4,12 @@
 
 #include <cstring>
 
-template <class T> BTree<T>::BTree() : left(nullptr), right(nullptr), name(nullptr), Data{0} {}
+template <class T> BTree<T>::BTree() : _left(nullptr), _right(nullptr), _name(nullptr), Data{0} {}
 
-template <class T> BTree<T>::BTree(const char* name, const T& value) : left(nullptr), right(nullptr)
+template <class T> BTree<T>::BTree(const char* name, const T& value) : _left(nullptr), _right(nullptr)
 {
-	this->name = new char[strlen(name) + 1];
-	strcpy(this->name, name);
+	this->_name = new char[strlen(name) + 1];
+	strcpy(this->_name, name);
 	this->Data = value;
 }
 
@@ -33,28 +33,28 @@ template <class T> DArray<char*>* BTree<T>::ConvertIndexToDArray()
 
 template <class T> void BTree<T>::Empty()
 {
-	if (left != nullptr)
-		delete left;
+	if (_left != nullptr)
+		delete _left;
 
-	if (right != nullptr)
-		delete right;
+	if (_right != nullptr)
+		delete _right;
 
-	if (name != nullptr)
-		delete[] name;
+	if (_name != nullptr)
+		delete[] _name;
 
-	right = nullptr;
-	left = nullptr;
-	name = nullptr;
+	_right = nullptr;
+	_left = nullptr;
+	_name = nullptr;
 }
 
 template <class T> BTree<T>* BTree<T>::Left()
 {
-	return left;
+	return _left;
 }
 
 template <class T> BTree<T>* BTree<T>::Right()
 {
-	return right;
+	return _right;
 }
 
 template <class T> BTree<T>* BTree<T>::LookupTree(const char* name)
@@ -63,23 +63,23 @@ template <class T> BTree<T>* BTree<T>::LookupTree(const char* name)
 
 	while (true)
 	{
-		if (tree->name == nullptr)
+		if (tree->_name == nullptr)
 			return nullptr;
 
-		const auto cmp = strcmp(name, tree->name);
+		const auto cmp = strcmp(name, tree->_name);
 
 		if (cmp == 0)
 			return tree;
 
-		if (tree->left != nullptr && cmp < 0)
+		if (tree->_left != nullptr && cmp < 0)
 		{
-			tree = tree->left;
+			tree = tree->_left;
 			continue;
 		}
 
-		if (tree->right != nullptr && cmp > 0)
+		if (tree->_right != nullptr && cmp > 0)
 		{
-			tree = tree->right;
+			tree = tree->_right;
 			continue;
 		}
 
@@ -103,30 +103,30 @@ template <class T> void BTree<T>::PutData(const char* name, const T& value)
 
 	while (true)
 	{
-		if (tree->name == nullptr)
+		if (tree->_name == nullptr)
 			break;
 
-		if (strcmp(name, tree->name) > 0)
+		if (strcmp(name, tree->_name) > 0)
 		{
-			if (tree->right == nullptr)
+			if (tree->_right == nullptr)
 			{
-				tree->right = new BTree<T>(name, value);
+				tree->_right = new BTree<T>(name, value);
 				return;
 			}
-			tree = tree->right;
+			tree = tree->_right;
 			continue;
 		}
 
-		if (tree->left == nullptr)
+		if (tree->_left == nullptr)
 		{
-			tree->left = new BTree<T>(name, value);
+			tree->_left = new BTree<T>(name, value);
 			return;
 		}
-		tree = tree->left;
+		tree = tree->_left;
 	}
 
-	tree->name = new char[strlen(name) + 1];
-	strcpy(tree->name, name);
+	tree->_name = new char[strlen(name) + 1];
+	strcpy(tree->_name, name);
 	tree->Data = value;
 }
 
@@ -138,24 +138,24 @@ template <class T> void BTree<T>::RemoveData(const char* name)
 
 	while (true)
 	{
-		const auto cmp = strcmp(name, tree->name);
+		const auto cmp = strcmp(name, tree->_name);
 
-		const auto leftNode = tree->Left();
-		const auto rightNode = tree->Right();
+		const auto leftNode = tree->_left;
+		const auto rightNode = tree->_right;
 
 		// If this tree is the one we want to remove
 		if (cmp == 0)
 		{
-			delete[] tree->name;
+			delete[] tree->_name;
 
 			// If there is a node to the left
 			if (leftNode != nullptr)
 			{
-				tree->name = new char[strlen(leftNode->name) + 1];
-				strcpy(tree->name, leftNode->name);
+				tree->_name = new char[strlen(leftNode->_name) + 1];
+				strcpy(tree->_name, leftNode->_name);
 				tree->Data = leftNode->Data;
-				tree->right = leftNode->Right();
-				tree->left = leftNode->Left();
+				tree->_right = leftNode->_right;
+				tree->_left = leftNode->_left;
 				tree->AppendRight(rightNode);
 				return;
 			}
@@ -163,16 +163,15 @@ template <class T> void BTree<T>::RemoveData(const char* name)
 			// If there is a node to the right
 			if (rightNode != nullptr)
 			{
-				tree->name = new char[strlen(rightNode->name) + 1];
-				auto rax_31 = rightNode;
-				strcpy(tree->name, rax_31->name);
+				tree->_name = new char[strlen(rightNode->_name) + 1];
+				strcpy(tree->_name, rightNode->_name);
 				tree->Data = rightNode->Data;
-				tree->left = rightNode->Left();
-				tree->right = rightNode->Right();
+				tree->_left = rightNode->_left;
+				tree->_right = rightNode->_right;
 				return;
 			}
 
-			tree->name = nullptr;
+			tree->_name = nullptr;
 			return;
 		}
 
@@ -184,10 +183,10 @@ template <class T> void BTree<T>::RemoveData(const char* name)
 				break;
 
 			// If this tree is the one we want to remove and there is no tree to the left or right
-			if (strcmp(leftNode->name, name) == 0 && leftNode->Left() == nullptr && leftNode->Right() == nullptr)
+			if (strcmp(leftNode->_name, name) == 0 && leftNode->_left == nullptr && leftNode->_right == nullptr)
 			{
-				delete[] leftNode->name;
-				tree->left = 0;
+				delete[] leftNode->_name;
+				tree->_left = 0;
 				return;
 			}
 
@@ -202,10 +201,10 @@ template <class T> void BTree<T>::RemoveData(const char* name)
 			break;
 
 		// If this tree is the one we want to remove and there is no tree to the left or right
-		if (strcmp(rightNode->name, name) == 0 && rightNode->Left() == nullptr && rightNode->Right() == nullptr)
+		if (strcmp(rightNode->_name, name) == 0 && rightNode->_left == nullptr && rightNode->_right == nullptr)
 		{
-			delete[] rightNode->name;
-			tree->right = nullptr;
+			delete[] rightNode->_name;
+			tree->_right = nullptr;
 			break;
 		}
 		tree = rightNode;
@@ -216,12 +215,12 @@ template <class T> void BTree<T>::RecursiveConvertToDArray(DArray<T>* array, BTr
 {
 	assert(array != nullptr);
 
-	for (auto i = tree; i != nullptr; i = i->Right())
+	for (auto i = tree; i != nullptr; i = i->_right)
 	{
-		if (i->name != nullptr)
+		if (i->_name != nullptr)
 			array->PutData(i->Data);
 
-		RecursiveConvertToDArray(array, i->Left());
+		RecursiveConvertToDArray(array, i->_left);
 	}
 }
 
@@ -229,12 +228,12 @@ template <class T> void BTree<T>::RecursiveConvertIndexToDArray(DArray<char*>* a
 {
 	assert(array != nullptr);
 
-	for (auto i = tree; i != nullptr; i = i->Right())
+	for (auto i = tree; i != nullptr; i = i->_right)
 	{
-		if (i->name != nullptr)
-			array->PutData(i->name);
+		if (i->_name != nullptr)
+			array->PutData(i->_name);
 
-		RecursiveConvertIndexToDArray(array, i->Left());
+		RecursiveConvertIndexToDArray(array, i->_left);
 	}
 }
 
@@ -244,11 +243,11 @@ template <class T> void BTree<T>::AppendRight(BTree<T>* value)
 
 	while (true)
 	{
-		if (tree->Right() == nullptr)
+		if (tree->_right == nullptr)
 			break;
 
-		tree = tree->Right();
+		tree = tree->_right;
 	}
 
-	tree->right = value;
+	tree->_right = value;
 }

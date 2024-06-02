@@ -8,29 +8,31 @@
 
 class Company : public UplinkObject
 {
-public:
-	int sharePrices[12] = {0};
-	int sharePriceLastMonth = 0;
-	char name[0x40] = " ";
-	char boss[0x80] = "Unlisted";
-	char admin[0x80] = "Unlisted";
-	int size;
-	int type;
-	int growth;
-	int alignment;
+	int _sharePrices[12] = {0};
+	int _sharePriceLastMonth = 0;
+	char _name[0x40] = " ";
+	char _boss[0x80] = "Unlisted";
+	char _admin[0x80] = "Unlisted";
+	int _size;
+	int _type;
+	int _growth;
+	int _alignment;
 
+public:
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	void Grow(int amount);
-	void VaryGrowth();
+	const char* GetName();
+	int GetSize();
 	void SetName(const char* name);
 	void SetSize(int value);
 	void SetTYPE(int value);
 	void SetGrowth(int value);
 	void SetAlignment(int value);
+	void Grow(int amount);
+	void VaryGrowth();
 };
 
 class CompanyUplink : public Company

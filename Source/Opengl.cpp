@@ -571,7 +571,7 @@ static void keyboard(char keychar)
 	if (keychar == '`')
 	{
 		char s[0x100];
-		UplinkSnprintf(s, 0x100, "%sscreenshot.bmp", &app->usersPath);
+		UplinkSnprintf(s, 0x100, "%sscreenshot.bmp", &app->UsersPath);
 		GciSaveScreenshot(s);
 		return;
 	}

@@ -10,15 +10,15 @@
 #include <cstdlib>
 #include <dirent.h>
 
-App::App() : startTime(0), closed(false), options(nullptr), network(nullptr), mainMenu(nullptr), phoneDialler(nullptr), nextLoadGame(nullptr)
+App::App() : _startTime(0), _closed(false), _options(nullptr), _network(nullptr), _mainMenu(nullptr), _phoneDialler(nullptr), _nextLoadGame(nullptr)
 {
-	UplinkStrncpy(path, "c:/", APP_PATH_MAX);
-	UplinkStrncpy(usersPath, path, APP_PATH_MAX);
-	UplinkStrncpy(version, "1.31c", APP_VERSION_MAX);
-	UplinkStrncpy(type, "RELEASE", APP_TYPE_MAX);
-	UplinkStrncpy(date, "01/01/97", APP_DATE_MAX);
-	UplinkStrncpy(title, "NewApp", APP_TITLE_MAX);
-	UplinkStrncpy(build, "Version 1.0 (RELEASE), Compiled on 01/01/97", APP_BUILD_MAX);
+	UplinkStrncpy(Path, "c:/", APP_PATH_MAX);
+	UplinkStrncpy(UsersPath, Path, APP_PATH_MAX);
+	UplinkStrncpy(Version, "1.31c", APP_VERSION_MAX);
+	UplinkStrncpy(Type, "RELEASE", APP_TYPE_MAX);
+	UplinkStrncpy(Date, "01/01/97", APP_DATE_MAX);
+	UplinkStrncpy(Title, "NewApp", APP_TITLE_MAX);
+	UplinkStrncpy(Build, "Version 1.0 (RELEASE), Compiled on 01/01/97", APP_BUILD_MAX);
 }
 
 App::~App()
@@ -43,8 +43,8 @@ void App::Update()
 
 	if (game->GameSpeed() == -1 || (game->IsRunning() && game->GetWorld()->GetPlayer()->gateway.nuked))
 	{
-		if (phoneDialler != nullptr)
-			UnRegisterPhoneDialler(phoneDialler);
+		if (_phoneDialler != nullptr)
+			UnRegisterPhoneDialler(_phoneDialler);
 
 		SaveGame(game->GetWorld()->GetPlayer()->handle);
 		UplinkAbort("TODO: implement App::Update()");
@@ -55,16 +55,16 @@ void App::Update()
 		if (game->IsRunning())
 			game->Update();
 
-		if (mainMenu->IsVisible())
-			mainMenu->Update();
+		if (_mainMenu->IsVisible())
+			_mainMenu->Update();
 
-		if (game->IsRunning() || mainMenu->InScreen() == MainMenuScreenCode::FirstTimeLoading)
+		if (game->IsRunning() || _mainMenu->InScreen() == MainMenuScreenCode::FirstTimeLoading)
 		{
-			if (phoneDialler != nullptr && phoneDialler->UpdateSpecial())
-				UnRegisterPhoneDialler(phoneDialler);
+			if (_phoneDialler != nullptr && _phoneDialler->UpdateSpecial())
+				UnRegisterPhoneDialler(_phoneDialler);
 		}
 
-		if (network->IsActive())
+		if (_network->IsActive())
 			UplinkAbort("TODO: implement App::Update()");
 
 		IRCInterface::UpdateMessages();
@@ -73,9 +73,9 @@ void App::Update()
 
 void App::Close()
 {
-	UplinkAssert(!closed);
+	UplinkAssert(!_closed);
 
-	closed = true;
+	_closed = true;
 
 	CloseGame();
 
@@ -84,30 +84,30 @@ void App::Close()
 	if (game != nullptr)
 		game->ExitGame();
 
-	options->ApplyShutdownChanges();
-	options->Save(nullptr);
+	_options->ApplyShutdownChanges();
+	_options->Save(nullptr);
 
 	SvbReset();
 	GciDeleteAllTrueTypeFonts();
 	RsCleanUp();
 	SgShutdown();
 
-	if (mainMenu != nullptr)
+	if (_mainMenu != nullptr)
 	{
-		delete mainMenu;
-		mainMenu = nullptr;
+		delete _mainMenu;
+		_mainMenu = nullptr;
 	}
 
-	if (options != nullptr)
+	if (_options != nullptr)
 	{
-		delete options;
-		options = nullptr;
+		delete _options;
+		_options = nullptr;
 	}
 
-	if (network != nullptr)
+	if (_network != nullptr)
 	{
-		delete network;
-		network = nullptr;
+		delete _network;
+		_network = nullptr;
 	}
 
 	if (game != nullptr)
@@ -116,16 +116,16 @@ void App::Close()
 		game = nullptr;
 	}
 
-	if (phoneDialler != nullptr)
+	if (_phoneDialler != nullptr)
 	{
-		delete phoneDialler;
-		phoneDialler = nullptr;
+		delete _phoneDialler;
+		_phoneDialler = nullptr;
 	}
 
-	if (nextLoadGame != nullptr)
+	if (_nextLoadGame != nullptr)
 	{
-		delete[] nextLoadGame;
-		nextLoadGame = nullptr;
+		delete[] _nextLoadGame;
+		_nextLoadGame = nullptr;
 	}
 }
 
@@ -145,35 +145,35 @@ void App::CoreDump()
 
 bool App::Closed()
 {
-	return closed;
+	return _closed;
 }
 
 MainMenu* App::GetMainMenu()
 {
-	UplinkAssert(mainMenu != nullptr);
-	return mainMenu;
+	UplinkAssert(_mainMenu != nullptr);
+	return _mainMenu;
 }
 
 Network* App::GetNetwork()
 {
-	UplinkAssert(network != nullptr);
-	return network;
+	UplinkAssert(_network != nullptr);
+	return _network;
 }
 
 Options* App::GetOptions()
 {
-	UplinkAssert(options != nullptr);
-	return options;
+	UplinkAssert(_options != nullptr);
+	return _options;
 }
 
 void App::Initialise()
 {
-	options = new Options();
-	options->Load(nullptr);
-	options->CreateDefaultOptions();
-	startTime = EclGetAccurateTime();
-	network = new Network();
-	mainMenu = new MainMenu();
+	_options = new Options();
+	_options->Load(nullptr);
+	_options->CreateDefaultOptions();
+	_startTime = EclGetAccurateTime();
+	_network = new Network();
+	_mainMenu = new MainMenu();
 }
 
 DArray<char*>* App::ListExistingGames()
@@ -181,7 +181,7 @@ DArray<char*>* App::ListExistingGames()
 	const auto array = new DArray<char*>();
 
 	char name[0x100];
-	UplinkStrncpy(name, app->usersPath, sizeof(name));
+	UplinkStrncpy(name, app->UsersPath, sizeof(name));
 	name[0xff] = 0;
 
 	DIR* dirp = opendir(name);
@@ -206,10 +206,10 @@ DArray<char*>* App::ListExistingGames()
 
 void App::LoadGame()
 {
-	UplinkAssert(nextLoadGame != nullptr);
-	LoadGame(nextLoadGame);
-	delete[] nextLoadGame;
-	nextLoadGame = nullptr;
+	UplinkAssert(_nextLoadGame != nullptr);
+	LoadGame(_nextLoadGame);
+	delete[] _nextLoadGame;
+	_nextLoadGame = nullptr;
 }
 
 void App::LoadGame(const char* name)
@@ -221,23 +221,23 @@ void App::LoadGame(const char* name)
 void App::RegisterPhoneDialler(PhoneDialler* newPhoneDiallerScreen)
 {
 	UplinkAssert(newPhoneDiallerScreen != nullptr);
-	UplinkAssert(phoneDialler != newPhoneDiallerScreen);
+	UplinkAssert(_phoneDialler != newPhoneDiallerScreen);
 
-	if (phoneDialler != nullptr)
-		UnRegisterPhoneDialler(phoneDialler);
+	if (_phoneDialler != nullptr)
+		UnRegisterPhoneDialler(_phoneDialler);
 
-	phoneDialler = newPhoneDiallerScreen;
+	_phoneDialler = newPhoneDiallerScreen;
 }
 
 void App::UnRegisterPhoneDialler(PhoneDialler* dialler)
 {
-	if (phoneDialler != dialler)
+	if (_phoneDialler != dialler)
 		return;
 
 	dialler->Remove();
 
-	delete phoneDialler;
-	phoneDialler = nullptr;
+	delete _phoneDialler;
+	_phoneDialler = nullptr;
 }
 
 void App::RetireGame(const char* name)
@@ -261,12 +261,12 @@ void App::Set(const char* newPath, const char* newVersion, const char* newType, 
 	UplinkAssert(strlen(newDate) < APP_DATE_MAX);
 	UplinkAssert(strlen(newTitle) < APP_TITLE_MAX);
 
-	UplinkStrncpy(path, newPath, APP_PATH_MAX);
-	UplinkStrncpy(version, newVersion, APP_VERSION_MAX);
-	UplinkStrncpy(type, newType, APP_TYPE_MAX);
-	UplinkStrncpy(date, newDate, APP_DATE_MAX);
-	UplinkStrncpy(title, newTitle, APP_TITLE_MAX);
-	UplinkSnprintf(build, APP_BUILD_MAX, "Version %s (%s)\nCompiled on %s\n", version, type, date);
+	UplinkStrncpy(Path, newPath, APP_PATH_MAX);
+	UplinkStrncpy(Version, newVersion, APP_VERSION_MAX);
+	UplinkStrncpy(Type, newType, APP_TYPE_MAX);
+	UplinkStrncpy(Date, newDate, APP_DATE_MAX);
+	UplinkStrncpy(Title, newTitle, APP_TITLE_MAX);
+	UplinkSnprintf(Build, APP_BUILD_MAX, "Version %s (%s)\nCompiled on %s\n", Version, Type, Date);
 
 #ifdef NDEBUG
 	char* homeDirPath = getenv("HOME");
@@ -276,15 +276,15 @@ void App::Set(const char* newPath, const char* newVersion, const char* newType, 
 
 	if (homeDirPath != nullptr)
 	{
-		UplinkSnprintf(usersPath, APP_PATH_MAX, "%s/.uplink/", homeDirPath);
-		UplinkSnprintf(usersTempPath, APP_PATH_MAX, "%s/.uplink/userstmp/", homeDirPath);
-		UplinkSnprintf(usersOldPath, APP_PATH_MAX, "%s/.uplink/usersold/", homeDirPath);
+		UplinkSnprintf(UsersPath, APP_PATH_MAX, "%s/.uplink/", homeDirPath);
+		UplinkSnprintf(UsersTempPath, APP_PATH_MAX, "%s/.uplink/userstmp/", homeDirPath);
+		UplinkSnprintf(UsersOldPath, APP_PATH_MAX, "%s/.uplink/usersold/", homeDirPath);
 	}
 	else
 	{
-		UplinkSnprintf(usersPath, APP_PATH_MAX, "%susers/", path);
-		UplinkSnprintf(usersTempPath, APP_PATH_MAX, "%suserstmp/", path);
-		UplinkSnprintf(usersOldPath, APP_PATH_MAX, "%susersold/", path);
+		UplinkSnprintf(UsersPath, APP_PATH_MAX, "%susers/", Path);
+		UplinkSnprintf(UsersTempPath, APP_PATH_MAX, "%suserstmp/", Path);
+		UplinkSnprintf(UsersOldPath, APP_PATH_MAX, "%susersold/", Path);
 	}
 }
 
@@ -292,10 +292,10 @@ void App::SetNextLoadGame(char const* name)
 {
 	UplinkAssert(name != nullptr);
 
-	if (nextLoadGame != 0)
-		delete[] nextLoadGame;
+	if (_nextLoadGame != 0)
+		delete[] _nextLoadGame;
 
-	nextLoadGame = new char[strlen(name) + 1];
+	_nextLoadGame = new char[strlen(name) + 1];
 
-	strcpy(nextLoadGame, name);
+	strcpy(_nextLoadGame, name);
 }

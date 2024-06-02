@@ -245,7 +245,7 @@ Company* World::CreateCompany(const char* name)
 void World::CreateCompany(Company* company)
 {
 	UplinkAssert(company != nullptr);
-	companies.PutData(company->name, company);
+	companies.PutData(company->GetName(), company);
 }
 
 VLocation* World::CreateVLocation(const char* ip, int x, int y)

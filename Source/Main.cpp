@@ -128,20 +128,20 @@ static void Init_App(const char* exePath)
 	puts("=                           =");
 	puts("=        U P L I N K        =");
 	puts("=                           =");
-	printf("=        Version %-10s =\n", app->version);
+	printf("=        Version %-10s =\n", app->Version);
 	puts("=     - R E L E A S E -     =");
 	puts("=                           =");
 	puts("=============================");
 	putchar('\n');
-	puts(app->build);
+	puts(app->Build);
 
-	MakeDirectory(app->usersPath);
-	MakeDirectory(app->usersTempPath);
-	EmptyDirectory(app->usersTempPath);
-	MakeDirectory(app->usersOldPath);
+	MakeDirectory(app->UsersPath);
+	MakeDirectory(app->UsersTempPath);
+	EmptyDirectory(app->UsersTempPath);
+	MakeDirectory(app->UsersOldPath);
 
 	char debugLogFile[0x100];
-	UplinkSnprintf(debugLogFile, sizeof(debugLogFile), "%sdebug.log", app->usersPath);
+	UplinkSnprintf(debugLogFile, sizeof(debugLogFile), "%sdebug.log", app->UsersPath);
 
 	file_stdout = nullptr;
 
@@ -166,12 +166,12 @@ static void Init_App(const char* exePath)
 	printf("NEW GAME     %d:%d, %d/%d/%d\n", localTime->tm_hour, localTime->tm_min, localTime->tm_mday, localTime->tm_mon + 1,
 		   localTime->tm_year + 1900);
 	puts("===============================================");
-	printf("Version : %s\n", app->version);
+	printf("Version : %s\n", app->Version);
 	puts("RELEASE");
 	puts("Linux Build");
-	puts(app->build);
-	printf("Path : %s\n", app->path);
-	RsInitialise(app->path);
+	puts(app->Build);
+	printf("Path : %s\n", app->Path);
+	RsInitialise(app->Path);
 	app->Initialise();
 }
 

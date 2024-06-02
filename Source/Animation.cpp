@@ -1,17 +1,10 @@
 #include <Animation.hpp>
 
-Animation::Animation()
-{
-	buttonName = nullptr;
-	button = nullptr;
-	targetCaption = nullptr;
-}
-
 Animation::~Animation()
 {
-	if (buttonName != nullptr)
-		delete[] buttonName;
+	if (ButtonName != nullptr)
+		delete[] ButtonName;
 
-	if (targetCaption != nullptr)
-		delete[] targetCaption;
+	if (TargetCaption != nullptr)
+		delete[] TargetCaption;
 }

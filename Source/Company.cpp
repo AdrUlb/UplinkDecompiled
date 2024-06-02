@@ -6,32 +6,32 @@
 
 bool Company::Load(FILE* file)
 {
-	if (!LoadDynamicStringBuf(name, 0x40, file))
+	if (!LoadDynamicStringBuf(_name, 0x40, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(boss, 0x80, file))
+	if (!LoadDynamicStringBuf(_boss, 0x80, file))
 		return false;
 
-	if (!LoadDynamicStringBuf(admin, 0x80, file))
+	if (!LoadDynamicStringBuf(_admin, 0x80, file))
 		return false;
 
-	if (!FileReadData(&size, 4, 1, file))
+	if (!FileReadData(&_size, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&type, 4, 1, file))
+	if (!FileReadData(&_type, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&growth, 4, 1, file))
+	if (!FileReadData(&_growth, 4, 1, file))
 		return false;
 
-	if (!FileReadData(&alignment, 4, 1, file))
+	if (!FileReadData(&_alignment, 4, 1, file))
 		return false;
 
 	for (auto i = 0; i < 12; i++)
-		if (!FileReadData(&sharePrices[i], 4, 1, file))
+		if (!FileReadData(&_sharePrices[i], 4, 1, file))
 			return false;
 
-	if (FileReadData(&sharePriceLastMonth, 4, 1, file) == 0)
+	if (FileReadData(&_sharePriceLastMonth, 4, 1, file) == 0)
 		return false;
 
 	return true;
@@ -39,33 +39,33 @@ bool Company::Load(FILE* file)
 
 void Company::Save(FILE* file)
 {
-	SaveDynamicString(name, 0x40, file);
-	SaveDynamicString(boss, 0x80, file);
-	SaveDynamicString(admin, 0x80, file);
+	SaveDynamicString(_name, 0x40, file);
+	SaveDynamicString(_boss, 0x80, file);
+	SaveDynamicString(_admin, 0x80, file);
 
-	fwrite(&size, 4, 1, file);
-	fwrite(&type, 4, 1, file);
-	fwrite(&growth, 4, 1, file);
-	fwrite(&alignment, 4, 1, file);
+	fwrite(&_size, 4, 1, file);
+	fwrite(&_type, 4, 1, file);
+	fwrite(&_growth, 4, 1, file);
+	fwrite(&_alignment, 4, 1, file);
 
 	for (auto i = 0; i < 12; i++)
-		fwrite(&sharePrices[i], 4, 1, file);
+		fwrite(&_sharePrices[i], 4, 1, file);
 
-	fwrite(&this->sharePriceLastMonth, 4, 1, file);
+	fwrite(&this->_sharePriceLastMonth, 4, 1, file);
 }
 
 void Company::Print()
 {
-	printf("Company : %s\n", name);
-	printf("\tSize=%d, type=%d, Growth=%d, Alignment=%d\n", size, type, growth, alignment);
-	printf("Boss    : %s\n", boss);
-	printf("Admin   : %s\n", admin);
+	printf("Company : %s\n", _name);
+	printf("\tSize=%d, type=%d, Growth=%d, Alignment=%d\n", _size, _type, _growth, _alignment);
+	printf("Boss    : %s\n", _boss);
+	printf("Admin   : %s\n", _admin);
 	puts("Share history");
 
 	for (int i = 0; i < 12; i++)
-		printf("%d:%dc  ", i, sharePrices[i]);
+		printf("%d:%dc  ", i, _sharePrices[i]);
 
-	printf("Last month set : %d\n", sharePriceLastMonth);
+	printf("Last month set : %d\n", _sharePriceLastMonth);
 }
 
 const char* Company::GetID()
@@ -80,20 +80,20 @@ UplinkObjectId Company::GetOBJECTID()
 
 void Company::Grow(int amount)
 {
-	size *= ((amount / 90.0 * this->growth) + 100.0) / 100.0;
+	_size *= ((amount / 90.0 * this->_growth) + 100.0) / 100.0;
 
 	auto month = game->GetWorld()->currentDate.GetMonth();
 
 	UplinkAssert(month >= 1 && month <= 12);
 
 	month--;
-	sharePriceLastMonth = month;
+	_sharePriceLastMonth = month;
 
-	auto price = NumberGenerator::ApplyVariance(size, 30);
+	auto price = NumberGenerator::ApplyVariance(_size, 30);
 	if (price <= 0)
 		price = 1;
 
-	sharePrices[month] = price;
+	_sharePrices[month] = price;
 
 	while (true)
 	{
@@ -101,41 +101,51 @@ void Company::Grow(int amount)
 		if (month < 0)
 			month = 11;
 
-		if (sharePrices[month] != 0)
+		if (_sharePrices[month] != 0)
 			break;
 
-		sharePrices[month] = NumberGenerator::RandomNumber(size);
+		_sharePrices[month] = NumberGenerator::RandomNumber(_size);
 	}
 }
 
 void Company::VaryGrowth()
 {
-	growth = NumberGenerator::ApplyVariance(growth, 20);
+	_growth = NumberGenerator::ApplyVariance(_growth, 20);
+}
+
+const char* Company::GetName()
+{
+	return _name;
+}
+
+int Company::GetSize()
+{
+	return _size;
 }
 
 void Company::SetName(const char* name)
 {
-	UplinkStrncpy(this->name, name, 0x40);
+	UplinkStrncpy(this->_name, name, 0x40);
 }
 
 void Company::SetSize(int value)
 {
-	size = value;
+	_size = value;
 }
 
 void Company::SetTYPE(int value)
 {
-	type = value;
+	_type = value;
 }
 
 void Company::SetGrowth(int value)
 {
-	growth = value;
+	_growth = value;
 }
 
 void Company::SetAlignment(int value)
 {
-	alignment = value;
+	_alignment = value;
 }
 
 CompanyUplink::CompanyUplink()

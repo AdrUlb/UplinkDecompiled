@@ -5,21 +5,21 @@
 
 struct LocalFileHeader
 {
-	uint32_t signature;
-	uint16_t version;
-	uint16_t flags;
-	uint16_t compression;
-	uint16_t modTime;
-	uint16_t modDate;
-	uint32_t crc32;
-	uint32_t compressedSize;
-	uint32_t uncompressedSize;
-	uint16_t filenameLength;
-	uint16_t extraFieldLength;
-	char* filename;
-	char* extraField;
-	char* data;
-	char* archiveName;
+	uint32_t _signature;
+	uint16_t _version;
+	uint16_t _flags;
+	uint16_t _compression;
+	uint16_t _modTime;
+	uint16_t _modDate;
+	uint32_t _crc32;
+	uint32_t _compressedSize;
+	uint32_t _uncompressedSize;
+	uint16_t _filenameLength;
+	uint16_t _extraFieldLength;
+	char* _filename;
+	char* _extraField;
+	char* _data;
+	char* _archiveName;
 };
 
 void BglCloseAllFiles(BTree<LocalFileHeader*>* tree);

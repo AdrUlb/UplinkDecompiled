@@ -90,7 +90,7 @@ bool Options::Load(FILE* file)
 	char themeName[sizeof(this->themeName) + 4];
 	char saveVersion[0x20];
 
-	UplinkSnprintf(optionsFilePath, sizeof(optionsFilePath), "%soptions", app->usersPath);
+	UplinkSnprintf(optionsFilePath, sizeof(optionsFilePath), "%soptions", app->UsersPath);
 
 	printf("Loading uplink options from %s...", optionsFilePath);
 
@@ -173,10 +173,10 @@ bool Options::Load(FILE* file)
 void Options::Save(FILE* file)
 {
 	(void)file;
-	MakeDirectory(app->usersPath);
+	MakeDirectory(app->UsersPath);
 
 	char optionsFilePath[0x100];
-	UplinkSnprintf(optionsFilePath, sizeof(optionsFilePath), "%soptions", app->usersPath);
+	UplinkSnprintf(optionsFilePath, sizeof(optionsFilePath), "%soptions", app->UsersPath);
 
 	printf("Saving uplink options to %s...", optionsFilePath);
 
@@ -535,7 +535,7 @@ char* Options::ThemeFilename(const char* name)
 	}
 
 	char tempPath[0x100];
-	UplinkSnprintf(tempPath, sizeof(tempPath), "%s%s/%s", app->path, themeName, name);
+	UplinkSnprintf(tempPath, sizeof(tempPath), "%s%s/%s", app->Path, themeName, name);
 
 	if (!DoesFileExist(tempPath))
 	{

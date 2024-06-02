@@ -5,22 +5,27 @@
 
 class AccessLog : UplinkObject
 {
-public:
-	int type = 0;
-	Date date;
-	char fromIp[0x18] = " ";
-	char fromName[0x80];
-	int suspicious = 0;
-	char* data1 = nullptr;
-	char* data2 = nullptr;
-	char* data3 = nullptr;
+	int _type = 0;
+	Date _date;
+	char _fromIp[0x18] = " ";
+	char _fromName[0x80];
+	int _suspicious = 0;
+	char* _data1 = nullptr;
+	char* _data2 = nullptr;
+	char* _data3 = nullptr;
 
+public:
 	~AccessLog() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
+	int GetTYPE();
+	Date& GetDate();
+	const char* GetFromIp();
+	const char* GetFromName();
+	int GetSuspicious();
 	void SetTYPE(int value);
 	void SetSuspicious(int value);
 	void SetFromIP(const char* value);

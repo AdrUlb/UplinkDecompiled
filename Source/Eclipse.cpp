@@ -355,7 +355,7 @@ void EclRemoveButton(const char* name)
 		if (!anims.ValidIndex(index))
 			continue;
 
-		if (strcmp(name, anims[index]->buttonName) != 0)
+		if (strcmp(name, anims[index]->ButtonName) != 0)
 			continue;
 
 		EclRemoveAnimation(index);
@@ -406,11 +406,11 @@ int EclIsCaptionChangeActive(const char* buttonName)
 		assert(animation != nullptr);
 
 		// Button name does not match
-		if (strcmp(buttonName, animation->buttonName) != 0)
+		if (strcmp(buttonName, animation->ButtonName) != 0)
 			continue;
 
 		// Caption will change
-		if (animation->targetCaption != nullptr)
+		if (animation->TargetCaption != nullptr)
 			return i;
 	}
 
@@ -464,8 +464,8 @@ void EclUpdateAllAnimations()
 		const auto animation = anims[i];
 		assert(animation);
 
-		const auto animationButton = EclGetButton(animation->buttonName);
-		animation->button = animationButton;
+		const auto animationButton = EclGetButton(animation->ButtonName);
+		animation->Button = animationButton;
 
 		if (animationButton == 0)
 		{
@@ -474,54 +474,54 @@ void EclUpdateAllAnimations()
 		}
 
 		const auto currentTime = EclGetAccurateTime();
-		const auto finishTime = animation->finishTime;
+		const auto finishTime = animation->FinishTime;
 
 		if (currentTime >= finishTime || !animsenabled)
 		{
-			const auto stepX = animation->stepX;
-			const auto stepY = animation->stepY;
+			const auto stepX = animation->StepX;
+			const auto stepY = animation->StepY;
 			if (stepX != 0.0f || stepY != 0.0f)
 			{
-				const auto button = animation->button;
-				button->X = animation->toX;
-				button->Y = animation->toY;
+				const auto button = animation->Button;
+				button->X = animation->ToX;
+				button->Y = animation->ToY;
 			}
 
-			const auto stepWidth = animation->stepWidth;
-			const auto stepHeight = animation->stepHeight;
+			const auto stepWidth = animation->StepWidth;
+			const auto stepHeight = animation->StepHeight;
 			if (stepWidth != 0.0f || stepHeight != 0.0f)
 			{
-				const auto button = animation->button;
-				button->Width = animation->toWidth;
-				button->Height = animation->toHeight;
+				const auto button = animation->Button;
+				button->Width = animation->ToWidth;
+				button->Height = animation->ToHeight;
 			}
 
-			float stepCaption = animation->stepCaption;
+			float stepCaption = animation->StepCaption;
 			if (stepCaption != 0.0f)
 			{
-				animation->button->SetCaption(animation->targetCaption);
-				if (EclIsSuperHighlighted(animation->buttonName))
+				animation->Button->SetCaption(animation->TargetCaption);
+				if (EclIsSuperHighlighted(animation->ButtonName))
 				{
-					EclUpdateSuperHighlights(animation->buttonName);
+					EclUpdateSuperHighlights(animation->ButtonName);
 				}
 			}
 
-			if (animation->finishedCallback != nullptr)
+			if (animation->FinishedCallback != nullptr)
 			{
-				animation->finishedCallback();
+				animation->FinishedCallback();
 			}
 
 			EclRemoveAnimation(i);
 			continue;
 		}
 
-		switch (animation->moveType)
+		switch (animation->MoveType)
 		{
 			case 1:
-				if (animation->stepX != 0 || animation->stepY != 0)
+				if (animation->StepX != 0 || animation->StepY != 0)
 				{
-					animation->button->X = animation->fromX + animation->stepX * (EclGetAccurateTime() - animation->starttime);
-					animation->button->Y = animation->fromY + animation->stepY * (EclGetAccurateTime() - animation->starttime);
+					animation->Button->X = animation->FromX + animation->StepX * (EclGetAccurateTime() - animation->StartTime);
+					animation->Button->Y = animation->FromY + animation->StepY * (EclGetAccurateTime() - animation->StartTime);
 				}
 				break;
 			case 2:
@@ -530,29 +530,29 @@ void EclUpdateAllAnimations()
 				UplinkAbort("TODO: implement EclUpdateAllAnimations()");
 		}
 
-		if (animation->stepWidth != 0.0f || animation->stepHeight != 0.0f)
+		if (animation->StepWidth != 0.0f || animation->StepHeight != 0.0f)
 		{
-			animation->button->Width = animation->fromWidth + animation->stepWidth * (EclGetAccurateTime() - animation->starttime);
-			animation->button->Height = animation->fromHeight + animation->stepHeight * (EclGetAccurateTime() - animation->starttime);
+			animation->Button->Width = animation->FromWidth + animation->StepWidth * (EclGetAccurateTime() - animation->StartTime);
+			animation->Button->Height = animation->FromHeight + animation->StepHeight * (EclGetAccurateTime() - animation->StartTime);
 		}
 
-		if (animation->stepCaption != 0.0f)
+		if (animation->StepCaption != 0.0f)
 		{
-			const size_t currentCharCount = animation->stepCaption * (EclGetAccurateTime() - animation->starttime);
-			const auto targetCharCount = strlen(animation->targetCaption) + 1;
+			const size_t currentCharCount = animation->StepCaption * (EclGetAccurateTime() - animation->StartTime);
+			const auto targetCharCount = strlen(animation->TargetCaption) + 1;
 			const auto newCaption = new char[targetCharCount];
-			strcpy(newCaption, animation->targetCaption);
+			strcpy(newCaption, animation->TargetCaption);
 
 			if (currentCharCount < targetCharCount)
 				newCaption[currentCharCount] = 0;
 
-			animation->button->SetCaption(newCaption);
+			animation->Button->SetCaption(newCaption);
 			if (newCaption != nullptr)
 				delete[] newCaption;
 		}
 
-		if (EclIsSuperHighlighted(animation->buttonName))
-			EclUpdateSuperHighlights(animation->buttonName);
+		if (EclIsSuperHighlighted(animation->ButtonName))
+			EclUpdateSuperHighlights(animation->ButtonName);
 	}
 }
 
@@ -565,63 +565,63 @@ int EclRegisterAnimation(const char* buttonName, int x, int y, int moveType, int
 		return -1;
 
 	const auto animation = new Animation();
-	animation->buttonName = new char[strlen(buttonName) + 1];
-	strcpy(animation->buttonName, buttonName);
+	animation->ButtonName = new char[strlen(buttonName) + 1];
+	strcpy(animation->ButtonName, buttonName);
 
-	animation->moveType = moveType;
-	animation->button = button;
-	animation->fromX = button->X;
-	animation->toX = x;
-	animation->fromY = button->Y;
-	animation->toY = y;
-	animation->fromWidth = button->Width;
-	animation->fromHeight = button->Height;
-	animation->toWidth = width;
-	animation->toHeight = height;
-	animation->finishedCallback = finishedCallback;
-	animation->time = time;
+	animation->MoveType = moveType;
+	animation->Button = button;
+	animation->FromX = button->X;
+	animation->ToX = x;
+	animation->FromY = button->Y;
+	animation->ToY = y;
+	animation->FromWidth = button->Width;
+	animation->FromHeight = button->Height;
+	animation->ToWidth = width;
+	animation->ToHeight = height;
+	animation->FinishedCallback = finishedCallback;
+	animation->Time = time;
 
 	if (animsfasterenabled)
-		animation->time /= animsfasterspeed;
+		animation->Time /= animsfasterspeed;
 
-	animation->starttime = EclGetAccurateTime();
+	animation->StartTime = EclGetAccurateTime();
 
 	const auto currentTime = EclGetAccurateTime();
-	const auto finishTime = currentTime + animation->time;
-	bool finishTimeIsStartTime = finishTime == animation->starttime;
+	const auto finishTime = currentTime + animation->Time;
+	bool finishTimeIsStartTime = finishTime == animation->StartTime;
 
-	animation->finishTime = finishTime;
+	animation->FinishTime = finishTime;
 	if (finishTimeIsStartTime)
-		animation->finishTime = finishTime + 1;
+		animation->FinishTime = finishTime + 1;
 
-	if (animation->toX == animation->fromX)
+	if (animation->ToX == animation->FromX)
 	{
-		animation->stepX = 0.0f;
-		animation->stepY = 0.0f;
+		animation->StepX = 0.0f;
+		animation->StepY = 0.0f;
 	}
 	else
 	{
-		const float time = animation->finishTime - animation->starttime;
-		animation->stepX = (animation->toX - animation->fromX) / time;
-		animation->stepY = (animation->toY - animation->fromY) / time;
+		const float time = animation->FinishTime - animation->StartTime;
+		animation->StepX = (animation->ToX - animation->FromX) / time;
+		animation->StepY = (animation->ToY - animation->FromY) / time;
 	}
 
-	if (animation->toWidth == animation->fromWidth)
+	if (animation->ToWidth == animation->FromWidth)
 	{
-		animation->stepWidth = 0.0f;
-		animation->stepHeight = 0.0f;
+		animation->StepWidth = 0.0f;
+		animation->StepHeight = 0.0f;
 	}
 	else
 	{
-		const float time = animation->finishTime - animation->starttime;
-		animation->stepWidth = (animation->toWidth - animation->fromWidth) / time;
-		animation->stepHeight = (animation->toHeight - animation->fromHeight) / time;
+		const float time = animation->FinishTime - animation->StartTime;
+		animation->StepWidth = (animation->ToWidth - animation->FromWidth) / time;
+		animation->StepHeight = (animation->ToHeight - animation->FromHeight) / time;
 	}
 
 	if (caption == nullptr)
 	{
-		animation->targetCaption = nullptr;
-		animation->stepCaption = 0.0f;
+		animation->TargetCaption = nullptr;
+		animation->StepCaption = 0.0f;
 	}
 	else
 	{
@@ -634,16 +634,16 @@ int EclRegisterAnimation(const char* buttonName, int x, int y, int moveType, int
 			EclRemoveAnimation(captionAnimation);
 		}
 
-		char* targetCaption = animation->targetCaption;
+		char* targetCaption = animation->TargetCaption;
 		if (targetCaption != nullptr)
 			delete[] targetCaption;
 
 		const auto captionLength = strlen(caption);
-		animation->targetCaption = new char[captionLength + 1];
-		strcpy(animation->targetCaption, caption);
+		animation->TargetCaption = new char[captionLength + 1];
+		strcpy(animation->TargetCaption, caption);
 
-		const float time = animation->finishTime - animation->starttime;
-		animation->stepCaption = captionLength / time;
+		const float time = animation->FinishTime - animation->StartTime;
+		animation->StepCaption = captionLength / time;
 	}
 
 	return anims.PutData(animation);
