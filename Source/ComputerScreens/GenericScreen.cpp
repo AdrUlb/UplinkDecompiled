@@ -35,6 +35,21 @@ const char* GenericScreen::GetID()
 	return "SCR_GEN";
 }
 
+UplinkObjectId GenericScreen::GetOBJECTID()
+{
+	return UplinkObjectId::GenericScreen;
+}
+
+int GenericScreen::GetNextPage()
+{
+	return _nextPage;
+}
+
+int GenericScreen::GetType()
+{
+	return _type;
+}
+
 void GenericScreen::SetNextPage(int nextPage)
 {
 	_nextPage = nextPage;

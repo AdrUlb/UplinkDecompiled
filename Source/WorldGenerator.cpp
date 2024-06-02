@@ -104,8 +104,8 @@ void WorldGenerator::GeneratePlayer(const char* handle)
 	(void)handle;
 	const auto player = new Player();
 	player->SetName("PLAYER");
-	/*player->SetAge(21);
-	player->SetHandle(handle);*/
+	player->SetAge(21);
+	player->SetHandle(handle);
 	player->SetLocalHost("127.0.0.1");
 	player->SetIsTargetable(false);
 	/*player->SetUplinkRating(0);
@@ -867,7 +867,7 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 	const auto gatewaySelectionScreen = new GenericScreen();
 	gatewaySelectionScreen->SetMainTitle("Uplink");
 	gatewaySelectionScreen->SetSubTitle("Local gateway selection");
-	gatewaySelectionScreen->SetScreenType(0x1f);
+	gatewaySelectionScreen->SetScreenType(31);
 	gatewaySelectionScreen->SetNextPage(9);
 	computer->AddComputerScreen(gatewaySelectionScreen, 4);
 

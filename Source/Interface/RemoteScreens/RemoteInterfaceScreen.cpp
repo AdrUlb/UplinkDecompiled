@@ -40,9 +40,11 @@ void RemoteInterfaceScreen::DrawMainTitle(Button* button, bool highlighted, bool
 	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
-	// HACK: for some reason the scissor test prevents the text from being drawn even though it is within the scissor box
-	glDisable(GL_SCISSOR_TEST);
 	SetColour("DefaultText");
+
+	// FIXME: sometimes text doesn't render correctly when scissor test is enabled, even when it is contained within the scissor box
+	glDisable(GL_SCISSOR_TEST);
+	
 	GciDrawText(button->X, button->Y + (button->Height / 2) + 5, button->Caption, 7);
 	glDisable(GL_SCISSOR_TEST);
 }
@@ -55,6 +57,10 @@ void RemoteInterfaceScreen::DrawSubTitle(Button* button, bool highlighted, bool 
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 	SetColour("DefaultText");
+
+	// FIXME: sometimes text doesn't render correctly when scissor test is enabled, even when it is contained within the scissor box
+	glDisable(GL_SCISSOR_TEST);
+
 	GciDrawText(button->X, button->Y + (button->Height / 2) + 5, button->Caption, 6);
 	glDisable(GL_SCISSOR_TEST);
 }

@@ -157,3 +157,18 @@ int Image::GetPixelR(int x, int y)
 
 	return _raster[x + (y * _width)] & 0xFF;
 }
+
+int Image::GetWidth()
+{
+	return _width;
+}
+
+int Image::GetHeight()
+{
+	return _height;
+}
+
+const uint32_t* Image::GetRaster()
+{
+	return _raster;
+}

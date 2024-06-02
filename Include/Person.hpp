@@ -38,9 +38,11 @@ public:
 	UplinkObjectId GetOBJECTID() override;
 	const char* GetName();
 	const char* GetLocalHostIp();
+	VLocation* GetLocalHost();
 	VLocation* GetRemoteHost();
 	Connection* GetConnection();
 	void SetName(const char* name);
+	void SetAge(int age);
 	void SetLocalHost(const char* localHost);
 	void SetRemoteHost(const char* remoteHost);
 	void SetIsTargetable(bool isTargetable);
@@ -65,6 +67,7 @@ public:
 	UplinkObjectId GetOBJECTID() override;
 	LList<char*>& GetLinks();
 	const char* GetHandle();
+	void SetHandle(const char* handle);
 	void GiveMessage(Message* message) override;
 	void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan) override;
 };

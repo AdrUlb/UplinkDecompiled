@@ -19,4 +19,7 @@ public:
 	void Scale(int newWidth, int newHeight);
 	void FlipAroundH();
 	int GetPixelR(int x, int y);
+	int GetWidth();
+	int GetHeight();
+	const uint32_t* GetRaster();
 };

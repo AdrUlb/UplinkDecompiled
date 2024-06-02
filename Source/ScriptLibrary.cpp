@@ -2,6 +2,7 @@
 #include <GL/gl.h>
 #include <Gci.hpp>
 #include <Globals.hpp>
+#include <NameGenerator.hpp>
 #include <Opengl.hpp>
 #include <RedShirt.hpp>
 #include <ScriptLibrary.hpp>
@@ -117,7 +118,60 @@ static void Script32()
 
 static void Script33()
 {
+	if (strcmp(game->GetWorld()->GetPlayer()->GetHandle(), "NEWAGENT") != 0)
+	{
+		create_msgbox("Error", "Our records show you are already\nregistered as an Uplink agent.", nullptr);
+		return;
+	}
+
+	char name[0x40];
+	char password[0x21];
+	char password2[0x21];
+	char accessCode[0x80];
+
+	strncpy(name, EclGetButton("nametext 0 0")->Caption, 0x40);
+	strncpy(password, EclGetButton("passwordtext 0 0")->Caption, 0x21);
+	strncpy(password2, EclGetButton("passwordtext2 0 0")->Caption, 0x21);
+
+	if (strcmp(name, "Fill this in") == 0)
+	{
+		create_msgbox("Error", "You must first enter a username", nullptr);
+		return;
+	}
+
+	if (strchr(name, ':') != nullptr || strchr(name, '/') != nullptr || strchr(name, '\\') != nullptr || strchr(name, '?') != nullptr ||
+		strchr(name, '.') != nullptr || strchr(name, ',') != nullptr || strchr(name, '\"') != nullptr || strchr(name, '<') != nullptr ||
+		strchr(name, '>') != nullptr || strchr(name, '|') != nullptr || strchr(name, '*') != nullptr)
+	{
+		create_msgbox("Error", "Usernames cannot contain\nany of these characters:\n : / \\ ? . , \" < > | * ", nullptr);
+		return;
+	}
+
+	if (strcmp(name, "admin") == 0 || strcmp(name, "readwrite") == 0 || strcmp(name, "readonly") == 0)
+	{
+		create_msgbox("Error", "Usernames cannot be\nadmin, readwrite or readonly\n", nullptr);
+		return;
+	}
+
+	if (password[0] == 0)
+	{
+		create_msgbox("Error", "You must first enter a password", nullptr);
+		return;
+	}
+
+	if (strcmp(password, password2) != 0)
+	{
+		create_msgbox("Error", "The two passwords must be identical", nullptr);
+		return;
+	}
+
+	Computer::GenerateAccessCode(name, password, accessCode, 0x80);
+
+	game->GetWorld()->GetPlayer()->SetHandle(name);
+
 	puts("TODO: implement Script33");
+
+	game->GetInterface()->GetRemoteInterface()->RunScreen(4, nullptr);
 }
 
 static void Script92()

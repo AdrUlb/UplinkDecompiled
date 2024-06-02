@@ -83,13 +83,13 @@ void VLocation::SetPLocation(int x, int y)
 	UplinkAssert(x <= 593);
 	UplinkAssert(y <= 314);
 
-	this->_x = x;
-	this->_y = y;
+	_x = x;
+	_y = y;
 }
 
-void VLocation::SetComputer(const char* computerName)
+void VLocation::SetComputer(const char* computer)
 {
-	UplinkStrncpy(this->_computer, computerName, 0x40);
+	UplinkStrncpy(_computer, computer, 0x40);
 }
 
 void VLocation::SetListed(bool listed)

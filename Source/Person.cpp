@@ -134,6 +134,13 @@ const char* Person::GetLocalHostIp()
 	return _localHostIp;
 }
 
+VLocation* Person::GetLocalHost()
+{
+	const auto ret = game->GetWorld()->GetVLocation(_localHostIp);
+	UplinkAssert(ret != nullptr);
+	return ret;
+}
+
 VLocation* Person::GetRemoteHost()
 {
 	const auto ret = game->GetWorld()->GetVLocation(_remoteHostIp);
@@ -151,6 +158,11 @@ void Person::SetName(const char* name)
 	UplinkStrncpy(_name, name, 0x80);
 	_connection.SetOwner(_name);
 	_rating.SetOwner(_name);
+}
+
+void Person::SetAge(int age)
+{
+	_age = age;
 }
 
 void Person::SetLocalHost(const char* value)
@@ -234,6 +246,11 @@ LList<char*>& Agent::GetLinks()
 const char* Agent::GetHandle()
 {
 	return _handle;
+}
+
+void Agent::SetHandle(const char* handle)
+{
+	UplinkStrncpy(_handle, handle, 0x40);
 }
 
 void Agent::GiveMessage(Message* message)

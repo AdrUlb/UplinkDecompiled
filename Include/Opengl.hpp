@@ -13,3 +13,6 @@ void opengl_run();
 void opengl_close();
 void button_assignbitmap(const char* buttonName, const char* imageName);
 void button_assignbitmaps(const char* buttonName, const char* normalFile, const char* highlightedFile, const char* clickedFile);
+void imagebutton_drawtextured(Button* button, bool highlighted, bool clicked);
+void create_msgbox(const char* title, const char* text, ButtonMouseUpFunc closeCallback);
+void remove_msgbox();

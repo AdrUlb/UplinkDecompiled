@@ -239,3 +239,11 @@ ComputerScreen* Computer::GetComputerScreen(int index)
 
 	return _screens.GetData(index);
 }
+
+void Computer::GenerateAccessCode(const char* name, const char* code, char* buf, size_t max)
+{
+	if (max == 0)
+		return;
+
+	UplinkSnprintf(buf, max, "%s:'%s', %s:'%s'", "NAME", name, "CODE", code);
+}

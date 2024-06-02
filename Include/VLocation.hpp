@@ -24,7 +24,7 @@ public:
 	int GetY();
 	void SetIp(const char* ip);
 	void SetPLocation(int x, int y);
-	void SetComputer(const char* computerName);
+	void SetComputer(const char* computer);
 	void SetListed(bool listed);
 	Computer* GetComputer();
 };

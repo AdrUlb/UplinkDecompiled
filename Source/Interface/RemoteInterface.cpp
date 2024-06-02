@@ -1,9 +1,11 @@
 #include <Interface/RemoteInterface.hpp>
 
+#include <ComputerScreens/GenericScreen.hpp>
 #include <Globals.hpp>
 #include <Interface/RemoteScreens/DialogScreenInterface.hpp>
 #include <Interface/RemoteScreens/MenuScreenInterface.hpp>
 #include <Interface/RemoteScreens/MessageScreenInterface.hpp>
+#include <Interface/RemoteScreens/NearestGatewayScreenInterface.hpp>
 #include <Svb.hpp>
 #include <Util.hpp>
 
@@ -125,6 +127,20 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 
 	switch (screenObjId)
 	{
+		case UplinkObjectId::GenericScreen:
+		{
+			const auto type = dynamic_cast<GenericScreen*>(computerScreen)->GetType();
+			switch (type)
+			{
+				case 31:
+					_screen = new NearestGatewayScreenInterface();
+					break;
+				default:
+					UplinkAbort("Unrecognised GenericScreen %d, computer '%s' (%s)", type, remoteComputer->GetName(), remoteComputer->GetIp());
+					break;
+			}
+			break;
+		}
 		case UplinkObjectId::MessageScreen:
 			_screen = new MessageScreenInterface();
 			break;

@@ -7,6 +7,7 @@
 #include <Record.hpp>
 #include <Security.hpp>
 #include <UplinkObject.hpp>
+#include <cstddef>
 
 class ComputerScreen;
 
@@ -58,4 +59,5 @@ public:
 	void SetIsExternallyOpen(bool isExternallyOpen);
 	void AddComputerScreen(ComputerScreen* screen, int index);
 	ComputerScreen* GetComputerScreen(int index);
+	static void GenerateAccessCode(const char* name, const char* code, char* buf, size_t max);
 };

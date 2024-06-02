@@ -213,6 +213,8 @@ void DialogScreenInterface::PasswordBoxDraw(Button* button, bool highlighted, bo
 	for (size_t i = 0; i < textLen; i++)
 		text[i] = '*';
 
+	// FIXME: sometimes text doesn't render correctly when scissor test is enabled, even when it is contained within the scissor box
+	glDisable(GL_SCISSOR_TEST);
 	text[textLen] = 0;
 	GciDrawText(button->X + 10, button->Y + 10, text, 2);
 	delete[] text;

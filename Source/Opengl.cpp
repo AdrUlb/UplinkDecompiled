@@ -132,6 +132,9 @@ static void text_draw(Button* button, bool highlighted, bool clicked)
 		return;
 	}
 
+	// FIXME: sometimes text doesn't render correctly when scissor test is enabled, even when it is contained within the scissor box
+	glDisable(GL_SCISSOR_TEST);
+
 	auto yOffset = 0;
 	for (auto i = 0; i < wrappedText->Size(); i++)
 	{
@@ -239,6 +242,8 @@ void button_draw(Button* button, bool highlighted, bool clicked)
 	SetColour("DefaultText");
 	const auto x = (button->Width / 2) + button->X - (textWidth / 2);
 	const auto y = button->Y + 2 + (button->Height / 2);
+	// FIXME: sometimes text doesn't render correctly when scissor test is enabled, even when it is contained within the scissor box
+	glDisable(GL_SCISSOR_TEST);
 	GciDrawText(x, y, button->Caption);
 	glDisable(GL_SCISSOR_TEST);
 }
@@ -334,6 +339,9 @@ void textbutton_draw(Button* button, bool highlighted, bool clicked)
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 	clear_draw(button->X, button->Y, button->Width, button->Height);
+
+	// FIXME: sometimes text doesn't render correctly when scissor test is enabled, even when it is contained within the scissor box
+	glDisable(GL_SCISSOR_TEST);
 	text_draw(button, highlighted, clicked);
 
 	if (highlighted || clicked)
@@ -776,4 +784,127 @@ void button_assignbitmaps(const char* buttonName, const char* normalFile, const 
 
 	button->SetImages(imageNormal, imageHighlighted, imageClicked);
 	button->RegisterDrawFunction(imagebutton_draw);
+}
+
+void imagebutton_drawtextured(Button* button, bool highlighted, bool clicked)
+{
+	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glScissor(button->X, (screenHeight - button->Y - button->Height), button->Width, button->Height);
+	uint64_t height = button->Height;
+	glEnable(GL_SCISSOR_TEST);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	Image* image;
+	if (clicked && button->ImageClicked != nullptr)
+	{
+		image = button->ImageClicked;
+	}
+	else if (highlighted && button->ImageHighlighted != nullptr)
+	{
+		image = button->ImageHighlighted;
+	}
+	else
+	{
+		image = button->ImageNormal;
+		UplinkAssert(image != nullptr);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 1);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->GetWidth(), image->GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->GetRaster());
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2i(button->X, button->Y);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2i(button->X + button->Width, button->Y);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2i(button->X + button->Width, button->Y + button->Height);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2i(button->X, button->Y + button->Height);
+	glEnd();
+	glDisable(GL_SCISSOR_TEST);
+	glPopAttrib();
+}
+
+static bool isvisible_msgbox()
+{
+	return EclGetButton("msgbox_background") != 0;
+}
+
+static void draw_msgboxbackground(Button* button, bool highlighted, bool clicked)
+{
+	(void)button;
+	(void)highlighted;
+	(void)clicked;
+}
+
+static void draw_msgboxbox(Button* button, bool highlighted, bool clicked)
+{
+	(void)highlighted;
+	(void)clicked;
+	glBegin(7);
+	SetColour("PanelBackgroundA");
+	glVertex2i(button->X, button->Y + button->Height);
+	SetColour("PanelBackgroundB");
+	glVertex2i(button->X, button->Y);
+	SetColour("PanelBackgroundA");
+	glVertex2i(button->X + button->Width, button->Y);
+	SetColour("PanelBackgroundB");
+	glVertex2i(button->X + button->Width, button->Y + button->Height);
+	glEnd();
+	SetColour("PanelBorder");
+	border_draw(button);
+}
+
+static void closeclick_msgbox(Button* button)
+{
+	(void)button;
+	remove_msgbox();
+}
+
+void create_msgbox(const char* title, const char* text, ButtonMouseUpFunc closeCallback)
+{
+	if (isvisible_msgbox())
+		return;
+
+	const auto width = app->GetOptions()->GetOptionValue("graphics_screenwidth");
+	const auto height = app->GetOptions()->GetOptionValue("graphics_screenheight");
+
+	EclRegisterButton(0, 0, width, height, "", "", "msgbox_background");
+	EclRegisterButtonCallbacks("msgbox_background", draw_msgboxbackground, 0, 0, nullptr);
+
+	EclRegisterButton((width / 2) - 100, height / 3, 200, 140, "", "", "msgbox_box");
+	EclRegisterButtonCallbacks("msgbox_box", draw_msgboxbox, 0, 0, nullptr);
+	EclRegisterButton((width / 2) - 98, height / 3 + 2, 195, 15, title, "Close the message box", "msgbox_title");
+	EclRegisterButtonCallback("msgbox_title", closeclick_msgbox);
+	EclRegisterButton((width / 2) - 98, (height / 3) + 20, 195, 80, "", "", "msgbox_text");
+	EclRegisterButtonCallbacks("msgbox_text", text_draw, 0, 0, nullptr);
+	EclRegisterCaptionChange("msgbox_text", text, nullptr);
+	EclRegisterButton((width / 2) - 50, (height / 3) + 110, 100, 15, "Close", "Close the message box", "msgbox_close");
+
+	if (closeCallback == nullptr)
+		closeCallback = closeclick_msgbox;
+
+	return EclRegisterButtonCallback("msgbox_close", closeCallback);
+}
+
+void remove_msgbox()
+{
+	if (!isvisible_msgbox())
+		return;
+
+	EclRemoveButton("msgbox_background");
+	EclRemoveButton("msgbox_box");
+	EclRemoveButton("msgbox_title");
+	EclRemoveButton("msgbox_text");
+
+	if (EclGetButton("msgbox_close") != nullptr)
+		EclRemoveButton("msgbox_close");
+
+	if (EclGetButton("msgbox_yes") != nullptr)
+		EclRemoveButton("msgbox_yes");
+
+	if (EclGetButton("msgbox_no") != nullptr)
+		EclRemoveButton("msgbox_no");
 }

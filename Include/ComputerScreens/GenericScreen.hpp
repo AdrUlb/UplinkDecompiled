@@ -12,6 +12,9 @@ public:
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
+	UplinkObjectId GetOBJECTID() override;
+	int GetNextPage();
+	int GetType();
 	void SetNextPage(int nextPage);
 	void SetScreenType(int type);
 };
