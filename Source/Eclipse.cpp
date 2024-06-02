@@ -668,7 +668,7 @@ int EclRegisterMovement(const char* buttonName, int x, int y, int time, int move
 {
 	const auto button = EclGetButton(buttonName);
 
-	if (button == 0)
+	if (button == nullptr)
 		return -1;
 
 	return EclRegisterAnimation(buttonName, x, y, moveType, button->Width, button->Height, nullptr, time, callback);
@@ -677,6 +677,20 @@ int EclRegisterMovement(const char* buttonName, int x, int y, int time, int move
 int EclRegisterMovement(const char* buttonName, int x, int y, int time, AnimationFinishedCallback callback)
 {
 	return EclRegisterMovement(buttonName, x, y, time, 1, callback);
+}
+int EclRegisterAnimation(const char* name, int x, int y, int width, int height, int time, AnimationFinishedCallback callback)
+{
+	return EclRegisterAnimation(name, x, y, 1, width, height, nullptr, time, callback);
+}
+
+int EclRegisterResize(const char* buttonName, int32_t width, int32_t height, int32_t time, AnimationFinishedCallback callback)
+{
+	const auto button = EclGetButton(buttonName);
+
+	if (button == nullptr)
+		return -1;
+
+	return EclRegisterAnimation(buttonName, button->X, button->Y, width, height, time, callback);
 }
 
 void EclButtonBringToFront(const char* name)

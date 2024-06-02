@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Button.hpp>
 #include <ComputerScreens/ComputerScreen.hpp>
 
 class LinksScreen : public ComputerScreen
@@ -13,6 +14,8 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
+	int GetNextPage();
+	int GetScreenType();
 	void SetNextPage(int nextPage);
 	void SetScreenType(int type);
 };

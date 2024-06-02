@@ -143,6 +143,7 @@ void WorldGenerator::GenerateSimpleStartingMissionB()
 {
 	puts("TODO: implement WorldGenerator::GenerateSimpleStartingMissionB()");
 }
+
 void WorldGenerator::GenerateLocalMachine()
 {
 	const auto vlocation = game->GetWorld()->CreateVLocation("127.0.0.1", 284, 73);

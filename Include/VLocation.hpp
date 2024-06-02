@@ -23,6 +23,7 @@ public:
 	const char* GetComputerName();
 	int GetX();
 	int GetY();
+	bool GetListed();
 	void SetIp(const char* ip);
 	void SetPLocation(int x, int y);
 	void SetComputerName(const char* computer);

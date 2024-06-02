@@ -30,7 +30,7 @@ void CodeCardScreenInterface::Create(ComputerScreen* screen)
 {
 	UplinkAssert(screen != nullptr);
 
-	_computerScreen = screen;
+	_screen = screen;
 
 	if (app->GetCheckCodeCard() || GetComputerScreen()->GetNextPage() == -1)
 		UplinkAbort("Code card not implemented.");
@@ -46,8 +46,8 @@ bool CodeCardScreenInterface::ReturnKeyPressed()
 
 GenericScreen* CodeCardScreenInterface::GetComputerScreen()
 {
-	UplinkAssert(_computerScreen != nullptr);
-	return dynamic_cast<GenericScreen*>(_computerScreen);
+	UplinkAssert(_screen != nullptr);
+	return dynamic_cast<GenericScreen*>(_screen);
 }
 
 void CodeCardScreenInterface::ProceedClick(Button* button)

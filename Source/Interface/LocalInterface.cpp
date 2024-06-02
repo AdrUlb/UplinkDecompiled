@@ -404,3 +404,23 @@ LocalInterfaceScreen* LocalInterface::GetInterfaceScreen()
 	UplinkAssert(_screen != nullptr);
 	return _screen;
 }
+
+bool LocalInterface::IsVisible()
+{
+	if (InScreen() == 0)
+		return false;
+
+	return _screen->IsVisible();
+}
+
+void LocalInterface::Create()
+{
+	GetHUD()->Create();
+	RunScreen(_screenCode, _screenIndex);
+}
+
+void LocalInterface::Reset()
+{
+	_screenCode = 0;
+	_screenIndex = 0;
+}

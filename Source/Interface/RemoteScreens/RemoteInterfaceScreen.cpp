@@ -7,20 +7,20 @@
 
 void RemoteInterfaceScreen::Create()
 {
-	if (_computerScreen == nullptr)
+	if (_screen == nullptr)
 	{
 		printf("Error : RemoteInterfaceScreen::Create, cs==NULL, ScreenID=%d\n", ScreenID());
 		return;
 	}
 
-	Create(_computerScreen);
+	Create(_screen);
 }
 
 void RemoteInterfaceScreen::Remove() {}
 
 void RemoteInterfaceScreen::Create(ComputerScreen* screen)
 {
-	_computerScreen = screen;
+	_screen = screen;
 }
 
 bool RemoteInterfaceScreen::ReturnKeyPressed()
@@ -67,5 +67,5 @@ void RemoteInterfaceScreen::DrawSubTitle(Button* button, bool highlighted, bool 
 
 ComputerScreen* RemoteInterfaceScreen::GetComputerScreen()
 {
-	return _computerScreen;
+	return _screen;
 }

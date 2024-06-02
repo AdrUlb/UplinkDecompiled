@@ -4,6 +4,7 @@
 #include <Globals.hpp>
 #include <Interface/RemoteScreens/CodeCardScreenInterface.hpp>
 #include <Interface/RemoteScreens/DialogScreenInterface.hpp>
+#include <Interface/RemoteScreens/LinksScreenInterface.hpp>
 #include <Interface/RemoteScreens/MenuScreenInterface.hpp>
 #include <Interface/RemoteScreens/MessageScreenInterface.hpp>
 #include <Interface/RemoteScreens/NearestGatewayScreenInterface.hpp>
@@ -173,6 +174,9 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 		case UplinkObjectId::DialogScreen:
 			_screen = new DialogScreenInterface();
 			break;
+		case UplinkObjectId::LinksScreen:
+			_screen = new LinksScreenInterface();
+			break;
 		default:
 			UplinkAbort("Unrecognised ComputerScreen %d, computer '%s' (%s)", screenObjId, remoteComputer->GetName(), remoteComputer->GetIp());
 	}
@@ -242,6 +246,4 @@ void RemoteInterface::RunNewLocation()
 			game->GetInterface()->GetRemoteInterface()->RunScreen(9, nullptr);
 		}
 	}
-
-	puts("TODO: implement RemoteInterface::RunNewLocation()");
 }

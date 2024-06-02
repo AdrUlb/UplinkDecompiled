@@ -2,7 +2,30 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <cstring>
 #include <tiffio.h>
+
+Image::Image() {}
+
+Image::Image(Image* image)
+{
+	_width = image->_width;
+	_height = image->_height;
+	_alpha = image->_alpha;
+
+	if (image->_raster != nullptr)
+	{
+		_raster = new uint32_t[_width * _height];
+		memcpy(_raster, image->_raster, _width * _height * sizeof(uint32_t));
+	}
+
+	_rgbPixels = nullptr;
+	if (image->_rgbPixels != nullptr)
+	{
+		_rgbPixels = new uint8_t[_width * _height * 3];
+		memcpy(_rgbPixels, image->_rgbPixels, _width * _height * 3);
+	}
+}
 
 Image::~Image()
 {

@@ -6,7 +6,7 @@
 
 struct RemoteInterfaceScreen : InterfaceScreen
 {
-	ComputerScreen* _computerScreen = nullptr;
+	ComputerScreen* _screen = nullptr;
 
 	void Create() override;
 	void Remove() override;

@@ -786,13 +786,31 @@ void button_assignbitmaps(const char* buttonName, const char* normalFile, const 
 	button->RegisterDrawFunction(imagebutton_draw);
 }
 
+void button_assignbitmaps(const char* buttonName, Image* normal, Image* highlighted, Image* clicked)
+{
+	const auto button = EclGetButton(buttonName);
+	
+	UplinkAssert(button != nullptr);
+
+	if (normal != nullptr)
+		normal = new Image(normal);
+
+	if (highlighted != nullptr)
+		highlighted = new Image(highlighted);
+
+	if (clicked != nullptr)
+		clicked = new Image(clicked);
+
+	button->SetImages(normal, highlighted, clicked);
+	button->RegisterDrawFunction(imagebutton_draw);
+}
+
 void imagebutton_drawtextured(Button* button, bool highlighted, bool clicked)
 {
 	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glScissor(button->X, (screenHeight - button->Y - button->Height), button->Width, button->Height);
-	uint64_t height = button->Height;
 	glEnable(GL_SCISSOR_TEST);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
@@ -907,4 +925,18 @@ void remove_msgbox()
 
 	if (EclGetButton("msgbox_no") != nullptr)
 		EclRemoveButton("msgbox_no");
+}
+
+Image* get_assignbitmap(const char* path)
+{
+	char* themeFilePath = app->GetOptions()->ThemeFilename(path);
+
+	const auto image = new Image();
+	image->LoadTIF(RsArchiveFileOpen(themeFilePath));
+	image->SetAlpha(0.85f);
+
+	if (themeFilePath != nullptr)
+		delete[] themeFilePath;
+
+	return image;
 }

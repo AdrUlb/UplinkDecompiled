@@ -95,4 +95,7 @@ public:
 	void RunScreen(int code, int index);
 	int InScreen();
 	LocalInterfaceScreen* GetInterfaceScreen();
+	bool IsVisible();
+	void Create();
+	void Reset();
 };

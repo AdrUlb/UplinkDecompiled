@@ -180,7 +180,9 @@ static void Script34()
 
 		EclRemoveButton("start_link");
 
-		return GciTimerFunc(600, ScriptLibrary::RunScript, 35);
+		GciTimerFunc(600, ScriptLibrary::RunScript, 35);
+
+		return;
 	}
 
 	EclRegisterButton(230, 200, 64, 78, " ", " ", "start_localhost");
@@ -266,6 +268,276 @@ static void Script36()
 	GciTimerFunc(100, ScriptLibrary::RunScript, 40);
 }
 
+static void Script40()
+{
+	if (EclGetButton("downloadingUOS") == nullptr)
+	{
+		EclRegisterButton(180, 180, 300, 20, "Downloading UPLINK Operating System...", "", "downloadingUOS_title");
+		EclRegisterButtonCallbacks("downloadingUOS_title", textbutton_draw, 0, 0, nullptr);
+		EclRegisterButton(190, 210, 0, 15, "", "Shows the progress of the download", "downloadingUOS");
+		EclRegisterResize("downloadingUOS", 200, 15, 5000, nullptr);
+		EclRegisterButton(150, 210, 40, 15, "", "0 %", "downloadingUOS_prog");
+		EclRegisterButtonCallbacks("downloadingUOS_prog", textbutton_draw, 0, 0, nullptr);
+		EclRegisterButton(190, 230, 300, 15, " ", " ", "downloadingUOS_current");
+		EclRegisterButtonCallbacks("downloadingUOS_current", textbutton_draw, 0, 0, nullptr);
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	const auto downloadingButton = EclGetButton("downloadingUOS");
+	UplinkAssert(downloadingButton != nullptr);
+
+	const auto prog = EclGetButton("downloadingUOS_prog");
+	UplinkAssert(prog != nullptr);
+
+	const auto current = EclGetButton("downloadingUOS_current");
+	UplinkAssert(current != nullptr);
+
+	const int progress = downloadingButton->Width * 100.0 / 200.0;
+
+	char progressString[0x10];
+	UplinkSnprintf(progressString, 0x10, "%d %%", progress);
+
+	prog->SetCaption(progressString);
+
+	if (progress <= 4)
+	{
+		current->SetCaption("Downloading Core services");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 9)
+	{
+		current->SetCaption("Downloading Kernel");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 14)
+	{
+		current->SetCaption("Downloading Loader package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 19)
+	{
+		current->SetCaption("Downloading Gateway package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 24)
+	{
+		current->SetCaption("Downloading Memory package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 29)
+	{
+		current->SetCaption("Downloading Status package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 34)
+	{
+		current->SetCaption("Downloading Finance package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 39)
+	{
+		current->SetCaption("Downloading Mail package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 44)
+	{
+		current->SetCaption("Downloading Mission package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 49)
+	{
+		current->SetCaption("Downloading Clock package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 54)
+	{
+		current->SetCaption("Downloading Multitasking package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 59)
+	{
+		current->SetCaption("Downloading Map package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 74)
+	{
+		current->SetCaption("Downloading Global communications package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 79)
+	{
+		current->SetCaption("Downloading Security package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 84)
+	{
+		current->SetCaption("Downloading File utilities");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 89)
+	{
+		current->SetCaption("Downloading Tutorial daemon");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 94)
+	{
+		current->SetCaption("Downloading Remote renderer package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	if (progress <= 99)
+	{
+		current->SetCaption("Downloading Site connect package");
+		GciTimerFunc(100, ScriptLibrary::RunScript, 40);
+		return;
+	}
+
+	GciTimerFunc(500, ScriptLibrary::RunScript, 41);
+}
+
+static void Script41()
+{
+	if (EclGetButton("syscheckUOS_13") != nullptr)
+	{
+		GciTimerFunc(250, ScriptLibrary::RunScript, 42);
+		return;
+	}
+
+	for (auto i = 0; i < 14; i++)
+	{
+		char var_48[0x20];
+		UplinkSnprintf(var_48, 0x20, "syscheckUOS_%d", i);
+
+		if (EclGetButton(var_48) != nullptr)
+			continue;
+
+		auto caption = "Checking gateway HARDWARE : Trinity Ax086 2GQs cpu...";
+		if (i == 0)
+		{
+			EclRemoveButton("downloadingUOS_title");
+			EclRemoveButton("downloadingUOS_prog");
+			EclRemoveButton("downloadingUOS_current");
+			EclRemoveButton("downloadingUOS");
+		}
+		else
+		{
+			char var_68[0x20];
+			UplinkSnprintf(var_68, 0x20, "syscheckUOS_OK_%d", i - 1);
+
+			EclRegisterButton(450, 110 + (20 * i), 30, 15, "[OK]", "", var_68);
+			EclRegisterButtonCallbacks(var_68, textbutton_draw, nullptr, nullptr, nullptr);
+			switch (i)
+			{
+				case 1:
+					caption = "Checking gateway HARDWARE : K256 512KQds modem...";
+					break;
+				case 2:
+					caption = "Checking gateway HARDWARE : 24 GQds DR-RAM memory...";
+					break;
+				case 3:
+					caption = "Verifying integrity of Uplink Operating System...";
+					break;
+				case 4:
+					caption = "Verifying security of Uplink Operating System...";
+					break;
+				case 5:
+					caption = "Installing UPLINK Operating system files...";
+					break;
+				case 6:
+					caption = "Initialising TSR programs in memory...";
+					break;
+				case 7:
+					caption = "Sending RUN signal to core Uplink Kernel...";
+					break;
+				case 8:
+					caption = "Checking Kernel Initilisation...";
+					break;
+				case 9:
+					caption = "Establishing Network communications protocols...";
+					break;
+				case 10:
+					caption = "Installing File-Copier...";
+					break;
+				case 11:
+					caption = "Installing File-Deleter...";
+					break;
+				case 12:
+					caption = "Installing Task-Manager you can read fast...";
+					break;
+				case 13:
+					caption = "Running Graphical User Interface...";
+					break;
+			}
+		}
+
+		EclRegisterButton(20, 130 + (20 * i), 400, 15, caption, "", var_48);
+		EclRegisterButtonCallbacks(var_48, textbutton_draw, nullptr, nullptr, nullptr);
+		SgPlaySound(RsArchiveFileOpen("sounds/done.wav"), "sounds/done.wav");
+		GciTimerFunc(250, ScriptLibrary::RunScript, 41);
+		return;
+	}
+}
+
+static void Script42()
+{
+	if (EclGetButton("syscheckUOS_0") != nullptr)
+	{
+		for (auto i = 0; i < 14; i++)
+		{
+			char buttonName[0x20];
+
+			UplinkSnprintf(buttonName, 0x20, "syscheckUOS_%d", i);
+			EclRemoveButton(buttonName);
+
+			UplinkSnprintf(buttonName, 0x20, "syscheckUOS_OK_%d", i);
+			EclRemoveButton(buttonName);
+		}
+	}
+
+	if (!game->GetInterface()->GetLocalInterface()->IsVisible())
+	{
+		game->GetInterface()->GetLocalInterface()->Reset();
+		game->GetInterface()->GetLocalInterface()->Create();
+	}
+
+	app->GetOptions()->SetOptionValue("game_firsttime", 0);
+	game->GetInterface()->GetRemoteInterface()->RunScreen(6, nullptr);
+}
+
 static void Script92()
 {
 	const auto key = EclGetButton("start_key");
@@ -290,8 +562,7 @@ static void Script93()
 	EclRegisterButton(key->X + (key->Width / 2) + 8, key->Y + (key->Height / 2) + 8, size, size, " ", " ", "start_link");
 	EclRegisterButtonCallbacks("start_link", DrawConnection, 0, 0, nullptr);
 	EclRegisterCaptionChange("connecting 0 0", "Awaiting connection acknowledgment from GATEWAY...", 0x2bc, nullptr);
-	/* tailcall */
-	return GciTimerFunc(3500, ScriptLibrary::RunScript, 36);
+	GciTimerFunc(3500, ScriptLibrary::RunScript, 36);
 }
 
 void ScriptLibrary::RunScript(int index)
@@ -318,6 +589,15 @@ void ScriptLibrary::RunScript(int index)
 			return;
 		case 36:
 			Script36();
+			return;
+		case 40:
+			Script40();
+			return;
+		case 41:
+			Script41();
+			return;
+		case 42:
+			Script42();
 			return;
 		case 92:
 			Script92();

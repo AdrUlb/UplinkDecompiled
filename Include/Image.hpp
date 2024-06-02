@@ -11,6 +11,8 @@ class Image
 	uint32_t* _raster = nullptr;
 
 public:
+	Image();
+	Image(Image* image);
 	virtual ~Image();
 	void LoadTIF(const char* path);
 	void CreateErrorBitmap();

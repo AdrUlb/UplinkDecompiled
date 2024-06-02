@@ -78,6 +78,11 @@ int VLocation::GetY()
 	return _y;
 }
 
+bool VLocation::GetListed()
+{
+	return _listed;
+}
+
 void VLocation::SetIp(const char* ip)
 {
 	UplinkStrncpy(_ip, ip, 0x18);

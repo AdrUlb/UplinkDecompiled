@@ -36,7 +36,7 @@ void MessageScreenInterface::Create(ComputerScreen* screen)
 {
 	UplinkAssert(screen != nullptr);
 
-	_computerScreen = screen;
+	_screen = screen;
 
 	if (IsVisible())
 		return;
@@ -85,8 +85,8 @@ bool MessageScreenInterface::ReturnKeyPressed()
 
 MessageScreen* MessageScreenInterface::GetComputerScreen()
 {
-	UplinkAssert(_computerScreen != nullptr);
-	return dynamic_cast<MessageScreen*>(_computerScreen);
+	UplinkAssert(_screen != nullptr);
+	return dynamic_cast<MessageScreen*>(_screen);
 }
 
 void MessageScreenInterface::Click(Button* button)

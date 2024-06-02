@@ -248,13 +248,13 @@ void App::UnRegisterPhoneDialler(PhoneDialler* dialler)
 void App::RetireGame(const char* name)
 {
 	(void)name;
-	UplinkAbort("TODO: implement App::RetireGame(const char*)");
+	UplinkAbort("TODO: implement App::RetireGame()");
 }
 
 void App::SaveGame(char const* name)
 {
 	(void)name;
-	UplinkAbort("TODO: implement App::SaveGame(const char*)");
+	puts("TODO: implement App::SaveGame()");
 }
 
 void App::Set(const char* newPath, const char* newVersion, const char* newType, const char* newDate, const char* newTitle)

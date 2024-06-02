@@ -48,7 +48,7 @@ int NearestGatewayScreenInterface::ScreenID()
 
 void NearestGatewayScreenInterface::Create(ComputerScreen* screen)
 {
-	_computerScreen = screen;
+	_screen = screen;
 
 	if (IsVisible())
 		return;
@@ -101,8 +101,8 @@ void NearestGatewayScreenInterface::Create(ComputerScreen* screen)
 
 GenericScreen* NearestGatewayScreenInterface::GetComputerScreen()
 {
-	UplinkAssert(_computerScreen != nullptr);
-	return dynamic_cast<GenericScreen*>(_computerScreen);
+	UplinkAssert(_screen != nullptr);
+	return dynamic_cast<GenericScreen*>(_screen);
 }
 
 void NearestGatewayScreenInterface::DrawBlack(Button* button, bool highlighted, bool clicked)
