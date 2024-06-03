@@ -13,4 +13,10 @@ public:
 		// TODO
 		return false;
 	}
+
+	int GetStatus()
+	{
+		// TODO
+		return 0;
+	}
 };

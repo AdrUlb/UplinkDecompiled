@@ -28,7 +28,17 @@ void MainMenuScreen::Create()
 
 void MainMenuScreen::Remove()
 {
-	UplinkAbort("TODO: implement MainMenuScreen::Remove");
+	for (auto i = 0; i < buttons->Size(); i++)
+	{
+		if (!buttons->ValidIndex(i))
+			continue;
+
+		const auto name = buttons->GetData(i);
+		if (name != nullptr && name[0] != 0)
+		{
+			EclRemoveButton(name);
+		}
+	}
 }
 
 void MainMenuScreen::Update() {}

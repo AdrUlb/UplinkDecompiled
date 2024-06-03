@@ -92,7 +92,18 @@ static LList<char*>* wordwraptext(const char* text, int width)
 	return ret;
 }
 
-static void text_draw(Button* button, bool highlighted, bool clicked)
+static void tooltip_callback()
+{
+	tooltipanimindex = -1;
+}
+
+static void superhighlight_draw(Button* button)
+{
+	(void)button;
+	UplinkAbort("TODO: implement superhighlight_draw()");
+}
+
+void text_draw(Button* button, bool highlighted, bool clicked)
 {
 	(void)clicked;
 
@@ -150,12 +161,7 @@ static void text_draw(Button* button, bool highlighted, bool clicked)
 	glDisable(GL_SCISSOR_TEST);
 }
 
-static void tooltip_callback()
-{
-	tooltipanimindex = -1;
-}
-
-static void tooltip_update(const char* text)
+void tooltip_update(const char* text)
 {
 	auto tooltipButton = EclGetButton("tooltip");
 
@@ -186,12 +192,6 @@ static void tooltip_update(const char* text)
 	}
 	else
 		tooltipanimindex = EclRegisterCaptionChange("tooltip", text, tooltip_callback);
-}
-
-static void superhighlight_draw(Button* button)
-{
-	(void)button;
-	UplinkAbort("TODO: implement superhighlight_draw()");
 }
 
 void button_draw(Button* button, bool highlighted, bool clicked)

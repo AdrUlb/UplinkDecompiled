@@ -3,6 +3,8 @@
 #include <Eclipse.hpp>
 #include <Globals.hpp>
 #include <MainMenuScreens/FirstTimeLoadingInterface.hpp>
+#include <MainMenuScreens/LoginInterface.hpp>
+#include <MainMenuScreens/OptionsInterface.hpp>
 #include <Opengl.hpp>
 #include <RedShirt.hpp>
 #include <Util.hpp>
@@ -41,12 +43,18 @@ void MainMenu::RunScreen(MainMenuScreenCode code)
 
 	switch (code)
 	{
+		case MainMenuScreenCode::Login:
+			_screen = new LoginInterface();
+			break;
 		case MainMenuScreenCode::FirstTimeLoading:
 			_screen = new FirstTimeLoadingInterface();
 			break;
+		case MainMenuScreenCode::Options:
+			_screen = new OptionsInterface();
+			break;
 		default:
 			printf("TODO: implement MainMenu::RunScreen(%d)\n", static_cast<int>(code));
-			UplinkAbort("Tried to create a local screen with unknown SCREENCODE");
+			UplinkAbort("Tried to create a local screen with unknown SCREENCODE %d", static_cast<int>(code));
 	}
 
 	_screen->Create();

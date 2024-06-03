@@ -4,6 +4,8 @@ void SetColour(const char* name);
 void border_draw(Button* button);
 void imagebutton_draw(Button* button, bool highlighted, bool clicked);
 void textbutton_draw(Button* button, bool highlighted, bool clicked);
+void text_draw(Button* button, bool highlighted, bool clicked);
+void tooltip_update(const char* text);
 void button_draw(Button* button, bool highlighted, bool clicked);
 void button_click(Button* button);
 void clear_draw(int x, int y, int width, int height);
