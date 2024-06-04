@@ -30,6 +30,7 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId);
 void SetWindowScaleFactor(float x, float y);
 int GetScaledXPosition(int pos);
 int GetScaledYPosition(int pos);
+char* LowerCaseString(const char* str);
 bool CopyFilePlain(const char* sourceFilePath, const char* destFilePath);
 DArray<char*>* ListDirectory(const char* dir, const char* ext);
 bool LoadDArray(DArray<UplinkObject*>* array, FILE* file);

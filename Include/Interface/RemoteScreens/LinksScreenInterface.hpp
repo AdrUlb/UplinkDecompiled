@@ -25,9 +25,9 @@ public:
 	void ApplyFilter(const char* filter);
 	void CreateScrollBarAndFilter();
 	static void LinkDraw(Button* button, bool highlighted, bool clicked);
+	static void AddLinkDraw(Button* button, bool highlighted, bool clicked);
 	static void DeleteLinkDraw(Button* button, bool highlighted, bool clicked);
 	static void ShowLinkDraw(Button* button, bool highlighted, bool clicked);
-	static void AddLinkDraw(Button* button, bool highlighted, bool clicked);
 	static void FilterDraw(Button* button, bool highlighted, bool clicked);
 	static void LinkClick(Button* button);
 	static void DeleteLinkClick(Button* button);

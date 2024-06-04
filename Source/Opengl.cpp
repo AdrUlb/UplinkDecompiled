@@ -332,6 +332,28 @@ void imagebutton_draw(Button* button, bool highlighted, bool clicked)
 	glDisable(GL_SCISSOR_TEST);
 }
 
+void imagebutton_draw(Button* button, bool highlighted, bool clicked, Image* imageNormal, Image* imageHighlighted, Image* imageClicked)
+{
+	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+
+	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
+
+	glEnable(GL_SCISSOR_TEST);
+
+	if (clicked && imageClicked != nullptr)
+	{
+		imageClicked->Draw(button->X, button->Y);
+	}
+	else if (highlighted && imageHighlighted != nullptr)
+	{
+		imageHighlighted->Draw(button->X, button->Y);
+	}
+	else if (imageNormal != nullptr)
+		imageNormal->Draw(button->X, button->Y);
+
+	glDisable(GL_SCISSOR_TEST);
+}
+
 void textbutton_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != nullptr);

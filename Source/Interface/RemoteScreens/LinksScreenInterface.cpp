@@ -139,9 +139,9 @@ void LinksScreenInterface::Create(ComputerScreen* screen)
 	struct Image* closeHighlightImage = get_assignbitmap("close_h.tif");
 	struct Image* closeClickedImage = get_assignbitmap("close_c.tif");
 
-	const auto numLinksOnScreen = NumLinksOnScreen();
+	const auto numLinks = NumLinksOnScreen();
 	int y = 145;
-	for (auto i = 0; i < numLinksOnScreen; i++)
+	for (auto i = 0; i < numLinks; i++)
 	{
 		char buf[0x80];
 		UplinkSnprintf(buf, 0x80, "linksscreen_link %d", i);
@@ -288,8 +288,62 @@ void LinksScreenInterface::SetFullList(LList<char*>* links)
 
 void LinksScreenInterface::ApplyFilter(const char* filter)
 {
-	(void)filter;
-	puts("TODO: LinksScreenInterface::ApplyFilter()");
+	DeleteLListData(&_filterList);
+	_filterList.Empty();
+
+	if (filter != nullptr)
+	{
+		const auto lowerFilter = LowerCaseString(filter);
+		const auto filterLength = strlen(lowerFilter);
+
+		for (auto i = 0; i < _displayList.Size(); i++)
+		{
+			const auto ip = _displayList.GetData(i);
+			const auto vlocation = game->GetWorld().GetVLocation(ip);
+
+			if (vlocation == nullptr)
+				UplinkAbort("Cannot find location for ip %s", ip);
+
+			const auto lowerComputerName = LowerCaseString(vlocation->GetComputerName());
+			bool found;
+			if (GetComputerScreen()->GetScreenType() == 3)
+			{
+				found = strncmp(lowerComputerName, lowerFilter, filterLength) == 0;
+			}
+			else
+			{
+				found = strstr(lowerComputerName, lowerFilter) != 0;
+			}
+
+			if (found)
+			{
+				const auto str = new char[0x18];
+				UplinkStrncpy(str, ip, 0x18);
+				_filterList.PutData(str);
+			}
+
+			if (lowerComputerName != 0)
+				delete[] lowerComputerName;
+		}
+
+		delete[] lowerFilter;
+	}
+	else
+	{
+		for (auto i = 0; i < _displayList.Size(); i++)
+		{
+			const auto str = new char[0x18];
+			UplinkStrncpy(str, _displayList.GetData(i), 0x18);
+			_filterList.PutData(str);
+		}
+	}
+
+	baseoffset = 0;
+
+	CreateScrollBarAndFilter();
+	const auto scrollbox = ScrollBox::GetScrollBox("linksscreen_scroll");
+	if (scrollbox != 0)
+		scrollbox->SetNumItems(_filterList.Size());
 }
 
 void LinksScreenInterface::CreateScrollBarAndFilter()
@@ -326,6 +380,8 @@ void LinksScreenInterface::CreateScrollBarAndFilter()
 
 void LinksScreenInterface::LinkDraw(Button* button, bool highlighted, bool clicked)
 {
+	(void)clicked;
+
 	UplinkAssert(button != nullptr);
 
 	clear_draw(button->X, button->Y, button->Width, button->Height);
@@ -334,6 +390,7 @@ void LinksScreenInterface::LinkDraw(Button* button, bool highlighted, bool click
 	sscanf(button->Name, "linksscreen_link %d", &index);
 
 	index += baseoffset;
+
 	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
 	if (!linksScreen->_displayList.ValidIndex(index))
 		return;
@@ -388,48 +445,103 @@ void LinksScreenInterface::LinkDraw(Button* button, bool highlighted, bool click
 	}
 }
 
+void LinksScreenInterface::AddLinkDraw(Button* button, bool highlighted, bool clicked)
+{
+	UplinkAssert(button != nullptr);
+
+	int index;
+	sscanf(button->Name, "linksscreen_addlink %d", &index);
+
+	index += baseoffset;
+
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
+	if (!linksScreen->_filterList.ValidIndex(index))
+	{
+		clear_draw(button->X, button->Y, button->Width, button->Height);
+		return;
+	}
+
+	char* ip = linksScreen->_filterList.GetData(index);
+	if (ip == nullptr)
+	{
+		clear_draw(button->X, button->Y, button->Width, button->Height);
+		return;
+	}
+
+	if (game->GetWorld().GetPlayer().HasLink(ip))
+	{
+		clear_draw(button->X, button->Y, button->Width, button->Height);
+		return;
+	}
+
+	imagebutton_draw(button, highlighted, clicked);
+}
+
 void LinksScreenInterface::DeleteLinkDraw(Button* button, bool highlighted, bool clicked)
 {
-	(void)button;
-	(void)highlighted;
-	(void)clicked;
+	UplinkAssert(button != nullptr);
 
-	static auto called = false;
-	if (!called)
+	int index;
+	sscanf(button->Name, "linksscreen_deletelink %d", &index);
+
+	index += baseoffset;
+
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
+	if (linksScreen->_filterList.ValidIndex(index) && linksScreen->_filterList.GetData(index) != nullptr)
 	{
-		puts("TODO: implement LinksScreenInterface::DeleteLinkDraw()");
-		called = true;
+		imagebutton_draw(button, highlighted, clicked);
 	}
+	else
+		clear_draw(button->X, button->Y, button->Width, button->Height);
 }
 
 void LinksScreenInterface::ShowLinkDraw(Button* button, bool highlighted, bool clicked)
 {
-	(void)button;
-	(void)highlighted;
-	(void)clicked;
+	UplinkAssert(button != nullptr);
 
-	static auto called = false;
-	if (!called)
+	int index;
+	sscanf(button->Name, "linksscreen_showlink %d", &index);
+
+	index += baseoffset;
+
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
+	if (!linksScreen->_filterList.ValidIndex(index))
 	{
-		puts("TODO: implement LinksScreenInterface::ShowLinkDraw()");
-		called = true;
+		clear_draw(button->X, button->Y, button->Width, button->Height);
+		return;
 	}
-}
 
-void LinksScreenInterface::AddLinkDraw(Button* button, bool highlighted, bool clicked)
-{
-	(void)button;
-	(void)highlighted;
-	(void)clicked;
-	puts("TODO: implement LinksScreenInterface::AddLinkDraw()");
+	const auto ip = linksScreen->_filterList.GetData(index);
+	if (ip == nullptr)
+	{
+		clear_draw(button->X, button->Y, button->Width, button->Height);
+		return;
+	}
+
+	const auto vlocation = game->GetWorld().GetVLocation(ip);
+	if (!vlocation->GetDisplayed())
+	{
+		clear_draw(button->X, button->Y, button->Width, button->Height);
+		return;
+	}
+
+	if (vlocation->GetColored())
+	{
+		imagebutton_draw(button, highlighted, clicked, iadd_tif, iadd_h_tif, iadd_c_tif);
+	}
+	else
+	{
+		imagebutton_draw(button, highlighted, clicked, ilink_tif, ilink_h_tif, ilink_c_tif);
+	}
 }
 
 void LinksScreenInterface::FilterDraw(Button* button, bool highlighted, bool clicked)
 {
-	(void)button;
-	(void)highlighted;
-	(void)clicked;
-	puts("TODO: implement LinksScreenInterface::FilterDraw()");
+	UplinkAssert(button != nullptr);
+
+	textbutton_draw(button, highlighted, clicked);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	border_draw(button);
 }
 
 void LinksScreenInterface::LinkClick(Button* button)

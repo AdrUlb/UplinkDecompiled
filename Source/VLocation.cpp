@@ -83,6 +83,16 @@ bool VLocation::GetListed()
 	return _listed;
 }
 
+bool VLocation::GetDisplayed()
+{
+	return _displayed;
+}
+
+bool VLocation::GetColored()
+{
+	return _colored;
+}
+
 void VLocation::SetIp(const char* ip)
 {
 	UplinkStrncpy(_ip, ip, 0x18);

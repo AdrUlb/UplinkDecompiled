@@ -3,6 +3,7 @@
 void SetColour(const char* name);
 void border_draw(Button* button);
 void imagebutton_draw(Button* button, bool highlighted, bool clicked);
+void imagebutton_draw(Button* button, bool highlighted, bool clicked, Image* imageNormal, Image* imageHighlighted, Image* imageClicked);
 void textbutton_draw(Button* button, bool highlighted, bool clicked);
 void text_draw(Button* button, bool highlighted, bool clicked);
 void tooltip_update(const char* text);

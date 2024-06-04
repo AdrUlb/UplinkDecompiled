@@ -286,6 +286,23 @@ int GetScaledYPosition(int pos)
 	return pos * windowScaleY;
 }
 
+char* LowerCaseString(const char* str)
+{
+	UplinkAssert(str != nullptr);
+
+	char* lowerStr = new char[strlen(str) + 1];
+	strcpy(lowerStr, str);
+
+	auto ptr = lowerStr;
+	for (char c = *ptr; c != 0; c = *ptr++)
+	{
+		if (c >= 'A' && c <= 'Z')
+			*ptr = 'a' - 'A';
+	}
+
+	return lowerStr;
+}
+
 bool CopyFilePlain(const char* sourceFilePath, const char* destFilePath)
 {
 	const auto sourceFile = fopen(sourceFilePath, "rb");
