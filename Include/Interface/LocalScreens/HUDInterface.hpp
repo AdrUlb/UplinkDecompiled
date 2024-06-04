@@ -36,12 +36,11 @@ public:
 
 class SWInterface : LocalInterfaceScreen
 {
+public:
 	void Update() override;
 	void Create() override;
 	void Remove() override;
 	bool IsVisible() override;
-
-public:
 	static bool IsVisibleSoftwareMenu();
 	static void ToggleSoftwareMenu();
 };
@@ -55,6 +54,18 @@ class GatewayInterface : LocalInterfaceScreen
 	int ScreenID() override;
 };
 
+struct HUDUpgrade
+{
+	int Id;
+	const char* Name;
+	const char* Description;
+	const char* ButtonName;
+	const char* FileName;
+	const char* FileNameHighlight;
+	const char* FileNameClicked;
+	ButtonMouseUpFunc Callback;
+};
+
 class HUDInterface : LocalInterfaceScreen
 {
 	WorldMapInterface worldMapInterface;
@@ -63,7 +74,7 @@ class HUDInterface : LocalInterfaceScreen
 	GatewayInterface gatewayInterface;
 	char* highlightedToolbarButton = nullptr;
 	Image* image = nullptr;
-	char upgrades[8]{0};
+	char _upgrades[8]{0};
 
 public:
 	~HUDInterface() override;
@@ -76,4 +87,7 @@ public:
 	int ScreenID() override;
 	static void MoveSelecter(int screenCode, int screenIndex);
 	static void CloseGame();
+	HUDUpgrade* GetUpgrade(char upgrade);
+	bool IsUpgradeVisible(char upgrade);
+	void AddUpgrade(char upgrade);
 };

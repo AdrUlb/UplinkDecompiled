@@ -18,3 +18,8 @@ void SvbCreateInterface(int x, int y)
 	(void)y;
 	puts("TODO: implement SvbCreateInterface()");
 }
+
+void SvbUpdateInterface()
+{
+
+}

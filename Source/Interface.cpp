@@ -36,13 +36,7 @@ void Interface::Update()
 {
 	GetLocalInterface().Update();
 	GetRemoteInterface().Update();
-
-	static auto called = false;
-	if (!called)
-	{
-		puts("TODO: implement Interface::Update");
-		called = true;
-	}
+	GetTaskManager().Update();
 }
 
 const char* Interface::GetID()

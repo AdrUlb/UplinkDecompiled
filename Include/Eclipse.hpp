@@ -35,6 +35,7 @@ int EclRegisterCaptionChange(const char* buttonName, const char* caption, int ti
 int EclRegisterCaptionChange(const char* buttonName, const char* caption, AnimationFinishedCallback finishedCallback);
 int EclRegisterMovement(const char* buttonName, int x, int y, int time, AnimationFinishedCallback callback);
 int EclRegisterResize(const char* buttonName, int32_t width, int32_t height, int32_t time, AnimationFinishedCallback callback);
+int EclIsAnimationActive(const char* name);
 void EclButtonBringToFront(const char* name);
 void EclButtonSendToBack(const char* name);
 void EclRegisterButtonCallback(const char* name, ButtonMouseUpFunc func);

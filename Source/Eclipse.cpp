@@ -579,7 +579,7 @@ int EclRegisterAnimation(const char* buttonName, int x, int y, int moveType, int
 	animation->ToWidth = width;
 	animation->ToHeight = height;
 	animation->FinishedCallback = finishedCallback;
-	animation->Time = time;
+	animation->Time = time / 5;
 
 	if (animsfasterenabled)
 		animation->Time /= animsfasterspeed;
@@ -691,6 +691,22 @@ int EclRegisterResize(const char* buttonName, int32_t width, int32_t height, int
 		return -1;
 
 	return EclRegisterAnimation(buttonName, button->X, button->Y, width, height, time, callback);
+}
+
+int EclIsAnimationActive(const char* name)
+{
+	for (auto i = 0; i < anims.Size(); i++)
+	{
+		if (!anims.ValidIndex(i))
+			continue;
+
+		const auto anim = anims[i];
+		assert(anim != nullptr);
+		if (strcmp(name, anim->ButtonName) == 0)
+			return i;
+	}
+
+	return -1;
 }
 
 void EclButtonBringToFront(const char* name)

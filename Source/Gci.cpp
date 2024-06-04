@@ -329,7 +329,7 @@ void GciTimerFunc(int delay, GciTimerCallback callback, int arg)
 	const auto rax = new TimerEvent();
 	rax->callback = callback;
 	rax->callbackArg = arg;
-	rax->fireTime = SDL_GetTicks() + delay;
+	rax->fireTime = SDL_GetTicks() + delay / 5;
 	timerEvents.push_back(rax);
 }
 

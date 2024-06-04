@@ -40,4 +40,6 @@ public:
 	bool After(Date* other);
 	void Activate();
 	bool Equal(Date& other);
+	const char* GetLongString();
+	static const char* GetMonthName(int month);
 };

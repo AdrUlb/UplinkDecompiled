@@ -9,6 +9,26 @@
 #include <Svb.hpp>
 #include <cstring>
 
+static void AnalyserClick(Button*)
+{
+	puts("TODO: implement AnalyserClick()");
+}
+
+static void IRCClick(Button*)
+{
+	puts("TODO: implement IRCClick()");
+}
+
+static void LANClick(Button*)
+{
+	puts("TODO: implement LANClick()");
+}
+
+static HUDUpgrade hudUpgrades[8] = {
+	{2, "Analyser", "Show the connection analyser", "hud_analyser", "hud/analyser.tif", "hud/analyser_h.tif", "hud/analyser_c.tif", AnalyserClick},
+	{4, "CClient", "Show the IRC Client", "hud_ircclient", "hud/irc.tif", "hud/irc_h.tif", "hud/irc_c.tif", IRCClick},
+	{8, "LANView", "Show the LAN Viewer", "hud_lanview", "hud/lan.tif", "hud/lan_h.tif", "hud/lan_c.tif", LANClick}};
+
 static void ToolbarButtonDraw(Button* button, bool highlighted, bool clicked)
 {
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -83,6 +103,30 @@ static void SpeedButtonClick(Button* button)
 	puts("TODO: implement SpeedButtonClick()");
 }
 
+static void MissionClick(Button* button)
+{
+	(void)button;
+	puts("TODO: implement MissionClick()");
+}
+
+static void MissionHighlight(Button* button)
+{
+	(void)button;
+	puts("TODO: implement MissionHighlight()");
+}
+
+static void EmailClick(Button* button)
+{
+	(void)button;
+	puts("TODO: implement EmailClick()");
+}
+
+static void EmailHighlight(Button* button)
+{
+	(void)button;
+	puts("TODO: implement EmailHighlight()");
+}
+
 WorldMapInterface::~WorldMapInterface()
 {
 	if (layout != nullptr)
@@ -112,7 +156,12 @@ void WorldMapInterface::Print()
 
 void WorldMapInterface::Update()
 {
-	puts("TODO: implement WorldMapInterface::Update()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement WorldMapInterface::Update()");
+		called = true;
+	}
 }
 
 const char* WorldMapInterface::GetID()
@@ -275,7 +324,12 @@ void WorldMapInterface::RemoveWorldMapInterface()
 
 void SWInterface::Update()
 {
-	puts("TODO: implement SWInterface::Update()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement SWInterface::Update()");
+		called = true;
+	}
 }
 
 void SWInterface::Create()
@@ -360,12 +414,84 @@ void HUDInterface::Update()
 	if (!IsVisible())
 		return;
 
-	static auto called = false;
-	if (!called)
+	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
+	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+
+	char var_b8[0x80];
+	UplinkStrncpy(var_b8, game->GetWorld().GetPlayer().GetRemoteHost()->GetIp(), 0x80);
+	EclGetButton("hud_location")->SetCaption(var_b8);
+	EclGetButton("hud_date")->SetCaption(game->GetWorld().GetCurrentDate().GetLongString());
+	char* name;
+	char var_1b8[0x80];
+
+	auto messageX = screenWidth - 30;
+	for (auto i = 0; i < game->GetWorld().GetPlayer().GetMessages().Size(); i++)
 	{
-		puts("TODO: HUDInterface::Update()");
-		called = true;
+		UplinkSnprintf(var_1b8, 0x80, "hud_message %d", i);
+
+		if (EclGetButton(var_1b8) != nullptr)
+			continue;
+
+		EclRegisterButton(222, screenHeight - 41, 24, 24, "", "Read this message", var_1b8);
+		button_assignbitmaps(var_1b8, "hud/email.tif", "hud/email_h.tif", "hud/email_c.tif");
+		EclRegisterButtonCallbacks(var_1b8, imagebutton_draw, EmailClick, button_click, EmailHighlight);
+		EclRegisterMovement(var_1b8, messageX, screenHeight - 41, 1000, nullptr);
+		SgPlaySound(RsArchiveFileOpen("sounds/newmail.wav"), "sounds/newmail.wav");
+		messageX -= 30;
 	}
+
+	char var_138[0x80];
+	for (auto i = game->GetWorld().GetPlayer().GetMessages().Size(); true; i++)
+	{
+		UplinkSnprintf(var_138, 0x80, "hud_message %d", i);
+		if (EclGetButton(var_138) == nullptr)
+			break;
+
+		EclRemoveButton(var_138);
+	}
+
+	auto missionX = screenWidth - 30 - (game->GetWorld().GetPlayer().GetMessages().Size() * 30);
+
+	for (auto i = 0; i < game->GetWorld().GetPlayer().GetMissions().Size(); i++)
+	{
+		UplinkSnprintf(var_1b8, 0x80, "hud_mission %d", i);
+
+		const auto button = EclGetButton(var_1b8);
+		if (button == nullptr)
+		{
+			name = var_1b8;
+			EclRegisterButton(222, screenHeight - 41, 24, 24, "", "View this mission", name);
+			button_assignbitmaps(var_1b8, "hud/mission.tif", "hud/mission_h.tif", "hud/mission_c.tif");
+			EclRegisterButtonCallbacks(var_1b8, imagebutton_draw, MissionClick, button_click, MissionHighlight);
+			EclRegisterMovement(var_1b8, missionX, screenHeight - 41, 1000, nullptr);
+			SgPlaySound(RsArchiveFileOpen("sounds/newmail.wav"), "sounds/newmail.wav");
+		}
+		else if (EclGetButton(var_1b8) != nullptr && missionX != EclGetButton(var_1b8)->X && EclIsAnimationActive(var_1b8) == -1)
+			EclRegisterMovement(var_1b8, missionX, screenHeight - 41, 300, nullptr);
+
+		missionX -= 30;
+	}
+
+	for (auto i = game->GetWorld().GetPlayer().GetMissions().Size(); true; i++)
+	{
+		UplinkSnprintf(var_138, 0x80, "hud_mission %d", i);
+		if (EclGetButton(var_138) == nullptr)
+			break;
+
+		EclRemoveButton(var_138);
+	}
+	if (game->GetWorld().GetPlayer().GetGateway().HasHUDUpgrade(2) && !IsUpgradeVisible(2))
+		AddUpgrade(2);
+
+	if (game->GetWorld().GetPlayer().GetGateway().HasHUDUpgrade(4) && !IsUpgradeVisible(4))
+		AddUpgrade(4);
+
+	if (game->GetWorld().GetPlayer().GetGateway().HasHUDUpgrade(8) && !IsUpgradeVisible(8))
+		AddUpgrade(8);
+
+	worldMapInterface.Update();
+	softwareInterface.Update();
+	SvbUpdateInterface();
 }
 
 const char* HUDInterface::GetID()
@@ -457,4 +583,32 @@ void HUDInterface::CloseGame()
 	game->SetGameSpeed(0);
 	EclReset();
 	app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+}
+
+HUDUpgrade* HUDInterface::GetUpgrade(char upgrade)
+{
+	for (auto i = 0; i < 8; i++)
+		if (hudUpgrades[i].Id == upgrade)
+			return &hudUpgrades[i];
+
+	return nullptr;
+}
+
+bool HUDInterface::IsUpgradeVisible(char upgrade)
+{
+	for (auto i = 0; i < 8; i++)
+	{
+		if (_upgrades[i] == upgrade)
+			return GetUpgrade(upgrade) != nullptr;
+	}
+
+	return false;
+}
+
+void HUDInterface::AddUpgrade(char upgrade)
+{
+	if (IsUpgradeVisible(upgrade))
+		return;
+
+	puts("TODO: implement HUDInterface::AddUpgrade()");
 }

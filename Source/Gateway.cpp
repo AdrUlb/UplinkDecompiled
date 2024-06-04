@@ -56,3 +56,8 @@ void Gateway::ExchangeGatewayComplete()
 {
 	puts("TODO implement Gateway::ExchangeGatewayComplete()");
 }
+
+bool Gateway::HasHUDUpgrade(char upgrade)
+{
+	return (_upgrades & upgrade) != 0;
+}

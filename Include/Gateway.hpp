@@ -30,4 +30,5 @@ public:
 	bool GetNuked();
 	void SetNuked(bool nuked);
 	void ExchangeGatewayComplete();
+	bool HasHUDUpgrade(char upgrade);
 };

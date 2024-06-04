@@ -13,7 +13,12 @@ void TaskManager::Print()
 
 void TaskManager::Update()
 {
-	puts("TODO: TaskManager::Update()");
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: TaskManager::Update()");
+		called = true;
+	}
 }
 
 const char* TaskManager::GetID()
@@ -23,8 +28,8 @@ const char* TaskManager::GetID()
 
 void TaskManager::SetTargetProgram(int pid)
 {
-    if (pid != -1)
-        _unknown = 0;
-    _lastTargetProgramPid = _targetProgramPid;
-    _targetProgramPid = pid;
+	if (pid != -1)
+		_unknown = 0;
+	_lastTargetProgramPid = _targetProgramPid;
+	_targetProgramPid = pid;
 }

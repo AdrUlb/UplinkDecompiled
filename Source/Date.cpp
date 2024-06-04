@@ -4,6 +4,10 @@
 #include <Globals.hpp>
 #include <Util.hpp>
 
+static char _tempdate[0x40];
+static char _monthname[13][10] = {"",	  "January", "February",  "March",	 "April",	 "May",		"June",
+								  "July", "August",	 "September", "October", "November", "December"};
+
 Date::Date()
 {
 	_second = 1;
@@ -424,4 +428,18 @@ bool Date::Equal(Date& other)
 		return false;
 
 	return true;
+}
+
+const char* Date::GetLongString()
+{
+	char s[0x40];
+	UplinkSnprintf(s, 0x40, "%.2d:%.2d.%.2d, %d %s %d", _hour, _minute, _second, _day, GetMonthName(_month), _year);
+	UplinkStrncpy(_tempdate, s, 0x40);
+	return _tempdate;
+}
+
+const char* Date::GetMonthName(int month)
+{
+	UplinkAssert(month >= 1 && month <= 12);
+	return _monthname[month];
 }
