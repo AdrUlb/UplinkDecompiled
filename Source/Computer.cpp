@@ -255,6 +255,12 @@ ComputerScreen* Computer::GetComputerScreen(int index)
 	return _screens.GetData(index);
 }
 
+bool Computer::ChangeSecurityCodes()
+{
+	puts("TODO: implement Computer::ChangeSecurityCodes()");
+	return false;
+}
+
 void Computer::GenerateAccessCode(const char* name, const char* code, char* buf, size_t max)
 {
 	if (max == 0)

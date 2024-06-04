@@ -62,5 +62,6 @@ public:
 	void SetIsExternallyOpen(bool isExternallyOpen);
 	void AddComputerScreen(ComputerScreen* screen, int index);
 	ComputerScreen* GetComputerScreen(int index);
+	bool ChangeSecurityCodes();
 	static void GenerateAccessCode(const char* name, const char* code, char* buf, size_t max);
 };

@@ -16,4 +16,5 @@ public:
 	UplinkObjectId GetOBJECTID() override;
 	void SetTextMessage(const char* textMessage);
 	void SetNextPage(int value);
+	static void AddLoginLost(const char* ip);
 };

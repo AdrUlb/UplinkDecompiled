@@ -72,6 +72,7 @@ public:
 	LList<char*>& GetLinks();
 	LList<Mission*>& GetMissions();
 	const char* GetHandle();
+	int HasAccount(const char* ip);
 	bool HasLink(const char* ip);
 	void GiveLink(const char* ip);
 	void SetHandle(const char* handle);

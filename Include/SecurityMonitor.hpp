@@ -8,4 +8,9 @@ namespace SecurityMonitor
 	{
 		puts("TODO: implement SecurityMonitor::BeginAttack()");
 	}
-}
+	
+	static void EndAttack()
+	{
+		puts("TODO: implement SecurityMonitor::BeginAttack()");
+	}
+} // namespace SecurityMonitor

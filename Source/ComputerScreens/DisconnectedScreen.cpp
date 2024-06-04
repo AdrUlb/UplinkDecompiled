@@ -59,3 +59,9 @@ void DisconnectedScreen::SetNextPage(int nextPage)
 {
 	_nextPage = nextPage;
 }
+
+void DisconnectedScreen::AddLoginLost(const char* ip)
+{
+	(void)ip;
+	puts("TODO: implement DisconnectedScreen::AddLoginLost()");
+}

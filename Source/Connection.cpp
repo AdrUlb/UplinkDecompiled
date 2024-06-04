@@ -1,5 +1,6 @@
 #include <Connection.hpp>
 
+#include <ComputerScreens/DisconnectedScreen.hpp>
 #include <Globals.hpp>
 #include <LanMonitor.hpp>
 #include <SecurityMonitor.hpp>
@@ -227,11 +228,30 @@ void Connection::Disconnect()
 
 	if (strcmp(_owner, "PLAYER") == 0)
 	{
-		// SecurityMonitor::EndAttack(); and so on
-		puts("TODO: Connection::Disconnect()");
+		SecurityMonitor::EndAttack();
+		LanMonitor::EndAttack();
+
+		for (auto i = _traceProgress - ((GetSize() - 1) / 2); i >= 0; i--)
+		{
+			const auto ip = _vlocations.GetData(GetSize() - i - 1);
+			UplinkAssert(ip != nullptr);
+
+			if (game->GetWorld().GetPlayer().HasAccount(ip) != -1)
+			{
+				const auto vlocation = game->GetWorld().GetVLocation(ip);
+				UplinkAssert(vlocation != nullptr);
+
+				const auto computer = vlocation->GetComputer();
+				UplinkAssert(computer != nullptr);
+
+				if (computer->ChangeSecurityCodes())
+					DisconnectedScreen::AddLoginLost(computer->GetIp());
+			}
+		}
 	}
 	const auto owner = GetOwner();
 	owner->SetRemoteHost(owner->GetLocalHostIp());
+
 	_traceProgress = 0;
 	_traceInProgress = false;
 }

@@ -264,6 +264,13 @@ const char* Agent::GetHandle()
 	return _handle;
 }
 
+int Agent::HasAccount(const char* ip)
+{
+	(void)ip;
+	puts("TODO: implement Agent::HasAccount()");
+	return -1;
+}
+
 bool Agent::HasLink(const char* ip)
 {
 	for (auto i = 0; i < _links.Size(); i++)
