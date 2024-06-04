@@ -544,6 +544,19 @@ void LinksScreenInterface::FilterDraw(Button* button, bool highlighted, bool cli
 	border_draw(button);
 }
 
+void LinksScreenInterface::LinkMouseMove(Button* button)
+{
+	UplinkAssert(button != nullptr);
+
+	int index;
+	sscanf(button->Name, "linksscreen_link %d", &index);
+
+	index += baseoffset;
+
+	if (dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen())->_filterList.ValidIndex(index))
+		button_highlight(button);
+}
+
 void LinksScreenInterface::LinkClick(Button* button)
 {
 	(void)button;
@@ -578,12 +591,6 @@ void LinksScreenInterface::LinkMouseDown(Button* button)
 {
 	(void)button;
 	puts("TODO: implement LinksScreenInterface::LinkMouseDown()");
-}
-
-void LinksScreenInterface::LinkMouseMove(Button* button)
-{
-	(void)button;
-	puts("TODO: implement LinksScreenInterface::LinkMouseMove()");
 }
 
 void LinksScreenInterface::ShowLinkMouseMove(Button* button)

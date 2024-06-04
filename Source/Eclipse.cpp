@@ -579,7 +579,7 @@ int EclRegisterAnimation(const char* buttonName, int x, int y, int moveType, int
 	animation->ToWidth = width;
 	animation->ToHeight = height;
 	animation->FinishedCallback = finishedCallback;
-	animation->Time = time / 10;
+	animation->Time = time;
 
 	if (animsfasterenabled)
 		animation->Time /= animsfasterspeed;

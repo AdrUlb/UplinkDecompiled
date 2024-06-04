@@ -1,5 +1,6 @@
 #include <WorldGenerator.hpp>
 
+#include <ComputerScreens/CypherScreen.hpp>
 #include <ComputerScreens/DialogScreen.hpp>
 #include <ComputerScreens/DisconnectedScreen.hpp>
 #include <ComputerScreens/GenericScreen.hpp>
@@ -294,12 +295,12 @@ void WorldGenerator::GenerateGlobalCriminalDatabase()
 	loginScreen->SetNextPage(1);
 	computer->AddComputerScreen(loginScreen, 2);
 
-	/*const auto cypherScreen = new CypherScreen());
+	const auto cypherScreen = new CypherScreen();
 	cypherScreen->SetMainTitle("Global Criminal Database");
 	cypherScreen->SetSubTitle("Enter elliptic-curve encryption cypher");
 	cypherScreen->SetDifficulty(180);
 	cypherScreen->SetNextPage(1);
-	computer->AddComputerScreen(cypherScreen, 3);*/
+	computer->AddComputerScreen(cypherScreen, 3);
 
 	const auto menuScreen = new MenuScreen();
 	menuScreen->SetMainTitle("Global Criminal Database");
@@ -370,8 +371,6 @@ void WorldGenerator::GenerateGlobalCriminalDatabase()
 	readonlyUser->AddField("Password", NameGenerator::GeneratePassword());
 	readonlyUser->AddField("Security", "4");
 	computer->GetRecordBank().AddRecord(*readonlyUser);
-
-	puts("TODO: implement WorldGenerator::GenerateGlobalCriminalDatabase()");
 }
 
 void WorldGenerator::GenerateInternationalSocialSecurityDatabase()

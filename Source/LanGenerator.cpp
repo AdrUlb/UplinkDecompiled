@@ -48,8 +48,6 @@ void LanGenerator::GenerateLANCluster(LanComputer* computer, int level)
 	cluster->Merge(computer);
 
 	delete cluster;*/
-	(void)computer;
-	(void)level;
 	puts("TODO: implement LanGenerator::GenerateLANCluster()");
 }
 

@@ -119,7 +119,7 @@ bool DialogScreenInterface::ReturnKeyPressed()
 {
 	const auto screen = GetComputerScreen();
 	UplinkAssert(screen != nullptr);
-	char* returnKeyButton = screen->_returnKeyButtonName;
+	const auto returnKeyButton = screen->GetReturnKeyButtonName();
 
 	if (returnKeyButton == nullptr)
 		return false;

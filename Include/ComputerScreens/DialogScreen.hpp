@@ -4,7 +4,7 @@
 #include <DialogScreenWidget.hpp>
 #include <LList.hpp>
 
-struct DialogScreen : ComputerScreen
+class DialogScreen : public ComputerScreen
 {
 	LList<DialogScreenWidget*> _widgets;
 	char* _returnKeyButtonName = nullptr;
@@ -18,6 +18,8 @@ public:
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 	LList<DialogScreenWidget*>* GetWidgets();
+	const char* GetReturnKeyButtonName();
+	const char* GetEscapeKeyButtonName();
 	void AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip);
 	void AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip, int data1, int data2,
 				   const char* stringData1, const char* stringData2);

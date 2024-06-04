@@ -62,6 +62,16 @@ LList<DialogScreenWidget*>* DialogScreen::GetWidgets()
 	return &_widgets;
 }
 
+const char* DialogScreen::GetReturnKeyButtonName()
+{
+	return _returnKeyButtonName;
+}
+
+const char* DialogScreen::GetEscapeKeyButtonName()
+{
+	return _escapeKeyButtonName;
+}
+
 void DialogScreen::AddWidget(const char* name, int type, int x, int y, int width, int height, const char* caption, const char* tooltip)
 {
 	const auto widget = new DialogScreenWidget();
