@@ -24,6 +24,7 @@ public:
 	void SetFullList(LList<char*>* links);
 	void ApplyFilter(const char* filter);
 	void CreateScrollBarAndFilter();
+	static void AfterPhoneDialler(const char* ip);
 	static void LinkDraw(Button* button, bool highlighted, bool clicked);
 	static void AddLinkDraw(Button* button, bool highlighted, bool clicked);
 	static void DeleteLinkDraw(Button* button, bool highlighted, bool clicked);

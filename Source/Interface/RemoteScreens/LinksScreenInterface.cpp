@@ -395,6 +395,16 @@ void LinksScreenInterface::CreateScrollBarAndFilter()
 	}
 }
 
+void LinksScreenInterface::AfterPhoneDialler(const char* ip)
+{
+	UplinkAssert(ip != nullptr);
+	game->GetWorld().GetPlayer().GetConnection().Disconnect();
+	game->GetWorld().GetPlayer().GetConnection().Reset();
+	game->GetWorld().GetPlayer().GetConnection().AddVLocation(ip);
+	game->GetWorld().GetPlayer().GetConnection().Connect();
+	game->GetInterface().GetRemoteInterface().RunNewLocation();
+}
+
 void LinksScreenInterface::LinkDraw(Button* button, bool highlighted, bool clicked)
 {
 	(void)clicked;
@@ -592,8 +602,25 @@ void LinksScreenInterface::ShowLinkMouseMove(Button* button)
 
 void LinksScreenInterface::LinkClick(Button* button)
 {
-	(void)button;
-	puts("TODO: implement LinksScreenInterface::LinkClick()");
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+		return;
+
+	UplinkAssert(button != nullptr);
+
+	int index;
+	sscanf(button->Name, "linksscreen_link %d", &index);
+
+	index += _baseoffset;
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(RemoteInterfaceScreen::GetInterfaceScreen(7));
+	if (!linksScreen->_filterList.ValidIndex(index))
+		return;
+
+	const auto ip = linksScreen->_filterList.GetData(index);
+	game->GetWorld().GetPlayer().GetConnection().Disconnect();
+	game->GetWorld().GetPlayer().GetConnection().Reset();
+
+	const auto dialler = new PhoneDialler();
+	dialler->DialNumber(100, 100, ip, PhoneDiallerNextScene::Links, nullptr);
 }
 
 void LinksScreenInterface::DeleteLinkClick(Button* button)

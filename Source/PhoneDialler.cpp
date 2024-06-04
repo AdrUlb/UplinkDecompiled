@@ -2,6 +2,7 @@
 
 #include <Eclipse.hpp>
 #include <Globals.hpp>
+#include <Interface/RemoteScreens/LinksScreenInterface.hpp>
 #include <Opengl.hpp>
 #include <RedShirt.hpp>
 #include <ScriptLibrary.hpp>
@@ -92,13 +93,13 @@ void PhoneDialler::UpdateDisplay()
 				UplinkAbort("TODO: implement nextScene=PhoneDiallerNextScene::Finance");
 				break;
 			case PhoneDiallerNextScene::Links:
-				UplinkAbort("TODO: implement nextScene=PhoneDiallerNextScene::Links");
+				LinksScreenInterface::AfterPhoneDialler(_ip);
 				break;
 			default:
 			{
-				char s[0x40];
-				UplinkSnprintf(s, 0x40, "Unrecognised nextScene=%d", _nextScene);
-				UplinkAbort(s);
+				char buf[0x40];
+				UplinkSnprintf(buf, 0x40, "Unrecognised nextScene=%d", _nextScene);
+				UplinkAbort(buf);
 			}
 		}
 		_ipIndex = -1;
