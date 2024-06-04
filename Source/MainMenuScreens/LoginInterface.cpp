@@ -8,16 +8,6 @@
 #include <ScriptLibrary.hpp>
 #include <Sg.hpp>
 
-static void CreateExistingGames()
-{
-	puts("TODO: implement LoginInterface::CreateExistingGames()");
-}
-
-static void RemoveExistingGames()
-{
-	puts("TODO: implement LoginInterface::RemoveExistingGames()");
-}
-
 static void LargeTextBoxDraw(Button* button, bool highlighted, bool clicked)
 {
 	(void)highlighted;
@@ -140,7 +130,68 @@ static void ExitGameClick(Button* button)
 static void ProceedClick(Button* button)
 {
 	(void)button;
-	puts("TODO: implement LoginInterface::ProceedClick()");
+
+	UplinkAssert(EclGetButton("userid_name") != nullptr);
+
+	char name[0x100];
+	UplinkStrncpy(name, EclGetButton("userid_name")->Caption, 0x100);
+
+	app->GetMainMenu()->RunScreen(MainMenuScreenCode::Loading);
+	app->SetNextLoadGame(name);
+
+	GciTimerFunc(1, ScriptLibrary::RunScript, 91);
+
+	if (app->GetOptions()->IsOptionEqualTo("sound_musicenabled", 1))
+		SgPlaylist_Play("main");
+}
+
+static void UserNameClick(Button* button)
+{
+	EclRegisterCaptionChange("userid_name", button->Caption, nullptr);
+	EclRegisterCaptionChange("userid_code", "PASSWORD", nullptr);
+}
+
+static void CreateExistingGames()
+{
+	const auto games = App::ListExistingGames();
+
+	auto yOffset = 0;
+
+	for (auto i = 0; i < games->Size(); i++)
+	{
+		if (!games->ValidIndex(i))
+			continue;
+
+		const auto caption = games->GetData(i);
+
+		char name[0x20];
+		UplinkSnprintf(name, 0x20, "username %d", i);
+		const auto x = GetScaledXPosition(170);
+		const auto y = GetScaledYPosition(300) + yOffset;
+		EclRegisterButton(GetScaledXPosition(35), y, x, 0xf, caption, "Log in as this Agent", name);
+		EclRegisterButtonCallbacks(name, textbutton_draw, UserNameClick, button_click, button_highlight);
+
+		delete[] caption;
+
+		yOffset += 18;
+	}
+
+	delete games;
+}
+
+static void RemoveExistingGames()
+{
+	char name[0x20];
+
+	for (auto i = 0; true; i++)
+	{
+		UplinkSnprintf(name, 0x20, "username %d", i);
+
+		if (EclGetButton(name) == nullptr)
+			break;
+
+		EclRemoveButton(name);
+	}
 }
 
 void LoginInterface::Create()
@@ -227,8 +278,7 @@ void LoginInterface::Create()
 	EclMakeButtonEditable("userid_name");
 	EclMakeButtonEditable("userid_code");
 	EclRegisterButton(screenWidth - 40, screenHeight - 15, 40, 15, versionNumberString, "", "login_int_version");
-	/* tailcall */
-	return EclRegisterButtonCallbacks("login_int_version", textbutton_draw, nullptr, nullptr, nullptr);
+	EclRegisterButtonCallbacks("login_int_version", textbutton_draw, nullptr, nullptr, nullptr);
 }
 
 void LoginInterface::Remove()

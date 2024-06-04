@@ -34,8 +34,8 @@ void Interface::Print()
 
 void Interface::Update()
 {
-	GetLocalInterface()->Update();
-	GetRemoteInterface()->Update();
+	GetLocalInterface().Update();
+	GetRemoteInterface().Update();
 
 	static auto called = false;
 	if (!called)
@@ -52,7 +52,7 @@ const char* Interface::GetID()
 
 void Interface::Create()
 {
-	Interface::GetRemoteInterface()->Create();
+	GetRemoteInterface().Create();
 
 	if (!app->GetOptions()->IsOptionEqualTo("game_firsttime", 1))
 	{
@@ -60,20 +60,20 @@ void Interface::Create()
 	}
 }
 
-LocalInterface* Interface::GetLocalInterface()
+LocalInterface& Interface::GetLocalInterface()
 {
 	UplinkAssert(_localInterface != nullptr);
-	return _localInterface;
+	return *_localInterface;
 }
 
-RemoteInterface* Interface::GetRemoteInterface()
+RemoteInterface& Interface::GetRemoteInterface()
 {
 	UplinkAssert(_remoteInterface != nullptr);
-	return _remoteInterface;
+	return *_remoteInterface;
 }
 
-TaskManager* Interface::GetTaskManager()
+TaskManager& Interface::GetTaskManager()
 {
 	UplinkAssert(_taskManager != nullptr);
-	return _taskManager;
+	return *_taskManager;
 }

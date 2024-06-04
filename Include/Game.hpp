@@ -15,11 +15,11 @@ class Game : UplinkObject
 	int _speed;
 	GameObituary* _obituary;
 	time_t _lastAutosaveTime;
-	const char* _loadedSaveFileVer;
+	char* _loadedSaveFileVer;
 	char* _createdSaveFileVer;
 	int _field_48;
-	const char* _winCodeDesc;
-	const char* _field_58;
+	char* _winCodeDesc;
+	char* _field_58;
 	int _field_60;
 	int _worldMapType;
 
@@ -32,13 +32,15 @@ public:
 	void Print() override;
 	void Update() override;
 	const char* GetID() override;
-	int GameSpeed();
-	World* GetWorld();
-	View* GetView();
-	Interface* GetInterface();
+	Interface& GetInterface();
+	View& GetView();
+	World& GetWorld();
+	int GetGameSpeed();
+	int GetWorldMapType();
+	const char* GetLoadedSavefileVer();
+	void SetGameSpeed(int speed);
 	bool IsRunning();
 	void NewGame();
-	const char* GetLoadedSavefileVer();
-	int GetWorldMapType();
+	bool LoadGame(FILE* file);
 	void ExitGame();
 };

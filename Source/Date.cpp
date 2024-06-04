@@ -76,7 +76,7 @@ void Date::Update()
 		return;
 	const auto rbx_2 = EclGetAccurateTime() - _lastUpdateTime;
 
-	if (game->GameSpeed() == 1)
+	if (game->GetGameSpeed() == 1)
 	{
 		if (rbx_2 > 1000)
 		{
@@ -92,7 +92,7 @@ void Date::Update()
 	Date newDate;
 	newDate.SetDate(this);
 
-	switch (game->GameSpeed())
+	switch (game->GetGameSpeed())
 	{
 		case 2:
 			newDate.AdvanceSecond(3);
@@ -112,7 +112,7 @@ void Date::Update()
 			UplinkAbort("Unrecognised Game Speed");
 	}
 
-	const auto nextEventDate = game->GetWorld()->GetEventScheduler().GetDateOfNextEvent();
+	const auto nextEventDate = game->GetWorld().GetEventScheduler().GetDateOfNextEvent();
 
 	if (nextEventDate != 0 && nextEventDate->Before(&newDate))
 	{
@@ -130,7 +130,7 @@ void Date::Update()
 		else
 			AdvanceSecond(1);
 
-		game->GetWorld()->ForceNextUpdate();
+		game->GetWorld().ForceNextUpdate();
 	}
 	else
 		SetDate(&newDate);

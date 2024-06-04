@@ -11,7 +11,7 @@ class Gateway : UplinkObject
 	DataBank _dataBank;
 	GatewayDef* _currentGatewayDef = nullptr;
 	int _id = 0;
-	GatewayDef* _exchangeGateway = nullptr;
+	GatewayDef* _exchangeGatewayDef = nullptr;
 	bool _nuked = false;
 	int _proximity = 0;
 	char _modem[0x40] = " ";
@@ -26,5 +26,8 @@ public:
 	void Print() override;
 	void Update() override;
 	const char* GetID() override;
+	GatewayDef* GetExchangeGatewayDef();
 	bool GetNuked();
+	void SetNuked(bool nuked);
+	void ExchangeGatewayComplete();
 };

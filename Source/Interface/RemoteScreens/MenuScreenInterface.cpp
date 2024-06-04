@@ -73,7 +73,7 @@ void MenuScreenInterface::Create(ComputerScreen* screen)
 
 		time += timeInc;
 
-		if (game->GetInterface()->GetRemoteInterface()->GetSecurityLevel() < GetComputerScreen()->GetSecurity(i))
+		if (game->GetInterface().GetRemoteInterface().GetSecurityLevel() < GetComputerScreen()->GetSecurity(i))
 		{
 			EclRegisterButton(-350, 120 + yOffset, 16, 16, "", GetComputerScreen()->GetTooltip(i), text);
 			button_assignbitmap(text, "menuscreenoption.tif");
@@ -123,14 +123,14 @@ void MenuScreenInterface::ClickMenuScreenOption(Button* button)
 	char var_38[0x18];
 	sscanf(button->Name, "%s %d %d %s", var_58, &var_20, &screenIndex, var_38);
 
-	const auto vlocation = game->GetWorld()->GetVLocation(var_38);
+	const auto vlocation = game->GetWorld().GetVLocation(var_38);
 
 	Computer* computer = nullptr;
 	if (vlocation != nullptr)
 		computer = vlocation->GetComputer();
 
 	if (screenIndex != -1)
-		game->GetInterface()->GetRemoteInterface()->RunScreen(screenIndex, computer);
+		game->GetInterface().GetRemoteInterface().RunScreen(screenIndex, computer);
 }
 
 void MenuScreenInterface::DrawMenuOption(Button* button, bool highlighted, bool clicked)

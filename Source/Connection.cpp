@@ -66,7 +66,7 @@ const char* Connection::GetTarget()
 
 Person* Connection::GetOwner()
 {
-	const auto ret = game->GetWorld()->GetPerson(_owner);
+	const auto ret = game->GetWorld().GetPerson(_owner);
 	UplinkAssert(ret != nullptr);
 	return ret;
 }
@@ -124,9 +124,9 @@ void Connection::Connect()
 	GetOwner()->SetRemoteHost(target);
 	_traceProgress = 0;
 	_traceInProgress = false;
-	_connectionTime.SetDate(&game->GetWorld()->GetCurrentDate());
+	_connectionTime.SetDate(&game->GetWorld().GetCurrentDate());
 
-	const auto vlocation = game->GetWorld()->GetVLocation(target);
+	const auto vlocation = game->GetWorld().GetVLocation(target);
 	UplinkAssert(vlocation != nullptr);
 
 	const auto computer = vlocation->GetComputer();
@@ -144,7 +144,7 @@ void Connection::Connect()
 
 	for (auto j = 0; j < _vlocations.Size(); j++)
 	{
-		const auto vloc = game->GetWorld()->GetVLocation(_vlocations.GetData(j));
+		const auto vloc = game->GetWorld().GetVLocation(_vlocations.GetData(j));
 		UplinkAssert(vloc != nullptr);
 
 		const auto comp = vloc->GetComputer();
@@ -164,15 +164,15 @@ void Connection::Connect()
 
 		if (j == lastLoc)
 		{
-			connectLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData(lastLoc - 1), _owner, 0, 2);
+			connectLog->SetProperties(game->GetWorld().GetCurrentDate(), _vlocations.GetData(lastLoc - 1), _owner, 0, 2);
 			comp->GetLogBank().AddLog(connectLog, -1);
 			continue;
 		}
 
 		if (j == 0)
-			connectLog->SetProperties(game->GetWorld()->GetCurrentDate(), "LOCAL", _owner, 0, 4);
+			connectLog->SetProperties(game->GetWorld().GetCurrentDate(), "LOCAL", _owner, 0, 4);
 		else
-			connectLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData(j - 1), _owner, 0, 5);
+			connectLog->SetProperties(game->GetWorld().GetCurrentDate(), _vlocations.GetData(j - 1), _owner, 0, 5);
 
 		connectLog->SetData1(_vlocations.GetData(j + 1));
 
@@ -182,7 +182,7 @@ void Connection::Connect()
 
 void Connection::Disconnect()
 {
-	const auto targetVlocation = game->GetWorld()->GetVLocation(GetTarget());
+	const auto targetVlocation = game->GetWorld().GetVLocation(GetTarget());
 	UplinkAssert(targetVlocation != nullptr);
 
 	const auto targetComputer = targetVlocation->GetComputer();
@@ -191,7 +191,7 @@ void Connection::Disconnect()
 	bool rbp_1 = TraceInProgress() && !Traced();
 
 	const auto disconnectLog = new AccessLog();
-	disconnectLog->SetProperties(game->GetWorld()->GetCurrentDate(), _vlocations.GetData((_vlocations.Size() - 2)), _owner, 0, 3);
+	disconnectLog->SetProperties(game->GetWorld().GetCurrentDate(), _vlocations.GetData((_vlocations.Size() - 2)), _owner, 0, 3);
 
 	if (rbp_1 != 0)
 	{
@@ -244,7 +244,7 @@ void Connection::BeginTrace()
 	if (this->_traceInProgress)
 		return;
 
-	struct VLocation* vlocation = game->GetWorld()->GetVLocation(GetTarget());
+	struct VLocation* vlocation = game->GetWorld().GetVLocation(GetTarget());
 	UplinkAssert(vlocation != nullptr);
 
 	struct Computer* computer = vlocation->GetComputer();

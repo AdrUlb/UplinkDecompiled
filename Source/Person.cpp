@@ -23,14 +23,14 @@ bool Person::Load(FILE* file)
 		return false;
 
 	// TODO: this does not seem right? it warns about an already existing thing when it *doesn't* find anything??
-	if (game->GetWorld()->GetVLocations().LookupTree(_localHostIp) == nullptr)
+	if (game->GetWorld().GetVLocations().LookupTree(_localHostIp) == nullptr)
 	{
 		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
 		printf("WARNING: Person::Load, Localhost IP '%s' already existing\n", _localHostIp);
 		return false;
 	}
 
-	if (game->GetWorld()->GetVLocations().LookupTree(_remoteHostIp) == nullptr)
+	if (game->GetWorld().GetVLocations().LookupTree(_remoteHostIp) == nullptr)
 	{
 		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
 		printf("WARNING: Person::Load, Remotehost IP '%s' already existing\n", _remoteHostIp);
@@ -136,16 +136,21 @@ const char* Person::GetLocalHostIp()
 
 VLocation* Person::GetLocalHost()
 {
-	const auto ret = game->GetWorld()->GetVLocation(_localHostIp);
+	const auto ret = game->GetWorld().GetVLocation(_localHostIp);
 	UplinkAssert(ret != nullptr);
 	return ret;
 }
 
 VLocation* Person::GetRemoteHost()
 {
-	const auto ret = game->GetWorld()->GetVLocation(_remoteHostIp);
+	const auto ret = game->GetWorld().GetVLocation(_remoteHostIp);
 	UplinkAssert(ret != nullptr);
 	return ret;
+}
+
+LList<Message*>& Person::GetMessages()
+{
+	return _messages;
 }
 
 Connection& Person::GetConnection()
@@ -168,13 +173,13 @@ void Person::SetAge(int age)
 void Person::SetLocalHost(const char* value)
 {
 	UplinkStrncpy(_localHostIp, value, 0x18);
-	UplinkAssert(game->GetWorld()->GetVLocation(_localHostIp) != nullptr);
+	UplinkAssert(game->GetWorld().GetVLocation(_localHostIp) != nullptr);
 }
 
 void Person::SetRemoteHost(const char* remoteHost)
 {
 	UplinkStrncpy(_remoteHostIp, remoteHost, 0x18);
-	UplinkAssert(game->GetWorld()->GetVLocation(_remoteHostIp) != nullptr);
+	UplinkAssert(game->GetWorld().GetVLocation(_remoteHostIp) != nullptr);
 }
 
 void Person::SetIsTargetable(bool isTargetable)
@@ -241,6 +246,11 @@ UplinkObjectId Agent::GetOBJECTID()
 LList<char*>& Agent::GetLinks()
 {
 	return _links;
+}
+
+LList<Mission*>& Agent::GetMissions()
+{
+	return _missions;
 }
 
 const char* Agent::GetHandle()

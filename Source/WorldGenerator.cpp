@@ -55,7 +55,7 @@ void WorldGenerator::UpdateSoftwareUpgrades()
 
 void WorldGenerator::LoadDynamicsGatewayDefs()
 {
-	game->Game::GetWorld()->GetGatewayDefs().Size();
+	game->Game::GetWorld().GetGatewayDefs().Size();
 	const auto defFiles = ListDirectory("data/gateways/", ".txt");
 	for (auto i = 0; i < defFiles->Size(); i++)
 	{
@@ -84,7 +84,7 @@ void WorldGenerator::GenerateAll()
 
 void WorldGenerator::GenerateSpecifics()
 {
-	game->GetWorld()->CreateCompany("Player");
+	game->GetWorld().CreateCompany("Player");
 	GenerateLocalMachine();
 	GenerateCompanyGovernment();
 	GenerateGlobalCriminalDatabase();
@@ -114,7 +114,7 @@ void WorldGenerator::GeneratePlayer(const char* handle)
 	player->SetCurrentAccount(0);
 	player->gateway.GiveStartingHardware();
 	player->gateway.GiveStartingSoftware();*/
-	game->GetWorld()->CreatePerson(player);
+	game->GetWorld().CreatePerson(player);
 	player->GetConnection().Reset();
 	player->GetConnection().AddVLocation("234.773.0.666");
 	player->GetConnection().Connect();
@@ -146,8 +146,8 @@ void WorldGenerator::GenerateSimpleStartingMissionB()
 
 void WorldGenerator::GenerateLocalMachine()
 {
-	const auto vlocation = game->GetWorld()->CreateVLocation("127.0.0.1", 284, 73);
-	const auto computer = game->GetWorld()->CreateComputer("Gateway", "Player", "127.0.0.1");
+	const auto vlocation = game->GetWorld().CreateVLocation("127.0.0.1", 284, 73);
+	const auto computer = game->GetWorld().CreateComputer("Gateway", "Player", "127.0.0.1");
 	vlocation->SetListed(false);
 	computer->SetIsTargetable(false);
 
@@ -291,7 +291,7 @@ void WorldGenerator::GenerateIntroversion()
 void WorldGenerator::GenerateCompanyUplink()
 {
 	const auto company = new CompanyUplink();
-	game->GetWorld()->CreateCompany(company);
+	game->GetWorld().CreateCompany(company);
 	GenerateUplinkPublicAccessServer();
 
 	puts("TODO: implement WorldGenerator::GenerateCompanyUplink()");
@@ -312,7 +312,7 @@ Company* WorldGenerator::GenerateCompany(const char* name, int size, int type, i
 	company->SetTYPE(type);
 	company->SetGrowth(growth);
 	company->SetAlignment(alignment);
-	game->GetWorld()->CreateCompany(company);
+	game->GetWorld().CreateCompany(company);
 
 	WorldGenerator::GeneratePublicAccessServer(name);
 	WorldGenerator::GenerateInternalServicesMachine(name);
@@ -324,12 +324,12 @@ Company* WorldGenerator::GenerateCompany(const char* name, int size, int type, i
 		WorldGenerator::GenerateComputer(name);
 
 	NameGenerator::GeneratePublicAccessServerName(name);
-	const auto computer = game->GetWorld()->GetComputer(tempname);
+	const auto computer = game->GetWorld().GetComputer(tempname);
 	UplinkAssert(computer != nullptr);
 
 	char s[0x80];
 	UplinkSnprintf(s, 0x80, "internal@%s.net", name);
-	game->GetWorld()->CreatePerson(s, computer->GetIp())->SetIsTargetable(false);
+	game->GetWorld().CreatePerson(s, computer->GetIp())->SetIsTargetable(false);
 	company->Grow(0);
 	return company;
 }
@@ -349,7 +349,7 @@ VLocation* WorldGenerator::GenerateLocation()
 	struct VLocation* vlocation = new VLocation();
 	vlocation->SetPLocation(x, y);
 	vlocation->SetIp(ip);
-	game->GetWorld()->CreateVLocation(vlocation);
+	game->GetWorld().CreateVLocation(vlocation);
 
 	return vlocation;
 
@@ -384,7 +384,7 @@ Computer* WorldGenerator::GeneratePublicAccessServer(const char* name)
 	companyDataScreen->SetSubTitle("Company data");
 	companyDataScreen->SetScreenType(28);
 	computer->AddComputerScreen(companyDataScreen, 1);
-	game->GetWorld()->CreateComputer(computer);
+	game->GetWorld().CreateComputer(computer);
 
 	return computer;
 }
@@ -396,7 +396,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	char value[0x80];
 	UplinkStrncpy(value, tempname, 0x80);
 
-	const auto company = game->GetWorld()->GetCompany(companyName);
+	const auto company = game->GetWorld().GetCompany(companyName);
 	UplinkAssert(company != nullptr);
 
 	const auto vlocation = WorldGenerator::GenerateLocation();
@@ -452,7 +452,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	if (strcmp(companyName, "Government") == 0)
 		computer->SetIsTargetable(0);
 
-	game->GetWorld()->CreateComputer(computer);
+	game->GetWorld().CreateComputer(computer);
 
 	const auto loginScreen = new UserIDScreen();
 	loginScreen->SetMainTitle(companyName);
@@ -552,7 +552,7 @@ Computer* WorldGenerator::GenerateInternalServicesMachine(const char* companyNam
 	{
 		const auto log = new AccessLog();
 		const auto loc = WorldGenerator::GetRandomLocation();
-		log->SetProperties(game->GetWorld()->GetCurrentDate(), loc->GetIp(), " ", 0, 1);
+		log->SetProperties(game->GetWorld().GetCurrentDate(), loc->GetIp(), " ", 0, 1);
 		log->SetData1("Accessed File");
 		computer->GetLogBank().AddLog(log, -1);
 	}
@@ -573,7 +573,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	char value[0x80];
 	UplinkStrncpy(value, tempname, 0x80);
 
-	const auto company = game->GetWorld()->GetCompany(companyName);
+	const auto company = game->GetWorld().GetCompany(companyName);
 	UplinkAssert(company != nullptr);
 
 	const auto vlocation = WorldGenerator::GenerateLocation();
@@ -624,7 +624,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	if (strcmp(companyName, "Government") == 0)
 		computer->SetIsTargetable(false);
 
-	game->GetWorld()->CreateComputer(computer);
+	game->GetWorld().CreateComputer(computer);
 
 	const auto highSecurityScreen = new HighSecurityScreen();
 	highSecurityScreen->SetMainTitle(companyName);
@@ -708,7 +708,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 	{
 		const auto log = new AccessLog();
 		const auto loc = WorldGenerator::GetRandomLocation();
-		log->SetProperties(game->GetWorld()->GetCurrentDate(), loc->GetIp(), " ", 0, 1);
+		log->SetProperties(game->GetWorld().GetCurrentDate(), loc->GetIp(), " ", 0, 1);
 		log->SetData1("Accessed File");
 		computer->GetLogBank().AddLog(log, -1);
 	}
@@ -725,7 +725,7 @@ Computer* WorldGenerator::GenerateCentralMainframe(const char* companyName)
 
 Computer* WorldGenerator::GenerateLAN(const char* companyName)
 {
-	const auto company = game->GetWorld()->GetCompany(companyName);
+	const auto company = game->GetWorld().GetCompany(companyName);
 
 	if (company == nullptr)
 		return nullptr;
@@ -740,7 +740,7 @@ void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)
 {
 	UplinkAssert(worldmapmask != nullptr);
 
-	const auto vlocations = game->GetWorld()->GetVLocations().ConvertToDArray();
+	const auto vlocations = game->GetWorld().GetVLocations().ConvertToDArray();
 
 	auto x = 0;
 	auto y = 0;
@@ -794,10 +794,10 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 	char serverName[0x80];
 	UplinkStrncpy(serverName, tempname, 0x80);
 
-	game->GetWorld()->CreateVLocation("234.773.0.666", x, y);
-	game->GetWorld()->CreateComputer(serverName, "Uplink", "234.773.0.666");
+	game->GetWorld().CreateVLocation("234.773.0.666", x, y);
+	game->GetWorld().CreateComputer(serverName, "Uplink", "234.773.0.666");
 
-	const auto computer = game->GetWorld()->GetComputer(serverName);
+	const auto computer = game->GetWorld().GetComputer(serverName);
 	UplinkAssert(computer != nullptr);
 	computer->SetIsTargetable(0);
 	computer->SetTraceSpeed(-1);
@@ -928,7 +928,7 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 
 VLocation* WorldGenerator::GetRandomLocation()
 {
-	const auto indices = game->GetWorld()->GetVLocations().ConvertIndexToDArray();
+	const auto indices = game->GetWorld().GetVLocations().ConvertIndexToDArray();
 
 	UplinkAssert(indices->Size() > 0);
 
@@ -936,7 +936,7 @@ VLocation* WorldGenerator::GetRandomLocation()
 
 	UplinkAssert(indices->ValidIndex(index));
 
-	const auto loc = game->GetWorld()->GetVLocation(indices->GetData(index));
+	const auto loc = game->GetWorld().GetVLocation(indices->GetData(index));
 
 	delete indices;
 

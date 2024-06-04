@@ -47,7 +47,7 @@ const char* ComputerScreen::GetSubTitle()
 
 Computer* ComputerScreen::GetComputer()
 {
-	return game->GetWorld()->GetComputer(_computer);
+	return game->GetWorld().GetComputer(_computer);
 }
 
 void ComputerScreen::SetMainTitle(const char* mainTitle)

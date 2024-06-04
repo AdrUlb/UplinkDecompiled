@@ -445,7 +445,7 @@ static void mouse(GciMouseButton button, GciMouseEvent event, int x, int y)
 	if (button == GciMouseButton::Right && event == GciMouseEvent::Up)
 	{
 		if (game->IsRunning())
-			game->GetInterface()->GetTaskManager()->SetTargetProgram(-1);
+			game->GetInterface().GetTaskManager().SetTargetProgram(-1);
 	}
 }
 
@@ -530,15 +530,15 @@ static void keyboard(char keychar)
 			return;
 		}
 
-		if (game->GetInterface()->GetLocalInterface()->InScreen() == 0)
+		if (game->GetInterface().GetLocalInterface().InScreen() == 0)
 		{
-			if (!game->GetInterface()->GetRemoteInterface()->GetInterfaceScreen()->ReturnKeyPressed())
+			if (!game->GetInterface().GetRemoteInterface().GetInterfaceScreen()->ReturnKeyPressed())
 				goto highlighted;
 
 			return;
 		}
 
-		if (game->GetInterface()->GetLocalInterface()->GetInterfaceScreen()->ScreenID() == 16)
+		if (game->GetInterface().GetLocalInterface().GetInterfaceScreen()->ScreenID() == 16)
 		{
 			if (!IRCInterface::ReturnKeyPressed())
 				goto highlighted;
@@ -546,7 +546,7 @@ static void keyboard(char keychar)
 			return;
 		}
 
-		if (!game->GetInterface()->GetRemoteInterface()->GetInterfaceScreen()->ReturnKeyPressed())
+		if (!game->GetInterface().GetRemoteInterface().GetInterfaceScreen()->ReturnKeyPressed())
 			goto highlighted;
 
 		return;
@@ -563,7 +563,7 @@ static void keyboard(char keychar)
 		}
 
 		if (game->IsRunning())
-			game->GetInterface()->GetRemoteInterface()->GetInterfaceScreen()->EscapeKeyPressed();
+			game->GetInterface().GetRemoteInterface().GetInterfaceScreen()->EscapeKeyPressed();
 
 		return;
 	}
@@ -789,7 +789,7 @@ void button_assignbitmaps(const char* buttonName, const char* normalFile, const 
 void button_assignbitmaps(const char* buttonName, Image* normal, Image* highlighted, Image* clicked)
 {
 	const auto button = EclGetButton(buttonName);
-	
+
 	UplinkAssert(button != nullptr);
 
 	if (normal != nullptr)

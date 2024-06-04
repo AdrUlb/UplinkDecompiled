@@ -7,8 +7,44 @@
 #include <Sg.hpp>
 #include <Svb.hpp>
 #include <Util.hpp>
+#include <WorldGenerator.hpp>
 #include <cstdlib>
 #include <dirent.h>
+
+static void CopyFilePlain(const char* sourceFilePath, const char* destFilePath)
+{
+	const auto sourceFile = fopen(sourceFilePath, "rb");
+	const auto destFile = fopen(destFilePath, "wb");
+
+	if (sourceFile != nullptr && destFile != nullptr)
+	{
+		while (true)
+		{
+			char buf[0x100];
+
+			const auto count = fread(buf, 1, 0x100, sourceFile);
+
+			if (count == 0)
+				break;
+
+			fwrite(buf, 1, count, destFile);
+		}
+	}
+
+	if (destFile != nullptr)
+		fclose(destFile);
+
+	if (sourceFile != nullptr)
+		fclose(sourceFile);
+}
+
+static void CopyGame(const char* name, const char* filePath)
+{
+	char curAgentPath[0x100];
+	UplinkSnprintf(curAgentPath, 0x100, "%scuragent.usr", app->UsersTempPath);
+	EmptyDirectory(app->UsersTempPath);
+	CopyFilePlain(filePath, curAgentPath);
+}
 
 App::App() : _startTime(0), _closed(false), _options(nullptr), _network(nullptr), _mainMenu(nullptr), _phoneDialler(nullptr), _nextLoadGame(nullptr)
 {
@@ -41,12 +77,12 @@ void App::Update()
 {
 	UplinkAssert(game != nullptr);
 
-	if (game->GameSpeed() == -1 || (game->IsRunning() && game->GetWorld()->GetPlayer()->GetGateway().GetNuked()))
+	if (game->GetGameSpeed() == -1 || (game->IsRunning() && game->GetWorld().GetPlayer()->GetGateway().GetNuked()))
 	{
 		if (_phoneDialler != nullptr)
 			UnRegisterPhoneDialler(_phoneDialler);
 
-		SaveGame(game->GetWorld()->GetPlayer()->GetHandle());
+		SaveGame(game->GetWorld().GetPlayer()->GetHandle());
 		UplinkAbort("TODO: implement App::Update()");
 	}
 
@@ -211,16 +247,105 @@ DArray<char*>* App::ListExistingGames()
 
 void App::LoadGame()
 {
-	UplinkAssert(_nextLoadGame != nullptr);
-	LoadGame(_nextLoadGame);
-	delete[] _nextLoadGame;
+	const auto game = _nextLoadGame;
 	_nextLoadGame = nullptr;
+
+	UplinkAssert(game != nullptr);
+	LoadGame(game);
+	delete[] game;
 }
 
 void App::LoadGame(const char* name)
 {
-	(void)name;
-	UplinkAbort("TODO: implement App::LoadGame(const char*)");
+	UplinkAssert(game != nullptr);
+
+	char filePath[0x100];
+	UplinkSnprintf(filePath, 0x100, "%s%s.usr", app->UsersPath, name);
+
+	if (RsFileEncrypted(filePath) == 0)
+	{
+		char tempFileName[0x100];
+		UplinkSnprintf(tempFileName, 0x100, "%s%s.tmp", app->UsersPath, name);
+		if (RsFileEncrypted(tempFileName))
+			strcpy(filePath, tempFileName);
+	}
+
+	CopyGame(name, filePath);
+
+	printf("Loading profile from %s...", filePath);
+
+	const auto file = RsFileOpen(filePath, "rb");
+	if (file == nullptr)
+	{
+		EmptyDirectory(app->UsersTempPath);
+		puts("failed");
+		puts("App::LoadGame, Failed to load user profile");
+		GetOptions()->GetOptionValue("graphics_screenheight");
+		GetOptions()->GetOptionValue("graphics_screenwidth");
+		EclReset();
+		GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+		return;
+	}
+
+	GetMainMenu()->Remove();
+	const auto success = game->LoadGame(file);
+	RsFileClose(filePath, file);
+	if (!success)
+	{
+		EmptyDirectory(app->UsersTempPath);
+		puts("App::LoadGame, Failed to load user profile");
+		delete game;
+		game = new Game();
+		return;
+	}
+
+	puts("success");
+	if (game->GetGameSpeed() == -1)
+	{
+		game->SetGameSpeed(0);
+		app->GetOptions()->GetOptionValue("graphics_screenheight");
+		app->GetOptions()->GetOptionValue("graphics_screenwidth");
+		EclReset();
+		_mainMenu->RunScreen(MainMenuScreenCode::Obituary);
+		return;
+	}
+
+	WorldGenerator::LoadDynamics();
+
+	game->GetWorld().GetPlayer()->GetConnection().Disconnect();
+	game->GetWorld().GetPlayer()->GetConnection().Reset();
+
+	struct Player* rax_18 = game->GetWorld().GetPlayer();
+	struct Player* rax_40;
+	if (rax_18->GetGateway().GetExchangeGatewayDef() == nullptr)
+	{
+		rax_40 = game->GetWorld().GetPlayer();
+		if (rax_40->GetGateway().GetNuked())
+		{
+			game->GetWorld().GetPlayer()->GetGateway().SetNuked(false);
+			game->GetWorld().GetPlayer()->GetConnection().AddVLocation("234.773.0.666");
+			game->GetWorld().GetPlayer()->GetConnection().Connect();
+			game->GetInterface().GetLocalInterface().Remove();
+			app->GetOptions()->GetOptionValue("graphics_screenheight");
+			app->GetOptions()->GetOptionValue("graphics_screenwidth");
+			EclReset();
+		}
+		else
+		{
+			game->GetInterface().GetRemoteInterface().RunNewLocation();
+			game->GetInterface().GetRemoteInterface().RunScreen(3, nullptr);
+		}
+	}
+	else
+	{
+		game->GetWorld().GetPlayer()->GetGateway().ExchangeGatewayComplete();
+	}
+
+	if (rax_18->GetGateway().GetExchangeGatewayDef() != nullptr || rax_40->GetGateway().GetNuked())
+	{
+		game->GetInterface().GetRemoteInterface().RunNewLocation();
+		game->GetInterface().GetRemoteInterface().RunScreen(10, nullptr);
+	}
 }
 
 void App::RegisterPhoneDialler(PhoneDialler* newPhoneDiallerScreen)

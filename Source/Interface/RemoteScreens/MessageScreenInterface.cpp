@@ -78,7 +78,7 @@ bool MessageScreenInterface::ReturnKeyPressed()
 	if (GetComputerScreen()->GetNextPage() != -1)
 	{
 		struct Computer* computer = GetComputerScreen()->GetComputer();
-		game->GetInterface()->GetRemoteInterface()->RunScreen(GetComputerScreen()->GetNextPage(), computer);
+		game->GetInterface().GetRemoteInterface().RunScreen(GetComputerScreen()->GetNextPage(), computer);
 	}
 	return true;
 }
@@ -95,14 +95,14 @@ void MessageScreenInterface::Click(Button* button)
 	char ip[0x18] = {0};
 	sscanf(button->Name, "messagescreen_click %d %s", &screenIndex, ip);
 
-	const auto vlocation = game->GetWorld()->GetVLocation(ip);
+	const auto vlocation = game->GetWorld().GetVLocation(ip);
 
 	Computer* computer = nullptr;
 	if (vlocation != nullptr)
 		computer = vlocation->GetComputer();
 
 	if (screenIndex != -1)
-		game->GetInterface()->GetRemoteInterface()->RunScreen(screenIndex, computer);
+		game->GetInterface().GetRemoteInterface().RunScreen(screenIndex, computer);
 }
 
 void MessageScreenInterface::MailMeClick(Button* button)

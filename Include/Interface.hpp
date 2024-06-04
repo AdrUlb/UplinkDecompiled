@@ -21,7 +21,7 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	void Create();
-	LocalInterface* GetLocalInterface();
-	RemoteInterface* GetRemoteInterface();
-	TaskManager* GetTaskManager();
+	LocalInterface& GetLocalInterface();
+	RemoteInterface& GetRemoteInterface();
+	TaskManager& GetTaskManager();
 };

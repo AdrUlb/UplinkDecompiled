@@ -40,6 +40,7 @@ public:
 	const char* GetLocalHostIp();
 	VLocation* GetLocalHost();
 	VLocation* GetRemoteHost();
+	LList<Message*>& GetMessages();
 	Connection& GetConnection();
 	void SetName(const char* name);
 	void SetAge(int age);
@@ -66,6 +67,7 @@ public:
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 	LList<char*>& GetLinks();
+	LList<Mission*>& GetMissions();
 	const char* GetHandle();
 	void SetHandle(const char* handle);
 	void GiveMessage(Message* message) override;

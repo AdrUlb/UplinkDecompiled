@@ -163,62 +163,62 @@ void NotificationEvent::ScheduleStartingEvents()
 {
 	const auto notif1 = new NotificationEvent();
 	notif1->SetTYPE(NotificationType::GrowCompanies);
-	notif1->SetRunDate(&game->GetWorld()->GetCurrentDate());
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif1);
+	notif1->SetRunDate(&game->GetWorld().GetCurrentDate());
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif1);
 
 	const auto notif2 = new NotificationEvent();
 	notif2->SetTYPE(NotificationType::GenerateNewMissions);
-	notif2->SetRunDate(&game->GetWorld()->GetCurrentDate());
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif2);
+	notif2->SetRunDate(&game->GetWorld().GetCurrentDate());
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif2);
 
 	const auto notif3 = new NotificationEvent();
 	notif3->SetTYPE(NotificationType::CheckForSecurityBreaches);
-	notif3->SetRunDate(&game->GetWorld()->GetCurrentDate());
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif3);
+	notif3->SetRunDate(&game->GetWorld().GetCurrentDate());
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif3);
 
 	const auto notif4 = new NotificationEvent();
 	notif4->SetTYPE(NotificationType::CheckMissionDueDates);
-	notif4->SetRunDate(&game->GetWorld()->GetCurrentDate());
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif4);
+	notif4->SetRunDate(&game->GetWorld().GetCurrentDate());
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif4);
 
 	Date date;
 
-	date.SetDate(&game->GetWorld()->GetCurrentDate());
+	date.SetDate(&game->GetWorld().GetCurrentDate());
 	date.AdvanceMonth(1);
 	date.SetDate(1, 1, 1, 1, date.GetMonth(), date.GetYear());
 	const auto notif5 = new NotificationEvent();
 	notif5->SetTYPE(NotificationType::CheckRecentHackCount);
 	notif5->SetRunDate(&date);
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif5);
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif5);
 
 	const auto notif6 = new NotificationEvent();
 	notif6->SetTYPE(NotificationType::GiveMissionToNpc);
-	notif6->SetRunDate(&game->GetWorld()->GetCurrentDate());
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif6);
+	notif6->SetRunDate(&game->GetWorld().GetCurrentDate());
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif6);
 
-	date.SetDate(&game->GetWorld()->GetCurrentDate());
+	date.SetDate(&game->GetWorld().GetCurrentDate());
 	date.AdvanceMonth(1);
 	date.SetDate(1, 1, 1, 1, date.GetMonth(), date.GetYear());
 	const auto notif7 = new NotificationEvent();
 	notif7->SetTYPE(NotificationType::PayUplinkMonthlyFee);
 	notif7->SetRunDate(&date);
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif7);
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif7);
 
 	const auto notif8 = new NotificationEvent();
 	notif8->SetTYPE(NotificationType::ExpireOldStuff);
-	notif8->SetRunDate(&game->GetWorld()->GetCurrentDate());
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif8);
+	notif8->SetRunDate(&game->GetWorld().GetCurrentDate());
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif8);
 
 	const auto notif9 = new NotificationEvent();
 	notif9->SetTYPE(NotificationType::AddInterestToLoans);
-	notif9->SetRunDate(&game->GetWorld()->GetCurrentDate());
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(notif9);
+	notif9->SetRunDate(&game->GetWorld().GetCurrentDate());
+	game->GetWorld().GetEventScheduler().ScheduleEvent(notif9);
 }
 
 void NotificationEvent::ApplyMonthlyGrowth()
 {
 
-	const auto companies = game->GetWorld()->GetCompanies().ConvertToDArray();
+	const auto companies = game->GetWorld().GetCompanies().ConvertToDArray();
 	for (auto i = 0; i < companies->Size(); i++)
 	{
 		if (!companies->ValidIndex(i))
@@ -242,7 +242,7 @@ void NotificationEvent::ApplyMonthlyGrowth()
 	const auto event = new NotificationEvent();
 	event->SetTYPE(NotificationType::GrowCompanies);
 	event->SetRunDate(&date);
-	game->GetWorld()->GetEventScheduler().ScheduleEvent(event);
+	game->GetWorld().GetEventScheduler().ScheduleEvent(event);
 }
 
 void NotificationEvent::GenerateNewMissions()

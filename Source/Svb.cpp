@@ -12,3 +12,9 @@ void SvbReset()
 	puts("TODO: implement SvbReset()");
 }
 
+void SvbCreateInterface(int x, int y)
+{
+	(void)x;
+	(void)y;
+	puts("TODO: implement SvbCreateInterface()");
+}

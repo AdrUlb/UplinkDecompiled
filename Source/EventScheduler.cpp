@@ -58,7 +58,7 @@ bool EventScheduler::UpdateProcessEvents()
 			if (event == nullptr)
 				break;
 
-			if (!game->GetWorld()->GetCurrentDate().After(&event->GetRunDate()))
+			if (!game->GetWorld().GetCurrentDate().After(&event->GetRunDate()))
 				break;
 
 			runEvents.PutData(event);

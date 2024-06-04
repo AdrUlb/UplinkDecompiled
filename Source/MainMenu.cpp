@@ -3,6 +3,7 @@
 #include <Eclipse.hpp>
 #include <Globals.hpp>
 #include <MainMenuScreens/FirstTimeLoadingInterface.hpp>
+#include <MainMenuScreens/LoadingInterface.hpp>
 #include <MainMenuScreens/LoginInterface.hpp>
 #include <MainMenuScreens/OptionsInterface.hpp>
 #include <Opengl.hpp>
@@ -45,6 +46,9 @@ void MainMenu::RunScreen(MainMenuScreenCode code)
 	{
 		case MainMenuScreenCode::Login:
 			_screen = new LoginInterface();
+			break;
+		case MainMenuScreenCode::Loading:
+			_screen = new LoadingInterface();
 			break;
 		case MainMenuScreenCode::FirstTimeLoading:
 			_screen = new FirstTimeLoadingInterface();

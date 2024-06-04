@@ -186,14 +186,14 @@ void DialogScreenInterface::NextPageClick(Button* button)
 	sscanf(button->Name, "%s %d %d %s", widgetName, &data1, &data2, ip);
 
 	const auto screenIndex = data1;
-	struct VLocation* vlocation = game->GetWorld()->GetVLocation(ip);
+	struct VLocation* vlocation = game->GetWorld().GetVLocation(ip);
 
 	struct Computer* computer = nullptr;
 	if (vlocation != 0)
 		computer = vlocation->GetComputer();
 
 	if (screenIndex != -1)
-		game->GetInterface()->GetRemoteInterface()->RunScreen(screenIndex, computer);
+		game->GetInterface().GetRemoteInterface().RunScreen(screenIndex, computer);
 }
 
 void DialogScreenInterface::PasswordBoxDraw(Button* button, bool highlighted, bool clicked)
@@ -239,12 +239,12 @@ void DialogScreenInterface::ScriptButtonClick(Button* button)
 	if (script != -1)
 		ScriptLibrary::RunScript(script);
 
-	const auto vlocation = game->GetWorld()->GetVLocation(ip);
+	const auto vlocation = game->GetWorld().GetVLocation(ip);
 
 	Computer* computer = nullptr;
 	if (vlocation != nullptr)
 		computer = vlocation->GetComputer();
 
 	if (screenIndex != -1)
-		game->GetInterface()->GetRemoteInterface()->RunScreen(screenIndex, computer);
+		game->GetInterface().GetRemoteInterface().RunScreen(screenIndex, computer);
 }

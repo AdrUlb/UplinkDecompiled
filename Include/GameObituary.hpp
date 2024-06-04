@@ -4,8 +4,8 @@
 
 class GameObituary : UplinkObject
 {
-	const char* _gameOverReason;
-	char _name[0x80];
+	char* _gameOverReason = nullptr;
+	char _name[0x80] = " ";
 	int _money;
 	int _uplinkRating;
 	int _neuromancerRating;
@@ -18,11 +18,9 @@ class GameObituary : UplinkObject
 	bool _warezGameOver;
 
 public:
-	GameObituary();
 	~GameObituary() override;
 	bool Load(FILE* file) override;
 	void Save(FILE* file) override;
 	void Print() override;
-	void Update() override;
 	const char* GetID() override;
 };

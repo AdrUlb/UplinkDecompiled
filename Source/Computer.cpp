@@ -141,13 +141,13 @@ void Computer::SetCompanyName(const char* companyName)
 	if (companyName == nullptr)
 		return;
 
-	UplinkAssert(game->GetWorld()->GetCompany(companyName) != nullptr);
+	UplinkAssert(game->GetWorld().GetCompany(companyName) != nullptr);
 	UplinkStrncpy(_companyName, companyName, 0x40);
 }
 
 void Computer::SetIP(const char* ip)
 {
-	UplinkAssert(game->GetWorld()->GetVLocation(ip) != nullptr);
+	UplinkAssert(game->GetWorld().GetVLocation(ip) != nullptr);
 	UplinkStrncpy(_ip, ip, 0x18);
 }
 

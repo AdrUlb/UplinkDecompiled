@@ -1,307 +1,9 @@
 #include <Interface/LocalInterface.hpp>
 
-#include <Eclipse.hpp>
-#include <Globals.hpp>
-#include <Opengl.hpp>
+#include <RedShirt.hpp>
+#include <Sg.hpp>
+#include <Svb.hpp>
 #include <Util.hpp>
-#include <cstring>
-
-void GatewayInterface::Update()
-{
-	puts("TODO: implement GatewayInterface::Update()");
-}
-
-void GatewayInterface::Create()
-{
-	puts("TODO: implement GatewayInterface::Create()");
-}
-
-void GatewayInterface::Remove()
-{
-	puts("TODO: implement GatewayInterface::Remove()");
-}
-
-bool GatewayInterface::IsVisible()
-{
-	puts("TODO: implement GatewayInterface::IsVisible()");
-	return false;
-}
-
-int GatewayInterface::ScreenID()
-{
-	return 15;
-}
-
-void SWInterface::Update()
-{
-	puts("TODO: implement SWInterface::Update()");
-}
-
-void SWInterface::Create()
-{
-	puts("TODO: implement SWInterface::Create()");
-}
-
-void SWInterface::Remove()
-{
-	puts("TODO: implement SWInterface::Remove()");
-}
-
-bool SWInterface::IsVisible()
-{
-	puts("TODO: implement SWInterface::IsVisible()");
-	return false;
-}
-
-bool SWInterface::IsVisibleSoftwareMenu()
-{
-	return EclGetButton("hud_swmenu 1") != nullptr;
-}
-
-void SWInterface::ToggleSoftwareMenu()
-{
-	puts("TODO: implement SWInterface::ToggleSoftwareMenu()");
-}
-
-WorldMapInterface::~WorldMapInterface()
-{
-	if (layout != nullptr)
-		delete layout;
-}
-
-bool WorldMapInterface::Load(FILE* file)
-{
-	if (strcmp(game->GetLoadedSavefileVer(), "SAV57") >= 0)
-	{
-		if (!LoadLList(&this->savedConnection, file))
-			return false;
-	}
-
-	return true;
-}
-
-void WorldMapInterface::Save(FILE* file)
-{
-	SaveLList(&savedConnection, file);
-}
-
-void WorldMapInterface::Print()
-{
-	PrintLList(&savedConnection);
-}
-
-void WorldMapInterface::Update()
-{
-	puts("TODO: implement WorldMapInterface::Update()");
-}
-
-const char* WorldMapInterface::GetID()
-{
-	return "WRLDMAPI";
-}
-
-void WorldMapInterface::Create()
-{
-	puts("TODO: implement WorldMapInterface::Create()");
-}
-
-void WorldMapInterface::Remove()
-{
-	puts("TODO: implement WorldMapInterface::Remove()");
-}
-
-bool WorldMapInterface::IsVisible()
-{
-	puts("TODO: implement WorldMapInterface::IsVisible()");
-	return false;
-}
-
-int WorldMapInterface::ScreenID()
-{
-	return 4;
-}
-
-int WorldMapInterface::IsVisibleWorldMapInterface()
-{
-	if (EclGetButton("worldmap_smallmap") != nullptr)
-		return 1;
-
-	if (EclGetButton("worldmap_largemap") != nullptr)
-		return 2;
-
-	return 0;
-}
-
-void WorldMapInterface::CloseWorldMapInterface_Large()
-{
-	if (WorldMapInterface::IsVisibleWorldMapInterface() != 2)
-		return;
-
-	WorldMapInterface::CreateWorldMapInterface(1);
-}
-
-void WorldMapInterface::CreateWorldMapInterface_Small()
-{
-	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	app->GetOptions()->GetOptionValue("graphics_screenheight");
-	auto width = screenWidth * 0.29;
-	auto height = width / 188.0 * 100.0;
-	EclRegisterButton(screenWidth - width - 3, 3, width, height, "", "Global Communications", "worldmap_smallmap");
-	if (game->GetWorldMapType() == 1)
-		button_assignbitmap("worldmap_smallmap", "worldmapsmall_defcon.tif");
-	else
-		button_assignbitmap("worldmap_smallmap", "worldmapsmall.tif");
-
-	EclGetButton("worldmap_smallmap")->ImageNormal->Scale(width, height);
-	// EclRegisterButtonCallbacks("worldmap_smallmap", DrawWorldMapSmall, FullScreenClick, button_click, button_highlight);
-	EclRegisterButton(screenWidth - width - 3, height + 4, width, 15, "", "", "worldmap_connect");
-	// EclRegisterButtonCallbacks("worldmap_connect", ConnectDraw, ConnectClick, ConnectMouseDown, ConnectMouseMove);
-	EclRegisterButton(screenWidth - 3, 0, 3, 3, "", "Global Communications", "worldmap_toprightclick");
-	// EclRegisterButtonCallbacks("worldmap_toprightclick", nullptr, FullScreenClick, button_click, button_highlight);
-
-	puts("TODO: implement WorldMapInterface::CreateWorldMapInterface_Small()");
-}
-
-void WorldMapInterface::CreateWorldMapInterface_Large()
-{
-	puts("TODO: implement WorldMapInterface::CreateWorldMapInterface_Large()");
-}
-
-void WorldMapInterface::CreateWorldMapInterface(int type)
-{
-	if (IsVisibleWorldMapInterface() != type)
-	{
-		RemoveWorldMapInterface();
-
-		if (type == 1)
-		{
-			CreateWorldMapInterface_Small();
-			return;
-		}
-
-		if (type == 2)
-		{
-			CreateWorldMapInterface_Large();
-			return;
-		}
-	}
-}
-
-void WorldMapInterface::RemoveTempConnectionButton()
-{
-
-	for (auto i = 0; true; i++)
-	{
-		char buf[0x80];
-		UplinkSnprintf(buf, 0x80, "worldmaptempcon %d", i);
-
-		if (EclGetButton(buf) == nullptr)
-			break;
-
-		EclRemoveButton(buf);
-	}
-}
-
-void WorldMapInterface::RemoveWorldMapInterface()
-{
-	auto visibleInterface = WorldMapInterface::IsVisibleWorldMapInterface();
-
-	if (visibleInterface == 0)
-		return;
-
-	if (visibleInterface == 1)
-	{
-		EclRemoveButton("worldmap_smallmap");
-		EclRemoveButton("worldmap_connect");
-		EclRemoveButton("worldmap_toprightclick");
-		return;
-	}
-
-	if (visibleInterface == 2)
-	{
-		EclRemoveButton("worldmap_largemap");
-		EclRemoveButton("worldmap_saveconnection");
-		EclRemoveButton("worldmap_loadconnection");
-		EclRemoveButton("worldmap_zoomout");
-		EclRemoveButton("worldmap_zoom");
-		EclRemoveButton("worldmap_zoomin");
-		EclRemoveButton("worldmap_connect");
-		EclRemoveButton("worldmap_cancel");
-		EclRemoveButton("worldmap_close");
-		EclRemoveButton("worldmap_scrollleft");
-		EclRemoveButton("worldmap_scrollright");
-		EclRemoveButton("worldmap_scrollup");
-		EclRemoveButton("worldmap_scrolldown");
-		const auto links = &game->GetWorld()->GetPlayer()->GetLinks();
-		;
-
-		for (auto i = 0; i < links->Size(); i++)
-		{
-			char* ip = links->GetData(i);
-			char str[0x80];
-			UplinkSnprintf(str, 0x80, "worldmap %s", game->GetWorld()->GetVLocation(ip)->GetIp());
-			EclRemoveButton(str);
-		}
-		RemoveTempConnectionButton();
-		EclRemoveButton("worldmap_texthelp");
-		EclRemoveButton("worldmap 127.0.0.1");
-	}
-}
-
-HUDInterface::~HUDInterface()
-{
-	if (highlightedToolbarButton != nullptr)
-		delete[] highlightedToolbarButton;
-
-	if (image != nullptr)
-		delete image;
-}
-
-bool HUDInterface::Load(FILE* file)
-{
-	if (strcmp(game->GetLoadedSavefileVer(), "SAV57") >= 0)
-	{
-		if (!worldMapInterface.Load(file))
-			return false;
-	}
-
-	return true;
-}
-
-void HUDInterface::Save(FILE* file)
-{
-	worldMapInterface.Save(file);
-}
-
-void HUDInterface::Update()
-{
-	static auto called = false;
-	if (!called)
-	{
-		puts("TODO: HUDInterface::Update()");
-		called = true;
-	}
-}
-
-const char* HUDInterface::GetID()
-{
-	return "HUD_INT";
-}
-
-void HUDInterface::Create()
-{
-	puts("TODO: implement HUDInterface::Create()");
-}
-
-bool HUDInterface::IsVisible()
-{
-	return EclGetButton("hud_software") != nullptr;
-}
-
-int HUDInterface::ScreenID()
-{
-	return 1;
-}
 
 LocalInterface::~LocalInterface()
 {
@@ -386,9 +88,121 @@ bool LocalInterface::VerifyScreen(int screenCode, int screenIndex)
 
 void LocalInterface::RunScreen(int code, int index)
 {
-	(void)code;
-	(void)index;
-	puts("TODO: implement Interface::RunScreen()");
+	if (_screen != nullptr)
+	{
+		_screen->Remove();
+		if (_screen != 0)
+			delete _screen;
+		_screen = nullptr;
+	}
+
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+		WorldMapInterface::CloseWorldMapInterface_Large();
+
+	_screenCode = code;
+	_screenIndex = index;
+
+	UplinkAssert(_hud != nullptr);
+
+	HUDInterface::MoveSelecter(_screenCode, _screenIndex);
+
+	struct LocalInterfaceScreen* rbx_1;
+
+	switch (_screenCode)
+	{
+		case 0:
+			SgPlaySound(RsArchiveFileOpen("sounds/close.wav"), "sounds/close.wav");
+			break;
+		/*case 3:
+			_screen = new HWInterface();
+			_screen->Create();
+			break;
+		case 6:
+		{
+			const auto screen = new MemoryInterface();
+			_screen = screen;
+			_screen->Create();
+			break;
+		}
+		case 7:
+			_screen = new StatusInterface();
+			_screen->Create();
+			break;
+		case 8:
+		{
+			if (!game->GetWorld().GetPlayer()->GetMessages().ValidIndex(_screenIndex))
+			{
+				_screenCode = 0;
+				break;
+			}
+			const auto screen = new EmailInterface();
+			_screen = screen;
+			screen->SetMessage(_screenIndex);
+			_screen->Create();
+			break;
+		}
+		case 9:
+		{
+			const auto screen = new FinanceInterface();
+			_screen = screen;
+			_screen->Create();
+		}
+		case 10:
+		{
+			if (!game->GetWorld().GetPlayer()->GetMissions().ValidIndex(_screenIndex))
+			{
+				_screenCode = 0;
+				break;
+			}
+			const auto screen = new MissionInterface();
+			_screen = screen;
+			screen->SetMission(_screenIndex);
+			_screen->Create();
+			break;
+		}
+		case 11:
+			_screen = new SendMailInterface();
+			_screen->Create();
+			break;
+		case 12:
+			_screen = new CheatInterface();
+			_screen->Create();
+			break;
+		case 13:
+			_screen = new EventQueueInterface();
+			_screen->Create();
+			break;
+		case 14:
+			_screen = new AnalyserInterface();
+			_screen->Create();
+			break;
+		case 16:
+			_screen = new IRCInterface();
+			_screen->Create();
+			break;
+		case 17:
+			_screen = new LanInterface();
+			_screen->Create();*/
+		case 1:
+			_screen->Create();
+			break;
+		case 2:
+			_screen->Create();
+			break;
+		case 4:
+			_screen->Create();
+			break;
+		case 5:
+			_screen->Create();
+			break;
+		case 15:
+			_screen->Create();
+			break;
+		default:
+			UplinkAbort("Tried to create a local screen with unknown SCREENCODE %d, code");
+	}
+
+	SvbShowAllTasks();
 }
 
 int LocalInterface::InScreen()
@@ -417,6 +231,22 @@ void LocalInterface::Create()
 {
 	GetHUD()->Create();
 	RunScreen(_screenCode, _screenIndex);
+}
+
+void LocalInterface::Remove()
+{
+	if (!IsVisible())
+		return;
+
+	if (_screen == nullptr)
+		return;
+
+	_screen->Remove();
+
+	if (_screen != 0)
+		delete _screen;
+
+	_screen = nullptr;
 }
 
 void LocalInterface::Reset()

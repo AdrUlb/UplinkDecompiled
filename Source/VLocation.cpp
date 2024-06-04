@@ -109,7 +109,7 @@ void VLocation::SetListed(bool listed)
 
 Computer* VLocation::GetComputer()
 {
-	auto tree = &game->GetWorld()->GetComputers();
+	auto tree = &game->GetWorld().GetComputers();
 
 	while (true)
 	{

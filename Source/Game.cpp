@@ -1,3 +1,4 @@
+#include <Eclipse.hpp>
 #include <Game.hpp>
 #include <Globals.hpp>
 #include <NotificationEvent.hpp>
@@ -53,14 +54,104 @@ Game::~Game()
 
 bool Game::Load(FILE* file)
 {
-	(void)file;
-	UplinkAbort("TODO: implement Game::Load(FILE*)");
+	if (_interface != nullptr)
+		delete _interface;
+	if (_view != nullptr)
+		delete _view;
+	if (_world != nullptr)
+		delete _world;
+
+	if (_obituary != nullptr)
+		delete _obituary;
+
+	_obituary = nullptr;
+
+	_interface = new Interface();
+	_view = new View();
+	_world = new World();
+
+	WorldGenerator::LoadDynamicsGatewayDefs();
+
+	if (strcmp(game->GetLoadedSavefileVer(), "SAV62") >= 0)
+	{
+		if (!FileReadData(&_worldMapType, 4, 1, file))
+			return false;
+	}
+	else
+		_worldMapType = 0;
+
+	if (!FileReadData(&_speed, 4, 1, file))
+		return false;
+
+	if (_speed == -1)
+	{
+		_obituary = new GameObituary();
+		if (!_obituary->Load(file))
+			return false;
+	}
+	else
+	{
+		if (!GetWorld().Load(file))
+			return false;
+
+		if (!GetInterface().Load(file))
+			return false;
+
+		if (!GetView().Load(file))
+			return false;
+	}
+
+	if (strcmp(game->GetLoadedSavefileVer(), "SAV58") >= 0)
+	{
+		if (!LoadDynamicString(_createdSaveFileVer, file))
+			return false;
+
+		if (!FileReadData(&_field_48, 4, 1, file))
+			return false;
+
+		if (!LoadDynamicString(_winCodeDesc, file))
+			return false;
+
+		if (!LoadDynamicString(_field_58, file))
+			return false;
+
+		if (!FileReadData(&_field_60, 4, 1, file))
+			return false;
+	}
+
+	return true;
 }
 
 void Game::Save(FILE* file)
 {
-	(void)file;
-	UplinkAbort("TODO: implement Game::Save(FILE*)");
+	if (_speed == 0)
+		return;
+
+	UplinkAssert(_interface != 0);
+	UplinkAssert(_view != 0);
+	UplinkAssert(_world != 0);
+
+	fwrite("SAV62", 6, 1, file);
+	fwrite(&_worldMapType, 4, 1, file);
+	fwrite(&_speed, 4, 1, file);
+
+	if (_speed != -1)
+	{
+		game->GetWorld().Save(file);
+		game->GetInterface().Save(file);
+		game->GetView().Save(file);
+	}
+	else
+	{
+		UplinkAssert(_obituary != nullptr);
+		_obituary->Save(file);
+	}
+
+	SaveDynamicString(_createdSaveFileVer, file);
+	fwrite(&_field_48, 4, 1, file);
+	SaveDynamicString(_winCodeDesc, file);
+	SaveDynamicString(_field_58, file);
+	fwrite(&_field_60, 4, 1, file);
 }
 
 void Game::Print()
@@ -72,14 +163,14 @@ void Game::Update()
 {
 	if (_speed > 0)
 	{
-		GetWorld()->Update();
-		GetView()->Update();
-		GetInterface()->Update();
+		GetWorld().Update();
+		GetView().Update();
+		GetInterface().Update();
 	}
 
 	if (time(nullptr) > _lastAutosaveTime + 60)
 	{
-		const auto player = GetWorld()->GetPlayer();
+		const auto player = GetWorld().GetPlayer();
 		app->SaveGame(player->GetHandle());
 		_lastAutosaveTime = time(nullptr);
 	}
@@ -90,27 +181,45 @@ const char* Game::GetID()
 	return "GAME";
 }
 
-int Game::GameSpeed()
+Interface& Game::GetInterface()
+{
+	UplinkAssert(_interface != nullptr);
+	return *_interface;
+}
+
+View& Game::GetView()
+{
+	UplinkAssert(_view != nullptr);
+	return *_view;
+}
+
+World& Game::GetWorld()
+{
+	UplinkAssert(_world != nullptr);
+	return *_world;
+}
+
+int Game::GetGameSpeed()
 {
 	return _speed;
 }
 
-World* Game::GetWorld()
+int Game::GetWorldMapType()
 {
-	UplinkAssert(_world != nullptr);
-	return _world;
+	return _worldMapType;
 }
 
-View* Game::GetView()
+const char* Game::GetLoadedSavefileVer()
 {
-	UplinkAssert(_view != nullptr);
-	return _view;
+	if (_loadedSaveFileVer == nullptr)
+		return latestSaveVersion;
+
+	return _loadedSaveFileVer;
 }
 
-Interface* Game::GetInterface()
+void Game::SetGameSpeed(int speed)
 {
-	UplinkAssert(_interface != nullptr);
-	return _interface;
+	_speed = speed;
 }
 
 bool Game::IsRunning()
@@ -159,18 +268,18 @@ void Game::NewGame()
 	_view->Initialise();
 
 	_interface = new Interface();
-	GetInterface()->Create();
+	GetInterface().Create();
 	_speed = 1;
 
 	Date date;
 	date.SetDate(0, 0, 0, 24, 3, 2010);
 
-	for (bool keepGen = true; keepGen; keepGen = Game::GetWorld()->GetCurrentDate().Before(&date))
+	for (bool keepGen = true; keepGen; keepGen = GetWorld().GetCurrentDate().Before(&date))
 	{
-		GetWorld()->Update();
-		GetWorld()->GetCurrentDate().AdvanceDay(1);
-		GetWorld()->GetCurrentDate().AdvanceHour(NumberGenerator::RandomNumber(12) - 6);
-		GetWorld()->GetCurrentDate().AdvanceMinute(NumberGenerator::RandomNumber(60));
+		GetWorld().Update();
+		GetWorld().GetCurrentDate().AdvanceDay(1);
+		GetWorld().GetCurrentDate().AdvanceHour(NumberGenerator::RandomNumber(12) - 6);
+		GetWorld().GetCurrentDate().AdvanceMinute(NumberGenerator::RandomNumber(60));
 
 		if (NumberGenerator::RandomNumber(5) == 0)
 			WorldGenerator::GenerateSimpleStartingMissionA();
@@ -180,17 +289,53 @@ void Game::NewGame()
 	}
 }
 
-const char* Game::GetLoadedSavefileVer()
+bool Game::LoadGame(FILE* file)
 {
-	if (_loadedSaveFileVer == nullptr)
-		return latestSaveVersion;
+	srand(time(nullptr));
 
-	return _loadedSaveFileVer;
-}
+	if (_loadedSaveFileVer != nullptr)
+		delete[] _loadedSaveFileVer;
 
-int Game::GetWorldMapType()
-{
-	return _worldMapType;
+	_loadedSaveFileVer = new char[7];
+	if (FileReadData(_loadedSaveFileVer, 6, 1, file))
+	{
+		_loadedSaveFileVer[6] = 0;
+	}
+	else
+	{
+		_loadedSaveFileVer[0] = 0;
+	}
+
+	if (_loadedSaveFileVer[0] == 0 || strcmp(_loadedSaveFileVer, minSaveVersion) < 0 || strcmp(_loadedSaveFileVer, latestSaveVersion) > 0)
+	{
+		EclReset();
+		app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+		char str[0x100];
+		UplinkSnprintf(str, 0x100,
+					   "Failed to load user profile\n"
+					   "The save file is not compatible\n"
+					   "\n"
+					   "Save file is Version [%s]\n"
+					   "Required Version is between [%s] and [%s]",
+					   _loadedSaveFileVer, minSaveVersion, latestSaveVersion);
+		create_msgbox("Error", str, nullptr);
+		return false;
+	}
+
+	if (!Load(file))
+	{
+		EclReset();
+		app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+		create_msgbox("Error",
+					  "Failed to load user profile\n"
+					  "The save file is either\n"
+					  "not compatible or\n"
+					  "corrupted",
+					  nullptr);
+		return false;
+	}
+
+	return true;
 }
 
 void Game::ExitGame()

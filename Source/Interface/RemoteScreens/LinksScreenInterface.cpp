@@ -175,7 +175,7 @@ void LinksScreenInterface::Create(ComputerScreen* screen)
 	if (closeClickedImage != nullptr)
 		delete closeClickedImage;
 
-	const auto vlocations = game->GetWorld()->GetVLocations().ConvertToDArray();
+	const auto vlocations = game->GetWorld().GetVLocations().ConvertToDArray();
 	if (GetComputerScreen()->GetScreenType() == 1)
 	{
 		LList<const char*> displayedLinks;
@@ -188,7 +188,7 @@ void LinksScreenInterface::Create(ComputerScreen* screen)
 	}
 	else if (GetComputerScreen()->GetScreenType() == 2)
 	{
-		SetFullList(&game->GetWorld()->GetPlayer()->GetLinks());
+		SetFullList(&game->GetWorld().GetPlayer()->GetLinks());
 	}
 	else if (GetComputerScreen()->GetScreenType() == 3)
 	{
@@ -324,7 +324,13 @@ void LinksScreenInterface::LinkDraw(Button* button, bool highlighted, bool click
 	(void)button;
 	(void)highlighted;
 	(void)clicked;
-	puts("TODO: implement LinksScreenInterface::LinkDraw()");
+	
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement LinksScreenInterface::LinkDraw()");
+		called = true;
+	}
 }
 
 void LinksScreenInterface::DeleteLinkDraw(Button* button, bool highlighted, bool clicked)
@@ -332,7 +338,13 @@ void LinksScreenInterface::DeleteLinkDraw(Button* button, bool highlighted, bool
 	(void)button;
 	(void)highlighted;
 	(void)clicked;
-	puts("TODO: implement LinksScreenInterface::DeleteLinkDraw()");
+	
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement LinksScreenInterface::DeleteLinkDraw()");
+		called = true;
+	}
 }
 
 void LinksScreenInterface::ShowLinkDraw(Button* button, bool highlighted, bool clicked)
@@ -340,7 +352,13 @@ void LinksScreenInterface::ShowLinkDraw(Button* button, bool highlighted, bool c
 	(void)button;
 	(void)highlighted;
 	(void)clicked;
-	puts("TODO: implement LinksScreenInterface::ShowLinkDraw()");
+
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement LinksScreenInterface::ShowLinkDraw()");
+		called = true;
+	}
 }
 
 void LinksScreenInterface::AddLinkDraw(Button* button, bool highlighted, bool clicked)

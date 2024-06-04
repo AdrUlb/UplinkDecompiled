@@ -35,7 +35,7 @@ void CodeCardScreenInterface::Create(ComputerScreen* screen)
 	if (app->GetCheckCodeCard() || GetComputerScreen()->GetNextPage() == -1)
 		UplinkAbort("Code card not implemented.");
 
-	game->GetInterface()->GetRemoteInterface()->RunScreen(GetComputerScreen()->GetNextPage(), screen->GetComputer());
+	game->GetInterface().GetRemoteInterface().RunScreen(GetComputerScreen()->GetNextPage(), screen->GetComputer());
 }
 
 bool CodeCardScreenInterface::ReturnKeyPressed()

@@ -160,9 +160,9 @@ void NearestGatewayScreenInterface::ClickLocation(Button* button)
 	const auto locations = game->GetWorldMapType() == 1 ? PHYSICALGATEWAYLOCATIONS_DEFCON : PHYSICALGATEWAYLOCATIONS;
 	const auto& location = locations[index];
 
-	game->GetWorld()->GetPlayer()->GetLocalHost()->SetPLocation(location.X, location.Y);
+	game->GetWorld().GetPlayer()->GetLocalHost()->SetPLocation(location.X, location.Y);
 
-	const auto remoteInterfaceScreen = dynamic_cast<NearestGatewayScreenInterface*>(game->GetInterface()->GetRemoteInterface()->GetInterfaceScreen());
+	const auto remoteInterfaceScreen = dynamic_cast<NearestGatewayScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
 
 	UplinkAssert(remoteInterfaceScreen != nullptr);
 
@@ -172,5 +172,5 @@ void NearestGatewayScreenInterface::ClickLocation(Button* button)
 
 	const auto computer = computerScreen->GetComputer();
 
-	game->GetInterface()->GetRemoteInterface()->RunScreen(computerScreen->GetNextPage(), computer);
+	game->GetInterface().GetRemoteInterface().RunScreen(computerScreen->GetNextPage(), computer);
 }
