@@ -17,6 +17,13 @@ struct LanComputerSystem : UplinkObject
 	int Data2;
 	int Data3;
 	DArray<int> Spoofs;
+
+	virtual ~LanComputerSystem();
+	virtual bool Load(FILE* file);
+	virtual void Save(FILE* file);
+	virtual void Print();
+	virtual const char* GetID();
+	virtual UplinkObjectId GetOBJECTID();
 };
 
 typedef void LanComputerLink;

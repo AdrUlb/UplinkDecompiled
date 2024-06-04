@@ -1,7 +1,7 @@
 #include <Eclipse.hpp>
+#include <Events/NotificationEvent.hpp>
 #include <Game.hpp>
 #include <Globals.hpp>
-#include <NotificationEvent.hpp>
 #include <NumberGenerator.hpp>
 #include <Opengl.hpp>
 #include <RedShirt.hpp>
@@ -170,8 +170,7 @@ void Game::Update()
 
 	if (time(nullptr) > _lastAutosaveTime + 60)
 	{
-		const auto player = GetWorld().GetPlayer();
-		app->SaveGame(player->GetHandle());
+		app->SaveGame(GetWorld().GetPlayer().GetHandle());
 		_lastAutosaveTime = time(nullptr);
 	}
 }

@@ -1,4 +1,4 @@
-#include <NotificationEvent.hpp>
+#include <Events/NotificationEvent.hpp>
 
 #include <Globals.hpp>
 #include <Util.hpp>

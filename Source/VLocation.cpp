@@ -107,6 +107,11 @@ void VLocation::SetListed(bool listed)
 	_listed = listed;
 }
 
+void VLocation::SetDisplayed(bool displayed)
+{
+	_displayed = displayed;
+}
+
 Computer* VLocation::GetComputer()
 {
 	auto tree = &game->GetWorld().GetComputers();

@@ -1,6 +1,8 @@
 #include <Connection.hpp>
 
 #include <Globals.hpp>
+#include <LanMonitor.hpp>
+#include <SecurityMonitor.hpp>
 #include <Util.hpp>
 
 Connection::~Connection()
@@ -138,8 +140,10 @@ void Connection::Connect()
 
 	if (strcmp("PLAYER", _owner) == 0) // cond3
 	{
-		// SecurityMonitor::BeginAttack(); and so on
-		puts("TODO: Connection::Connect()");
+		SecurityMonitor::BeginAttack();
+		LanMonitor::BeginAttack();
+		if (strcmp(computer->GetCompanyName(), "ARC") == 0)
+			game->GetWorld().GetPlotGenerator().PlayerVisitsPlotSites();
 	}
 
 	for (auto j = 0; j < _vlocations.Size(); j++)
@@ -151,30 +155,23 @@ void Connection::Connect()
 		if (comp == 0)
 			continue;
 
-		static auto called = false;
-		if (!called)
-		{
-			puts("TODO: Connection::Connect()");
-			called = true;
-		}
-
 		const auto connectLog = new AccessLog();
 
 		const auto lastLoc = _vlocations.Size() - 1;
 
 		if (j == lastLoc)
 		{
-			connectLog->SetProperties(game->GetWorld().GetCurrentDate(), _vlocations.GetData(lastLoc - 1), _owner, 0, 2);
-			comp->GetLogBank().AddLog(connectLog, -1);
-			continue;
+			connectLog->SetProperties(game->GetWorld().GetCurrentDate(), _vlocations.GetData(j - 1), _owner, 0, 2);
 		}
-
-		if (j == 0)
-			connectLog->SetProperties(game->GetWorld().GetCurrentDate(), "LOCAL", _owner, 0, 4);
 		else
-			connectLog->SetProperties(game->GetWorld().GetCurrentDate(), _vlocations.GetData(j - 1), _owner, 0, 5);
+		{
+			if (j == 0)
+				connectLog->SetProperties(game->GetWorld().GetCurrentDate(), "LOCAL", _owner, 0, 4);
+			else
+				connectLog->SetProperties(game->GetWorld().GetCurrentDate(), _vlocations.GetData(j - 1), _owner, 0, 5);
 
-		connectLog->SetData1(_vlocations.GetData(j + 1));
+			connectLog->SetData1(_vlocations.GetData(j + 1));
+		}
 
 		comp->GetLogBank().AddLog(connectLog, -1);
 	}

@@ -44,7 +44,7 @@ public:
 	BTree<Computer*>& GetComputers();
 	DArray<char*>& GetPasswords();
 	DArray<GatewayDef*>& GetGatewayDefs();
-	Player* GetPlayer();
+	Player& GetPlayer();
 	VLocation* GetVLocation(const char* ip);
 	Computer* GetComputer(const char* name);
 	Company* GetCompany(const char* name);

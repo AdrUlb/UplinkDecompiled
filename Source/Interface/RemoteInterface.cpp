@@ -105,6 +105,11 @@ ComputerScreen* RemoteInterface::GetComputerScreen()
 	return _screen->GetComputerScreen();
 }
 
+int RemoteInterface::GetScreenIndex()
+{
+	return _screenIndex;
+}
+
 int RemoteInterface::GetSecurityLevel()
 {
 	return _securityLevel;
@@ -118,7 +123,7 @@ RemoteInterfaceScreen* RemoteInterface::GetInterfaceScreen()
 
 void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 {
-	const auto remoteComputer = game->GetWorld().GetPlayer()->GetRemoteHost()->GetComputer();
+	const auto remoteComputer = game->GetWorld().GetPlayer().GetRemoteHost()->GetComputer();
 	UplinkAssert(remoteComputer != nullptr);
 	if (computer != nullptr && computer != remoteComputer)
 	{
@@ -200,10 +205,10 @@ void RemoteInterface::RunNewLocation()
 	strncpy(_securityName, "Guest", 0x80);
 	_securityLevel = 10;
 
-	const auto vlocation = game->GetWorld().GetPlayer()->GetRemoteHost();
+	const auto vlocation = game->GetWorld().GetPlayer().GetRemoteHost();
 	if (vlocation->GetOBJECTID() == UplinkObjectId::VlocationSpecial)
 	{
-		_screenIndex = dynamic_cast<VLocationSpecial*>(game->GetWorld().GetPlayer()->GetRemoteHost())->GetScreenIndex();
+		_screenIndex = dynamic_cast<VLocationSpecial*>(game->GetWorld().GetPlayer().GetRemoteHost())->GetScreenIndex();
 	}
 	else
 	{
@@ -224,15 +229,15 @@ void RemoteInterface::RunNewLocation()
 
 	if (!GetComputerScreen()->GetComputer()->GetRunning())
 	{
-		game->GetWorld().GetPlayer()->GetConnection().Disconnect();
-		game->GetWorld().GetPlayer()->GetConnection().Reset();
+		game->GetWorld().GetPlayer().GetConnection().Disconnect();
+		game->GetWorld().GetPlayer().GetConnection().Reset();
 		game->GetInterface().GetRemoteInterface().RunNewLocation();
 		game->GetInterface().GetRemoteInterface().RunScreen(8, nullptr);
 	}
 
 	if (!GetComputerScreen()->GetComputer()->GetIsExternallyOpen())
 	{
-		const auto ghostVlocation = game->GetWorld().GetVLocation(game->GetWorld().GetPlayer()->GetConnection().GetGhost());
+		const auto ghostVlocation = game->GetWorld().GetVLocation(game->GetWorld().GetPlayer().GetConnection().GetGhost());
 		UplinkAssert(ghostVlocation != nullptr);
 
 		const auto ghostComputer = ghostVlocation->GetComputer();
@@ -240,8 +245,8 @@ void RemoteInterface::RunNewLocation()
 
 		if (strcmp(ghostComputer->GetCompanyName(), GetComputerScreen()->GetComputer()->GetCompanyName()) != 0)
 		{
-			game->GetWorld().GetPlayer()->GetConnection().Disconnect();
-			game->GetWorld().GetPlayer()->GetConnection().Reset();
+			game->GetWorld().GetPlayer().GetConnection().Disconnect();
+			game->GetWorld().GetPlayer().GetConnection().Reset();
 			game->GetInterface().GetRemoteInterface().RunNewLocation();
 			game->GetInterface().GetRemoteInterface().RunScreen(9, nullptr);
 		}

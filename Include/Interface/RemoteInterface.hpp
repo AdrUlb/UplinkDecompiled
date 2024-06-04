@@ -22,6 +22,7 @@ public:
 	bool VerifyScreen(int index);
 	bool IsVisible();
 	ComputerScreen* GetComputerScreen();
+	int GetScreenIndex();
 	int GetSecurityLevel();
 	RemoteInterfaceScreen* GetInterfaceScreen();
 	void RunScreen(int screenIndex, Computer* computer);

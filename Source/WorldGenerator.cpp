@@ -118,8 +118,8 @@ void WorldGenerator::GeneratePlayer(const char* handle)
 	player->GetConnection().Reset();
 	player->GetConnection().AddVLocation("234.773.0.666");
 	player->GetConnection().Connect();
-	/*player->GiveLink("234.773.0.666");
-	player->GiveLink("458.615.48.651");*/
+	player->GiveLink("234.773.0.666");
+	player->GiveLink("458.615.48.651");
 
 	puts("TODO: implement WorldGenerator::GeneratePlayer()");
 }
@@ -245,6 +245,132 @@ void WorldGenerator::GenerateCompanyGovernment()
 
 void WorldGenerator::GenerateGlobalCriminalDatabase()
 {
+	int x, y;
+	WorldGenerator::GenerateValidMapPos(x, y);
+	game->GetWorld().CreateVLocation("785.234.87.124", x, y);
+
+	const auto computer = new Computer();
+	computer->SetTYPE(0);
+	computer->SetName("Global Criminal Database");
+	computer->SetCompanyName("Government");
+	computer->SetIP("785.234.87.124");
+	computer->SetTraceSpeed(10);
+	computer->SetTraceAction(9);
+	computer->SetIsTargetable(0);
+	computer->GetSecurity().AddSystem(1, 1, -1);
+	computer->GetSecurity().AddSystem(4, 1, -1);
+	game->GetWorld().CreateComputer(computer);
+
+	const auto infoScreen = new MessageScreen();
+	infoScreen->SetMainTitle("Global Criminal Database");
+	infoScreen->SetSubTitle("Unauthorised Access will be punished");
+	infoScreen->SetTextMessage("This is a Government owned computer system - all attempts at\n"
+							   "illegal access will be severely punished to the full extent of the law.\n"
+							   "\n"
+							   "An Elliptic-Curve encryption cypher will be required for full system access.\n"
+							   "\n"
+							   "Valid User Accounts\n"
+							   "====================\n"
+							   "\n"
+							   "admin     - Complete system wide access\n"
+							   "readwrite  - Read/Write access to all records\n"
+							   "readonly   - Read only access to all records\n");
+	infoScreen->SetButtonMessage("Log in");
+	infoScreen->SetNextPage(1);
+	computer->AddComputerScreen(infoScreen, 0);
+
+	const auto highSecurityScreen = new HighSecurityScreen();
+	highSecurityScreen->SetMainTitle("Global Criminal Database");
+	highSecurityScreen->SetSubTitle("Authorisation required");
+	highSecurityScreen->AddSystem("UserID / password verification", 2);
+	highSecurityScreen->AddSystem("Elliptic-Curve Encryption Cypher", 3);
+	highSecurityScreen->SetNextPage(4);
+	computer->AddComputerScreen(highSecurityScreen, 1);
+
+	const auto loginScreen = new UserIDScreen();
+	loginScreen->SetMainTitle("Global Criminal Database");
+	loginScreen->SetSubTitle("Log in");
+	loginScreen->SetDifficulty(180);
+	loginScreen->SetNextPage(1);
+	computer->AddComputerScreen(loginScreen, 2);
+
+	/*const auto cypherScreen = new CypherScreen());
+	cypherScreen->SetMainTitle("Global Criminal Database");
+	cypherScreen->SetSubTitle("Enter elliptic-curve encryption cypher");
+	cypherScreen->SetDifficulty(180);
+	cypherScreen->SetNextPage(1);
+	computer->AddComputerScreen(cypherScreen, 3);*/
+
+	const auto menuScreen = new MenuScreen();
+	menuScreen->SetMainTitle("Global Criminal Database");
+	menuScreen->SetSubTitle("Main Menu");
+	menuScreen->AddOption("Search Records", "", 7, 10, -1);
+	menuScreen->AddOption("View Logs", "", 6, 1, -1);
+	menuScreen->AddOption("Security", "", 9, 1, -1);
+	computer->AddComputerScreen(menuScreen, 4);
+
+	const auto screen_1 = new GenericScreen();
+	screen_1->SetScreenType(11);
+	screen_1->SetMainTitle("Global Criminal Database");
+	screen_1->SetSubTitle("Criminal Records");
+	screen_1->SetNextPage(4);
+	computer->AddComputerScreen(screen_1, 5);
+
+	const auto logsScreen = new LogScreen();
+	logsScreen->SetTARGET(0);
+	logsScreen->SetMainTitle("Global Criminal Database");
+	logsScreen->SetSubTitle("Access logs");
+	logsScreen->SetNextPage(4);
+	computer->AddComputerScreen(logsScreen, 6);
+
+	const auto searchScreen = new DialogScreen();
+	searchScreen->SetMainTitle("Global Criminal Database");
+	searchScreen->SetSubTitle("Search for Criminal Record");
+	searchScreen->AddWidget("name", 3, 150, 200, 200, 15, "Enter name here", "Type the name of the person to search for here");
+	searchScreen->AddWidget("OK", 8, 150, 240, 80, 15, "OK", "Click here when done", 15, -1, nullptr, nullptr);
+	searchScreen->AddWidget("Cancel", 5, 270, 240, 80, 15, "Cancel", "Click here to return to the menu", 4, -1, nullptr, nullptr);
+	searchScreen->AddWidget("border1", 1, 120, 170, 260, 4, "", "");
+	searchScreen->AddWidget("border2", 1, 120, 266, 260, 4, "", "");
+	searchScreen->AddWidget("border3", 1, 120, 170, 4, 100, "", "");
+	searchScreen->AddWidget("border4", 1, 380, 170, 4, 100, "", "");
+	searchScreen->SetReturnKeyButton("OK");
+	searchScreen->SetEscapeKeyButton("Cancel");
+	computer->AddComputerScreen(searchScreen, 7);
+
+	const auto screen_4 = new GenericScreen();
+	screen_4->SetScreenType(16);
+	screen_4->SetMainTitle("Global Criminal Database");
+	screen_4->SetSubTitle("View Criminal Records");
+	screen_4->SetNextPage(4);
+	computer->AddComputerScreen(screen_4, 8);
+
+	const auto screen_5 = new GenericScreen();
+	screen_5->SetScreenType(0x11);
+	screen_5->SetMainTitle("Global Criminal Database");
+	screen_5->SetSubTitle("Security settings");
+	screen_5->SetNextPage(4);
+	computer->AddComputerScreen(screen_5, 9);
+
+	const auto adminUser = new Record();
+	adminUser->AddField("Name", "admin");
+	NameGenerator::GenerateComplexPassword();
+	adminUser->AddField("Password", tempname);
+	adminUser->AddField("Security", "1");
+	computer->GetRecordBank().AddRecord(*adminUser);
+
+	const auto readwriteUser = new Record();
+	readwriteUser->AddField("Name", "readwrite");
+	NameGenerator::GenerateComplexPassword();
+	readwriteUser->AddField("Password", tempname);
+	readwriteUser->AddField("Security", "2");
+	computer->GetRecordBank().AddRecord(*readwriteUser);
+
+	const auto readonlyUser = new Record();
+	readonlyUser->AddField("Name", "readonly");
+	readonlyUser->AddField("Password", NameGenerator::GeneratePassword());
+	readonlyUser->AddField("Security", "4");
+	computer->GetRecordBank().AddRecord(*readonlyUser);
+
 	puts("TODO: implement WorldGenerator::GenerateGlobalCriminalDatabase()");
 }
 
@@ -260,6 +386,20 @@ void WorldGenerator::GenerateInternationalAcademicDatabase()
 
 void WorldGenerator::GenerateInterNIC()
 {
+	int x, y;
+	WorldGenerator::GenerateValidMapPos(x, y);
+	game->GetWorld().CreateVLocation("458.615.48.651", x, y);
+
+	const auto computer = new Computer();
+	computer->SetTYPE(0);
+	computer->SetName("InterNIC");
+	computer->SetCompanyName("Government");
+	computer->SetIP("458.615.48.651");
+	computer->SetTraceSpeed(0xf);
+	computer->SetTraceAction(3);
+	computer->SetIsTargetable(0);
+	game->GetWorld().CreateComputer(computer);
+
 	puts("TODO: implement WorldGenerator::GenerateInterNIC()");
 }
 

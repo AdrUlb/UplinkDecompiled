@@ -1,6 +1,6 @@
 #pragma once
 
-#include <UplinkEvent.hpp>
+#include <Events/UplinkEvent.hpp>
 
 enum class NotificationType
 {

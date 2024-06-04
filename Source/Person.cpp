@@ -1,6 +1,7 @@
 #include <Person.hpp>
 
 #include <Globals.hpp>
+#include <Interface/RemoteScreens/LinksScreenInterface.hpp>
 
 Person::~Person()
 {
@@ -141,6 +142,11 @@ VLocation* Person::GetLocalHost()
 	return ret;
 }
 
+const char* Person::GetRemoteHostIp()
+{
+	return _remoteHostIp;
+}
+
 VLocation* Person::GetRemoteHost()
 {
 	const auto ret = game->GetWorld().GetVLocation(_remoteHostIp);
@@ -258,6 +264,44 @@ const char* Agent::GetHandle()
 	return _handle;
 }
 
+bool Agent::HasLink(const char* ip)
+{
+	for (auto i = 0; i < _links.Size(); i++)
+	{
+		if (!_links.ValidIndex(i))
+			continue;
+
+		if (strcmp(ip, _links.GetData(i)) == 0)
+			return true;
+	}
+
+	return false;
+}
+
+void Agent::GiveLink(const char* ip)
+{
+	if (!HasLink(ip))
+	{
+		const auto var_20 = new char[0x18];
+		UplinkStrncpy(var_20, ip, 0x18);
+		_links.PutDataAtStart(var_20);
+
+		if (strcmp(GetName(), "NEWAGENT") == 0)
+		{
+			if (strcmp(game->GetWorld().GetPlayer().GetRemoteHostIp(), "127.0.0.1") == 0 &&
+				game->GetInterface().GetRemoteInterface().GetScreenIndex() == 0)
+			{
+				dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen())->SetFullList(&_links);
+				dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen())->ApplyFilter(nullptr);
+			}
+		}
+	}
+
+	const auto vlocation = game->GetWorld().GetVLocation(ip);
+	UplinkAssert(vlocation != nullptr);
+	vlocation->SetDisplayed(true);
+}
+
 void Agent::SetHandle(const char* handle)
 {
 	UplinkStrncpy(_handle, handle, 0x40);
@@ -307,7 +351,7 @@ void Player::Update()
 	static auto called = false;
 	if (!called)
 	{
-		puts("TODO: Player::Update()");
+		puts("TODO: implement Player::Update()");
 		called = true;
 	}
 }

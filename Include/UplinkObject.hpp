@@ -33,6 +33,7 @@ enum class UplinkObjectId
 	Company = 50,
 	CompanyUplink = 52,
 	NotificationEvent = 70,
+	ArrestEvent = 71,
 	WarningEvent = 75
 };
 

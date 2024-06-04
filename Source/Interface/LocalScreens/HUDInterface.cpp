@@ -4,6 +4,8 @@
 #include <GL/gl.h>
 #include <Globals.hpp>
 #include <Opengl.hpp>
+#include <RedShirt.hpp>
+#include <Sg.hpp>
 #include <Svb.hpp>
 #include <cstring>
 
@@ -66,7 +68,7 @@ static void SendMailClick(Button* button)
 static void MainMenuClick(Button* button)
 {
 	(void)button;
-	puts("TODO: implement MainMenuClick()");
+	HUDInterface::CloseGame();
 }
 
 static void PauseButtonClick(Button* button)
@@ -255,7 +257,7 @@ void WorldMapInterface::RemoveWorldMapInterface()
 		EclRemoveButton("worldmap_scrollright");
 		EclRemoveButton("worldmap_scrollup");
 		EclRemoveButton("worldmap_scrolldown");
-		const auto links = &game->GetWorld().GetPlayer()->GetLinks();
+		const auto links = &game->GetWorld().GetPlayer().GetLinks();
 		;
 
 		for (auto i = 0; i < links->Size(); i++)
@@ -442,4 +444,17 @@ void HUDInterface::MoveSelecter(int screenCode, int screenIndex)
 	(void)screenCode;
 	(void)screenIndex;
 	puts("TODO: implement HUDInterface::MoveSelecter()");
+}
+
+void HUDInterface::CloseGame()
+{
+	SgPlaySound(RsArchiveFileOpen("sounds/close.wav"), "sounds/close.wav");
+	game->GetWorld().GetPlayer().GetConnection().Disconnect();
+	game->GetWorld().GetPlayer().GetConnection().Reset();
+	game->GetInterface().GetRemoteInterface().RunNewLocation();
+	game->GetInterface().GetRemoteInterface().RunScreen(0, nullptr);
+	app->SaveGame(game->GetWorld().GetPlayer().GetHandle());
+	game->SetGameSpeed(0);
+	EclReset();
+	app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
 }

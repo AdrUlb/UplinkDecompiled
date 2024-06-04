@@ -50,4 +50,5 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	void Initialise();
+	void PlayerVisitsPlotSites();
 };

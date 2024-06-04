@@ -244,3 +244,8 @@ void PlotGenerator::Initialise()
 {
 	puts("TODO: implement PlotGenerator::Initialise()");
 }
+
+void PlotGenerator::PlayerVisitsPlotSites()
+{
+	_playerVisitsPlotSites = true;
+}

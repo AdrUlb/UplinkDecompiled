@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Date.hpp>
+#include <Events/UplinkEvent.hpp>
 #include <LList.hpp>
-#include <UplinkEvent.hpp>
 #include <UplinkObject.hpp>
 
 class EventScheduler : UplinkObject

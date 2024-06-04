@@ -97,3 +97,12 @@ void DialogScreen::SetReturnKeyButton(const char* button)
 	_returnKeyButtonName = new char[strlen(button) + 1];
 	strcpy(_returnKeyButtonName, button);
 }
+
+void DialogScreen::SetEscapeKeyButton(const char* button)
+{
+	if (_escapeKeyButtonName != nullptr)
+		delete[] _escapeKeyButtonName;
+
+	_escapeKeyButtonName = new char[strlen(button) + 1];
+	strcpy(_escapeKeyButtonName, button);
+}

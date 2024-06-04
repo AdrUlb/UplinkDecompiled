@@ -115,7 +115,7 @@ static void Script32()
 
 static void Script33()
 {
-	if (strcmp(game->GetWorld().GetPlayer()->GetHandle(), "NEWAGENT") != 0)
+	if (strcmp(game->GetWorld().GetPlayer().GetHandle(), "NEWAGENT") != 0)
 	{
 		create_msgbox("Error", "Our records show you are already\nregistered as an Uplink agent.", nullptr);
 		return;
@@ -164,7 +164,7 @@ static void Script33()
 
 	Computer::GenerateAccessCode(name, password, accessCode, 0x80);
 
-	game->GetWorld().GetPlayer()->SetHandle(name);
+	game->GetWorld().GetPlayer().SetHandle(name);
 
 	puts("TODO: implement Script33");
 
@@ -261,8 +261,8 @@ static void Script36()
 	EclRemoveButton("start_lock");
 	EclRemoveButton("start_locklink");
 	EclRemoveButton("start_link");
-	game->GetWorld().GetPlayer()->GetConnection().Disconnect();
-	game->GetWorld().GetPlayer()->GetConnection().Reset();
+	game->GetWorld().GetPlayer().GetConnection().Disconnect();
+	game->GetWorld().GetPlayer().GetConnection().Reset();
 	game->GetInterface().GetRemoteInterface().RunNewLocation();
 	game->GetInterface().GetRemoteInterface().RunScreen(5, nullptr);
 	GciTimerFunc(100, ScriptLibrary::RunScript, 40);

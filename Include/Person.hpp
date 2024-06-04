@@ -45,6 +45,7 @@ public:
 	void SetName(const char* name);
 	void SetAge(int age);
 	void SetLocalHost(const char* localHost);
+	const char* GetRemoteHostIp();
 	void SetRemoteHost(const char* remoteHost);
 	void SetIsTargetable(bool isTargetable);
 	virtual void GiveMessage(Message* message);
@@ -66,12 +67,14 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
+	void GiveMessage(Message* message) override;
+	void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan) override;
 	LList<char*>& GetLinks();
 	LList<Mission*>& GetMissions();
 	const char* GetHandle();
+	bool HasLink(const char* ip);
+	void GiveLink(const char* ip);
 	void SetHandle(const char* handle);
-	void GiveMessage(Message* message) override;
-	void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan) override;
 };
 
 class Player : public Agent
@@ -90,6 +93,6 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
-	Gateway& GetGateway();
 	void GiveMessage(Message* message) override;
+	Gateway& GetGateway();
 };

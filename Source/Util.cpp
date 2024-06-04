@@ -1,9 +1,9 @@
 #include <Util.hpp>
 
+#include <Events/WarningEvent.hpp>
 #include <Globals.hpp>
 #include <Options.hpp>
 #include <RedShirt.hpp>
-#include <WarningEvent.hpp>
 #include <cerrno>
 #include <cstdio>
 #include <dirent.h>
@@ -261,7 +261,6 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 	{
 		case UplinkObjectId::Option:
 			return new Option();
-			break;
 		case UplinkObjectId::WarningEvent:
 			return new WarningEvent();
 		default:
@@ -285,6 +284,39 @@ int GetScaledXPosition(int pos)
 int GetScaledYPosition(int pos)
 {
 	return pos * windowScaleY;
+}
+
+bool CopyFilePlain(const char* sourceFilePath, const char* destFilePath)
+{
+	const auto sourceFile = fopen(sourceFilePath, "rb");
+	const auto destFile = fopen(destFilePath, "wb");
+
+	auto ret = true;
+
+	if (sourceFile != nullptr && destFile != nullptr)
+	{
+		while (true)
+		{
+			char buf[0x100];
+
+			const auto count = fread(buf, 1, 0x100, sourceFile);
+
+			if (count == 0)
+				break;
+
+			fwrite(buf, 1, count, destFile);
+		}
+	}
+	else
+		ret = false;
+
+	if (destFile != nullptr)
+		fclose(destFile);
+
+	if (sourceFile != nullptr)
+		fclose(sourceFile);
+
+	return ret;
 }
 
 DArray<char*>* ListDirectory(const char* dir, const char* ext)

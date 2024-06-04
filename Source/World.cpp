@@ -210,11 +210,11 @@ DArray<GatewayDef*>& World::GetGatewayDefs()
 	return _gatewayDefs;
 }
 
-Player* World::GetPlayer()
+Player& World::GetPlayer()
 {
 	const auto ret = _people.LookupTree("PLAYER");
 	UplinkAssert(ret != nullptr);
-	return dynamic_cast<Player*>(ret->Data);
+	return *dynamic_cast<Player*>(ret->Data);
 }
 
 VLocation* World::GetVLocation(const char* ip)
@@ -247,8 +247,8 @@ Company* World::GetCompany(const char* name)
 
 Person* World::GetPerson(const char* name)
 {
-	if (_people.LookupTree("PLAYER") != nullptr && strcmp(name, GetPlayer()->GetHandle()) == 0)
-		return GetPlayer();
+	if (_people.LookupTree("PLAYER") != nullptr && strcmp(name, GetPlayer().GetHandle()) == 0)
+		return &GetPlayer();
 
 	const auto tree = _people.LookupTree(name);
 

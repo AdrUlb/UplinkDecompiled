@@ -75,4 +75,5 @@ public:
 	bool IsVisible() override;
 	int ScreenID() override;
 	static void MoveSelecter(int screenCode, int screenIndex);
+	static void CloseGame();
 };

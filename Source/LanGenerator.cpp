@@ -1,13 +1,54 @@
 #include <LanGenerator.hpp>
 
 #include <Globals.hpp>
+#include <LanCluster.hpp>
 #include <NameGenerator.hpp>
 #include <NumberGenerator.hpp>
 #include <WorldGenerator.hpp>
 
-void LanGenerator::GenerateLANCluster(LanComputer* lanComputer, int level)
+void LanGenerator::GenerateLANCluster(LanComputer* computer, int level)
 {
-	(void)lanComputer;
+	/*const auto cluster = new LanCluster();
+	LList<int> radioFreqs;
+
+	switch (level)
+	{
+		case 0:
+			GenerateLAN_Level0Cluster(computer, cluster, &radioFreqs, 10, 100, 200, 200);
+			break;
+		case 1:
+			GenerateLAN_Level1Cluster(computer, cluster, &radioFreqs, 10, 100, 275, 275);
+			break;
+		case 2:
+			GenerateLAN_Level2Cluster(computer, cluster, &radioFreqs);
+			break;
+		case 3:
+			GenerateLAN_Level3Cluster(computer, cluster, &radioFreqs);
+			break;
+		case 4:
+			GenerateLAN_Level4Cluster(computer, cluster, &radioFreqs);
+			break;
+	}
+
+	UplinkAssert(cluster->Input != 0);
+	UplinkAssert(cluster->Output != 0);
+
+	const auto inputSystem = cluster->Systems.GetData(cluster->Input);
+	const auto outputSystem = cluster->Systems.GetData(cluster->Output);
+	const auto router = GenerateRouter(computer, cluster, (inputSystem->X - 70), (inputSystem->Y - 100), 1);
+	cluster->AddLanLink(router, cluster->Input, 1, 0.5f, 1.0f, 0.5f, 0.0f);
+
+	if (level <= 1)
+	{
+		const auto mainServer = GenerateMainServer(computer, cluster, (outputSystem->X + 70), (outputSystem->Y + 120), 1);
+		cluster->AddLanLink(cluster->Output, mainServer, 1, 0.5f, 1.0f, 0.5f, 0.0f);
+	}
+
+	cluster->Rotate(NumberGenerator::RandomNumber(4));
+	cluster->Merge(computer);
+
+	delete cluster;*/
+	(void)computer;
 	(void)level;
 	puts("TODO: implement LanGenerator::GenerateLANCluster()");
 }

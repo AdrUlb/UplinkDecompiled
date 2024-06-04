@@ -1,16 +1,20 @@
 #include <Interface/RemoteScreens/LinksScreenInterface.hpp>
 
 #include <Eclipse.hpp>
+#include <GL/gl.h>
+#include <Gci.hpp>
 #include <Globals.hpp>
 #include <Opengl.hpp>
 #include <ScrollBox.hpp>
 
-Image* ilink_tif = nullptr;
-Image* ilink_h_tif = nullptr;
-Image* ilink_c_tif = nullptr;
-Image* iadd_tif = nullptr;
-Image* iadd_h_tif = nullptr;
-Image* iadd_c_tif = nullptr;
+static Image* ilink_tif = nullptr;
+static Image* ilink_h_tif = nullptr;
+static Image* ilink_c_tif = nullptr;
+static Image* iadd_tif = nullptr;
+static Image* iadd_h_tif = nullptr;
+static Image* iadd_c_tif = nullptr;
+
+static int baseoffset = 0;
 
 LinksScreenInterface::LinksScreenInterface()
 {
@@ -24,11 +28,11 @@ LinksScreenInterface::LinksScreenInterface()
 
 LinksScreenInterface::~LinksScreenInterface()
 {
-	DeleteLListData(&_ips);
-	_ips.Empty();
+	DeleteLListData(&_filterList);
+	_filterList.Empty();
 
-	DeleteLListData(&_names);
-	_names.Empty();
+	DeleteLListData(&_displayList);
+	_displayList.Empty();
 
 	if (ilink_tif != nullptr)
 	{
@@ -188,7 +192,7 @@ void LinksScreenInterface::Create(ComputerScreen* screen)
 	}
 	else if (GetComputerScreen()->GetScreenType() == 2)
 	{
-		SetFullList(&game->GetWorld().GetPlayer()->GetLinks());
+		SetFullList(&game->GetWorld().GetPlayer().GetLinks());
 	}
 	else if (GetComputerScreen()->GetScreenType() == 3)
 	{
@@ -240,16 +244,16 @@ int LinksScreenInterface::NumLinksOnScreen()
 
 void LinksScreenInterface::SetFullList()
 {
-	DeleteLListData(&_ips);
-	_ips.Empty();
+	DeleteLListData(&_displayList);
+	_displayList.Empty();
 
-	for (auto i = 0; i < _names.Size(); i++)
+	for (auto i = 0; i < _filterList.Size(); i++)
 	{
-		UplinkAssert(strlen(_names.GetData(i)) < 0x18);
+		UplinkAssert(strlen(_filterList.GetData(i)) < 0x18);
 
 		char* name = new char[0x18];
-		strncpy(name, _names.GetData(i), 0x18);
-		_ips.PutData(name);
+		strncpy(name, _filterList.GetData(i), 0x18);
+		_displayList.PutData(name);
 	}
 
 	ApplyFilter(nullptr);
@@ -259,11 +263,11 @@ void LinksScreenInterface::SetFullList(LList<const char*>* links)
 {
 	UplinkAssert(links != nullptr);
 
-	DeleteLListData(&_ips);
-	DeleteLListData(&_names);
+	DeleteLListData(&_displayList);
+	DeleteLListData(&_filterList);
 
-	_ips.Empty();
-	_names.Empty();
+	_displayList.Empty();
+	_filterList.Empty();
 
 	for (auto i = 0; i < links->Size(); i++)
 	{
@@ -271,7 +275,7 @@ void LinksScreenInterface::SetFullList(LList<const char*>* links)
 
 		const auto link = new char[0x18];
 		strncpy(link, links->GetData(i), 0x18);
-		_ips.PutData(link);
+		_displayList.PutData(link);
 	}
 
 	ApplyFilter(nullptr);
@@ -279,7 +283,7 @@ void LinksScreenInterface::SetFullList(LList<const char*>* links)
 
 void LinksScreenInterface::SetFullList(LList<char*>* links)
 {
-	return SetFullList(reinterpret_cast<LList<const char*>*>(links));
+	SetFullList(reinterpret_cast<LList<const char*>*>(links));
 }
 
 void LinksScreenInterface::ApplyFilter(const char* filter)
@@ -291,9 +295,9 @@ void LinksScreenInterface::ApplyFilter(const char* filter)
 void LinksScreenInterface::CreateScrollBarAndFilter()
 {
 	const auto numLinks = NumLinksOnScreen();
-	if (_ips.Size() >= NumLinksOnScreen() && ScrollBox::GetScrollBox("linksscreen_scroll") == nullptr)
+	if (_filterList.Size() >= NumLinksOnScreen() && ScrollBox::GetScrollBox("linksscreen_scroll") == nullptr)
 	{
-		const auto ipCount = _ips.Size();
+		const auto ipCount = _filterList.Size();
 		ScrollBox::CreateScrollBox("linksscreen_scroll", GetScaledYPosition(375) + 50, 145, 15, numLinks * 15, ipCount, numLinks, 0, ScrollChange);
 		EclRegisterButton((GetScaledYPosition(375) + 50), 125, 15, 15, "", "", "linksscreen_topright");
 		EclRegisterButton(15, (NumLinksOnScreen() * 15) + 150, 135, 15, "Filter", "Click here to apply the filter", "linksscreen_filter");
@@ -312,24 +316,75 @@ void LinksScreenInterface::CreateScrollBarAndFilter()
 		EclMakeButtonEditable("linksscreen_filtertext");
 	}
 
-	if ((GetComputerScreen()->GetScreenType() != 2 || _ips.Size() >= numLinks) && EclGetButton("linksscreen_iptitle") == nullptr)
+	if ((GetComputerScreen()->GetScreenType() != 2 || _filterList.Size() >= numLinks) && EclGetButton("linksscreen_iptitle") == nullptr)
 	{
 		EclRegisterButton(15, 125, 135, 15, "IP Address", "Shows the IP address of the location", "linksscreen_iptitle");
 		EclRegisterButton(155, 125, (GetScaledYPosition(375) - 107), 15, "Location name", "Shows the computer name at that location",
 						  "linksscreen_comptitle");
 	}
 }
+
 void LinksScreenInterface::LinkDraw(Button* button, bool highlighted, bool clicked)
 {
-	(void)button;
-	(void)highlighted;
-	(void)clicked;
-	
-	static auto called = false;
-	if (!called)
+	UplinkAssert(button != nullptr);
+
+	clear_draw(button->X, button->Y, button->Width, button->Height);
+
+	int index;
+	sscanf(button->Name, "linksscreen_link %d", &index);
+
+	index += baseoffset;
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
+	if (!linksScreen->_displayList.ValidIndex(index))
+		return;
+
+	char* ip = linksScreen->_displayList.GetData(index);
+	if (ip != nullptr)
 	{
-		puts("TODO: implement LinksScreenInterface::LinkDraw()");
-		called = true;
+		glBegin(GL_QUADS);
+		if (index % 2 != 0)
+		{
+			SetColour("DarkPanelA");
+			glVertex2i(button->X, button->Y);
+			SetColour("DarkPanelB");
+			glVertex2i(button->X + button->Width, button->Y);
+			SetColour("DarkPanelA");
+			glVertex2i(button->X + button->Width, button->Y + button->Height);
+			SetColour("DarkPanelB");
+			glVertex2i(button->X, button->Y + button->Height);
+		}
+		else
+		{
+			SetColour("DarkPanelB");
+			glVertex2i(button->X, button->Y);
+			SetColour("DarkPanelA");
+			glVertex2i(button->X + button->Width, button->Y);
+			SetColour("DarkPanelB");
+			glVertex2i(button->X + button->Width, button->Y + button->Height);
+			SetColour("DarkPanelA");
+			glVertex2i(button->X, button->Y + button->Height);
+		}
+		glEnd();
+
+		SetColour("DefaultText");
+		GciDrawText(button->X + 10, button->Y + 10, ip);
+
+		char text[0x40];
+		if (game->GetWorld().GetVLocation(ip) == 0)
+		{
+			strncpy(text, "This link has expired", 0x40);
+		}
+		else
+		{
+			UplinkStrncpy(text, game->GetWorld().GetVLocation(ip)->GetComputerName(), 0x40);
+		}
+
+		GciDrawText(button->X + 120, button->Y + 10, text);
+		if (highlighted)
+		{
+			SetColour("PanelHighlightBorder");
+			border_draw(button);
+		}
 	}
 }
 
@@ -338,7 +393,7 @@ void LinksScreenInterface::DeleteLinkDraw(Button* button, bool highlighted, bool
 	(void)button;
 	(void)highlighted;
 	(void)clicked;
-	
+
 	static auto called = false;
 	if (!called)
 	{

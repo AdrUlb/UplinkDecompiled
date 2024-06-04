@@ -28,6 +28,7 @@ public:
 	void SetPLocation(int x, int y);
 	void SetComputerName(const char* computer);
 	void SetListed(bool listed);
+	void SetDisplayed(bool displayed);
 	Computer* GetComputer();
 };
 

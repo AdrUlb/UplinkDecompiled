@@ -1,4 +1,4 @@
-#include <UplinkEvent.hpp>
+#include <Events/UplinkEvent.hpp>
 
 class WarningEvent : public UplinkEvent
 {

@@ -6,8 +6,8 @@
 
 class LinksScreenInterface : public RemoteInterfaceScreen
 {
-	LList<char*> _ips;
-	LList<char*> _names;
+	LList<char*> _displayList;
+	LList<char*> _filterList;
 
 public:
 	LinksScreenInterface();

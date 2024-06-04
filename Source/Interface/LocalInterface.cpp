@@ -130,7 +130,7 @@ void LocalInterface::RunScreen(int code, int index)
 			break;
 		case 8:
 		{
-			if (!game->GetWorld().GetPlayer()->GetMessages().ValidIndex(_screenIndex))
+			if (!game->GetWorld().GetPlayer().GetMessages().ValidIndex(_screenIndex))
 			{
 				_screenCode = 0;
 				break;
@@ -149,7 +149,7 @@ void LocalInterface::RunScreen(int code, int index)
 		}
 		case 10:
 		{
-			if (!game->GetWorld().GetPlayer()->GetMissions().ValidIndex(_screenIndex))
+			if (!game->GetWorld().GetPlayer().GetMissions().ValidIndex(_screenIndex))
 			{
 				_screenCode = 0;
 				break;

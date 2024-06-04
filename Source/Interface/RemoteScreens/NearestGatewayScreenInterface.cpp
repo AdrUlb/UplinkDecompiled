@@ -160,7 +160,7 @@ void NearestGatewayScreenInterface::ClickLocation(Button* button)
 	const auto locations = game->GetWorldMapType() == 1 ? PHYSICALGATEWAYLOCATIONS_DEFCON : PHYSICALGATEWAYLOCATIONS;
 	const auto& location = locations[index];
 
-	game->GetWorld().GetPlayer()->GetLocalHost()->SetPLocation(location.X, location.Y);
+	game->GetWorld().GetPlayer().GetLocalHost()->SetPLocation(location.X, location.Y);
 
 	const auto remoteInterfaceScreen = dynamic_cast<NearestGatewayScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
 

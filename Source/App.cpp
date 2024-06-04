@@ -11,35 +11,9 @@
 #include <cstdlib>
 #include <dirent.h>
 
-static void CopyFilePlain(const char* sourceFilePath, const char* destFilePath)
-{
-	const auto sourceFile = fopen(sourceFilePath, "rb");
-	const auto destFile = fopen(destFilePath, "wb");
-
-	if (sourceFile != nullptr && destFile != nullptr)
-	{
-		while (true)
-		{
-			char buf[0x100];
-
-			const auto count = fread(buf, 1, 0x100, sourceFile);
-
-			if (count == 0)
-				break;
-
-			fwrite(buf, 1, count, destFile);
-		}
-	}
-
-	if (destFile != nullptr)
-		fclose(destFile);
-
-	if (sourceFile != nullptr)
-		fclose(sourceFile);
-}
-
 static void CopyGame(const char* name, const char* filePath)
 {
+	(void)name;
 	char curAgentPath[0x100];
 	UplinkSnprintf(curAgentPath, 0x100, "%scuragent.usr", app->UsersTempPath);
 	EmptyDirectory(app->UsersTempPath);
@@ -77,12 +51,14 @@ void App::Update()
 {
 	UplinkAssert(game != nullptr);
 
-	if (game->GetGameSpeed() == -1 || (game->IsRunning() && game->GetWorld().GetPlayer()->GetGateway().GetNuked()))
+	if (game->GetGameSpeed() == -1 || (game->IsRunning() && game->GetWorld().GetPlayer().GetGateway().GetNuked()))
 	{
 		if (_phoneDialler != nullptr)
 			UnRegisterPhoneDialler(_phoneDialler);
 
-		SaveGame(game->GetWorld().GetPlayer()->GetHandle());
+		SaveGame(game->GetWorld().GetPlayer().GetHandle());
+		game->SetGameSpeed(0);
+		EclReset();
 		UplinkAbort("TODO: implement App::Update()");
 	}
 
@@ -312,19 +288,17 @@ void App::LoadGame(const char* name)
 
 	WorldGenerator::LoadDynamics();
 
-	game->GetWorld().GetPlayer()->GetConnection().Disconnect();
-	game->GetWorld().GetPlayer()->GetConnection().Reset();
+	game->GetWorld().GetPlayer().GetConnection().Disconnect();
+	game->GetWorld().GetPlayer().GetConnection().Reset();
 
-	struct Player* rax_18 = game->GetWorld().GetPlayer();
-	struct Player* rax_40;
-	if (rax_18->GetGateway().GetExchangeGatewayDef() == nullptr)
+	auto& player = game->GetWorld().GetPlayer();
+	if (player.GetGateway().GetExchangeGatewayDef() == nullptr)
 	{
-		rax_40 = game->GetWorld().GetPlayer();
-		if (rax_40->GetGateway().GetNuked())
+		if (player.GetGateway().GetNuked())
 		{
-			game->GetWorld().GetPlayer()->GetGateway().SetNuked(false);
-			game->GetWorld().GetPlayer()->GetConnection().AddVLocation("234.773.0.666");
-			game->GetWorld().GetPlayer()->GetConnection().Connect();
+			player.GetGateway().SetNuked(false);
+			player.GetConnection().AddVLocation("234.773.0.666");
+			player.GetConnection().Connect();
 			game->GetInterface().GetLocalInterface().Remove();
 			app->GetOptions()->GetOptionValue("graphics_screenheight");
 			app->GetOptions()->GetOptionValue("graphics_screenwidth");
@@ -338,10 +312,10 @@ void App::LoadGame(const char* name)
 	}
 	else
 	{
-		game->GetWorld().GetPlayer()->GetGateway().ExchangeGatewayComplete();
+		player.GetGateway().ExchangeGatewayComplete();
 	}
 
-	if (rax_18->GetGateway().GetExchangeGatewayDef() != nullptr || rax_40->GetGateway().GetNuked())
+	if (player.GetGateway().GetExchangeGatewayDef() != nullptr || player.GetGateway().GetNuked())
 	{
 		game->GetInterface().GetRemoteInterface().RunNewLocation();
 		game->GetInterface().GetRemoteInterface().RunScreen(10, nullptr);
@@ -378,8 +352,42 @@ void App::RetireGame(const char* name)
 
 void App::SaveGame(char const* name)
 {
-	(void)name;
-	puts("TODO: implement App::SaveGame()");
+	if (strcmp(name, "NEWAGENT") == 0)
+		return;
+
+	UplinkAssert(game != nullptr);
+
+	MakeDirectory(UsersPath);
+	char tempfile[0x100];
+	UplinkSnprintf(tempfile, 0x100, "%s%s.tmp", UsersPath, name);
+
+	char destfile[0x100];
+	UplinkSnprintf(destfile, 0x100, "%s%s.usr", UsersPath, name);
+
+	printf("Saving profile to %s...", tempfile);
+
+	const auto file = fopen(tempfile, "wb");
+	if (file == nullptr)
+	{
+		puts("failed");
+		puts("App::SaveGame, Failed to save user profile");
+		return;
+	}
+
+	game->Save(file);
+	fclose(file);
+	RsEncryptFile(tempfile);
+	printf("success. Moving profile to %s...", destfile);
+
+	if (!CopyFilePlain(tempfile, destfile))
+	{
+		puts("failed");
+		printf("App::SaveGame, Failed to copy user profile from %s to %s\n", tempfile, destfile);
+		return;
+	}
+
+	puts("success");
+	CopyGame(name, destfile);
 }
 
 void App::Set(const char* newPath, const char* newVersion, const char* newType, const char* newDate, const char* newTitle)

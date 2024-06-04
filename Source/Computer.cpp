@@ -116,7 +116,7 @@ void Computer::Update()
 	static auto called = false;
 	if (!called)
 	{
-		puts("TODO: Computer::Update()");
+		puts("TODO: implement Computer::Update()");
 		called = true;
 	}
 }
