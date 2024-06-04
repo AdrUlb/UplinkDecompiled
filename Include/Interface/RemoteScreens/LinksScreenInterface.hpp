@@ -30,13 +30,13 @@ public:
 	static void ShowLinkDraw(Button* button, bool highlighted, bool clicked);
 	static void FilterDraw(Button* button, bool highlighted, bool clicked);
 	static void LinkMouseMove(Button* button);
+	static void ShowLinkMouseMove(Button* button);
 	static void LinkClick(Button* button);
 	static void DeleteLinkClick(Button* button);
 	static void ShowLinkClick(Button* button);
 	static void AddLinkClick(Button* button);
 	static void CloseClick(Button* button);
 	static void LinkMouseDown(Button* button);
-	static void ShowLinkMouseMove(Button* button);
 	static void FilterClick(Button* button);
 	static void ScrollChange(const char* scrollboxName, int currentIndex);
 };

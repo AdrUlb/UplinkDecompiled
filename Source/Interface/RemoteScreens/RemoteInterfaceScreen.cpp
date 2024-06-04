@@ -69,3 +69,11 @@ ComputerScreen* RemoteInterfaceScreen::GetComputerScreen()
 {
 	return _screen;
 }
+
+RemoteInterfaceScreen* RemoteInterfaceScreen::GetInterfaceScreen(int id)
+{
+	const auto ret = game->GetInterface().GetRemoteInterface().GetInterfaceScreen();
+	UplinkAssert(ret != nullptr);
+	UplinkAssert(ret->ScreenID() == id);
+	return ret;
+}

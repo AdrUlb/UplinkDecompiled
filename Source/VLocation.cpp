@@ -122,6 +122,11 @@ void VLocation::SetDisplayed(bool displayed)
 	_displayed = displayed;
 }
 
+void VLocation::SetColorDisplayed(bool colored)
+{
+	_colored = colored;
+}
+
 Computer* VLocation::GetComputer()
 {
 	auto tree = &game->GetWorld().GetComputers();

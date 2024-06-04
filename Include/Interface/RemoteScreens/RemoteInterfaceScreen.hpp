@@ -16,4 +16,5 @@ struct RemoteInterfaceScreen : InterfaceScreen
 	static void DrawMainTitle(Button* button, bool highlighted, bool clicked);
 	static void DrawSubTitle(Button* button, bool highlighted, bool clicked);
 	ComputerScreen* GetComputerScreen();
+	static RemoteInterfaceScreen* GetInterfaceScreen(int id);
 };

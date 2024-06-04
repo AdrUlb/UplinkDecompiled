@@ -7,23 +7,40 @@
 #include <Opengl.hpp>
 #include <ScrollBox.hpp>
 
-static Image* ilink_tif = nullptr;
-static Image* ilink_h_tif = nullptr;
-static Image* ilink_c_tif = nullptr;
-static Image* iadd_tif = nullptr;
-static Image* iadd_h_tif = nullptr;
-static Image* iadd_c_tif = nullptr;
+static Image* _ilink_tif = nullptr;
+static Image* _ilink_h_tif = nullptr;
+static Image* _ilink_c_tif = nullptr;
+static Image* _iadd_tif = nullptr;
+static Image* _iadd_h_tif = nullptr;
+static Image* _iadd_c_tif = nullptr;
 
-static int baseoffset = 0;
+static int _baseoffset = 0;
+
+void UpdateTooltip(struct Button* button, struct VLocation* vlocation)
+{
+	if (!vlocation->GetDisplayed())
+	{
+		button->SetTooltip("Toggle the visibility and the color of this link on the map");
+		return;
+	}
+
+	if (vlocation->GetColored())
+	{
+		button->SetTooltip("Toggle the visibility of this link on the map");
+		return;
+	}
+
+	button->SetTooltip("Toggle the color of this link on the map");
+}
 
 LinksScreenInterface::LinksScreenInterface()
 {
-	ilink_tif = get_assignbitmap("link.tif");
-	ilink_h_tif = get_assignbitmap("link_h.tif");
-	ilink_c_tif = get_assignbitmap("link_c.tif");
-	iadd_tif = get_assignbitmap("add.tif");
-	iadd_h_tif = get_assignbitmap("add_h.tif");
-	iadd_c_tif = get_assignbitmap("add_c.tif");
+	_ilink_tif = get_assignbitmap("link.tif");
+	_ilink_h_tif = get_assignbitmap("link_h.tif");
+	_ilink_c_tif = get_assignbitmap("link_c.tif");
+	_iadd_tif = get_assignbitmap("add.tif");
+	_iadd_h_tif = get_assignbitmap("add_h.tif");
+	_iadd_c_tif = get_assignbitmap("add_c.tif");
 }
 
 LinksScreenInterface::~LinksScreenInterface()
@@ -34,40 +51,40 @@ LinksScreenInterface::~LinksScreenInterface()
 	DeleteLListData(&_displayList);
 	_displayList.Empty();
 
-	if (ilink_tif != nullptr)
+	if (_ilink_tif != nullptr)
 	{
-		delete ilink_tif;
-		ilink_tif = nullptr;
+		delete _ilink_tif;
+		_ilink_tif = nullptr;
 	}
 
-	if (ilink_h_tif != nullptr)
+	if (_ilink_h_tif != nullptr)
 	{
-		delete ilink_h_tif;
-		ilink_h_tif = nullptr;
+		delete _ilink_h_tif;
+		_ilink_h_tif = nullptr;
 	}
 
-	if (ilink_c_tif != nullptr)
+	if (_ilink_c_tif != nullptr)
 	{
-		delete ilink_c_tif;
-		ilink_c_tif = nullptr;
+		delete _ilink_c_tif;
+		_ilink_c_tif = nullptr;
 	}
 
-	if (iadd_tif != nullptr)
+	if (_iadd_tif != nullptr)
 	{
-		delete iadd_tif;
-		iadd_tif = nullptr;
+		delete _iadd_tif;
+		_iadd_tif = nullptr;
 	}
 
-	if (iadd_h_tif != nullptr)
+	if (_iadd_h_tif != nullptr)
 	{
-		delete iadd_h_tif;
-		iadd_h_tif = nullptr;
+		delete _iadd_h_tif;
+		_iadd_h_tif = nullptr;
 	}
 
-	if (iadd_c_tif != nullptr)
+	if (_iadd_c_tif != nullptr)
 	{
-		delete iadd_c_tif;
-		iadd_c_tif = nullptr;
+		delete _iadd_c_tif;
+		_iadd_c_tif = nullptr;
 	}
 }
 
@@ -163,7 +180,7 @@ void LinksScreenInterface::Create(ComputerScreen* screen)
 		{
 			UplinkSnprintf(buf, 0x80, "linksscreen_addlink %d", i);
 			EclRegisterButton(15, y, 13, 13, "", "Store this link", buf);
-			button_assignbitmaps(buf, iadd_tif, iadd_h_tif, iadd_c_tif);
+			button_assignbitmaps(buf, _iadd_tif, _iadd_h_tif, _iadd_c_tif);
 			EclRegisterButtonCallbacks(buf, AddLinkDraw, AddLinkClick, button_click, button_highlight);
 		}
 
@@ -338,7 +355,7 @@ void LinksScreenInterface::ApplyFilter(const char* filter)
 		}
 	}
 
-	baseoffset = 0;
+	_baseoffset = 0;
 
 	CreateScrollBarAndFilter();
 	const auto scrollbox = ScrollBox::GetScrollBox("linksscreen_scroll");
@@ -389,7 +406,7 @@ void LinksScreenInterface::LinkDraw(Button* button, bool highlighted, bool click
 	int index;
 	sscanf(button->Name, "linksscreen_link %d", &index);
 
-	index += baseoffset;
+	index += _baseoffset;
 
 	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
 	if (!linksScreen->_displayList.ValidIndex(index))
@@ -452,7 +469,7 @@ void LinksScreenInterface::AddLinkDraw(Button* button, bool highlighted, bool cl
 	int index;
 	sscanf(button->Name, "linksscreen_addlink %d", &index);
 
-	index += baseoffset;
+	index += _baseoffset;
 
 	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
 	if (!linksScreen->_filterList.ValidIndex(index))
@@ -484,7 +501,7 @@ void LinksScreenInterface::DeleteLinkDraw(Button* button, bool highlighted, bool
 	int index;
 	sscanf(button->Name, "linksscreen_deletelink %d", &index);
 
-	index += baseoffset;
+	index += _baseoffset;
 
 	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
 	if (linksScreen->_filterList.ValidIndex(index) && linksScreen->_filterList.GetData(index) != nullptr)
@@ -502,7 +519,7 @@ void LinksScreenInterface::ShowLinkDraw(Button* button, bool highlighted, bool c
 	int index;
 	sscanf(button->Name, "linksscreen_showlink %d", &index);
 
-	index += baseoffset;
+	index += _baseoffset;
 
 	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
 	if (!linksScreen->_filterList.ValidIndex(index))
@@ -527,11 +544,11 @@ void LinksScreenInterface::ShowLinkDraw(Button* button, bool highlighted, bool c
 
 	if (vlocation->GetColored())
 	{
-		imagebutton_draw(button, highlighted, clicked, iadd_tif, iadd_h_tif, iadd_c_tif);
+		imagebutton_draw(button, highlighted, clicked, _iadd_tif, _iadd_h_tif, _iadd_c_tif);
 	}
 	else
 	{
-		imagebutton_draw(button, highlighted, clicked, ilink_tif, ilink_h_tif, ilink_c_tif);
+		imagebutton_draw(button, highlighted, clicked, _ilink_tif, _ilink_h_tif, _ilink_c_tif);
 	}
 }
 
@@ -551,10 +568,26 @@ void LinksScreenInterface::LinkMouseMove(Button* button)
 	int index;
 	sscanf(button->Name, "linksscreen_link %d", &index);
 
-	index += baseoffset;
+	index += _baseoffset;
 
 	if (dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen())->_filterList.ValidIndex(index))
 		button_highlight(button);
+}
+
+void LinksScreenInterface::ShowLinkMouseMove(Button* button)
+{
+	UplinkAssert(button != nullptr);
+
+	int index;
+	sscanf(button->Name, "linksscreen_showlink %d", &index);
+	index += _baseoffset;
+
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
+	const auto ip = linksScreen->_filterList.GetData(index);
+	if (ip != nullptr)
+		UpdateTooltip(button, game->GetWorld().GetVLocation(ip));
+
+	button_highlight(button);
 }
 
 void LinksScreenInterface::LinkClick(Button* button)
@@ -571,43 +604,108 @@ void LinksScreenInterface::DeleteLinkClick(Button* button)
 
 void LinksScreenInterface::ShowLinkClick(Button* button)
 {
-	(void)button;
-	puts("TODO: implement LinksScreenInterface::ShowLinkClick()");
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+		return;
+
+	UplinkAssert(button != nullptr);
+
+	int index;
+	sscanf(button->Name, "linksscreen_showlink %d", &index);
+
+	index += _baseoffset;
+
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(RemoteInterfaceScreen::GetInterfaceScreen(7));
+	char* ip = linksScreen->_filterList.GetData(index);
+	if (ip == nullptr)
+		return;
+
+	const auto vlocation = game->GetWorld().GetVLocation(ip);
+	if (!vlocation->GetDisplayed())
+	{
+		vlocation->SetDisplayed(true);
+	}
+	else if (vlocation->GetColored() == 0)
+	{
+		vlocation->SetColorDisplayed(true);
+	}
+	else
+	{
+		vlocation->SetDisplayed(false);
+		vlocation->SetColorDisplayed(false);
+	}
+
+	UpdateTooltip(button, vlocation);
+	tooltip_update(button->Tooltip);
 }
 
 void LinksScreenInterface::AddLinkClick(Button* button)
 {
-	(void)button;
-	puts("TODO: implement LinksScreenInterface::AddLinkClick()");
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+		return;
+
+	UplinkAssert(button != nullptr);
+
+	int32_t index;
+	sscanf(button->Name, "linksscreen_addlink %d", &index);
+
+	index += _baseoffset;
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(RemoteInterfaceScreen::GetInterfaceScreen(7));
+	if (!linksScreen->_filterList.ValidIndex(index))
+		return;
+
+	const auto ip = linksScreen->_filterList.GetData(index);
+	if (ip == nullptr)
+		return;
+
+	if (!game->GetWorld().GetPlayer().HasLink(ip))
+		game->GetWorld().GetPlayer().GiveLink(ip);
 }
 
 void LinksScreenInterface::CloseClick(Button* button)
 {
 	(void)button;
-	puts("TODO: implement LinksScreenInterface::CloseClick()");
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(RemoteInterfaceScreen::GetInterfaceScreen(7));
+	UplinkAssert(linksScreen != nullptr);
+
+	const auto nextPage = linksScreen->GetComputerScreen()->GetNextPage();
+
+	if (nextPage == -1)
+		return;
+
+	const auto computer = linksScreen->GetComputerScreen()->GetComputer();
+	game->GetInterface().GetRemoteInterface().RunScreen(nextPage, computer);
 }
 
 void LinksScreenInterface::LinkMouseDown(Button* button)
 {
-	(void)button;
-	puts("TODO: implement LinksScreenInterface::LinkMouseDown()");
-}
+	UplinkAssert(button != nullptr);
 
-void LinksScreenInterface::ShowLinkMouseMove(Button* button)
-{
-	(void)button;
-	puts("TODO: implement LinksScreenInterface::ShowLinkMouseMove()");
+	int index;
+	sscanf(button->Name, "linksscreen_link %d", &index);
+
+	index += _baseoffset;
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
+	if (linksScreen->_filterList.ValidIndex(index) != 0)
+		button_click(button);
 }
 
 void LinksScreenInterface::FilterClick(Button* button)
 {
-	(void)button;
-	puts("TODO: implement LinksScreenInterface::FilterClick()");
+	UplinkAssert(button != nullptr);
+
+	const auto linksScreen = dynamic_cast<LinksScreenInterface*>(game->GetInterface().GetRemoteInterface().GetInterfaceScreen());
+	UplinkAssert(linksScreen != nullptr);
+	const auto caption = EclGetButton("linksscreen_filtertext")->Caption;
+	if (caption[0] != 0)
+	{
+		linksScreen->ApplyFilter(caption);
+	}
+	else
+		linksScreen->ApplyFilter(nullptr);
 }
 
-void LinksScreenInterface::ScrollChange(const char* scrollboxName, int currentIndex)
+void LinksScreenInterface::ScrollChange(const char* scrollboxName, int baseIndex)
 {
 	(void)scrollboxName;
-	(void)currentIndex;
-	puts("TODO: implement LinksScreenInterface::ScrollChange()");
+	_baseoffset = baseIndex;
 }

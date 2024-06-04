@@ -31,6 +31,7 @@ public:
 	void SetComputerName(const char* computer);
 	void SetListed(bool listed);
 	void SetDisplayed(bool displayed);
+	void SetColorDisplayed(bool displayed);
 	Computer* GetComputer();
 };
 
