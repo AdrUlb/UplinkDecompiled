@@ -32,7 +32,8 @@ enum class UplinkObjectId
 	DisconnectedScreen,
 	Company = 50,
 	CompanyUplink = 52,
-	NotificationEvent = 70
+	NotificationEvent = 70,
+	WarningEvent = 75
 };
 
 class UplinkObject

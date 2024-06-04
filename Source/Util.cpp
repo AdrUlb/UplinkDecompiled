@@ -3,6 +3,7 @@
 #include <Globals.hpp>
 #include <Options.hpp>
 #include <RedShirt.hpp>
+#include <WarningEvent.hpp>
 #include <cerrno>
 #include <cstdio>
 #include <dirent.h>
@@ -259,8 +260,10 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 	switch (objectId)
 	{
 		case UplinkObjectId::Option:
-			return static_cast<UplinkObject*>(new Option());
+			return new Option();
 			break;
+		case UplinkObjectId::WarningEvent:
+			return new WarningEvent();
 		default:
 			printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
 			printf("Unrecognised OBJECTID=%d", static_cast<int>(objectId));

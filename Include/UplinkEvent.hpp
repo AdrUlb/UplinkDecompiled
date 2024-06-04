@@ -14,9 +14,9 @@ public:
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
 	Date& GetRunDate();
+	virtual void Run();
+	virtual void RunWarning();
 	virtual char* GetShortString();
 	virtual char* GetLongString();
 	void SetRunDate(Date* date);
-	virtual void Run();
-	virtual void RunWarning();
 };
