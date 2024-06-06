@@ -8,6 +8,7 @@
 #include <Interface/RemoteScreens/MenuScreenInterface.hpp>
 #include <Interface/RemoteScreens/MessageScreenInterface.hpp>
 #include <Interface/RemoteScreens/NearestGatewayScreenInterface.hpp>
+#include <Interface/RemoteScreens/PasswordScreenInterface.hpp>
 #include <LanComputer.hpp>
 #include <LanMonitor.hpp>
 #include <Svb.hpp>
@@ -121,6 +122,12 @@ RemoteInterfaceScreen* RemoteInterface::GetInterfaceScreen()
 	return _screen;
 }
 
+void RemoteInterface::SetSecurity(const char* name, int level)
+{
+	UplinkStrncpy(_securityName, name, 0x80);
+	_securityLevel = level;
+}
+
 void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 {
 	const auto remoteComputer = game->GetWorld().GetPlayer().GetRemoteHost()->GetComputer();
@@ -172,6 +179,9 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 		}
 		case UplinkObjectId::MessageScreen:
 			_screen = new MessageScreenInterface();
+			break;
+		case UplinkObjectId::PasswordScreen:
+			_screen = new PasswordScreenInterface();
 			break;
 		case UplinkObjectId::MenuScreen:
 			_screen = new MenuScreenInterface();

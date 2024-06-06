@@ -14,6 +14,8 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
+	int GetNextPage();
+	const char* GetPassword();
 	void SetNextPage(int nextPage);
 	void SetDifficulty(int difficulty);
 	void SetPassword(const char* password);

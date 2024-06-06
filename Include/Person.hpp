@@ -36,6 +36,8 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	UplinkObjectId GetOBJECTID() override;
+	virtual void GiveMessage(Message* message);
+	virtual void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan);
 	const char* GetName();
 	const char* GetLocalHostIp();
 	VLocation* GetLocalHost();
@@ -51,8 +53,7 @@ public:
 	void SetRemoteHost(const char* remoteHost);
 	void SetCurrentAccount(int account);
 	void SetIsTargetable(bool isTargetable);
-	virtual void GiveMessage(Message* message);
-	virtual void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan);
+	bool IsConnected();
 };
 
 class Agent : public Person
@@ -73,6 +74,7 @@ public:
 	void GiveMessage(Message* message) override;
 	void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan) override;
 	LList<char*>& GetLinks();
+	BTree<char*>& GetAccessCodes();
 	LList<Mission*>& GetMissions();
 	const char* GetHandle();
 	int HasAccount(const char* ip);

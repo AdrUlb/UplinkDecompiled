@@ -25,6 +25,7 @@ public:
 	int GetScreenIndex();
 	int GetSecurityLevel();
 	RemoteInterfaceScreen* GetInterfaceScreen();
+	void SetSecurity(const char* name, int level);
 	void RunScreen(int screenIndex, Computer* computer);
 	void RunNewLocation();
 };

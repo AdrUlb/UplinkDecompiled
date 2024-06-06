@@ -125,6 +125,21 @@ UplinkObjectId Person::GetOBJECTID()
 	return UplinkObjectId::Person;
 }
 
+void Person::GiveMessage(Message* message)
+{
+	_messages.PutData(message);
+}
+
+void Person::CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan)
+{
+	(void)bankIp;
+	(void)owner;
+	(void)password;
+	(void)amount;
+	(void)loan;
+	puts("TODO: implement Person::CreateNewAccount()");
+}
+
 const char* Person::GetName()
 {
 	return _name;
@@ -208,19 +223,9 @@ void Person::SetIsTargetable(bool isTargetable)
 	_isTargetable = isTargetable;
 }
 
-void Person::GiveMessage(Message* message)
+bool Person::IsConnected()
 {
-	_messages.PutData(message);
-}
-
-void Person::CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan)
-{
-	(void)bankIp;
-	(void)owner;
-	(void)password;
-	(void)amount;
-	(void)loan;
-	puts("TODO: implement Person::CreateNewAccount()");
+	return strcmp(_localHostIp, _remoteHostIp) != 0;
 }
 
 Agent::~Agent()
@@ -276,6 +281,11 @@ UplinkObjectId Agent::GetOBJECTID()
 LList<char*>& Agent::GetLinks()
 {
 	return _links;
+}
+
+BTree<char*>& Agent::GetAccessCodes()
+{
+	return _accessCodes;
 }
 
 LList<Mission*>& Agent::GetMissions()

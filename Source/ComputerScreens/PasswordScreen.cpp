@@ -57,6 +57,16 @@ UplinkObjectId PasswordScreen::GetOBJECTID()
 	return UplinkObjectId::PasswordScreen;
 }
 
+int PasswordScreen::GetNextPage()
+{
+	return _nextPage;
+}
+
+const char* PasswordScreen::GetPassword()
+{
+	return _password;
+}
+
 void PasswordScreen::SetNextPage(int nextPage)
 {
 	_nextPage = nextPage;
