@@ -240,18 +240,102 @@ bool Agent::Load(FILE* file)
 	if (!Person::Load(file))
 		return false;
 
-	puts("TODO: implement Agent::Load()");
+	if (!LoadDynamicStringBuf(_handle, 0x40, file))
+		return false;
+
+	if (!LoadLList(&_links, file))
+		return false;
+
+	if (!LoadBTree(&_accessCodes, file))
+		return false;
+
+	if (!LoadLList(reinterpret_cast<LList<UplinkObject*>*>(&_missions), file))
+		return false;
+
+	const auto ips = _accessCodes.ConvertIndexToDArray();
+	const auto codes = _accessCodes.ConvertToDArray();
+
+	if (ips == nullptr)
+	{
+		if (codes != nullptr)
+			delete codes;
+
+		return true;
+	}
+
+	if (codes == nullptr)
+	{
+		delete ips;
+		return true;
+	}
+
+	for (auto i = 0; i < ips->Size(); i++)
+	{
+		if (!ips->ValidIndex(i))
+			continue;
+
+		if (!codes->ValidIndex(i))
+			continue;
+
+		if (ips->GetData(i) == nullptr)
+			continue;
+
+		auto ip = ips->GetData(i);
+		auto code = codes->GetData(i);
+
+		auto deleteCode = false;
+
+		if (code == nullptr)
+		{
+			_accessCodes.RemoveData(ip, code);
+			continue;
+		}
+
+		if (strlen(code) > 0xFF)
+		{
+			deleteCode = true;
+		}
+
+		if (!deleteCode)
+		{
+			char name[0x100];
+			char password[0x100];
+			if (!ParseAccessCode(code, name, 0x100, password, 0x100))
+				deleteCode = true;
+		}
+
+		if (!deleteCode)
+		{
+			for (int j = strlen(code) - 1; j >= 0; j--)
+			{
+				if (code[j] <= 31)
+				{
+					deleteCode = true;
+					break;
+				}
+			}
+		}
+
+		if (deleteCode)
+		{
+			_accessCodes.RemoveData(ip, code);
+			delete[] code;
+			continue;
+		}
+	}
+
+	delete ips;
+	delete codes;
 	return true;
 }
 
 void Agent::Save(FILE* file)
 {
 	Person::Save(file);
-	/*SaveDynamicString(_handle, 0x40, file);
+	SaveDynamicString(_handle, 0x40, file);
 	SaveLList(&_links, file);
 	SaveBTree(&_accessCodes, file);
-	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_missions), file);*/
-	puts("TODO: implement Agent::Save()");
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_missions), file);
 }
 
 void Agent::Print()
@@ -276,6 +360,22 @@ const char* Agent::GetID()
 UplinkObjectId Agent::GetOBJECTID()
 {
 	return UplinkObjectId::Agent;
+}
+
+void Agent::GiveMessage(Message* message)
+{
+	(void)message;
+	puts("TODO: implement Agent::GiveMessage()");
+}
+
+void Agent::CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan)
+{
+	(void)bankIp;
+	(void)owner;
+	(void)password;
+	(void)amount;
+	(void)loan;
+	puts("TODO: implement Agent::CreateNewAccount()");
 }
 
 LList<char*>& Agent::GetLinks()
@@ -323,9 +423,9 @@ void Agent::GiveLink(const char* ip)
 {
 	if (!HasLink(ip))
 	{
-		const auto var_20 = new char[0x18];
-		UplinkStrncpy(var_20, ip, 0x18);
-		_links.PutDataAtStart(var_20);
+		const auto str = new char[0x18];
+		UplinkStrncpy(str, ip, 0x18);
+		_links.PutDataAtStart(str);
 
 		if (strcmp(GetName(), "NEWAGENT") == 0)
 		{
@@ -348,20 +448,69 @@ void Agent::SetHandle(const char* handle)
 	UplinkStrncpy(_handle, handle, 0x40);
 }
 
-void Agent::GiveMessage(Message* message)
+bool Agent::ParseAccessCode(const char* code, char* name, size_t nameMax, char* password, size_t passwordMax)
 {
-	(void)message;
-	puts("TODO: implement Agent::GiveMessage()");
-}
+	char buf[0x100];
+	UplinkStrncpy(buf, code, 0x100);
 
-void Agent::CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan)
-{
-	(void)bankIp;
-	(void)owner;
-	(void)password;
-	(void)amount;
-	(void)loan;
-	puts("TODO: implement Agent::CreateNewAccount()");
+	auto quoteCount = 0;
+
+	auto quoteStr = buf;
+	while (true)
+	{
+		const auto match = strchr(quoteStr, '\'');
+		if (quoteStr == nullptr)
+			break;
+
+		quoteStr = match + 1;
+		quoteCount++;
+	}
+
+	if (quoteCount == 2)
+	{
+		// Start of password string is immediately after the first quote
+		const auto pwStr = strchr(buf, '\'') + 1;
+
+		// End of password string is the second quote
+		*strchr(pwStr, '\'') = 0;
+
+		if (nameMax != 0)
+			UplinkStrncpy(name, pwStr, nameMax);
+
+		if (passwordMax != 0)
+			UplinkStrncpy(password, pwStr, passwordMax);
+
+		return true;
+	}
+
+	if (quoteCount == 4)
+	{
+		// Start of name string is immediately after the first quote
+		const auto nameStr = strchr(buf, '\'') + 1;
+		// End of name string is the second quote
+		const auto nameStrEnd = strchr(nameStr, '\'');
+		// Start of password string is immediately after the third (first after the second)
+		const auto pwStr = strchr(nameStrEnd + 1, '\'') + 1;
+		// Write null terminator
+		*nameStrEnd = 0;
+		*strchr(pwStr, '\'') = 0;
+		if (nameMax != 0)
+		{
+			UplinkStrncpy(name, nameStr, nameMax);
+		}
+		if (passwordMax != 0)
+			UplinkStrncpy(password, pwStr, passwordMax);
+
+		return true;
+	}
+
+	if (nameMax != 0)
+		name[0] = 0;
+
+	if (passwordMax != 0)
+		password[0] = 0;
+
+	return false;
 }
 
 Player::~Player()
@@ -371,7 +520,6 @@ Player::~Player()
 
 bool Player::Load(FILE* file)
 {
-	bool rax_1;
 	if (!Agent::Load(file))
 		return false;
 

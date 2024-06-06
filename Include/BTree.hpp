@@ -21,7 +21,8 @@ public:
 	BTree<T>* LookupTree(const char* name);
 	T GetData(const char* name);
 	void PutData(const char* name, const T& value);
-	void RemoveData(const char* key);
+	void RemoveData(const char* name);
+	void RemoveData(const char* name, const T& value);
 
 	void Empty();
 

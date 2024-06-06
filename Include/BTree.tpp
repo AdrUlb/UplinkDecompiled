@@ -151,8 +151,7 @@ template <class T> void BTree<T>::RemoveData(const char* name)
 			// If there is a node to the left
 			if (leftNode != nullptr)
 			{
-				tree->_name = new char[strlen(leftNode->_name) + 1];
-				strcpy(tree->_name, leftNode->_name);
+				tree->_name = leftNode->_name;
 				tree->Data = leftNode->Data;
 				tree->_right = leftNode->_right;
 				tree->_left = leftNode->_left;
@@ -163,8 +162,7 @@ template <class T> void BTree<T>::RemoveData(const char* name)
 			// If there is a node to the right
 			if (rightNode != nullptr)
 			{
-				tree->_name = new char[strlen(rightNode->_name) + 1];
-				strcpy(tree->_name, rightNode->_name);
+				tree->_name = rightNode->_name;
 				tree->Data = rightNode->Data;
 				tree->_left = rightNode->_left;
 				tree->_right = rightNode->_right;
@@ -194,7 +192,7 @@ template <class T> void BTree<T>::RemoveData(const char* name)
 			return;
 		}
 
-		// If the tree we are looking for is to the left
+		// If the tree we are looking for is to the right
 
 		// There is no tree to the right
 		if (rightNode == nullptr)
@@ -208,6 +206,82 @@ template <class T> void BTree<T>::RemoveData(const char* name)
 			break;
 		}
 		tree = rightNode;
+	}
+}
+
+template <class T> void BTree<T>::RemoveData(const char* name, const T& value)
+{
+	assert(name != nullptr);
+
+	struct BTree<char*>* tree = this;
+	while (true)
+	{
+		const auto cmp = strcmp(name, tree->_name);
+
+		const auto leftNode = tree->Left();
+		const auto rightNode = tree->Right();
+
+		// If this is the tree we are looking for
+		if (cmp == 0)
+		{
+			// If this is also the correct value
+			if (tree->Data == value)
+			{
+				// There is a tree to the left
+				if (leftNode != nullptr)
+				{
+					tree->_name = leftNode->_name;
+					tree->Data = leftNode->Data;
+					tree->_right = leftNode->Right();
+					tree->_left = leftNode->Left();
+					tree->AppendRight(rightNode);
+					return;
+				}
+
+				// There is a tree to the right
+				if (rightNode != nullptr)
+				{
+					tree->_name = rightNode->_name;
+					tree->Data = rightNode->Data;
+					tree->_left = rightNode->Left();
+					tree->_right = rightNode->Right();
+					return;
+				}
+
+				tree->_name = nullptr;
+				return;
+			}
+		}
+
+		// The tree we are looking for is to the left
+		if (cmp < 0)
+		{
+			// There is no tree to the left
+			if (tree->Left() == nullptr)
+				break;
+
+			if (strcmp(tree->Left()->_name, name) == 0 && tree->Data == value && tree->Left()->Left() == 0 && tree->Left()->Right() == 0)
+			{
+				tree->_left = 0;
+				break;
+			}
+
+			tree = tree->Left();
+			continue;
+		}
+
+		// The tree we are looking for is to the right
+
+		// There is no tree to the right
+		if (tree->Right() == nullptr)
+			break;
+
+		if (strcmp(tree->Right()->_name, name) == 0 && tree->Data == value && tree->Right()->Left() == nullptr && tree->Right()->Right() == nullptr)
+		{
+			tree->_right = nullptr;
+			break;
+		}
+		tree = tree->Right();
 	}
 }
 

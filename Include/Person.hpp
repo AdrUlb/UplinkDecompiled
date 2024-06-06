@@ -81,6 +81,7 @@ public:
 	bool HasLink(const char* ip);
 	void GiveLink(const char* ip);
 	void SetHandle(const char* handle);
+	static bool ParseAccessCode(const char* code, char* name, size_t nameMax, char* password, size_t passwordMax);
 };
 
 class Player : public Agent

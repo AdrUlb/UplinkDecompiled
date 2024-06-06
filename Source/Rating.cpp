@@ -49,8 +49,8 @@ void Rating::Save(FILE* file)
 void Rating::Print()
 {
 	printf("Rating : Owner:%s\n", _owner);
-	printf("\tUplink Score      = %d (%s)\n", _uplinkScore, GetUplinkRating());
-	printf("\tNeuromancer Score = %d (%s)\n", _neuromancerScore, GetNeuromancerRating());
+	printf("\tUplink Score      = %d (%d)\n", _uplinkScore, GetUplinkRating());
+	printf("\tNeuromancer Score = %d (%d)\n", _neuromancerScore, GetNeuromancerRating());
 	printf("\tCredit rating     = %d\n", _creditRating);
 }
 
