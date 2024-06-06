@@ -18,6 +18,7 @@ bool LogScreen::Load(FILE* file)
 
 void LogScreen::Save(FILE* file)
 {
+	ComputerScreen::Save(file);
 	fwrite(&_nextPage, 4, 1, file);
 	fwrite(&_target, 4, 1, file);
 }

@@ -23,7 +23,7 @@ enum class UplinkObjectId
 	GenericScreen,
 	MessageScreen,
 	PasswordScreen,
-	MenuScreen = 33,
+	MenuScreen,
 	MenuScreenOption,
 	DialogScreen,
 	DialogScreenWidget,

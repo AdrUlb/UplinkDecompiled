@@ -1,5 +1,15 @@
 #include <Util.hpp>
 
+#include <ComputerScreens/DialogScreen.hpp>
+#include <ComputerScreens/DisconnectedScreen.hpp>
+#include <ComputerScreens/GenericScreen.hpp>
+#include <ComputerScreens/HighSecurityScreen.hpp>
+#include <ComputerScreens/LinksScreen.hpp>
+#include <ComputerScreens/LogScreen.hpp>
+#include <ComputerScreens/MenuScreen.hpp>
+#include <ComputerScreens/MenuScreenOption.hpp>
+#include <ComputerScreens/MessageScreen.hpp>
+#include <ComputerScreens/UserIDScreen.hpp>
 #include <Events/NotificationEvent.hpp>
 #include <Events/WarningEvent.hpp>
 #include <Globals.hpp>
@@ -266,6 +276,30 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 			return new Option();
 		case UplinkObjectId::Computer:
 			return new Computer();
+		case UplinkObjectId::GenericScreen:
+			return new GenericScreen();
+		case UplinkObjectId::MessageScreen:
+			return new MessageScreen();
+		case UplinkObjectId::MenuScreen:
+			return new MenuScreen();
+		case UplinkObjectId::MenuScreenOption:
+			return new MenuScreenOption();
+		case UplinkObjectId::DialogScreen:
+			return new DialogScreen();
+		case UplinkObjectId::DialogScreenWidget:
+			return new DialogScreenWidget();
+		case UplinkObjectId::UserIDScreen:
+			return new UserIDScreen();
+		case UplinkObjectId::LogScreen:
+			return new LogScreen();
+		case UplinkObjectId::LinksScreen:
+			return new LinksScreen();
+		/*case UplinkObjectId::CypherScreen:
+			return new CypherScreen();*/
+		case UplinkObjectId::HighSecurityScreen:
+			return new HighSecurityScreen();
+		case UplinkObjectId::DisconnectedScreen:
+			return new DisconnectedScreen();
 		case UplinkObjectId::Company:
 			return new Company();
 		case UplinkObjectId::CompanyUplink:

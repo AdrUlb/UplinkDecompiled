@@ -2,7 +2,7 @@
 
 #include <UplinkObject.hpp>
 
-class MenuScreenOption : UplinkObject
+class MenuScreenOption : public UplinkObject
 {
 	char _caption[0x40] = {0};
 	char _tooltip[0x80] = {0};

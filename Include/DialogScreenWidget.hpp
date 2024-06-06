@@ -2,7 +2,7 @@
 
 #include <UplinkObject.hpp>
 
-class DialogScreenWidget : UplinkObject
+class DialogScreenWidget : public UplinkObject
 {
 	char* _name = nullptr;
 	char* _caption = nullptr;
