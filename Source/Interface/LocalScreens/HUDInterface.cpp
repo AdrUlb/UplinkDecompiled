@@ -216,8 +216,8 @@ void WorldMapInterface::CloseWorldMapInterface_Large()
 
 void WorldMapInterface::CreateWorldMapInterface_Small()
 {
-	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenWidth = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	app->GetOptions().GetOptionValue("graphics_screenheight");
 	auto width = screenWidth * 0.29;
 	auto height = width / 188.0 * 100.0;
 	EclRegisterButton(screenWidth - width - 3, 3, width, height, "", "Global Communications", "worldmap_smallmap");
@@ -414,8 +414,8 @@ void HUDInterface::Update()
 	if (!IsVisible())
 		return;
 
-	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenWidth = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	char var_b8[0x80];
 	UplinkStrncpy(var_b8, game->GetWorld().GetPlayer().GetRemoteHost()->GetIp(), 0x80);
@@ -504,7 +504,7 @@ void HUDInterface::Create()
 	if (IsVisible())
 		return;
 
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 	worldMapInterface.Create(1);
 	EclRegisterButton(3, screenHeight - 70, 53, 53, "", "Run a software application", "hud_software");
 	button_assignbitmaps("hud_software", "hud/software.tif", "hud/software_h.tif", "hud/software_c.tif");
@@ -582,7 +582,7 @@ void HUDInterface::CloseGame()
 	app->SaveGame(game->GetWorld().GetPlayer().GetHandle());
 	game->SetGameSpeed(0);
 	EclReset();
-	app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+	app->GetMainMenu().RunScreen(MainMenuScreenCode::Login);
 }
 
 HUDUpgrade* HUDInterface::GetUpgrade(char upgrade)

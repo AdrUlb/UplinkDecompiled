@@ -59,7 +59,7 @@ void NearestGatewayScreenInterface::Create(ComputerScreen* screen)
 	EclRegisterButton(470, 280, 140, 140, " ", " ", "nearestgateway_black");
 	EclRegisterButtonCallbacks("nearestgateway_black", DrawBlack, nullptr, nullptr, nullptr);
 
-	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
+	const auto screenWidth = app->GetOptions().GetOptionValue("graphics_screenwidth");
 
 	const int height = (screenWidth - 46) / 595.0 * 316.0;
 

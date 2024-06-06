@@ -256,7 +256,7 @@ LinksScreen* LinksScreenInterface::GetComputerScreen()
 
 int LinksScreenInterface::NumLinksOnScreen()
 {
-	return (app->GetOptions()->GetOptionValue("graphics_screenheight") - 265) / 15;
+	return (app->GetOptions().GetOptionValue("graphics_screenheight") - 265) / 15;
 }
 
 void LinksScreenInterface::SetFullList()

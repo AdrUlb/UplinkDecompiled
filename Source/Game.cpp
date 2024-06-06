@@ -252,8 +252,8 @@ void Game::NewGame()
 
 	_obituary = nullptr;
 	_worldMapType = 1;
-	if ((app->GetOptions()->GetOption("graphics_defaultworldmap") != nullptr &&
-		 app->GetOptions()->GetOption("graphics_defaultworldmap")->GetValue() != 0))
+	if ((app->GetOptions().GetOption("graphics_defaultworldmap") != nullptr &&
+		 app->GetOptions().GetOption("graphics_defaultworldmap")->GetValue() != 0))
 		_worldMapType = 0;
 
 	_world = new World();
@@ -308,7 +308,7 @@ bool Game::LoadGame(FILE* file)
 	if (_loadedSaveFileVer[0] == 0 || strcmp(_loadedSaveFileVer, minSaveVersion) < 0 || strcmp(_loadedSaveFileVer, latestSaveVersion) > 0)
 	{
 		EclReset();
-		app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+		app->GetMainMenu().RunScreen(MainMenuScreenCode::Login);
 		char str[0x100];
 		UplinkSnprintf(str, 0x100,
 					   "Failed to load user profile\n"
@@ -324,7 +324,7 @@ bool Game::LoadGame(FILE* file)
 	if (!Load(file))
 	{
 		EclReset();
-		app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+		app->GetMainMenu().RunScreen(MainMenuScreenCode::Login);
 		create_msgbox("Error",
 					  "Failed to load user profile\n"
 					  "The save file is either\n"

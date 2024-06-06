@@ -240,8 +240,10 @@ Computer* World::GetComputer(const char* name)
 Company* World::GetCompany(const char* name)
 {
 	struct BTree<Company*>* tree = _companies.LookupTree(name);
+	
 	if (tree == nullptr)
 		return nullptr;
+
 	return tree->Data;
 }
 

@@ -56,7 +56,7 @@ void Interface::Create()
 {
 	GetRemoteInterface().Create();
 
-	if (!app->GetOptions()->IsOptionEqualTo("game_firsttime", 1))
+	if (!app->GetOptions().IsOptionEqualTo("game_firsttime", 1))
 	{
 		puts("TODO: implement Interface::Create");
 	}

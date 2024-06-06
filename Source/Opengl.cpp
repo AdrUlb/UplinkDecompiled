@@ -109,7 +109,7 @@ void text_draw(Button* button, bool highlighted, bool clicked)
 
 	UplinkAssert(button != nullptr);
 
-	const auto screenheight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenheight = app->GetOptions().GetOptionValue("graphics_screenheight");
 	glScissor(button->X, screenheight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 	SetColour("DefaultText");
@@ -167,8 +167,8 @@ void tooltip_update(const char* text)
 
 	if (tooltipButton == nullptr)
 	{
-		app->GetOptions()->GetOptionValue("graphics_screenwidth");
-		EclRegisterButton(0, app->GetOptions()->GetOptionValue("graphics_screenheight") - 15, 500, 15, "", "tooltip");
+		app->GetOptions().GetOptionValue("graphics_screenwidth");
+		EclRegisterButton(0, app->GetOptions().GetOptionValue("graphics_screenheight") - 15, 500, 15, "", "tooltip");
 		EclRegisterButtonCallbacks("tooltip", textbutton_draw, 0, 0, nullptr);
 		EclButtonSendToBack("tooltip");
 		tooltipButton = EclGetButton("tooltip");
@@ -197,7 +197,7 @@ void tooltip_update(const char* text)
 void button_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != 0);
-	auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
@@ -284,10 +284,9 @@ void button_highlight(Button* button)
 
 void SetColour(const char* name)
 {
-	Options* options;
 	ColourOption* colour;
 
-	if (app == nullptr || (options = app->GetOptions()) == nullptr || (colour = options->GetColour(name)) == nullptr)
+	if (app == nullptr || (colour = app->GetOptions().GetColour(name)) == nullptr)
 	{
 		printf("SetColour WARNING : Failed to find colour %s\n", name);
 		glColor3f(0.0f, 0.0f, 0.0f);
@@ -309,7 +308,7 @@ void border_draw(Button* button)
 
 void imagebutton_draw(Button* button, bool highlighted, bool clicked)
 {
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 
@@ -334,7 +333,7 @@ void imagebutton_draw(Button* button, bool highlighted, bool clicked)
 
 void imagebutton_draw(Button* button, bool highlighted, bool clicked, Image* imageNormal, Image* imageHighlighted, Image* imageClicked)
 {
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 
@@ -357,7 +356,7 @@ void imagebutton_draw(Button* button, bool highlighted, bool clicked, Image* ima
 void textbutton_draw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != nullptr);
-	auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 	clear_draw(button->X, button->Y, button->Width, button->Height);
@@ -390,8 +389,8 @@ static void display()
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenWidth = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 	glOrtho(0.0, screenWidth, screenHeight, 0.0, -1.0, 1.0);
 
 	glTranslatef(0.375f, 0.375f, 0.0f);
@@ -482,7 +481,7 @@ static void mousemove(int x, int y)
 	if (ScrollBox::IsGrabInProgress())
 		ScrollBox::UpdateGrabScroll();
 
-	if (app->GetOptions()->IsOptionEqualTo("graphics_softwaremouse", 1))
+	if (app->GetOptions().IsOptionEqualTo("graphics_softwaremouse", 1))
 	{
 		if (EclGetButton("mouse") == nullptr)
 		{
@@ -508,7 +507,7 @@ static void passivemouse(int x, int y)
 	mouseX = x;
 	mouseY = y;
 
-	if (app->GetOptions()->IsOptionEqualTo("graphics_softwaremouse", 1))
+	if (app->GetOptions().IsOptionEqualTo("graphics_softwaremouse", 1))
 	{
 		if (EclGetButton("mouse") == 0)
 		{
@@ -546,7 +545,7 @@ static void keyboard(char keychar)
 	{
 		if (!game->IsRunning())
 		{
-			if (app->GetMainMenu()->InScreen() == MainMenuScreenCode::Unknown || !app->GetMainMenu()->GetMenuScreen()->ReturnKeyPressed())
+			if (app->GetMainMenu().InScreen() == MainMenuScreenCode::Unknown || !app->GetMainMenu().GetMenuScreen()->ReturnKeyPressed())
 				goto highlighted;
 
 			return;
@@ -651,13 +650,13 @@ static void setcallbacks()
 
 void opengl_initialise()
 {
-	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+	const auto debug = app->GetOptions().IsOptionEqualTo("game_debugstart", 1);
 
-	auto width = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	auto height = app->GetOptions()->GetOptionValue("graphics_screenheight");
-	const auto depth = app->GetOptions()->GetOptionValue("graphics_screendepth");
-	const auto fullscreen = app->GetOptions()->IsOptionEqualTo("graphics_fullscreen", 1);
-	const auto safemode = app->GetOptions()->IsOptionEqualTo("graphics_safemode", 1);
+	auto width = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	auto height = app->GetOptions().GetOptionValue("graphics_screenheight");
+	const auto depth = app->GetOptions().GetOptionValue("graphics_screendepth");
+	const auto fullscreen = app->GetOptions().IsOptionEqualTo("graphics_fullscreen", 1);
+	const auto safemode = app->GetOptions().IsOptionEqualTo("graphics_safemode", 1);
 
 	GciInitFlags flags{.UnknownFlag0 = true, .UnknownFlag1 = true, .Fullscreen = fullscreen && !safemode, .Debug = debug};
 
@@ -669,8 +668,8 @@ void opengl_initialise()
 	{
 		width = screenMode[0];
 		height = screenMode[1];
-		app->GetOptions()->SetOptionValue("graphics_screenwidth", width);
-		app->GetOptions()->SetOptionValue("graphics_screenheight", height);
+		app->GetOptions().SetOptionValue("graphics_screenwidth", width);
+		app->GetOptions().SetOptionValue("graphics_screenheight", height);
 	}
 	delete[] screenMode;
 
@@ -681,8 +680,8 @@ void opengl_initialise()
 	if (actualScreenMode[0] != width || actualScreenMode[1] != height)
 	{
 		printf("We actually ended up with %dx%d\n", actualScreenMode[0], actualScreenMode[1]);
-		app->GetOptions()->SetOptionValue("graphics_screenwidth", actualScreenMode[0]);
-		app->GetOptions()->SetOptionValue("graphics_screenheight", actualScreenMode[1]);
+		app->GetOptions().SetOptionValue("graphics_screenwidth", actualScreenMode[0]);
+		app->GetOptions().SetOptionValue("graphics_screenheight", actualScreenMode[1]);
 	}
 
 	delete[] actualScreenMode;
@@ -729,14 +728,14 @@ void opengl_initialise()
 	EclRegisterClearDrawFunction(clear_draw);
 	EclRegisterDefaultButtonCallbacks(button_draw, nullptr, button_click, button_highlight);
 	EclRegisterSuperHighlightFunction(3, superhighlight_draw);
-	const auto buttonAnimationsOption = app->GetOptions()->GetOption("graphics_buttonanimations");
+	const auto buttonAnimationsOption = app->GetOptions().GetOption("graphics_buttonanimations");
 
 	if (buttonAnimationsOption && !buttonAnimationsOption->GetValue())
 		EclDisableAnimations();
 
-	const auto value = app->GetOptions()->GetOption("graphics_fasterbuttonanimations");
+	const auto value = app->GetOptions().GetOption("graphics_fasterbuttonanimations");
 
-	if (value != nullptr && app->GetOptions()->GetOption("graphics_fasterbuttonanimations")->GetValue())
+	if (value != nullptr && app->GetOptions().GetOption("graphics_fasterbuttonanimations")->GetValue())
 		EclEnableFasterAnimations(2.0);
 
 	if (debug)
@@ -766,7 +765,7 @@ void button_assignbitmap(const char* buttonName, const char* imageName)
 	const auto button = EclGetButton(buttonName);
 	UplinkAssert(button != nullptr);
 
-	const char* filePath = app->GetOptions()->ThemeFilename(imageName);
+	const char* filePath = app->GetOptions().ThemeFilename(imageName);
 
 	const auto image = new Image();
 	image->LoadTIF(RsArchiveFileOpen(filePath));
@@ -783,21 +782,21 @@ void button_assignbitmaps(const char* buttonName, const char* normalFile, const 
 	const auto button = EclGetButton(buttonName);
 	UplinkAssert(button != nullptr);
 
-	const auto normalPath = app->GetOptions()->ThemeFilename(normalFile);
+	const auto normalPath = app->GetOptions().ThemeFilename(normalFile);
 	const auto imageNormal = new Image();
 	imageNormal->LoadTIF(RsArchiveFileOpen(normalPath));
 	imageNormal->SetAlpha(0.85f);
 	if (normalPath != 0)
 		delete[] normalPath;
 
-	const auto highlightedPath = app->GetOptions()->ThemeFilename(highlightedFile);
+	const auto highlightedPath = app->GetOptions().ThemeFilename(highlightedFile);
 	const auto imageHighlighted = new Image();
 	imageHighlighted->LoadTIF(RsArchiveFileOpen(highlightedPath));
 	imageHighlighted->SetAlpha(0.85f);
 	if (highlightedPath != 0)
 		delete[] highlightedPath;
 
-	const auto clickedPath = app->GetOptions()->ThemeFilename(clickedFile);
+	const auto clickedPath = app->GetOptions().ThemeFilename(clickedFile);
 	const auto imageClicked = new Image();
 	imageClicked->LoadTIF(RsArchiveFileOpen(clickedPath));
 	imageClicked->SetAlpha(0.85f);
@@ -829,7 +828,7 @@ void button_assignbitmaps(const char* buttonName, Image* normal, Image* highligh
 
 void imagebutton_drawtextured(Button* button, bool highlighted, bool clicked)
 {
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glScissor(button->X, (screenHeight - button->Y - button->Height), button->Width, button->Height);
@@ -908,8 +907,8 @@ void create_msgbox(const char* title, const char* text, ButtonMouseUpFunc closeC
 	if (isvisible_msgbox())
 		return;
 
-	const auto width = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	const auto height = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto width = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	const auto height = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	EclRegisterButton(0, 0, width, height, "", "", "msgbox_background");
 	EclRegisterButtonCallbacks("msgbox_background", draw_msgboxbackground, 0, 0, nullptr);
@@ -951,7 +950,7 @@ void remove_msgbox()
 
 Image* get_assignbitmap(const char* path)
 {
-	char* themeFilePath = app->GetOptions()->ThemeFilename(path);
+	char* themeFilePath = app->GetOptions().ThemeFilename(path);
 
 	const auto image = new Image();
 	image->LoadTIF(RsArchiveFileOpen(themeFilePath));

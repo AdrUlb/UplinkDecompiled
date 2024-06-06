@@ -20,7 +20,7 @@ static void UserIDButtonDraw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != nullptr);
 
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 
@@ -45,7 +45,7 @@ static void CodeButtonDraw(Button* button, bool highlighted, bool clicked)
 {
 	UplinkAssert(button != nullptr);
 
-	const int screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const int screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	glScissor(button->X, screenHeight + -button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
@@ -76,23 +76,23 @@ static void CodeButtonDraw(Button* button, bool highlighted, bool clicked)
 static void CommsClick(Button* button)
 {
 	(void)button;
-	UplinkAssert(app->GetNetwork()->GetStatus() == 1);
+	UplinkAssert(app->GetNetwork().GetStatus() == 1);
 
 	EclReset();
 
 	UplinkAbort("TODO: implement LoginInterface::CommsClick()");
-	// app->GetNetwork()->GetClient()->SetClientType(1);
+	// app->GetNetwork().GetClient()->SetClientType(1);
 }
 
 static void StatusClick(Button* button)
 {
 	(void)button;
-	UplinkAssert(app->GetNetwork()->GetStatus() == 1);
+	UplinkAssert(app->GetNetwork().GetStatus() == 1);
 
 	EclReset();
 
 	UplinkAbort("TODO: implement LoginInterface::CommsClick()");
-	// app->GetNetwork()->GetClient()->SetClientType(2);
+	// app->GetNetwork().GetClient()->SetClientType(2);
 }
 
 static void NewGameClick(Button* button)
@@ -100,12 +100,12 @@ static void NewGameClick(Button* button)
 	(void)button;
 	tooltip_update(" ");
 
-	app->GetOptions()->SetOptionValue("game_firsttime", 1);
-	app->GetMainMenu()->RunScreen(MainMenuScreenCode::FirstTimeLoading);
+	app->GetOptions().SetOptionValue("game_firsttime", 1);
+	app->GetMainMenu().RunScreen(MainMenuScreenCode::FirstTimeLoading);
 
 	GciTimerFunc(2000, ScriptLibrary::RunScript, 30);
 
-	if (app->GetOptions()->IsOptionEqualTo("sound_musicenabled", 1))
+	if (app->GetOptions().IsOptionEqualTo("sound_musicenabled", 1))
 		SgPlaylist_Play("main");
 }
 
@@ -118,7 +118,7 @@ static void RetireAgentClick(Button* button)
 static void OptionsClick(Button* button)
 {
 	(void)button;
-	app->GetMainMenu()->RunScreen(MainMenuScreenCode::Options);
+	app->GetMainMenu().RunScreen(MainMenuScreenCode::Options);
 }
 
 static void ExitGameClick(Button* button)
@@ -136,12 +136,12 @@ static void ProceedClick(Button* button)
 	char name[0x100];
 	UplinkStrncpy(name, EclGetButton("userid_name")->Caption, 0x100);
 
-	app->GetMainMenu()->RunScreen(MainMenuScreenCode::Loading);
+	app->GetMainMenu().RunScreen(MainMenuScreenCode::Loading);
 	app->SetNextLoadGame(name);
 
 	GciTimerFunc(1, ScriptLibrary::RunScript, 91);
 
-	if (app->GetOptions()->IsOptionEqualTo("sound_musicenabled", 1))
+	if (app->GetOptions().IsOptionEqualTo("sound_musicenabled", 1))
 		SgPlaylist_Play("main");
 }
 
@@ -199,15 +199,15 @@ void LoginInterface::Create()
 	if (IsVisible())
 		return;
 
-	if (app->GetOptions()->IsOptionEqualTo("sound_musicenabled", 1))
+	if (app->GetOptions().IsOptionEqualTo("sound_musicenabled", 1))
 		SgPlaylist_Play("main");
 
 	MainMenuScreen::Create();
 
-	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenWidth = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
-	if (app->GetNetwork()->GetStatus() == 1)
+	if (app->GetNetwork().GetStatus() == 1)
 	{
 		EclRegisterButton(20, 20, 110, 20, "COMMS", "Run as a dumb client, showing the communications status", "client_comms");
 		EclRegisterButtonCallback("client_comms", CommsClick);
@@ -226,7 +226,7 @@ void LoginInterface::Create()
 	EclRegisterButton(optionsX - 68, optionsY + 45, 50, 20, "Retire", "Remove an agent from the roster", "retireagent_text");
 	EclRegisterButtonCallbacks("retireagent_text", LargeTextBoxDraw, RetireAgentClick, button_click, button_highlight);
 
-	if (app->GetNetwork()->GetStatus() == 1)
+	if (app->GetNetwork().GetStatus() == 1)
 	{
 		EclRegisterButtonCallbacks("newgame", imagebutton_draw, nullptr, nullptr, nullptr);
 		EclGetButton("newgame")->ImageNormal->SetAlpha(0.5f);
@@ -289,7 +289,7 @@ void LoginInterface::Remove()
 		return;
 
 	MainMenuScreen::Remove();
-	if (app->GetNetwork()->GetStatus() == 1)
+	if (app->GetNetwork().GetStatus() == 1)
 	{
 		EclRemoveButton("client_comms");
 		EclRemoveButton("client_status");

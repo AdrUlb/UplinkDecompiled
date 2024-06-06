@@ -18,7 +18,7 @@ static void DrawConnection(Button* button, bool highlighted, bool clicked)
 {
 	(void)highlighted;
 	(void)clicked;
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
@@ -110,7 +110,7 @@ static void Script32()
 	EclRemoveButton("start_lock");
 	EclRemoveButton("start_locklink");
 	EclRemoveButton("start_link");
-	app->GetMainMenu()->Remove();
+	app->GetMainMenu().Remove();
 }
 
 static void Script33()
@@ -534,7 +534,7 @@ static void Script42()
 		game->GetInterface().GetLocalInterface().Create();
 	}
 
-	app->GetOptions()->SetOptionValue("game_firsttime", 0);
+	app->GetOptions().SetOptionValue("game_firsttime", 0);
 	game->GetInterface().GetRemoteInterface().RunScreen(6, nullptr);
 }
 

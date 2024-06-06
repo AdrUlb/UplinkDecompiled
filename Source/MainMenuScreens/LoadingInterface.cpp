@@ -10,9 +10,9 @@ void LoadingInterface::Create()
 	if (IsVisible())
 		return;
 
-	const auto width = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	const auto height = app->GetOptions()->GetOptionValue("graphics_screenheight");
-	const auto filePath = app->GetOptions()->ThemeFilename("loading/filenames.txt");
+	const auto width = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	const auto height = app->GetOptions().GetOptionValue("graphics_screenheight");
+	const auto filePath = app->GetOptions().ThemeFilename("loading/filenames.txt");
 
 	FILE* file = RsArchiveFileOpen(filePath, "rt");
 

@@ -37,7 +37,7 @@ void RemoteInterfaceScreen::DrawMainTitle(Button* button, bool highlighted, bool
 {
 	(void)highlighted;
 	(void)clicked;
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 	SetColour("DefaultText");
@@ -53,7 +53,7 @@ void RemoteInterfaceScreen::DrawSubTitle(Button* button, bool highlighted, bool 
 {
 	(void)highlighted;
 	(void)clicked;
-	const auto screenHeight = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 	SetColour("DefaultText");

@@ -160,22 +160,22 @@ bool App::Closed()
 	return _closed;
 }
 
-MainMenu* App::GetMainMenu()
+MainMenu& App::GetMainMenu()
 {
 	UplinkAssert(_mainMenu != nullptr);
-	return _mainMenu;
+	return *_mainMenu;
 }
 
-Network* App::GetNetwork()
+Network& App::GetNetwork()
 {
 	UplinkAssert(_network != nullptr);
-	return _network;
+	return *_network;
 }
 
-Options* App::GetOptions()
+Options& App::GetOptions()
 {
 	UplinkAssert(_options != nullptr);
-	return _options;
+	return *_options;
 }
 
 bool App::GetCheckCodeCard()
@@ -256,14 +256,14 @@ void App::LoadGame(const char* name)
 		EmptyDirectory(app->UsersTempPath);
 		puts("failed");
 		puts("App::LoadGame, Failed to load user profile");
-		GetOptions()->GetOptionValue("graphics_screenheight");
-		GetOptions()->GetOptionValue("graphics_screenwidth");
+		GetOptions().GetOptionValue("graphics_screenheight");
+		GetOptions().GetOptionValue("graphics_screenwidth");
 		EclReset();
-		GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+		GetMainMenu().RunScreen(MainMenuScreenCode::Login);
 		return;
 	}
 
-	GetMainMenu()->Remove();
+	GetMainMenu().Remove();
 	const auto success = game->LoadGame(file);
 	RsFileClose(filePath, file);
 	if (!success)
@@ -279,8 +279,8 @@ void App::LoadGame(const char* name)
 	if (game->GetGameSpeed() == -1)
 	{
 		game->SetGameSpeed(0);
-		app->GetOptions()->GetOptionValue("graphics_screenheight");
-		app->GetOptions()->GetOptionValue("graphics_screenwidth");
+		app->GetOptions().GetOptionValue("graphics_screenheight");
+		app->GetOptions().GetOptionValue("graphics_screenwidth");
 		EclReset();
 		_mainMenu->RunScreen(MainMenuScreenCode::Obituary);
 		return;
@@ -300,8 +300,8 @@ void App::LoadGame(const char* name)
 			player.GetConnection().AddVLocation("234.773.0.666");
 			player.GetConnection().Connect();
 			game->GetInterface().GetLocalInterface().Remove();
-			app->GetOptions()->GetOptionValue("graphics_screenheight");
-			app->GetOptions()->GetOptionValue("graphics_screenwidth");
+			app->GetOptions().GetOptionValue("graphics_screenheight");
+			app->GetOptions().GetOptionValue("graphics_screenwidth");
 			EclReset();
 		}
 		else

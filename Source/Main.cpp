@@ -184,10 +184,10 @@ static void Init_Options(int argc, char** argv)
 		switch (prefix)
 		{
 			case '+':
-				app->GetOptions()->SetOptionValue(arg + 1, 1);
+				app->GetOptions().SetOptionValue(arg + 1, 1);
 				break;
 			case '-':
-				app->GetOptions()->SetOptionValue(arg + 1, 0);
+				app->GetOptions().SetOptionValue(arg + 1, 0);
 				break;
 			case '!':
 			{
@@ -201,7 +201,7 @@ static void Init_Options(int argc, char** argv)
 
 				int value;
 				sscanf(argv[i], "%d", &value);
-				app->GetOptions()->SetOptionValue(arg + 1, value);
+				app->GetOptions().SetOptionValue(arg + 1, value);
 				break;
 			}
 			default:
@@ -210,22 +210,22 @@ static void Init_Options(int argc, char** argv)
 		}
 	}
 
-	if (app->GetOptions()->GetOptionValue("graphics_safemode"))
+	if (app->GetOptions().GetOptionValue("graphics_safemode"))
 	{
-		app->GetOptions()->SetOptionValue("graphics_fullscreen", 0);
-		app->GetOptions()->SetOptionValue("graphics_screenrefresh", -1);
-		app->GetOptions()->SetOptionValue("graphics_screendepth", -1);
-		app->GetOptions()->SetOptionValue("graphics_softwaremouse", 1);
+		app->GetOptions().SetOptionValue("graphics_fullscreen", 0);
+		app->GetOptions().SetOptionValue("graphics_screenrefresh", -1);
+		app->GetOptions().SetOptionValue("graphics_screendepth", -1);
+		app->GetOptions().SetOptionValue("graphics_softwaremouse", 1);
 	}
 
 	putchar('\n');
 
-	const auto width = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	const auto height = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto width = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	const auto height = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	SetWindowScaleFactor(width / 640.0f, height / 480.0f);
 
-	if (app->GetOptions()->IsOptionEqualTo("game_debugstart", 1))
+	if (app->GetOptions().IsOptionEqualTo("game_debugstart", 1))
 	{
 		puts("=====DEBUGGING INFORMATION ENABLED=====");
 	}
@@ -252,7 +252,7 @@ static bool TestRsLoadArchive(char const* name)
 
 static bool Load_Data()
 {
-	const auto debugStart = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+	const auto debugStart = app->GetOptions().IsOptionEqualTo("game_debugstart", 1);
 
 	if (debugStart)
 		puts("Loading application data");
@@ -292,7 +292,7 @@ static bool Load_Data()
 
 static void Init_Game()
 {
-	char debugStart = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+	char debugStart = app->GetOptions().IsOptionEqualTo("game_debugstart", 1);
 
 	if (debugStart)
 		puts("Init_Game called...creating game object");
@@ -307,17 +307,17 @@ static void Init_Game()
 
 static void Init_Graphics()
 {
-	const auto options = app->GetOptions();
-	options->SetThemeName(options->GetThemeName());
+	auto& options = app->GetOptions();
+	options.SetThemeName(options.GetThemeName());
 }
 
 static void Init_OpenGL()
 {
-	app->GetOptions()->SetOptionValue("crash_graphicsinit", 1, "", true, false);
-	app->GetOptions()->Save(nullptr);
+	app->GetOptions().SetOptionValue("crash_graphicsinit", 1, "", true, false);
+	app->GetOptions().Save(nullptr);
 	opengl_initialise();
-	app->GetOptions()->SetOptionValue("crash_graphicsinit", 0, "", true, false);
-	app->GetOptions()->Save(nullptr);
+	app->GetOptions().SetOptionValue("crash_graphicsinit", 0, "", true, false);
+	app->GetOptions().Save(nullptr);
 }
 
 static void Init_Fonts()
@@ -325,7 +325,7 @@ static void Init_Fonts()
 	FT_UInt interpreterVersion = TT_INTERPRETER_VERSION_35;
 	FT_Property_Set(*FTLibrary::Instance().GetLibrary(), "truetype", "interpreter-version", &interpreterVersion);
 
-	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+	const auto debug = app->GetOptions().IsOptionEqualTo("game_debugstart", 1);
 
 	if (debug)
 		puts("Init_Fonts called...setting up system fonts");
@@ -374,7 +374,7 @@ static void Init_Fonts()
 
 static void Init_Sound()
 {
-	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+	const auto debug = app->GetOptions().IsOptionEqualTo("game_debugstart", 1);
 
 	if (debug)
 		puts("Init_Sound called...setting up sound system");
@@ -387,7 +387,7 @@ static void Init_Sound()
 
 static void Init_Music()
 {
-	const auto debug = app->GetOptions()->IsOptionEqualTo("game_debugstart", 1);
+	const auto debug = app->GetOptions().IsOptionEqualTo("game_debugstart", 1);
 
 	if (debug)
 		puts("Init_Music called...loading modules");
@@ -408,7 +408,7 @@ static void Init_Music()
 
 static void Run_MainMenu()
 {
-	if (app->GetOptions()->IsOptionEqualTo("game_debugstart", 1))
+	if (app->GetOptions().IsOptionEqualTo("game_debugstart", 1))
 	{
 		puts("Creating main menu.");
 		puts("====== END OF DEBUGGING INFORMATION ====");
@@ -416,29 +416,29 @@ static void Run_MainMenu()
 	float currentVersion;
 	sscanf(versionNumberString, "%f", &currentVersion);
 	currentVersion *= 100.0f;
-	const auto prevVersion = app->GetOptions()->GetOptionValue("game_version");
+	const auto prevVersion = app->GetOptions().GetOptionValue("game_version");
 	if (prevVersion != currentVersion)
 	{
 		puts("New patch Detected!");
 		printf("Old version = %d\n", prevVersion);
 		printf("New version = %d\n\n", static_cast<int>(currentVersion));
 
-		app->GetOptions()->SetOptionValue("game_version", currentVersion, "z", false, false);
+		app->GetOptions().SetOptionValue("game_version", currentVersion, "z", false, false);
 
 		if (prevVersion <= 119)
 		{
-			app->GetMainMenu()->RunScreen(MainMenuScreenCode::FirstTimeLoading);
+			app->GetMainMenu().RunScreen(MainMenuScreenCode::FirstTimeLoading);
 			ScriptLibrary::RunScript(45);
 			return;
 		}
 	}
-	else if (app->GetOptions()->IsOptionEqualTo("game_firsttime", 1))
+	else if (app->GetOptions().IsOptionEqualTo("game_firsttime", 1))
 	{
-		app->GetMainMenu()->RunScreen(MainMenuScreenCode::FirstTimeLoading);
+		app->GetMainMenu().RunScreen(MainMenuScreenCode::FirstTimeLoading);
 		GciTimerFunc(2000, ScriptLibrary::RunScript, 30);
 	}
 	else
-		app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+		app->GetMainMenu().RunScreen(MainMenuScreenCode::Login);
 }
 
 static void Run_Game()

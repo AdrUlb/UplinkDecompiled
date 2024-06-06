@@ -47,7 +47,7 @@ void LocalInterfaceScreen::CreateHeight(int height)
 	if (IsVisible())
 		return;
 
-	const auto screenWidth = app->GetOptions()->GetOptionValue("graphics_screenwidth");
+	const auto screenWidth = app->GetOptions().GetOptionValue("graphics_screenwidth");
 
 	double zmm1 = screenWidth * 0.29;
 	int width = zmm1;

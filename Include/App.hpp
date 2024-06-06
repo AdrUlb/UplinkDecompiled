@@ -54,9 +54,9 @@ public:
 	void LoadGame(const char* name);
 	void SaveGame(char const* name);
 	void RetireGame(const char* name);
-	MainMenu* GetMainMenu();
-	Network* GetNetwork();
-	Options* GetOptions();
+	MainMenu& GetMainMenu();
+	Network& GetNetwork();
+	Options& GetOptions();
 	bool GetCheckCodeCard();
 	void RegisterPhoneDialler(PhoneDialler* phoneDiallerScreen);
 	void UnRegisterPhoneDialler(PhoneDialler* phoneDiallerScreen);

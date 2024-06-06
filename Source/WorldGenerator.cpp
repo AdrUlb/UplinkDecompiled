@@ -25,7 +25,7 @@ void WorldGenerator::Initialise()
 {
 	worldmapmask = new Image();
 	const auto filePath =
-		app->GetOptions()->ThemeFilename(game->GetWorldMapType() == 1 ? "worldmaplarge_mask_defcon.tif" : "worldmaplarge_mask_new.tif");
+		app->GetOptions().ThemeFilename(game->GetWorldMapType() == 1 ? "worldmaplarge_mask_defcon.tif" : "worldmaplarge_mask_new.tif");
 
 	const auto path = RsArchiveFileOpen(filePath);
 
@@ -1077,8 +1077,8 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 	computer->AddComputerScreen(gatewayInfoScreen, 5);
 
 	const auto connectingScreen = new DialogScreen();
-	connectingScreen->AddWidget("connecting", 2, app->GetOptions()->GetOptionValue("graphics_screenwidth") - 370,
-								app->GetOptions()->GetOptionValue("graphics_screenheight") - 30, 370, 20, "", "");
+	connectingScreen->AddWidget("connecting", 2, app->GetOptions().GetOptionValue("graphics_screenwidth") - 370,
+								app->GetOptions().GetOptionValue("graphics_screenheight") - 30, 370, 20, "", "");
 	computer->AddComputerScreen(connectingScreen, 6);
 
 	const auto codeCardScreen = new GenericScreen();

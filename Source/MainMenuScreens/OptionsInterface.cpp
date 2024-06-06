@@ -24,7 +24,7 @@ static void SoundOptionsClick(Button* button)
 static void ReturnToMainMenuClick(Button* button)
 {
 	(void)button;
-	app->GetMainMenu()->RunScreen(MainMenuScreenCode::Login);
+	app->GetMainMenu().RunScreen(MainMenuScreenCode::Login);
 }
 
 static void ThemeOptionsClick(Button* button)
@@ -39,8 +39,8 @@ void OptionsInterface::Create()
 		return;
 
 	MainMenuScreen::Create();
-	int32_t w = app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	int32_t h = app->GetOptions()->GetOptionValue("graphics_screenheight") - 50;
+	int32_t w = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	int32_t h = app->GetOptions().GetOptionValue("graphics_screenheight") - 50;
 	EclRegisterButton(-832, h, 32, 32, "", "Edit GAME options", "gameoptions");
 	EclRegisterButton(-672, h, 32, 32, "", "Edit GRAPHICS options", "graphicsoptions");
 	EclRegisterButton(-512, h, 32, 32, "", "Edit SOUND options", "soundoptions");

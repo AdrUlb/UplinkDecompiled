@@ -10,11 +10,11 @@ void FirstTimeLoadingInterface::Create()
 	if (IsVisible() != 0)
 		return;
 
-	if (app->GetOptions()->IsOptionEqualTo("sound_musicenabled", 1))
+	if (app->GetOptions().IsOptionEqualTo("sound_musicenabled", 1))
 		SgPlaylist_Play("main");
 
-	EclRegisterButton(app->GetOptions()->GetOptionValue("graphics_screenwidth") - 370,
-					  app->GetOptions()->GetOptionValue("graphics_screenheight") - 30, 370, 20, "", "", "firsttimeloading_text");
+	EclRegisterButton(app->GetOptions().GetOptionValue("graphics_screenwidth") - 370,
+					  app->GetOptions().GetOptionValue("graphics_screenheight") - 30, 370, 20, "", "", "firsttimeloading_text");
 
 	EclRegisterButtonCallbacks("firsttimeloading_text", textbutton_draw, 0, 0, nullptr);
 }

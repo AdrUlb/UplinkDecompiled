@@ -310,10 +310,10 @@ void Options::CreateDefaultOptions()
 		SetOptionValue("sound_musicenabled", 1, "Enables or disables music", true, true);
 
 	// TODO: look at THIS??
-	app->GetOptions()->GetOption("graphics_screenwidth")->SetVisible(false);
-	app->GetOptions()->GetOption("graphics_screenheight")->SetVisible(false);
-	app->GetOptions()->GetOption("graphics_screendepth")->SetVisible(false);
-	app->GetOptions()->GetOption("graphics_screenrefresh")->SetVisible(false);
+	app->GetOptions().GetOption("graphics_screenwidth")->SetVisible(false);
+	app->GetOptions().GetOption("graphics_screenheight")->SetVisible(false);
+	app->GetOptions().GetOption("graphics_screendepth")->SetVisible(false);
+	app->GetOptions().GetOption("graphics_screenrefresh")->SetVisible(false);
 }
 
 LList<Option*>* Options::GetAllOptions(const char* search, bool getInvisible)

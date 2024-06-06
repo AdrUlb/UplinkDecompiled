@@ -200,9 +200,9 @@ void DialogScreenInterface::PasswordBoxDraw(Button* button, bool highlighted, bo
 {
 	UplinkAssert(button != nullptr);
 
-	int32_t rax_2 = app->GetOptions()->GetOptionValue("graphics_screenheight");
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
-	glScissor(button->X, rax_2 - button->Y - button->Height, button->Width, button->Height);
+	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);
 
 	clear_draw(button->X, button->Y, button->Width, button->Height);

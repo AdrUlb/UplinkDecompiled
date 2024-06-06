@@ -19,8 +19,8 @@ MainMenuScreen::~MainMenuScreen()
 
 void MainMenuScreen::Create()
 {
-	app->GetOptions()->GetOptionValue("graphics_screenwidth");
-	app->GetOptions()->GetOptionValue("graphics_screenheight");
+	app->GetOptions().GetOptionValue("graphics_screenwidth");
+	app->GetOptions().GetOptionValue("graphics_screenheight");
 	RegisterButton(GetScaledXPosition(320) - 170, 75, 425, 60, "", "mainmenu_background");
 	button_assignbitmap("mainmenu_background", "mainmenu/uplinklogo.tif");
 	EclRegisterButtonCallbacks("mainmenu_background", imagebutton_draw, 0, 0, nullptr);
