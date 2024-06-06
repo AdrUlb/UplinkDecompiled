@@ -114,11 +114,9 @@ void Image::SetAlpha(float value)
 			_raster[x + (y * _width)] = (_raster[x + (y * _width)] & 0x00FFFFFF) | (_alpha << 24);
 }
 
-#include <cstring>
-
 void Image::Draw(int x, int y)
 {
-	if (_raster == 0)
+	if (_raster == nullptr)
 		return;
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);

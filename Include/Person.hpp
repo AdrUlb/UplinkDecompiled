@@ -41,12 +41,15 @@ public:
 	VLocation* GetLocalHost();
 	VLocation* GetRemoteHost();
 	LList<Message*>& GetMessages();
+	int GetCurrentAccount();
 	Connection& GetConnection();
+	Rating& GetRating();
 	void SetName(const char* name);
 	void SetAge(int age);
 	void SetLocalHost(const char* localHost);
 	const char* GetRemoteHostIp();
 	void SetRemoteHost(const char* remoteHost);
+	void SetCurrentAccount(int account);
 	void SetIsTargetable(bool isTargetable);
 	virtual void GiveMessage(Message* message);
 	virtual void CreateNewAccount(const char* bankIp, const char* owner, const char* password, int amount, int loan);

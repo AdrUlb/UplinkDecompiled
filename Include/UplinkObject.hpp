@@ -22,6 +22,7 @@ enum class UplinkObjectId
 	SecuritySystem = 29,
 	GenericScreen,
 	MessageScreen,
+	PasswordScreen,
 	MenuScreen = 33,
 	MenuScreenOption,
 	DialogScreen,

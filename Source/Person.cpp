@@ -159,9 +159,19 @@ LList<Message*>& Person::GetMessages()
 	return _messages;
 }
 
+int Person::GetCurrentAccount()
+{
+	return _currentAccount;
+}
+
 Connection& Person::GetConnection()
 {
 	return _connection;
+}
+
+Rating& Person::GetRating()
+{
+	return _rating;
 }
 
 void Person::SetName(const char* name)
@@ -186,6 +196,11 @@ void Person::SetRemoteHost(const char* remoteHost)
 {
 	UplinkStrncpy(_remoteHostIp, remoteHost, 0x18);
 	UplinkAssert(game->GetWorld().GetVLocation(_remoteHostIp) != nullptr);
+}
+
+void Person::SetCurrentAccount(int account)
+{
+	_currentAccount = account;
 }
 
 void Person::SetIsTargetable(bool isTargetable)

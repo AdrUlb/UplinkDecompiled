@@ -9,6 +9,7 @@
 #include <ComputerScreens/LogScreen.hpp>
 #include <ComputerScreens/MenuScreen.hpp>
 #include <ComputerScreens/MessageScreen.hpp>
+#include <ComputerScreens/PasswordScreen.hpp>
 #include <ComputerScreens/UserIDScreen.hpp>
 #include <Globals.hpp>
 #include <Image.hpp>
@@ -109,11 +110,11 @@ void WorldGenerator::GeneratePlayer(const char* handle)
 	player->SetHandle(handle);
 	player->SetLocalHost("127.0.0.1");
 	player->SetIsTargetable(false);
-	/*player->SetUplinkRating(0);
-	player->SetNeuromancerRating(5);
-	player->SetCreditRating(10);
+	player->GetRating().SetUplinkRating(0);
+	player->GetRating().SetNeuromancerRating(5);
+	player->GetRating().SetCreditRating(10);
 	player->SetCurrentAccount(0);
-	player->gateway.GiveStartingHardware();
+	/*player->gateway.GiveStartingHardware();
 	player->gateway.GiveStartingSoftware();*/
 	game->GetWorld().CreatePerson(player);
 	player->GetConnection().Reset();
@@ -399,7 +400,49 @@ void WorldGenerator::GenerateInterNIC()
 	computer->SetIsTargetable(0);
 	game->GetWorld().CreateComputer(computer);
 
-	puts("TODO: implement WorldGenerator::GenerateInterNIC()");
+	const auto welcomeScreen = new MessageScreen();
+	welcomeScreen->SetMainTitle("InterNIC");
+	welcomeScreen->SetSubTitle("InterNet Information Center");
+	welcomeScreen->SetNextPage(1);
+	welcomeScreen->SetTextMessage("Welcome to the Internet Information Center.\n\nUse of this service is free and open to all.");
+	welcomeScreen->SetButtonMessage("OK");
+	computer->AddComputerScreen(welcomeScreen, 0);
+
+	const auto menuScreen = new MenuScreen();
+	menuScreen->SetMainTitle("InterNIC");
+	menuScreen->SetSubTitle("Main menu");
+	menuScreen->AddOption("Browse/Search", "Click here to use a list of all known IP's", 2, 10, -1);
+	menuScreen->AddOption("Admin", "Click here to modify the database", 3, 10, -1);
+	computer->AddComputerScreen(menuScreen, 1);
+
+	const auto listScreen = new LinksScreen();
+	listScreen->SetMainTitle("InterNIC");
+	listScreen->SetSubTitle("Search list");
+	listScreen->SetScreenType(1);
+	listScreen->SetNextPage(1);
+	computer->AddComputerScreen(listScreen, 2);
+
+	const auto passwordScreen = new PasswordScreen();
+	passwordScreen->SetMainTitle("InterNIC");
+	passwordScreen->SetSubTitle("Password authorisation required");
+	passwordScreen->SetNextPage(4);
+	passwordScreen->SetPassword(NameGenerator::GeneratePassword());
+	passwordScreen->SetDifficulty(70);
+	computer->AddComputerScreen(passwordScreen, 3);
+
+	const auto adminMenuScreen = new MenuScreen();
+	adminMenuScreen->SetMainTitle("InterNIC");
+	adminMenuScreen->SetSubTitle("Admin menu");
+	adminMenuScreen->AddOption("Access Logs", "Click here to view access logs", 5, 0xa, 0xffffffff);
+	adminMenuScreen->AddOption("Exit", "Return to the main menu", 1, 0xa, 0xffffffff);
+	computer->AddComputerScreen(adminMenuScreen, 4);
+
+	const auto logScreen = new LogScreen();
+	logScreen->SetMainTitle("InterNIC");
+	logScreen->SetSubTitle("Log Screen");
+	logScreen->SetTARGET(0);
+	logScreen->SetNextPage(4);
+	computer->AddComputerScreen(logScreen, 5);
 }
 
 void WorldGenerator::GenerateStockMarket()

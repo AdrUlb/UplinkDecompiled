@@ -23,4 +23,7 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	void SetOwner(const char* owner);
+	void SetUplinkRating(int uplinkRating);
+	void SetNeuromancerRating(int neuromancerRating);
+	void SetCreditRating(int creditRating);
 };
