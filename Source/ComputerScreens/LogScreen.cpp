@@ -39,6 +39,11 @@ void LogScreen::SetNextPage(int nextPage)
 	_nextPage = nextPage;
 }
 
+UplinkObjectId LogScreen::GetOBJECTID()
+{
+	return UplinkObjectId::LogScreen;
+}
+
 void LogScreen::SetTARGET(int type)
 {
 	_target = type;

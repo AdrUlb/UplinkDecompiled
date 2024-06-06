@@ -3,7 +3,7 @@
 #include <Computer.hpp>
 #include <UplinkObject.hpp>
 
-class VLocation : UplinkObject
+class VLocation : public UplinkObject
 {
 	char _ip[0x18] = "0.0.0.0";
 	char _computerName[0x40];

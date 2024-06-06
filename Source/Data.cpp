@@ -83,20 +83,31 @@ DataBank::~DataBank()
 
 bool DataBank::Load(FILE* file)
 {
-	(void)file;
-	(void)puts("TODO: implement DataBank::Load()");
-	return false;
+	if (!LoadDArray(reinterpret_cast<DArray<UplinkObject*>*>(&_files), file))
+		return false;
+
+	if (!LoadDArray(&_placements, file))
+		return false;
+
+	if (!FileReadData(&_formatted, 1, 1, file))
+		return false;
+
+	return true;
 }
 
 void DataBank::Save(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement DataBank::Save()");
+	SaveDArray(reinterpret_cast<DArray<UplinkObject*>*>(&_files), file);
+	SaveDArray(&_placements, file);
+	fwrite(&_formatted, 1, 1, file);
 }
 
 void DataBank::Print()
 {
-	puts("TODO: implement DataBank::Print()");
+	puts("DataBank");
+	PrintDArray(reinterpret_cast<DArray<UplinkObject*>*>(&_files));
+	PrintDArray(&_placements);
+	printf("Formatted: %d\n", _formatted);
 }
 
 const char* DataBank::GetID()

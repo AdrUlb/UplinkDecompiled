@@ -13,5 +13,6 @@ public:
 	void Print() override;
 	const char* GetID() override;
 	void SetNextPage(int nextPage);
+	UplinkObjectId GetOBJECTID() override;
 	void SetTARGET(int type);
 };

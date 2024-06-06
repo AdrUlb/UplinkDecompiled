@@ -15,25 +15,58 @@ struct RatingInfo uplinkRatings[0x11] = {{"Unregistered", 0},	{"Registered", 1},
 
 bool Rating::Load(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement Rating::Load()");
-	return false;
+	if (!LoadDynamicStringBuf(_owner, 0x80, file))
+		return false;
+
+	if (!FileReadData(&_uplinkScore, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&_neuromancerScore, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&uplinkRatings, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&_neuromancerRating, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&_creditRating, 4, 1, file))
+		return false;
+
+	return true;
 }
 
 void Rating::Save(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement Rating::Save()");
+	SaveDynamicString(_owner, 0x80, file);
+	fwrite(&_uplinkScore, 4, 1, file);
+	fwrite(&_neuromancerScore, 4, 1, file);
+	fwrite(&_uplinkRating, 4, 1, file);
+	fwrite(&_neuromancerRating, 4, 1, file);
+	fwrite(&_creditRating, 4, 1, file);
 }
 
 void Rating::Print()
 {
-	puts("TODO: implement Rating::Print()");
+	printf("Rating : Owner:%s\n", _owner);
+	printf("\tUplink Score      = %d (%s)\n", _uplinkScore, GetUplinkRating());
+	printf("\tNeuromancer Score = %d (%s)\n", _neuromancerScore, GetNeuromancerRating());
+	printf("\tCredit rating     = %d\n", _creditRating);
 }
 
 const char* Rating::GetID()
 {
 	return "RATING";
+}
+
+int Rating::GetUplinkRating()
+{
+	return _uplinkRating;
+}
+
+int Rating::GetNeuromancerRating()
+{
+	return _neuromancerRating;
 }
 
 void Rating::SetOwner(const char* owner)

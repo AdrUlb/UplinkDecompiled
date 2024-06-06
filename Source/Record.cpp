@@ -7,12 +7,12 @@ Record::~Record()
 
 bool Record::Load(FILE* file)
 {
-	return LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_fields), file);
+	return LoadBTree(&_fields, file);
 }
 
 void Record::Save(FILE* file)
 {
-	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_fields), file);
+	SaveBTree(&_fields, file);
 }
 
 void Record::Print()

@@ -28,6 +28,7 @@ enum class UplinkObjectId
 	DialogScreen,
 	DialogScreenWidget,
 	UserIDScreen,
+	LogScreen,
 	LinksScreen = 40,
 	CypherScreen = 42,
 	HighSecurityScreen,

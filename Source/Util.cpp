@@ -1,5 +1,6 @@
 #include <Util.hpp>
 
+#include <Events/NotificationEvent.hpp>
 #include <Events/WarningEvent.hpp>
 #include <Globals.hpp>
 #include <Options.hpp>
@@ -259,13 +260,23 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 {
 	switch (objectId)
 	{
+		case UplinkObjectId::VLocation:
+			return new VLocation();
 		case UplinkObjectId::Option:
 			return new Option();
+		case UplinkObjectId::Computer:
+			return new Company();
+		case UplinkObjectId::Company:
+			return new Company();
+		case UplinkObjectId::CompanyUplink:
+			return new CompanyUplink();
+		case UplinkObjectId::NotificationEvent:
+			return new NotificationEvent();
 		case UplinkObjectId::WarningEvent:
 			return new WarningEvent();
 		default:
 			printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
-			printf("Unrecognised OBJECTID=%d", static_cast<int>(objectId));
+			printf("Unrecognised OBJECTID=%d\n", static_cast<int>(objectId));
 			return nullptr;
 	}
 }
@@ -385,6 +396,53 @@ DArray<char*>* ListDirectory(const char* dir, const char* ext)
 	return files;
 }
 
+bool LoadDArray(DArray<int>* array, FILE* file)
+{
+	if (array == nullptr)
+		return false;
+
+	int itemCount;
+	if (!FileReadData(&itemCount, 4, 1, file))
+		return true;
+
+	if (itemCount > 0x40000)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: LoadDArray, number of items appears to be wrong, size=%d\n", itemCount);
+		return false;
+	}
+
+	array->SetSize(itemCount);
+
+	if (itemCount <= 0)
+		return true;
+
+	int index;
+	for (auto i = 0; i < itemCount; i++)
+	{
+		if (!FileReadData(&index, 4, 1, file))
+			return false;
+
+		if (index == -1)
+			continue;
+
+		if (index >= 0x40000)
+		{
+			printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+			printf("WARNING: LoadDArray, number of items appears to be wrong, index=%d\n", index);
+			return false;
+		}
+
+		int data;
+		if (FileReadData(&data, 4, 1, file) == 0)
+			break;
+
+		array->PutData(index, data);
+	}
+
+	return true;
+}
+
 bool LoadDArray(DArray<UplinkObject*>* array, FILE* file)
 {
 	if (array == nullptr)
@@ -446,6 +504,38 @@ bool LoadDArray(DArray<UplinkObject*>* array, FILE* file)
 	}
 
 	return true;
+}
+
+void SaveDArray(DArray<int>* array, FILE* file)
+{
+	UplinkAssert(array != nullptr);
+
+	auto itemCount = array->Size();
+	if (itemCount > 0x40000)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: SaveDArray, number of items appears to be too big, size=%d, maxsize=%d\n", itemCount, 0x40000);
+		itemCount = 0x40000;
+	}
+
+	fwrite(&itemCount, 4, 1, file);
+	if (itemCount <= 0)
+		return;
+
+	for (auto i = 0; i < itemCount; i++)
+	{
+		if (!array->ValidIndex(i))
+		{
+			const auto buf = -1;
+			fwrite(&buf, 4, 1, file);
+			continue;
+		}
+
+		const auto data = array->GetData(i);
+
+		fwrite(&i, 4, 1, file);
+		fwrite(&data, 4, 1, file);
+	}
 }
 
 void SaveDArray(DArray<UplinkObject*>* array, FILE* file)
@@ -565,7 +655,25 @@ void SaveDArrayGatewayDefLocation(DArray<GatewayDefLocation*>* array, FILE* file
 	}
 }
 
-void PrintDArray(struct DArray<UplinkObject*>* array)
+void PrintDArray(DArray<int>* array)
+{
+	UplinkAssert(array != nullptr);
+
+	for (auto i = 0; i < array->Size(); i++)
+	{
+		printf("Index %d : ", i);
+
+		if (!array->ValidIndex(i))
+		{
+			puts("Not a valid index");
+			continue;
+		}
+
+		printf("%d\n", array->GetData(i));
+	}
+}
+
+void PrintDArray(DArray<UplinkObject*>* array)
 {
 	UplinkAssert(array != nullptr);
 
@@ -788,37 +896,6 @@ void DeleteLListData(LList<UplinkObject*>* list)
 	}
 }
 
-void PrintBTree(BTree<UplinkObject*>* tree)
-{
-	UplinkAssert(tree != nullptr);
-
-	const auto elements = tree->ConvertToDArray();
-	const auto indices = tree->ConvertIndexToDArray();
-
-	for (int index = 0; index < elements->Size(); index++)
-	{
-		if (elements->ValidIndex(index))
-			continue;
-
-		UplinkAssert(indices->ValidIndex(index));
-		printf("Index = %s\n", indices->GetData(index));
-
-		const auto element = elements->GetData(index);
-
-		if (element == nullptr)
-		{
-			puts("NULL");
-		}
-		else
-		{
-			element->Print();
-		}
-	}
-
-	delete elements;
-	delete indices;
-}
-
 void PrintBTree(BTree<char*>* tree)
 {
 	UplinkAssert(tree != nullptr);
@@ -850,6 +927,78 @@ void PrintBTree(BTree<char*>* tree)
 	delete indices;
 }
 
+void PrintBTree(BTree<UplinkObject*>* tree)
+{
+	UplinkAssert(tree != nullptr);
+
+	const auto elements = tree->ConvertToDArray();
+	const auto indices = tree->ConvertIndexToDArray();
+
+	for (int index = 0; index < elements->Size(); index++)
+	{
+		if (elements->ValidIndex(index))
+			continue;
+
+		UplinkAssert(indices->ValidIndex(index));
+		printf("Index = %s\n", indices->GetData(index));
+
+		const auto element = elements->GetData(index);
+
+		if (element == nullptr)
+		{
+			puts("NULL");
+		}
+		else
+		{
+			element->Print();
+		}
+	}
+
+	delete elements;
+	delete indices;
+}
+
+bool LoadBTree(BTree<char*>* tree, FILE* file)
+{
+	if (!tree)
+	{
+		printf("LoadBTree called with tree = nullptr at %s:%d\n", __FILE__, __LINE__);
+		return false;
+	}
+
+	int nodeCount;
+	if (!FileReadData(&nodeCount, 4, 1, file))
+		return false;
+
+	if (nodeCount > 0x40000)
+	{
+		printf("WARNING: LoadBTree, number of items appears to be wrong, size=%d\n", nodeCount);
+		return false;
+	}
+
+	for (auto i = 0; i < nodeCount; i++)
+	{
+		char* key = nullptr;
+		if (!LoadDynamicString(key, file))
+			return false;
+
+		if (key == nullptr)
+		{
+			printf("WARNING: LoadBTree NULL id");
+			return false;
+		}
+
+		char* value = nullptr;
+		if (!LoadDynamicString(value, file))
+			return false;
+
+		tree->PutData(key, value);
+
+		delete[] key;
+	}
+	return true;
+}
+
 bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file)
 {
 	if (!tree)
@@ -874,7 +1023,7 @@ bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file)
 		if (!LoadDynamicString(key, file))
 			return false;
 
-		if (!key)
+		if (key == nullptr)
 		{
 			printf("WARNING: LoadBTree NULL id");
 			return false;
@@ -885,7 +1034,7 @@ bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file)
 			return false;
 
 		auto value = CreateUplinkObject((UplinkObjectId)id);
-		if (!value)
+		if (value == nullptr)
 		{
 			delete[] key;
 			return false;
@@ -900,10 +1049,62 @@ bool LoadBTree(BTree<UplinkObject*>* tree, FILE* file)
 
 		tree->PutData(key, value);
 
-		if (key)
-			delete[] key;
+		delete[] key;
 	}
 	return true;
+}
+
+void SaveBTree(BTree<char*>* tree, FILE* file)
+{
+	UplinkAssert(tree);
+
+	const auto elements = tree->ConvertToDArray();
+	const auto indices = tree->ConvertIndexToDArray();
+
+	const auto elementCountTotal = elements->Size();
+	auto elementCountValid = 0;
+
+	if (elementCountTotal <= 0)
+	{
+		int count = 0;
+		fwrite(&count, 4, 1, file);
+		delete elements;
+		delete indices;
+		return;
+	}
+
+	for (auto i = 0; i < elementCountTotal; i++)
+	{
+		if (elements->ValidIndex(i))
+			elementCountValid++;
+	}
+
+	if (elementCountValid > 0x40000)
+	{
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
+		printf("WARNING: SaveBTree, number of items appears to be too big, size=%d, maxsize=%d", elementCountValid, 0x40000);
+		putchar('\n');
+		elementCountValid = 0x40000;
+	}
+
+	fwrite(&elementCountValid, 4, 1, file);
+
+	elementCountValid = 0;
+	for (auto i = 0; i < elementCountTotal && elementCountValid < 0x40000; i++)
+	{
+		if (!elements->ValidIndex(i))
+			continue;
+
+		UplinkAssert(indices->ValidIndex(i));
+		UplinkAssert(elements->GetData(i));
+
+		SaveDynamicString(indices->GetData(i), file);
+		SaveDynamicString(elements->GetData(i), file);
+
+		elementCountValid++;
+	}
+	delete elements;
+	delete indices;
 }
 
 void SaveBTree(BTree<UplinkObject*>* tree, FILE* file)

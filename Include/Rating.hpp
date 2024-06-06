@@ -22,6 +22,8 @@ public:
 	void Save(FILE* file) override;
 	void Print() override;
 	const char* GetID() override;
+	int GetUplinkRating();
+	int GetNeuromancerRating();
 	void SetOwner(const char* owner);
 	void SetUplinkRating(int uplinkRating);
 	void SetNeuromancerRating(int neuromancerRating);

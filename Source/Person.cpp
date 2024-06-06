@@ -232,21 +232,30 @@ Agent::~Agent()
 
 bool Agent::Load(FILE* file)
 {
-	(void)file;
+	if (!Person::Load(file))
+		return false;
+
 	puts("TODO: implement Agent::Load()");
-	return false;
+	return true;
 }
 
 void Agent::Save(FILE* file)
 {
-
-	(void)file;
+	Person::Save(file);
+	/*SaveDynamicString(_handle, 0x40, file);
+	SaveLList(&_links, file);
+	SaveBTree(&_accessCodes, file);
+	SaveLList(reinterpret_cast<LList<UplinkObject*>*>(&_missions), file);*/
 	puts("TODO: implement Agent::Save()");
 }
 
 void Agent::Print()
 {
-	puts("TODO: implement Agent::Print()");
+	printf("Uplink Agent : Handle %s\n", &_handle);
+	Person::Print();
+	PrintLList(&_links);
+	PrintBTree(&_accessCodes);
+	PrintLList(reinterpret_cast<LList<UplinkObject*>*>(&_missions));
 }
 
 void Agent::Update()
@@ -352,20 +361,47 @@ Player::~Player()
 
 bool Player::Load(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement Player::Load()");
-	return false;
+	bool rax_1;
+	if (!Agent::Load(file))
+		return false;
+
+	if (!_gateway.Load(file))
+		return false;
+
+	if (!FileReadData(&_livesRuined, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&_systemsDestroyed, 4, 1, file))
+		return false;
+
+	if (!FileReadData(&_highSecurityHacks, 4, 1, file))
+		return false;
+
+	if (!LoadBTree(&_shares, file))
+		return false;
+
+	return true;
 }
 
 void Player::Save(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement Player::Save()");
+	Agent::Save(file);
+	_gateway.Save(file);
+	fwrite(&_livesRuined, 4, 1, file);
+	fwrite(&_systemsDestroyed, 4, 1, file);
+	fwrite(&_highSecurityHacks, 4, 1, file);
+	SaveBTree(&_shares, file);
 }
 
 void Player::Print()
 {
-	puts("TODO: implement Player::Print()");
+	puts("Player : ");
+	Agent::Print();
+	_gateway.Print();
+	printf("Score : People's lives ruined : %d\n", _livesRuined);
+	printf("Score : Systems destroyed : %d\n", _systemsDestroyed);
+	printf("Score : High Security Hacks : %d\n", _highSecurityHacks);
+	PrintBTree(&_shares);
 }
 
 void Player::Update()
