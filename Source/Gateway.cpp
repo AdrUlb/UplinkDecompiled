@@ -13,7 +13,7 @@ bool Gateway::Load(FILE* file)
 {
 	(void)file;
 	puts("TODO: implement Gateway::Load()");
-	return false;
+	return true;
 }
 
 void Gateway::Save(FILE* file)

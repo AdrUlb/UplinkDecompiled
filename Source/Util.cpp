@@ -1,5 +1,6 @@
 #include <Util.hpp>
 
+#include <ComputerScreens/CypherScreen.hpp>
 #include <ComputerScreens/DialogScreen.hpp>
 #include <ComputerScreens/DisconnectedScreen.hpp>
 #include <ComputerScreens/GenericScreen.hpp>
@@ -9,10 +10,12 @@
 #include <ComputerScreens/MenuScreen.hpp>
 #include <ComputerScreens/MenuScreenOption.hpp>
 #include <ComputerScreens/MessageScreen.hpp>
+#include <ComputerScreens/PasswordScreen.hpp>
 #include <ComputerScreens/UserIDScreen.hpp>
 #include <Events/NotificationEvent.hpp>
 #include <Events/WarningEvent.hpp>
 #include <Globals.hpp>
+#include <LanComputer.hpp>
 #include <Options.hpp>
 #include <RedShirt.hpp>
 #include <cerrno>
@@ -272,14 +275,30 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 	{
 		case UplinkObjectId::VLocation:
 			return new VLocation();
+		case UplinkObjectId::Person:
+			return new Person();
+		case UplinkObjectId::Player:
+			return new Player();
 		case UplinkObjectId::Option:
 			return new Option();
+		case UplinkObjectId::LanComputer:
+			return new LanComputer();
 		case UplinkObjectId::Computer:
 			return new Computer();
+		case UplinkObjectId::Data:
+			return new Data();
+		case UplinkObjectId::DataBank:
+			return new DataBank();
+		case UplinkObjectId::Record:
+			return new Record();
+		case UplinkObjectId::SecuritySystem:
+			return new SecuritySystem();
 		case UplinkObjectId::GenericScreen:
 			return new GenericScreen();
 		case UplinkObjectId::MessageScreen:
 			return new MessageScreen();
+		case UplinkObjectId::PasswordScreen:
+			return new PasswordScreen();
 		case UplinkObjectId::MenuScreen:
 			return new MenuScreen();
 		case UplinkObjectId::MenuScreenOption:
@@ -294,8 +313,8 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 			return new LogScreen();
 		case UplinkObjectId::LinksScreen:
 			return new LinksScreen();
-		/*case UplinkObjectId::CypherScreen:
-			return new CypherScreen();*/
+		case UplinkObjectId::CypherScreen:
+			return new CypherScreen();
 		case UplinkObjectId::HighSecurityScreen:
 			return new HighSecurityScreen();
 		case UplinkObjectId::DisconnectedScreen:

@@ -16,15 +16,23 @@ Interface::~Interface()
 
 bool Interface::Load(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement Interface::Load");
-	return false;
+	if (!GetRemoteInterface().Load(file))
+		return false;
+
+	if (!GetLocalInterface().Load(file))
+		return false;
+
+	if (!GetTaskManager().Load(file))
+		return false;
+		
+	return true;
 }
 
 void Interface::Save(FILE* file)
 {
-	(void)file;
-	puts("TODO: implement Interface::Save");
+	GetRemoteInterface().Save(file);
+	GetLocalInterface().Save(file);
+	GetTaskManager().Save(file);
 }
 
 void Interface::Print()

@@ -251,7 +251,7 @@ void Agent::Save(FILE* file)
 
 void Agent::Print()
 {
-	printf("Uplink Agent : Handle %s\n", &_handle);
+	printf("Uplink Agent : Handle %s\n", _handle);
 	Person::Print();
 	PrintLList(&_links);
 	PrintBTree(&_accessCodes);

@@ -26,9 +26,6 @@ bool Connection::Load(FILE* file)
 			return false;
 	}
 
-	if (!LoadDynamicStringBuf(_owner, 0x40, file))
-		return false;
-
 	if (!FileReadData(&_traceInProgress, 1, 1, file))
 		return false;
 

@@ -47,12 +47,12 @@ void WorldGenerator::Shutdown()
 
 void WorldGenerator::ReplaceInvalidCompanyAdmins()
 {
-	UplinkAbort("TODO: implement WorldGenerator::ReplaceInvalidCompanyAdmins()");
+	puts("TODO: implement WorldGenerator::ReplaceInvalidCompanyAdmins()");
 }
 
 void WorldGenerator::UpdateSoftwareUpgrades()
 {
-	UplinkAbort("TODO: implement WorldGenerator::UpdateSoftwareUpgrades()");
+	puts("TODO: implement WorldGenerator::UpdateSoftwareUpgrades()");
 }
 
 void WorldGenerator::LoadDynamicsGatewayDefs()

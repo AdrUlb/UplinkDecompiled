@@ -3,7 +3,7 @@
 #include <DArray.hpp>
 #include <UplinkObject.hpp>
 
-class SecuritySystem : UplinkObject
+class SecuritySystem : public UplinkObject
 {
 	int _type = 0;
 	int _level = 0;

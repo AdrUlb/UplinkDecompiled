@@ -3,7 +3,7 @@
 #include <LList.hpp>
 #include <UplinkObject.hpp>
 
-class Record : UplinkObject
+class Record : public UplinkObject
 {
 	BTree<char*> _fields;
 

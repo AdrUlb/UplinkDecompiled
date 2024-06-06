@@ -3,7 +3,7 @@
 #include <DArray.hpp>
 #include <UplinkObject.hpp>
 
-class Data : UplinkObject
+class Data : public UplinkObject
 {
 	char _title[0x40] = "Empty";
 	int _type = 0;

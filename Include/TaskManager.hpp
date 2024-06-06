@@ -2,7 +2,7 @@
 
 #include <UplinkObject.hpp>
 
-class TaskManager : UplinkObject
+class TaskManager : public UplinkObject
 {
 	int _targetProgramPid = -1;
 	int _unknown = 0;
