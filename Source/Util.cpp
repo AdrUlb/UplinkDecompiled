@@ -265,7 +265,7 @@ UplinkObject* CreateUplinkObject(UplinkObjectId objectId)
 		case UplinkObjectId::Option:
 			return new Option();
 		case UplinkObjectId::Computer:
-			return new Company();
+			return new Computer();
 		case UplinkObjectId::Company:
 			return new Company();
 		case UplinkObjectId::CompanyUplink:
