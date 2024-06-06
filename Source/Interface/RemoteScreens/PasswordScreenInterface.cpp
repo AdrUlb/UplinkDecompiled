@@ -44,8 +44,9 @@ static void CodeButtonDraw(Button* button, bool highlighted, bool clicked)
 static void PasswordClick(Button* button)
 {
 	UplinkAssert(button != nullptr);
-
-	puts("TODO: implement PasswordClick()");
+	struct RemoteInterfaceScreen* rax_3 = game->GetInterface().GetRemoteInterface().GetInterfaceScreen();
+	UplinkAssert(rax_3 != nullptr);
+	game->GetInterface().GetTaskManager().SetProgramTarget(rax_3->GetComputerScreen(), button->Name, -1);
 }
 
 static void AccessCodeClick(Button* button)

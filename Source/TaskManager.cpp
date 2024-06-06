@@ -33,3 +33,11 @@ void TaskManager::SetTargetProgram(int pid)
 	_lastTargetProgramPid = _targetProgramPid;
 	_targetProgramPid = pid;
 }
+
+void TaskManager::SetProgramTarget(UplinkObject* programTarget, const char* buttonName, int index)
+{
+	(void)programTarget;
+	(void)buttonName;
+	(void)index;
+	puts("TODO: implement TaskManager::SetProgramTarget()");
+}

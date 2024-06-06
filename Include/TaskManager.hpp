@@ -16,4 +16,5 @@ public:
 	void Update() override;
 	const char* GetID() override;
 	void SetTargetProgram(int pid);
+	void SetProgramTarget(UplinkObject* programTarget, const char* buttonName, int index);
 };
