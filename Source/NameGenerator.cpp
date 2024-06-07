@@ -39,6 +39,12 @@ void NameGenerator::GenerateCentralMainframeName(const char* companyName)
 	UplinkSnprintf(tempname, 0x80, "%s Central Mainframe", companyName);
 }
 
+const char* NameGenerator::GenerateInternationalBankName(const char* companyName)
+{
+	UplinkSnprintf(tempname, 0x80, "%s International Bank", companyName);
+	return tempname;
+}
+
 void NameGenerator::GenerateLANName(const char* companyName)
 {
 	UplinkSnprintf(tempname, 0x80, "%s Local Area Network", companyName);
