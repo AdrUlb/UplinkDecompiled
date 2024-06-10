@@ -10,13 +10,18 @@ add_subdirectory(Dependencies/ftgl-2.4.0)
 project(UplinkDecompiled CXX)
 
 find_package(Freetype REQUIRED)
+find_package(SDL REQUIRED)
+find_package(SDL_mixer REQUIRED)
+find_package(TIFF REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 file(GLOB_RECURSE UPLINK_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp)
 
 add_executable(UplinkDecompiled ${UPLINK_SOURCES})
 
-target_include_directories(UplinkDecompiled PRIVATE Include ${FREETYPE_INCLUDE_DIRS})
+target_include_directories(UplinkDecompiled PRIVATE Include ${SDL_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR} ${FREETYPE_INCLUDE_DIRS} ${TIFF_INCLUDE_DIRS})
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
-target_link_libraries(UplinkDecompiled tcp4u crypto SDL GL ftgl SDL_mixer tiff)
+target_link_libraries(UplinkDecompiled ftgl tcp4u ${SDL_LIBRARIES} ${SDL_MIXER_LIBRARIES} ${OPENGL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY} ${FREETYPE_LIBRARIES} ${TIFF_LIBRARIES})
 
 add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> -game_firsttime -graphics_fullscreen +graphics_fasterbuttonanimations !graphics_screenwidth 640 !graphics_screenheight 480)

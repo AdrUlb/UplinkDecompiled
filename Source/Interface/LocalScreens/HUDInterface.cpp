@@ -129,15 +129,15 @@ static void EmailHighlight(Button* button)
 
 WorldMapInterface::~WorldMapInterface()
 {
-	if (layout != nullptr)
-		delete layout;
+	if (_layout != nullptr)
+		delete _layout;
 }
 
 bool WorldMapInterface::Load(FILE* file)
 {
 	if (strcmp(game->GetLoadedSavefileVer(), "SAV57") >= 0)
 	{
-		if (!LoadLList(&this->savedConnection, file))
+		if (!LoadLList(&this->_savedConnection, file))
 			return false;
 	}
 
@@ -146,12 +146,12 @@ bool WorldMapInterface::Load(FILE* file)
 
 void WorldMapInterface::Save(FILE* file)
 {
-	SaveLList(&savedConnection, file);
+	SaveLList(&_savedConnection, file);
 }
 
 void WorldMapInterface::Print()
 {
-	PrintLList(&savedConnection);
+	PrintLList(&_savedConnection);
 }
 
 void WorldMapInterface::Update()
@@ -171,18 +171,17 @@ const char* WorldMapInterface::GetID()
 
 void WorldMapInterface::Create()
 {
-	puts("TODO: implement WorldMapInterface::Create()");
+	Create(2);
 }
 
 void WorldMapInterface::Remove()
 {
-	puts("TODO: implement WorldMapInterface::Remove()");
+	RemoveWorldMapInterface();
 }
 
 bool WorldMapInterface::IsVisible()
 {
-	puts("TODO: implement WorldMapInterface::IsVisible()");
-	return false;
+	return IsVisibleWorldMapInterface() != 0;
 }
 
 int WorldMapInterface::ScreenID()
@@ -193,6 +192,21 @@ int WorldMapInterface::ScreenID()
 void WorldMapInterface::Create(int id)
 {
 	printf("TODO: implement WorldMapInterface::Create(%d)\n", id);
+}
+
+int GetLargeMapWidth()
+{
+	return app->GetOptions().GetOptionValue("graphics_screenwidth") - 46;
+}
+
+int GetLargeMapHeight()
+{
+	return GetLargeMapWidth() / 595.0 * 316.0;
+}
+
+MapRect GetLargeMapRect()
+{
+	return {23, 50, GetLargeMapWidth(), GetLargeMapHeight()};
 }
 
 int WorldMapInterface::IsVisibleWorldMapInterface()
@@ -551,8 +565,6 @@ void HUDInterface::Create()
 	button_assignbitmaps("hud_speed 3", "hud/speed3.tif", "hud/speed3_h.tif", "hud/speed3_c.tif");
 	EclRegisterButtonCallbacks("hud_speed 3", SpeedButtonDraw, SpeedButtonClick, button_click, button_highlight);
 	SvbCreateInterface(335, 15);
-
-	puts("TODO: implement HUDInterface::Create()");
 }
 
 bool HUDInterface::IsVisible()

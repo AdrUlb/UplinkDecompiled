@@ -119,7 +119,7 @@ SET(ftlayout_sources
 
 ADD_LIBRARY(ftgl ${libftgl_la_SOURCES} ${ftgl_headers} ${ftglyph_sources} ${ftfont_sources} ${ftlayout_sources})
 TARGET_LINK_LIBRARIES(ftgl
-	${OPENGL_LIBRARIES} freetype
+	${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES}
 )
 
 target_include_directories(ftgl PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

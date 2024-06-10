@@ -3,12 +3,20 @@
 #include <Interface/LocalScreens/LocalInterfaceScreen.hpp>
 #include <LList.hpp>
 
+struct MapRect
+{
+	int Left;
+	int Top;
+	int Right;
+	int Bottom;
+};
+
 typedef void WorldMapLayout;
 
 class WorldMapInterface : LocalInterfaceScreen
 {
-	WorldMapLayout* layout = nullptr;
-	LList<char*> savedConnection;
+	WorldMapLayout* _layout = nullptr;
+	LList<char*> _savedConnection;
 	int field_38 = 0;
 	int field_3c = 0;
 	int field_40 = 0;
@@ -25,6 +33,9 @@ public:
 	bool IsVisible() override;
 	int ScreenID() override;
 	void Create(int id);
+	static int GetLargeMapWidth();
+	static int GetLargeMapHeight();
+	static MapRect GetLargeMapRect();
 	static int IsVisibleWorldMapInterface();
 	static void CloseWorldMapInterface_Large();
 	static void CreateWorldMapInterface_Small();

@@ -6,9 +6,57 @@
 #include <NumberGenerator.hpp>
 #include <WorldGenerator.hpp>
 
+static void GenerateLAN_Level0Cluster(LanComputer* computer, LanCluster* cluster, LList<int>* radioFreqs, int x, int y, int width, int height)
+{
+	(void)computer;
+	(void)cluster;
+	(void)radioFreqs;
+	(void)x;
+	(void)y;
+	(void)width;
+	(void)height;
+	puts("TODO: implement GenerateLAN_Level0Cluster()");
+}
+
+static void GenerateLAN_Level1Cluster(LanComputer* computer, LanCluster* cluster, LList<int>* radioFreqs, int x, int y, int width, int height)
+{
+	(void)computer;
+	(void)cluster;
+	(void)radioFreqs;
+	(void)x;
+	(void)y;
+	(void)width;
+	(void)height;
+	puts("TODO: implement GenerateLAN_Level1Cluster()");
+}
+
+static void GenerateLAN_Level2Cluster(LanComputer* computer, LanCluster* cluster, LList<int>* radioFreqs)
+{
+	(void)computer;
+	(void)cluster;
+	(void)radioFreqs;
+	puts("TODO: implement GenerateLAN_Level2Cluster()");
+}
+
+static void GenerateLAN_Level3Cluster(LanComputer* computer, LanCluster* cluster, LList<int>* radioFreqs)
+{
+	(void)computer;
+	(void)cluster;
+	(void)radioFreqs;
+	puts("TODO: implement GenerateLAN_Level3Cluster()");
+}
+
+static void GenerateLAN_Level4Cluster(LanComputer* computer, LanCluster* cluster, LList<int>* radioFreqs)
+{
+	(void)computer;
+	(void)cluster;
+	(void)radioFreqs;
+	puts("TODO: implement GenerateLAN_Level4Cluster()");
+}
+
 void LanGenerator::GenerateLANCluster(LanComputer* computer, int level)
 {
-	/*const auto cluster = new LanCluster();
+	const auto cluster = new LanCluster();
 	LList<int> radioFreqs;
 
 	switch (level)
@@ -30,7 +78,7 @@ void LanGenerator::GenerateLANCluster(LanComputer* computer, int level)
 			break;
 	}
 
-	UplinkAssert(cluster->Input != 0);
+	/*UplinkAssert(cluster->Input != 0);
 	UplinkAssert(cluster->Output != 0);
 
 	const auto inputSystem = cluster->Systems.GetData(cluster->Input);
@@ -45,10 +93,10 @@ void LanGenerator::GenerateLANCluster(LanComputer* computer, int level)
 	}
 
 	cluster->Rotate(NumberGenerator::RandomNumber(4));
-	cluster->Merge(computer);
-
-	delete cluster;*/
+	cluster->Merge(computer);*/
 	puts("TODO: implement LanGenerator::GenerateLANCluster()");
+
+	delete cluster;
 }
 
 Computer* LanGenerator::GenerateLAN(const char* companyName, int level)
