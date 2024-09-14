@@ -10,7 +10,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 void PrintStackTrace();
@@ -162,3 +161,8 @@ template <class T> void DeleteDArrayDataD(DArray<T>* array)
 		}
 	}
 }
+
+#ifdef UPLINKDECOMPILEDPRELOADED
+const auto Temp_LoginInterface_RetireAgentClick = (void(*)(void))0x0048fee0;
+#endif
+

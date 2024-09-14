@@ -13,5 +13,4 @@ SpaceInEmptyParentheses: 'false'
 SpacesBeforeTrailingComments: '1'
 TabWidth: '4'
 UseTab: Always
-
 ...

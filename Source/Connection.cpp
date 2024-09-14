@@ -71,6 +71,11 @@ Person* Connection::GetOwner()
 	return ret;
 }
 
+LList<char*>& Connection::GetVLocations()
+{
+	return _vlocations;
+}
+
 int Connection::GetSize()
 {
 	return _vlocations.Size();

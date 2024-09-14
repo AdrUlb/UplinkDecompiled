@@ -1,49 +1,8 @@
 #pragma once
 
 #include <Interface/LocalScreens/LocalInterfaceScreen.hpp>
+#include <Interface/LocalScreens/WorldMapInterface.hpp>
 #include <LList.hpp>
-
-struct MapRect
-{
-	int Left;
-	int Top;
-	int Right;
-	int Bottom;
-};
-
-typedef void WorldMapLayout;
-
-class WorldMapInterface : LocalInterfaceScreen
-{
-	WorldMapLayout* _layout = nullptr;
-	LList<char*> _savedConnection;
-	int field_38 = 0;
-	int field_3c = 0;
-	int field_40 = 0;
-
-public:
-	~WorldMapInterface() override;
-	bool Load(FILE* file) override;
-	void Save(FILE* file) override;
-	void Print() override;
-	void Update() override;
-	const char* GetID() override;
-	void Create() override;
-	void Remove() override;
-	bool IsVisible() override;
-	int ScreenID() override;
-	void Create(int id);
-	static int GetLargeMapWidth();
-	static int GetLargeMapHeight();
-	static MapRect GetLargeMapRect();
-	static int IsVisibleWorldMapInterface();
-	static void CloseWorldMapInterface_Large();
-	static void CreateWorldMapInterface_Small();
-	static void CreateWorldMapInterface_Large();
-	static void CreateWorldMapInterface(int type);
-	static void RemoveTempConnectionButton();
-	static void RemoveWorldMapInterface();
-};
 
 class SWInterface : LocalInterfaceScreen
 {

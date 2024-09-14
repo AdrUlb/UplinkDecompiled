@@ -24,7 +24,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 # Allow the developer to select if Dynamic or Static libraries are built
-OPTION(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
+OPTION(BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 IF(BUILD_SHARED_LIBS)
  	SET(LIB_TYPE SHARED)
 	ADD_DEFINITIONS(-DFTGL_LIBRARY)
@@ -49,7 +49,7 @@ SUBDIRS(src)
 
 FIND_PACKAGE(CxxTest)
 IF(CxxTest_FOUND)
-	OPTION(BUILD_TESTS "Build Unit Tests" ON)
+	OPTION(BUILD_TESTS "Build Unit Tests" OFF)
 	IF(BUILD_TESTS)
 	  SUBDIRS(test)
 	ENDIF(BUILD_TESTS)

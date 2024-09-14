@@ -112,7 +112,11 @@ static void NewGameClick(Button* button)
 static void RetireAgentClick(Button* button)
 {
 	(void)button;
+#ifdef UPLINKDECOMPILEDPRELOADED
+	Temp_LoginInterface_RetireAgentClick();
+#else
 	puts("TODO: implement LoginInterface::RetireAgentClick()");
+#endif
 }
 
 static void OptionsClick(Button* button)

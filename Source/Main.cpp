@@ -12,6 +12,7 @@
 #include FT_DRIVER_H
 #include FT_MODULE_H
 
+
 App* app = nullptr;
 FILE* file_stdout = nullptr;
 const char* versionNumberString = "1.55";
@@ -323,8 +324,9 @@ static void Init_OpenGL()
 static void Init_Fonts()
 {
 	FT_UInt interpreterVersion = TT_INTERPRETER_VERSION_35;
+#ifndef UPLINKDECOMPILEDPRELOADED
 	FT_Property_Set(*FTLibrary::Instance().GetLibrary(), "truetype", "interpreter-version", &interpreterVersion);
-
+#endif
 	const auto debug = app->GetOptions().IsOptionEqualTo("game_debugstart", 1);
 
 	if (debug)
@@ -496,3 +498,54 @@ int main(int argc, char** argv)
 	RunUplink(argc, argv);
 	return 0;
 }
+
+#ifdef UPLINKDECOMPILEDPRELOADED
+#include <sys/mman.h>
+
+uintptr_t PAGESIZE = 0;
+
+constexpr uintptr_t uplinkMainAddr = 0x004A12B0;
+
+static inline uintptr_t GetPageFromAddress(uintptr_t address)
+{
+	return address & ~(PAGESIZE - 1);
+}
+template<typename T>
+static void Write(uintptr_t address, T value)
+{
+	const auto ptr = (T*)address;
+
+	const auto page1 = GetPageFromAddress(address);
+	const auto page2 = GetPageFromAddress(address + sizeof(T) - 1);
+
+	mprotect((void*)page1, PAGESIZE, PROT_WRITE);
+
+	if (page1 != page2)
+		mprotect((void*)page2, PAGESIZE, PROT_WRITE);
+
+	*ptr = value;
+
+	mprotect((void*)page1, PAGESIZE, PROT_EXEC | PROT_READ);
+
+	if (page1 != page2)
+		mprotect((void*)page2, PAGESIZE, PROT_EXEC | PROT_READ);
+}
+
+static void WriteJump(uintptr_t from, uintptr_t to)
+{
+	Write<uint8_t>(from++, 0xFF);
+	Write<uint8_t>(from++, 0x25);
+	Write<uint8_t>(from++, 0x00);
+	Write<uint8_t>(from++, 0x00);
+	Write<uint8_t>(from++, 0x00);
+	Write<uint8_t>(from++, 0x00);
+	Write<uint64_t>(from, to);
+}
+
+__attribute__((constructor)) void LibMain()
+{
+	PAGESIZE = sysconf(_SC_PAGE_SIZE);
+
+	WriteJump(uplinkMainAddr, (uintptr_t)main);
+}
+#endif

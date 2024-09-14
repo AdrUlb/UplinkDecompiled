@@ -4,14 +4,9 @@
 
 AccessLog::~AccessLog()
 {
-	if (_data1 != nullptr)
-		delete[] _data1;
-
-	if (_data2 != nullptr)
-		delete[] _data2;
-
-	if (_data3 != nullptr)
-		delete[] _data3;
+	delete[] _data1;
+	delete[] _data2;
+	delete[] _data3;
 }
 
 bool AccessLog::Load(FILE* file)
@@ -141,11 +136,8 @@ void AccessLog::SetFromIP(const char* value)
 
 void AccessLog::SetData1(const char* value)
 {
-	if (_data1 != nullptr)
-	{
-		delete[] _data1;
-		_data1 = nullptr;
-	}
+	delete[] _data1;
+	_data1 = nullptr;
 
 	if (value == nullptr)
 		return;
@@ -171,11 +163,8 @@ void AccessLog::SetData2(const char* value)
 
 void AccessLog::SetData3(const char* value)
 {
-	if (_data3 != nullptr)
-	{
-		delete[] _data3;
-		_data3 = nullptr;
-	}
+	delete[] _data3;
+	_data3 = nullptr;
 
 	if (value == nullptr)
 		return;

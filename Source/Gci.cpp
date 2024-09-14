@@ -1,7 +1,7 @@
 #include <Gci.hpp>
 
-#include <FTFace.h>
-#include <FTGL/ftgl.h>
+#include <FTGL/FTFont.h>
+#include <FTGL/FTGLBitmapFont.h>
 #include <GL/gl.h>
 #include <SDL/SDL.h>
 #include <Util.hpp>
@@ -11,6 +11,7 @@
 #include <list>
 #include <map>
 #include <sys/time.h>
+#include <dlfcn.h>
 
 static SDL_Surface* screen = nullptr;
 
@@ -29,7 +30,7 @@ static ReshapeFunc gciReshapeHandlerP = nullptr;
 static bool gci_truetypeenabled = false;
 static int gci_defaultfont = 6;
 
-static std::map<int, FTBitmapFont*> fonts;
+static std::map<int, FTFont*> fonts;
 
 static bool displayDamaged = false;
 
@@ -311,7 +312,7 @@ bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size
 		return false;
 	}
 
-	const auto font = new FTBitmapFont(path);
+	const auto font = new FTGLBitmapFont(path);
 
 	if (font->Error() != FT_Err_Ok || !font->FaceSize(size, 96))
 	{

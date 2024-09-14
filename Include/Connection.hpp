@@ -22,6 +22,7 @@ public:
 	const char* GetID();
 	const char* GetTarget();
 	Person* GetOwner();
+	LList<char*>& GetVLocations();
 	int GetSize();
 	void SetOwner(const char* owner);
 	const char* GetGhost();
