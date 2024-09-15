@@ -12,7 +12,6 @@
 #include FT_DRIVER_H
 #include FT_MODULE_H
 
-
 App* app = nullptr;
 FILE* file_stdout = nullptr;
 const char* versionNumberString = "1.55";
@@ -23,7 +22,7 @@ char tempname[0x80] = {0};
 
 static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {
-	auto buffer = (char*)malloc(0xFFF);
+	const auto buffer = new char[0x1080];
 
 	if (buffer == nullptr)
 	{
@@ -32,9 +31,6 @@ static char* vmg57670648335164_br_find_exe(unsigned int* error)
 
 		return nullptr;
 	}
-
-	if (buffer == nullptr)
-		return nullptr;
 
 	const auto procSelfLength = readlink("/proc/self/exe", buffer, 0xFFF);
 
@@ -44,31 +40,21 @@ static char* vmg57670648335164_br_find_exe(unsigned int* error)
 		return buffer;
 	}
 
-	const auto buffer2 = (char*)realloc(buffer, 0x1080);
-	if (buffer2 == nullptr)
-	{
-		free(buffer);
-		if (error != nullptr)
-			*error = 0;
-
-		return nullptr;
-	}
-
 	const auto mapsFile = fopen("/proc/self/maps", "r");
 
 	if (mapsFile == nullptr)
 	{
-		free(buffer2);
+		delete[] buffer;
 		if (error != nullptr)
 			*error = 1;
 
 		return nullptr;
 	}
 
-	if (fgets(buffer2, 0x1080, mapsFile) == 0)
+	if (fgets(buffer, 0x1080, mapsFile) == 0)
 	{
 		fclose(mapsFile);
-		free(buffer2);
+		delete[] buffer;
 
 		if (error != nullptr)
 			*error = 2;
@@ -76,30 +62,29 @@ static char* vmg57670648335164_br_find_exe(unsigned int* error)
 		return nullptr;
 	}
 
-	uint64_t mapsLen = strlen(buffer2);
+	uint64_t mapsLen = strlen(buffer);
 	const char* slashLoc;
 	const char* rxpLoc;
 	if (mapsLen != 0)
 	{
 		// Replace newline with NULL-terminator
-		if (buffer2[mapsLen - 1] == '\n')
-			buffer2[mapsLen - 1] = 0;
+		if (buffer[mapsLen - 1] == '\n')
+			buffer[mapsLen - 1] = 0;
 
-		slashLoc = strchr(buffer2, '/');
-		rxpLoc = strstr(buffer2, " r-xp ");
+		slashLoc = strchr(buffer, '/');
+		rxpLoc = strstr(buffer, " r-xp ");
 
 		if (rxpLoc != nullptr && slashLoc != nullptr)
 		{
-			buffer = strdup(slashLoc);
-			free(buffer2);
+			const auto buf = strdup(slashLoc);
+			delete[] buffer;
 			fclose(mapsFile);
-
-			return buffer;
+			return buf;
 		}
 	}
 
 	fclose(mapsFile);
-	free(buffer2);
+	delete[] buffer;
 
 	if (error != 0)
 		*error = 3;
@@ -462,12 +447,17 @@ static void RunUplink(int argc, char** argv)
 		return;
 	}
 
-	const char* exePath = "/opt/uk.co.introversion.uplink-full/data.dat";
+	auto exePath = "/opt/uk.co.introversion.uplink-full/data.dat";
 
 	if (!DoesFileExist(exePath))
+	{
 		exePath = vmg57670648335164_br_find_exe(nullptr);
+		Init_App(exePath);
+		delete[] exePath;
+	}
+	else
+		Init_App(exePath);
 
-	Init_App(exePath);
 	Init_Options(argc, argv);
 
 	if (!VerifyLegitAndCodeCardCheck() || !Load_Data())
@@ -510,8 +500,7 @@ static inline uintptr_t GetPageFromAddress(uintptr_t address)
 {
 	return address & ~(PAGESIZE - 1);
 }
-template<typename T>
-static void Write(uintptr_t address, T value)
+template <typename T> static void Write(uintptr_t address, T value)
 {
 	const auto ptr = (T*)address;
 

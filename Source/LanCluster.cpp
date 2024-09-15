@@ -2,5 +2,5 @@
 
 LanCluster::~LanCluster()
 {
-	DeleteDArrayDataD(&Links);
+	DeleteDArrayDataD(reinterpret_cast<DArray<UplinkObject*>*>(&Links));
 }

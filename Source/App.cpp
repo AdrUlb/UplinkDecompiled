@@ -102,6 +102,7 @@ void App::Close()
 	SvbReset();
 	GciDeleteAllTrueTypeFonts();
 	RsCleanUp();
+	// TODO: SgPlaylist_Shutdown();
 	SgShutdown();
 
 	if (_mainMenu != nullptr)

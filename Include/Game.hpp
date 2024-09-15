@@ -14,7 +14,7 @@ class Game : UplinkObject
 	World* _world;
 	int _speed;
 	GameObituary* _obituary;
-	time_t _lastAutosaveTime;
+	time_t _lastAutosaveTime = 0;
 	char* _loadedSaveFileVer;
 	char* _createdSaveFileVer;
 	int _field_48;

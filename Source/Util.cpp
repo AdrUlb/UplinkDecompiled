@@ -1236,3 +1236,61 @@ void UpdateBTree(BTree<UplinkObject*>* tree)
 	}
 	delete objs;
 }
+
+void DeleteDArrayDataD(DArray<char*>* array)
+{
+	UplinkAssert(array != nullptr);
+
+	for (int i = 0; i < array->Size(); i++)
+	{
+		if (array->ValidIndex(i) && array->GetData(i))
+		{
+			delete[] array->GetData(i);
+			array->RemoveData(i);
+		}
+	}
+}
+
+void DeleteDArrayDataD(DArray<UplinkObject*>* array)
+{
+	UplinkAssert(array != nullptr);
+
+	for (int i = 0; i < array->Size(); i++)
+	{
+		if (array->ValidIndex(i) && array->GetData(i))
+		{
+			delete array->GetData(i);
+			array->RemoveData(i);
+		}
+	}
+}
+
+void DeleteBTreeData(BTree<UplinkObject*>* tree)
+{
+	UplinkAssert(tree != nullptr);
+
+	const auto array = tree->ConvertToDArray();
+
+	for (int i = 0; i < array->Size(); i++)
+	{
+		if (const auto data = array->GetData(i); array->ValidIndex(i) && data != nullptr)
+			delete data;
+	}
+
+	delete array;
+}
+
+void DeleteBTreeData(BTree<char*>* tree)
+{
+	UplinkAssert(tree != nullptr);
+
+	const auto array = tree->ConvertToDArray();
+
+	for (int i = 0; i < array->Size(); i++)
+	{
+		if (const auto data = array->GetData(i); array->ValidIndex(i) && data != nullptr)
+			delete[] data;
+	}
+
+	delete array;
+}

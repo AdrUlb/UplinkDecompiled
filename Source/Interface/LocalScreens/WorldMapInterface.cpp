@@ -54,7 +54,24 @@ static int GetScaledY(const int value, const int arg2)
 
 	return -1;
 }
-void DrawWorldMapSmall(Button* button, bool highlighted, bool clicked)
+
+static void ConnectDraw(Button* button, bool highlighted, bool clicked)
+{
+	if (!game->GetWorld().GetPlayer().IsConnected() && WorldMapInterface::IsVisibleWorldMapInterface() != 2)
+	{
+		clear_draw(button->X, button->Y, button->Width, button->Height);
+		return;
+	}
+
+	if (game->GetWorld().GetPlayer().IsConnected())
+		button->SetCaption("Disconnect");
+	else
+		button->SetCaption("Connect");
+
+	button_draw(button, highlighted, clicked);
+}
+
+static void DrawWorldMapSmall(Button* button, bool highlighted, bool clicked)
 {
 	imagebutton_draw(button, highlighted, clicked);
 
@@ -168,6 +185,59 @@ static void FullScreenClick(Button* button)
 {
 	(void)button;
 	puts("TODO: implement FullScreenClick()");
+}
+
+static void ConnectClick(Button* button)
+{
+	(void)button;
+	puts("TODO: implement ConnectClick()");
+
+	if (!game->GetWorld().GetPlayer().IsConnected())
+	{
+		if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+		{
+			WorldMapInterface::CreateWorldMapInterface(1);
+			const auto dialler = new PhoneDialler();
+			dialler->DialNumber(0x64, 0x64, game->GetWorld().GetPlayer().GetConnection().GetTarget(), PhoneDiallerNextScene::WorldMap, nullptr);
+		}
+	}
+	else
+	{
+		const auto worldMapInterface = WorldMapInterface::IsVisibleWorldMapInterface();
+
+		game->GetWorld().GetPlayer().GetConnection().Disconnect();
+		game->GetWorld().GetPlayer().GetConnection().Reset();
+		game->GetInterface().GetRemoteInterface().RunNewLocation();
+		game->GetInterface().GetRemoteInterface().RunScreen(1, nullptr);
+
+		if (worldMapInterface == 2)
+		{
+			WorldMapInterface::RemoveWorldMapInterface();
+			WorldMapInterface::CreateWorldMapInterface(2);
+		}
+	}
+}
+
+static void ConnectMouseDown(Button* button)
+{
+	(void)button;
+	puts("TODO: implement ConnectMouseDown()");
+}
+
+static void ConnectMouseMove(Button* button)
+{
+	if (!game->GetWorld().GetPlayer().IsConnected() && WorldMapInterface::IsVisibleWorldMapInterface() != 2)
+		return;
+
+	if (game->GetWorld().GetPlayer().IsConnected())
+	{
+		button->SetTooltip("Break the connection to your cur…");
+		button_highlight(button);
+		return;
+	}
+
+	button->SetTooltip("Establish the connection to your…");
+	button_highlight(button);
 }
 
 WorldMapRect::WorldMapRect(const int x, const int y, const int width, const int height) : X(x), Y(y), Width(width), Height(height) {}
@@ -428,7 +498,7 @@ void WorldMapInterface::CreateWorldMapInterface_Small()
 	EclGetButton("worldmap_smallmap")->ImageNormal->Scale(width, height);
 	EclRegisterButtonCallbacks("worldmap_smallmap", DrawWorldMapSmall, FullScreenClick, button_click, button_highlight);
 	EclRegisterButton(screenWidth - width - 3, height + 4, width, 15, "", "", "worldmap_connect");
-	// TODO: EclRegisterButtonCallbacks("worldmap_connect", ConnectDraw, ConnectClick, ConnectMouseDown, ConnectMouseMove);
+	EclRegisterButtonCallbacks("worldmap_connect", ConnectDraw, ConnectClick, ConnectMouseDown, ConnectMouseMove);
 	EclRegisterButton(screenWidth - 3, 0, 3, 3, "", "Global Communications", "worldmap_toprightclick");
 	// TODO: EclRegisterButtonCallbacks("worldmap_toprightclick", nullptr, FullScreenClick, button_click, button_highlight);
 

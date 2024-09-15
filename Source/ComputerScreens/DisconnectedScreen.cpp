@@ -2,10 +2,11 @@
 
 #include <Util.hpp>
 
+DArray<char*> DisconnectedScreen::loginslost;
+
 DisconnectedScreen::~DisconnectedScreen()
 {
-	if (_textMessage != nullptr)
-		delete[] _textMessage;
+	delete[] _textMessage;
 }
 
 bool DisconnectedScreen::Load(FILE* file)
@@ -64,4 +65,10 @@ void DisconnectedScreen::AddLoginLost(const char* ip)
 {
 	(void)ip;
 	puts("TODO: implement DisconnectedScreen::AddLoginLost()");
+}
+
+void DisconnectedScreen::ClearLoginsLost()
+{
+	DeleteDArrayDataD(&loginslost);
+	loginslost.Empty();
 }

@@ -55,6 +55,10 @@ void PrintBTree(BTree<UplinkObject*>* tree);
 void SaveBTree(BTree<char*>* tree, FILE* file);
 void SaveBTree(BTree<UplinkObject*>* tree, FILE* file);
 void UpdateBTree(BTree<UplinkObject*>* tree);
+void DeleteDArrayDataD(DArray<char*>* array);
+void DeleteDArrayDataD(DArray<UplinkObject*>* array);
+void DeleteBTreeData(BTree<UplinkObject*>* tree);
+void DeleteBTreeData(BTree<char*>* tree);
 
 template <class... Args>
 static inline int UplinkSnprintfImpl(const char* file, const size_t line, char* s, size_t n, const char* format, Args... args)
@@ -125,44 +129,6 @@ template <typename... Args> [[noreturn]] static void inline UplinkAbortImpl(cons
 #define LoadDynamicString(buffer, file) LoadDynamicStringImpl(__FILE__, __LINE__, buffer, file)
 #define LoadDynamicStringBuf(buffer, max, file) LoadDynamicStringBufImpl(__FILE__, __LINE__, buffer, max, file)
 
-template <class T> void DeleteBTreeData(BTree<T>* tree)
-{
-	UplinkAssert(tree != nullptr);
-
-	const auto array = tree->ConvertToDArray();
-
-	for (int i = 0; i < array->Size(); i++)
-	{
-		const auto data = array->GetData(i);
-		if (array->ValidIndex(i) && data != nullptr)
-		{
-			if (data != nullptr)
-				delete data;
-		}
-	}
-
-	delete (array);
-}
-
-template <class T> void DeleteDArrayDataD(DArray<T>* array)
-{
-	UplinkAssert(array != nullptr);
-
-	for (int i = 0; i < array->Size(); i++)
-	{
-		if ((array->ValidIndex(i) && array->GetData(i)))
-		{
-			const auto element = array->GetData(i);
-
-			if (element != 0)
-				delete element;
-
-			array->RemoveData(i);
-		}
-	}
-}
-
 #ifdef UPLINKDECOMPILEDPRELOADED
-const auto Temp_LoginInterface_RetireAgentClick = (void(*)(void))0x0048fee0;
+const auto Temp_LoginInterface_RetireAgentClick = (void (*)(void))0x0048fee0;
 #endif
-

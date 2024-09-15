@@ -70,8 +70,8 @@ Options::Options()
 
 Options::~Options()
 {
-	DeleteBTreeData(&_options);
-	auto array = _colourOptions.ConvertToDArray();
+	DeleteBTreeData(reinterpret_cast<BTree<UplinkObject*>*>(&_options));
+	const auto array = _colourOptions.ConvertToDArray();
 
 	for (int i = 0; i < array->Size(); i++)
 	{
@@ -130,9 +130,9 @@ bool Options::Load(FILE* file)
 
 	puts("success");
 
-	if (!LoadBTree((BTree<UplinkObject*>*)&_options, optionsFile))
+	if (!LoadBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_options), optionsFile))
 	{
-		DeleteBTreeData((BTree<UplinkObject*>*)&_options);
+		DeleteBTreeData(reinterpret_cast<BTree<UplinkObject*>*>(&_options));
 		return false;
 	}
 
@@ -192,7 +192,7 @@ void Options::Save(FILE* file)
 
 	fwrite(latestSaveVersion, strlen(latestSaveVersion) + 1, 1, fp);
 
-	SaveBTree((BTree<UplinkObject*>*)&_options, fp);
+	SaveBTree(reinterpret_cast<BTree<UplinkObject*>*>(&_options), fp);
 	fputc('t', fp);
 	const auto themeNameLength = strlen(_themeName);
 

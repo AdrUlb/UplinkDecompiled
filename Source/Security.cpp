@@ -64,7 +64,7 @@ void SecuritySystem::Enable()
 
 Security::~Security()
 {
-	DeleteDArrayDataD(&_systems);
+	DeleteDArrayDataD(reinterpret_cast<DArray<UplinkObject*>*>(&_systems));
 }
 
 bool Security::Load(FILE* file)

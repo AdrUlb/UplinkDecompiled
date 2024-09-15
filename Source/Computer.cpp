@@ -5,7 +5,7 @@
 
 Computer::~Computer()
 {
-	DeleteDArrayDataD(&_screens);
+	DeleteDArrayDataD(reinterpret_cast<DArray<UplinkObject*>*>(&_screens));
 }
 
 bool Computer::Load(FILE* file)

@@ -68,10 +68,10 @@ World::~World()
 	NameGenerator::Shutdown();
 	MissionGenerator::Shutdown();
 
-	DeleteBTreeData(&_vlocations);
-	DeleteBTreeData(&_companies);
-	DeleteBTreeData(&_computers);
-	DeleteBTreeData(&_people);
+	DeleteBTreeData(reinterpret_cast<BTree<UplinkObject*>*>(&_vlocations));
+	DeleteBTreeData(reinterpret_cast<BTree<UplinkObject*>*>(&_companies));
+	DeleteBTreeData(reinterpret_cast<BTree<UplinkObject*>*>(&_computers));
+	DeleteBTreeData(reinterpret_cast<BTree<UplinkObject*>*>(&_people));
 	DeleteDArrayDataD(&_passwords);
 
 	for (auto i = 0; i < _gatewayDefs.Size(); i++)

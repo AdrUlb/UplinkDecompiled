@@ -196,8 +196,8 @@ void tooltip_update(const char* text)
 
 void button_draw(Button* button, bool highlighted, bool clicked)
 {
-	UplinkAssert(button != 0);
-	auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
+	UplinkAssert(button != nullptr);
+	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
 
 	glScissor(button->X, screenHeight - button->Y - button->Height, button->Width, button->Height);
 	glEnable(GL_SCISSOR_TEST);

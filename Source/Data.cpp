@@ -78,7 +78,7 @@ void Data::SetDetails(int type, int size, int encrypted, int compressed, float s
 
 DataBank::~DataBank()
 {
-	DeleteDArrayDataD(&_files);
+	DeleteDArrayDataD(reinterpret_cast<DArray<UplinkObject*>*>(&_files));
 }
 
 bool DataBank::Load(FILE* file)

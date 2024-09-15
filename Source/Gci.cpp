@@ -1,7 +1,6 @@
 #include <Gci.hpp>
 
-#include <FTGL/FTFont.h>
-#include <FTGL/FTGLBitmapFont.h>
+#include <FTGL/ftgl.h>
 #include <GL/gl.h>
 #include <SDL/SDL.h>
 #include <Util.hpp>
@@ -11,7 +10,6 @@
 #include <list>
 #include <map>
 #include <sys/time.h>
-#include <dlfcn.h>
 
 static SDL_Surface* screen = nullptr;
 

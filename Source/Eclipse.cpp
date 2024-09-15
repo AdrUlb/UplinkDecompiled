@@ -129,13 +129,13 @@ void EclReset()
 {
 	if (currenthighlight != nullptr)
 	{
-		delete currenthighlight;
+		delete[] currenthighlight;
 		currenthighlight = nullptr;
 	}
 
 	if (currentclick != nullptr)
 	{
-		delete currentclick;
+		delete[] currentclick;
 		currentclick = nullptr;
 	}
 
