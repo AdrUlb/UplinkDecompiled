@@ -34,4 +34,5 @@ public:
 	void BeginTrace();
 	bool TraceInProgress();
 	bool Traced();
+	[[nodiscard]] int GetTraceProgress() const { return _traceProgress; };
 };

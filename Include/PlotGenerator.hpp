@@ -51,4 +51,5 @@ public:
 	const char* GetID() override;
 	void Initialise();
 	void PlayerVisitsPlotSites();
+	LList<char*>& GetRevelationInfected();
 };

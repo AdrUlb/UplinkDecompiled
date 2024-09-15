@@ -220,7 +220,7 @@ const char* GciInitGraphics(const char* title, GciInitFlags flags, int width, in
 	return nullptr;
 }
 
-int* GciGetClosestScreenMode(int width, int height)
+int* GciGetClosestScreenMode(const int width, const int height)
 {
 	const auto ret = new int[2];
 	ret[0] = width;
@@ -283,12 +283,12 @@ bool GciUnregisterTrueTypeFont()
 	return true;
 }
 
-void GciSetDefaultFont(int index)
+void GciSetDefaultFont(const int index)
 {
 	gci_defaultfont = index;
 }
 
-void GciDeleteTrueTypeFont(int index)
+void GciDeleteTrueTypeFont(const int index)
 {
 	if (fonts[index] == nullptr)
 		return;
@@ -303,7 +303,7 @@ void GciDeleteAllTrueTypeFonts()
 		GciDeleteTrueTypeFont(node.first);
 }
 
-bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size)
+bool GciLoadTrueTypeFont(const int index, const char* name, const char* path, const int size)
 {
 	(void)name;
 	if (!gci_truetypeenabled)
@@ -325,7 +325,7 @@ bool GciLoadTrueTypeFont(int index, const char* name, const char* path, int size
 	return true;
 }
 
-void GciTimerFunc(int delay, GciTimerCallback callback, int arg)
+void GciTimerFunc(const int delay, const GciTimerCallback callback, const int arg)
 {
 	const auto rax = new TimerEvent();
 	rax->callback = callback;

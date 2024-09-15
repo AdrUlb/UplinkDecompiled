@@ -249,3 +249,8 @@ void PlotGenerator::PlayerVisitsPlotSites()
 {
 	_playerVisitsPlotSites = true;
 }
+
+LList<char*>& PlotGenerator::GetRevelationInfected()
+{
+	return _revelationInfected;
+}
