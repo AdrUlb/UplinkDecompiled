@@ -24,8 +24,7 @@ static Image* worldmapmask;
 void WorldGenerator::Initialise()
 {
 	worldmapmask = new Image();
-	const auto filePath =
-		app->GetOptions().ThemeFilename(game->GetWorldMapType() == 1 ? "worldmaplarge_mask_defcon.tif" : "worldmaplarge_mask_new.tif");
+	const auto filePath = app->GetOptions().ThemeFilename(game->GetWorldMapType() == 1 ? "worldmaplarge_mask_defcon.tif" : "worldmaplarge_mask_new.tif");
 
 	const auto path = RsArchiveFileOpen(filePath);
 
@@ -190,8 +189,7 @@ void WorldGenerator::GenerateLocalMachine()
 	const auto setupCompleteScreen = new DialogScreen();
 	setupCompleteScreen->SetMainTitle("Gateway");
 	setupCompleteScreen->SetSubTitle("Set up complete");
-	setupCompleteScreen->AddWidget(
-		"caption", 2, 50, 120, 400, 280,
+	setupCompleteScreen->AddWidget("caption", 2, 50, 120, 400, 280,
 		"Your Gateway computer has been successfully set up and will accept only your username and password in the future.  "
 		"When you next start Uplink on your home computer, you will be connected automatically to this Gateway.\n"
 		"\n"
@@ -201,8 +199,7 @@ void WorldGenerator::GenerateLocalMachine()
 		"WOULD YOU LIKE TO RUN THE TUTORIAL?\n(Recommended for first time users)",
 		"");
 	setupCompleteScreen->AddWidget("runtutorial", 8, 300, 350, 50, 20, "Yes", "Run the tutorial", 43, 0, nullptr, nullptr);
-	setupCompleteScreen->AddWidget("dontruntutorial", 5, 200, 350, 50, 20, "No", "Skip the tutorial and return to the main screen", 0, 0, nullptr,
-								   nullptr);
+	setupCompleteScreen->AddWidget("dontruntutorial", 5, 200, 350, 50, 20, "No", "Skip the tutorial and return to the main screen", 0, 0, nullptr, nullptr);
 	computer->AddComputerScreen(setupCompleteScreen, 7);
 
 	const auto systemNotFoundScreen = new MessageScreen();
@@ -229,12 +226,11 @@ void WorldGenerator::GenerateLocalMachine()
 	const auto gatewayUpgradeCompleteScreen = new MessageScreen();
 	gatewayUpgradeCompleteScreen->SetMainTitle("Gateway");
 	gatewayUpgradeCompleteScreen->SetSubTitle("Upgrade complete");
-	gatewayUpgradeCompleteScreen->SetTextMessage(
-		"Congratulations agent - your are now using your new gateway and your old one is already being dismantled.\n"
-		"\n"
-		"If you view your hardware profile you should see the new gateway in place.\n"
-		"If you experience any problems with this new system, please get in contact with us at\n"
-		"Problems@UplinkCorporation.net.");
+	gatewayUpgradeCompleteScreen->SetTextMessage("Congratulations agent - your are now using your new gateway and your old one is already being dismantled.\n"
+												 "\n"
+												 "If you view your hardware profile you should see the new gateway in place.\n"
+												 "If you experience any problems with this new system, please get in contact with us at\n"
+												 "Problems@UplinkCorporation.net.");
 	gatewayUpgradeCompleteScreen->SetButtonMessage("OK");
 	gatewayUpgradeCompleteScreen->SetNextPage(0);
 	computer->AddComputerScreen(gatewayUpgradeCompleteScreen, 10);
@@ -930,11 +926,11 @@ void WorldGenerator::GenerateValidMapPos(int& outX, int& outY)
 	// 32 attempts
 	for (auto attempts = 0; attempts < 32; attempts++)
 	{
-		x = NumberGenerator::RandomNumber(593);
-		y = NumberGenerator::RandomNumber(314);
+		x = NumberGenerator::RandomNumber(VirtualWidth - 1);
+		y = NumberGenerator::RandomNumber(VirtualHeight - 1);
 
-		UplinkAssert(x <= 593);
-		UplinkAssert(y <= 314);
+		UplinkAssert(x < VirtualWidth);
+		UplinkAssert(y < VirtualHeight);
 
 		// If we are outside of the world map, try again and do not count the attempt
 		if (worldmapmask->GetPixelR(x, y) == 0)
@@ -1011,19 +1007,19 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 	dialogScreen->SetMainTitle("Uplink");
 	dialogScreen->SetSubTitle("Registration");
 	dialogScreen->AddWidget("caption1", 2, 100, 110, 380, 270,
-							"Your Uplink membership package includes : \n"
-							"\n"
-							"- A Gateway computer at a secure location.  "
-							"You will connect to this machine from your home computer when you are working for Uplink.  "
-							"You can have it upgraded at a later stage if necessary.\n"
-							"\n"
-							"- A low interest loan of 3000 credits with Uplink International Bank, to get you started.\n"
-							"\n"
-							"- Access to our Bulletin Board system - the usual place for Uplink Agents to find work.\n"
-							"\n"
-							"- You will be officially rated as an Uplink Agent, and we will monitor your progress.  "
-							"As your rating increases you will find new avenues of work become available.",
-							"");
+		"Your Uplink membership package includes : \n"
+		"\n"
+		"- A Gateway computer at a secure location.  "
+		"You will connect to this machine from your home computer when you are working for Uplink.  "
+		"You can have it upgraded at a later stage if necessary.\n"
+		"\n"
+		"- A low interest loan of 3000 credits with Uplink International Bank, to get you started.\n"
+		"\n"
+		"- Access to our Bulletin Board system - the usual place for Uplink Agents to find work.\n"
+		"\n"
+		"- You will be officially rated as an Uplink Agent, and we will monitor your progress.  "
+		"As your rating increases you will find new avenues of work become available.",
+		"");
 	dialogScreen->AddWidget("cancel", 5, 160, 380, 100, 20, "Cancel", "Cancel registration", 1, 0, nullptr, nullptr);
 	dialogScreen->AddWidget("continue", 5, 270, 380, 100, 20, "Continue", "Continue registration", 3, 0, nullptr, nullptr);
 	dialogScreen->SetReturnKeyButton("continue");
@@ -1039,10 +1035,10 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 	registrationScreen->AddWidget("passwordtext", 4, 270, 170, 170, 20, "", "Enter your password here");
 	registrationScreen->AddWidget("passwordtext2", 4, 270, 200, 170, 20, "", "Re-type your password here");
 	registrationScreen->AddWidget("moretext", 2, 80, 270, 360, 100,
-								  "Uplink Corporation will not ask for any more personal details.  In the event of you being charged with illegal "
-								  "operations, our corporation will be forced to disavow all knowledge of your actions, however you will be safe "
-								  "from arrest as your real world address will never be stored.",
-								  "");
+		"Uplink Corporation will not ask for any more personal details.  In the event of you being charged with illegal "
+		"operations, our corporation will be forced to disavow all knowledge of your actions, however you will be safe "
+		"from arrest as your real world address will never be stored.",
+		"");
 	registrationScreen->AddWidget("continue", 8, 270, 400, 100, 20, "Done", "Click here when finished", 33, -1, nullptr, nullptr);
 	registrationScreen->SetReturnKeyButton("continue");
 	computer->AddComputerScreen(registrationScreen, 3);
@@ -1057,8 +1053,7 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 	const auto gatewayInfoScreen = new DialogScreen();
 	gatewayInfoScreen->SetMainTitle("Uplink Registration");
 	gatewayInfoScreen->SetSubTitle("Your Gateway computer");
-	gatewayInfoScreen->AddWidget(
-		"caption1", 2, 100, 130, 380, 270,
+	gatewayInfoScreen->AddWidget("caption1", 2, 100, 130, 380, 270,
 		"Registration is now taking place.\n"
 		"\n"
 		"As part of your membership, we will assign you a Gateway computer system in your chosen server room.  "
@@ -1078,7 +1073,7 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 
 	const auto connectingScreen = new DialogScreen();
 	connectingScreen->AddWidget("connecting", 2, app->GetOptions().GetOptionValue("graphics_screenwidth") - 370,
-								app->GetOptions().GetOptionValue("graphics_screenheight") - 30, 370, 20, "", "");
+		app->GetOptions().GetOptionValue("graphics_screenheight") - 30, 370, 20, "", "");
 	computer->AddComputerScreen(connectingScreen, 6);
 
 	const auto codeCardScreen = new GenericScreen();
@@ -1091,8 +1086,7 @@ void WorldGenerator::GenerateUplinkPublicAccessServer()
 	const auto connectionFailedScreen = new DialogScreen();
 	connectionFailedScreen->SetMainTitle("Uplink");
 	connectionFailedScreen->SetSubTitle("Gateway connection failed");
-	connectionFailedScreen->AddWidget(
-		"caption1", 2, 100, 130, 400, 270,
+	connectionFailedScreen->AddWidget("caption1", 2, 100, 130, 400, 270,
 		"We have been unable to connect you to your Gateway computer.\n"
 		"\n"
 		"This may be due to a fault in out communications lines, and if this is the case then we apologise and ask you to try again later.\n"

@@ -45,6 +45,7 @@ public:
 	LList<Message*>& GetMessages();
 	int GetCurrentAccount();
 	Connection& GetConnection();
+	const Connection& GetConnection() const;
 	Rating& GetRating();
 	void SetName(const char* name);
 	void SetAge(int age);

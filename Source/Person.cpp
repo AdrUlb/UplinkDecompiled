@@ -184,6 +184,11 @@ Connection& Person::GetConnection()
 	return _connection;
 }
 
+const Connection& Person::GetConnection() const
+{
+	return _connection;
+}
+
 Rating& Person::GetRating()
 {
 	return _rating;

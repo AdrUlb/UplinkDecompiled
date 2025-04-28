@@ -90,7 +90,8 @@ void MainMenu::Create()
 
 MainMenuScreen* MainMenu::GetMenuScreen()
 {
-	UplinkAbort("TODO: implement MainMenu::GetMenuScreen()");
+    UplinkAssert(_screen != nullptr);
+    return _screen;
 }
 
 MainMenuScreenCode MainMenu::InScreen()

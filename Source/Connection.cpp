@@ -56,6 +56,18 @@ const char* Connection::GetID()
 {
 	return "CONNECT";
 }
+
+LList<char*>& Connection::GetVLocations()
+{
+	return _vlocations;
+}
+
+
+const LList<char*>& Connection::GetVLocations() const
+{
+	return _vlocations;
+}
+
 const char* Connection::GetTarget()
 {
 	if (_vlocations.ValidIndex(0))

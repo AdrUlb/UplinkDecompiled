@@ -8,18 +8,20 @@ class Person;
 
 class Connection : public UplinkObject
 {
-	char _owner[0x40] = {0};
+	char _owner[0x40] = { 0 };
 	LList<char*> _vlocations;
 	bool _traceInProgress = false;
 	int _traceProgress = 0;
 	Date _connectionTime;
 
 public:
-	~Connection();
-	bool Load(FILE* file);
-	void Save(FILE* file);
-	void Print();
-	const char* GetID();
+	~Connection() override;
+	bool Load(FILE* file) override;
+	void Save(FILE* file) override;
+	void Print() override;
+	const char* GetID() override;
+	LList<char*>& GetVLocations();
+	const LList<char*>& GetVLocations() const;
 	const char* GetTarget();
 	Person* GetOwner();
 	LList<char*>& GetVLocations();

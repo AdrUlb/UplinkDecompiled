@@ -30,12 +30,17 @@ public:
 	void Empty();
 	void PutDataAtIndex(const T& value, int index);
 
-	int Size()
+	int Size() const
 	{
 		return _length;
 	}
 
 	T operator[](int index)
+	{
+		return GetData(index);
+	}
+
+	const T operator[](int index) const
 	{
 		return GetData(index);
 	}

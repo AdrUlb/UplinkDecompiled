@@ -16,7 +16,7 @@ bool LogBank::Load(FILE* file)
 
 	if (count > 0x40000)
 	{
-		printf("Print Abort: %s ln %d : ", "world/computer/logbank.cpp", 0xe9);
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
 		printf("WARNING: LogBank::Load, number of items appears to be wrong, size=%d\n", count);
 		return false;
 	}

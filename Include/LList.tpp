@@ -62,7 +62,7 @@ template <class T> void LList<T>::PutDataAtEnd(const T& value)
 {
 	// Create the new item to be inserted at the end of the list
 	const auto item = new LListItem<T>();
-	item->_prev = _last; // The last item of the list becomes previous to this new last item
+	item->_prev = _last;   // The last item of the list becomes previous to this new last item
 	item->_next = nullptr; // This is the last item, there is no next item yet
 	item->_value = value;
 

@@ -1,16 +1,16 @@
 ---
+BasedOnStyle: Microsoft
 AccessModifierOffset: '-4'
-AlignTrailingComments: 'false'
+AlignAfterOpenBracket: DontAlign
+AllowShortBlocksOnASingleLine: 'true'
 AllowShortFunctionsOnASingleLine: Empty
-BreakBeforeBraces: Allman
-ColumnLimit: '150'
-IndentCaseLabels: 'true'
-IndentWidth: '4'
+ColumnLimit: '160'
+Cpp11BracedListStyle: 'false'
 NamespaceIndentation: All
 PointerAlignment: Left
-SortUsingDeclarations: 'false'
-SpaceInEmptyParentheses: 'false'
-SpacesBeforeTrailingComments: '1'
 TabWidth: '4'
 UseTab: Always
+QualifierAlignment: Left
+
 ...
+

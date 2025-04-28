@@ -138,7 +138,7 @@ bool FileReadDataImpl(const char* sourceFile, const int sourceLine, void* buffer
 	const auto actualCount = fread(buffer, size, count, file);
 
 	if (count != actualCount)
-		printf("WARNING: FileReadDataInt, request read count is different then the actual read count, request=%zu, actual=%zu, errno=%d, "
+		printf("WARNING: FileReadData, request read count is different then the actual read count, request=%zu, actual=%zu, errno=%d, "
 			   "%s:%d\n",
 			   count, actualCount, errno, sourceFile, sourceLine);
 
@@ -248,7 +248,7 @@ void SaveDynamicString(const char* value, int maxSize, FILE* file)
 
 	if (size > (size_t)actualMaxSize)
 	{
-		printf("Print Abort: %s ln %d : ", "app/serialise.cpp", 0x3e5);
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
 		printf("WARNING: SaveDynamicString, size appears to be too long, size=%zu, maxsize=%d, absolute  maxsize=%d", size, maxSize, 0x4000);
 		putchar('\n');
 		size = actualMaxSize;
@@ -790,7 +790,7 @@ bool LoadLList(LList<UplinkObject*>* list, FILE* file)
 
 	if (itemCount > 0x40000)
 	{
-		printf("Print Abort: %s ln %d : ", "app/serialise.cpp", 0x185);
+		printf("Print Abort: %s ln %d : ", __FILE__, __LINE__);
 		printf("WARNING: LoadLList, number of items appears to be wrong, size=%d", itemCount);
 		putchar(0xa);
 		return 0;

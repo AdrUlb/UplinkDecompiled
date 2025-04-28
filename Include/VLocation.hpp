@@ -3,6 +3,9 @@
 #include <Computer.hpp>
 #include <UplinkObject.hpp>
 
+static constexpr int VirtualWidth = 594;
+static constexpr int VirtualHeight = 315;
+
 class VLocation : public UplinkObject
 {
 	char _ip[0x18] = "0.0.0.0";

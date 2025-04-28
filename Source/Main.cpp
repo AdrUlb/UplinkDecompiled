@@ -18,7 +18,7 @@ const char* versionNumberString = "1.55";
 Game* game = nullptr;
 const char* minSaveVersion = "SAV56";
 const char* latestSaveVersion = "SAV62";
-char tempname[0x80] = {0};
+char tempname[0x80] = { 0 };
 
 static char* vmg57670648335164_br_find_exe(unsigned int* error)
 {
@@ -149,8 +149,7 @@ static void Init_App(const char* exePath)
 
 	puts("\n");
 	puts("===============================================");
-	printf("NEW GAME     %d:%d, %d/%d/%d\n", localTime->tm_hour, localTime->tm_min, localTime->tm_mday, localTime->tm_mon + 1,
-		   localTime->tm_year + 1900);
+	printf("NEW GAME     %d:%d, %d/%d/%d\n", localTime->tm_hour, localTime->tm_min, localTime->tm_mday, localTime->tm_mon + 1, localTime->tm_year + 1900);
 	puts("===============================================");
 	printf("Version : %s\n", app->Version);
 	puts("RELEASE");
@@ -169,30 +168,29 @@ static void Init_Options(int argc, char** argv)
 		char prefix = arg[0];
 		switch (prefix)
 		{
-			case '+':
-				app->GetOptions().SetOptionValue(arg + 1, 1);
-				break;
-			case '-':
-				app->GetOptions().SetOptionValue(arg + 1, 0);
-				break;
-			case '!':
+		case '+':
+			app->GetOptions().SetOptionValue(arg + 1, 1);
+			break;
+		case '-':
+			app->GetOptions().SetOptionValue(arg + 1, 0);
+			break;
+		case '!': {
+			if (i + 1 >= argc)
 			{
-				if (i + 1 >= argc)
-				{
-					printf("Error parsing command line option : %s\n", arg);
-					break;
-				}
-
-				i++;
-
-				int value;
-				sscanf(argv[i], "%d", &value);
-				app->GetOptions().SetOptionValue(arg + 1, value);
-				break;
-			}
-			default:
 				printf("Error parsing command line option : %s\n", arg);
 				break;
+			}
+
+			i++;
+
+			int value;
+			sscanf(argv[i], "%d", &value);
+			app->GetOptions().SetOptionValue(arg + 1, value);
+			break;
+		}
+		default:
+			printf("Error parsing command line option : %s\n", arg);
+			break;
 		}
 	}
 
@@ -217,7 +215,7 @@ static void Init_Options(int argc, char** argv)
 	}
 }
 
-static bool TestRsLoadArchive(char const* name)
+static bool TestRsLoadArchive(const char* name)
 {
 	if (RsLoadArchive(name))
 		return true;
@@ -480,6 +478,9 @@ static void RunUplink(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
+	// Avoid some graphical glitches (no idea why this happens but it also happens with the original game)
+	setenv("LIBGL_ALWAYS_SOFTWARE", "1", 1);
+
 	// FIXME: do not use signal
 	signal(SIGSEGV, hSignalSIGSEGV);
 	signal(SIGFPE, hSignalSIGFPE);

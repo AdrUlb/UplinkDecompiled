@@ -148,7 +148,7 @@ void RemoteInterface::RunScreen(int screenIndex, Computer* computer)
 		_screen = nullptr;
 	}
 
-	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == WorldMapInterfaceType::Large)
 		WorldMapInterface::CloseWorldMapInterface_Large();
 
 	_previousScreenIndex = this->_screenIndex;

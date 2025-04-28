@@ -36,8 +36,3 @@ MainMenuScreenCode FirstTimeLoadingInterface::ScreenID()
 {
 	return MainMenuScreenCode::FirstTimeLoading;
 }
-
-bool FirstTimeLoadingInterface::ReturnKeyPressed()
-{
-	UplinkAbort("TODO: implement FirstTimeLoadingInterface::ReturnKeyPressed()");
-}

@@ -390,8 +390,7 @@ void LinksScreenInterface::CreateScrollBarAndFilter()
 	if ((GetComputerScreen()->GetScreenType() != 2 || _filterList.Size() >= numLinks) && EclGetButton("linksscreen_iptitle") == nullptr)
 	{
 		EclRegisterButton(15, 125, 135, 15, "IP Address", "Shows the IP address of the location", "linksscreen_iptitle");
-		EclRegisterButton(155, 125, (GetScaledYPosition(375) - 107), 15, "Location name", "Shows the computer name at that location",
-						  "linksscreen_comptitle");
+		EclRegisterButton(155, 125, (GetScaledYPosition(375) - 107), 15, "Location name", "Shows the computer name at that location", "linksscreen_comptitle");
 	}
 }
 
@@ -602,7 +601,7 @@ void LinksScreenInterface::ShowLinkMouseMove(Button* button)
 
 void LinksScreenInterface::LinkClick(Button* button)
 {
-	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == WorldMapInterfaceType::Large)
 		return;
 
 	UplinkAssert(button != nullptr);
@@ -631,7 +630,7 @@ void LinksScreenInterface::DeleteLinkClick(Button* button)
 
 void LinksScreenInterface::ShowLinkClick(Button* button)
 {
-	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == WorldMapInterfaceType::Large)
 		return;
 
 	UplinkAssert(button != nullptr);
@@ -667,7 +666,7 @@ void LinksScreenInterface::ShowLinkClick(Button* button)
 
 void LinksScreenInterface::AddLinkClick(Button* button)
 {
-	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == WorldMapInterfaceType::Large)
 		return;
 
 	UplinkAssert(button != nullptr);

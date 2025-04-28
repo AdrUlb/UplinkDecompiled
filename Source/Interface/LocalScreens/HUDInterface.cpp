@@ -24,10 +24,10 @@ static void LANClick(Button*)
 	puts("TODO: implement LANClick()");
 }
 
-static HUDUpgrade hudUpgrades[8] = {
-	{2, "Analyser", "Show the connection analyser", "hud_analyser", "hud/analyser.tif", "hud/analyser_h.tif", "hud/analyser_c.tif", AnalyserClick},
-	{4, "CClient", "Show the IRC Client", "hud_ircclient", "hud/irc.tif", "hud/irc_h.tif", "hud/irc_c.tif", IRCClick},
-	{8, "LANView", "Show the LAN Viewer", "hud_lanview", "hud/lan.tif", "hud/lan_h.tif", "hud/lan_c.tif", LANClick}};
+static HUDUpgrade hudUpgrades[8] = { { 2, "Analyser", "Show the connection analyser", "hud_analyser", "hud/analyser.tif", "hud/analyser_h.tif",
+										 "hud/analyser_c.tif", AnalyserClick },
+	{ 4, "CClient", "Show the IRC Client", "hud_ircclient", "hud/irc.tif", "hud/irc_h.tif", "hud/irc_c.tif", IRCClick },
+	{ 8, "LANView", "Show the LAN Viewer", "hud_lanview", "hud/lan.tif", "hud/lan_h.tif", "hud/lan_c.tif", LANClick } };
 
 static void ToolbarButtonDraw(Button* button, bool highlighted, bool clicked)
 {
@@ -125,6 +125,439 @@ static void EmailHighlight(Button* button)
 {
 	(void)button;
 	puts("TODO: implement EmailHighlight()");
+}
+
+float WorldMapInterface::_zoom;
+float WorldMapInterface::_scrollX;
+float WorldMapInterface::_scrollY;
+
+WorldMapInterface::~WorldMapInterface()
+{
+	if (_layout != nullptr)
+		delete _layout;
+}
+
+bool WorldMapInterface::Load(FILE* file)
+{
+	if (strcmp(game->GetLoadedSavefileVer(), "SAV57") >= 0)
+	{
+		if (!LoadLList(&this->_savedConnection, file))
+			return false;
+	}
+
+	return true;
+}
+
+void WorldMapInterface::Save(FILE* file)
+{
+	SaveLList(&_savedConnection, file);
+}
+
+void WorldMapInterface::Print()
+{
+	PrintLList(&_savedConnection);
+}
+
+void WorldMapInterface::Update()
+{
+	static auto called = false;
+	if (!called)
+	{
+		puts("TODO: implement WorldMapInterface::Update()");
+		called = true;
+	}
+}
+
+const char* WorldMapInterface::GetID()
+{
+	return "WRLDMAPI";
+}
+
+void WorldMapInterface::Create()
+{
+	Create(WorldMapInterfaceType::Large);
+}
+
+void WorldMapInterface::Remove()
+{
+	RemoveWorldMapInterface();
+}
+
+bool WorldMapInterface::IsVisible()
+{
+	return IsVisibleWorldMapInterface() != WorldMapInterfaceType::None;
+}
+
+int WorldMapInterface::ScreenID()
+{
+	return 4;
+}
+
+void WorldMapInterface::Create(const WorldMapInterfaceType type)
+{
+	const auto& mapRect = GetLargeMapRect();
+	_layout = new WorldMapLayout(mapRect);
+	ProgramLayoutEngine();
+	CreateWorldMapInterface(type);
+}
+
+void WorldMapInterface::ProgramLayoutEngine()
+{
+	_layout->Reset();
+
+	RemoveTempConnectionButton();
+
+	auto& player = game->GetWorld().GetPlayer();
+
+	const auto isVisibleWorldMapInterface = IsVisibleWorldMapInterface();
+
+	auto buttonIndex = 0;
+
+	for (auto i = 0; i < player.GetConnection().GetVLocations().Size(); i += 1)
+	{
+		const auto ip = player.GetConnection().GetVLocations()[i];
+		struct VLocation* vloc = game->GetWorld().GetVLocation(ip);
+
+		UplinkAssert(vloc != nullptr);
+
+		const auto oldZoom = _zoom;
+		const auto oldScrollX = _scrollX;
+		const auto oldScrollY = _scrollY;
+
+		_zoom = 1;
+		_scrollX = 0;
+		_scrollY = 0;
+
+		bool var_1e5_1;
+
+		const auto vlocHidden = !vloc->GetDisplayed() || !player.HasLink(vloc->GetIp());
+
+		var_1e5_1 = i != 0 && vlocHidden;
+
+		int32_t rax_5 = GetScaledY(vloc->GetY(), WorldMapInterfaceType::Large);
+		int32_t rax_6 = GetScaledX(vloc->GetX(), WorldMapInterfaceType::Large);
+		_layout->AddLocation(rax_6 + 20, rax_5 + 47, vloc->GetComputerName(), vloc->GetIp(), var_1e5_1);
+
+		_zoom = oldZoom;
+		_scrollX = oldScrollX;
+		_scrollY = oldScrollY;
+
+		if (var_1e5_1)
+		{
+			if (isVisibleWorldMapInterface == WorldMapInterfaceType::Large)
+			{
+				const auto largeMapRect = GetLargeMapRect();
+				char name[0x80];
+				char caption[0x80];
+				char tooltip[0x80];
+
+				UplinkSnprintf(name, 0x80, "worldmaptempcon %d", (uint64_t)buttonIndex);
+				UplinkStrncpy(caption, vloc->GetIp(), 0x80);
+				UplinkSnprintf(tooltip, 0x80, "Connect to IP address %s", vloc->GetIp());
+
+				EclRegisterButton(largeMapRect.X + WorldMapInterface::GetScaledX(vloc->GetX(), WorldMapInterfaceType::Large) - 3,
+					largeMapRect.Y + WorldMapInterface::GetScaledY(vloc->GetY(), WorldMapInterfaceType::Large) - 3, 7, 7, caption, tooltip, name);
+
+				EclRegisterButtonCallbacks(name, DrawLocation, LocationClick, button_click, button_highlight);
+			}
+
+			buttonIndex++;
+		}
+	}
+
+	for (auto i = 0; i < player.GetLinks().Size(); i++)
+	{
+		const auto ip = player.GetLinks()[i];
+		const auto vlocation = game->GetWorld().GetVLocation(ip);
+
+		UplinkAssert(vlocation != nullptr);
+
+		if (!player.GetConnection().LocationIncluded(vlocation->GetIp()) && vlocation->GetDisplayed())
+		{
+			const auto oldZoom = _zoom;
+			const auto oldScrollX = _scrollX;
+			const auto oldScrolly = _scrollY;
+
+			_zoom = 1;
+			_scrollX = 0;
+			_scrollY = 0;
+
+			const auto scaledX = WorldMapInterface::GetScaledX(vlocation->GetX(), WorldMapInterfaceType::Large);
+			const auto scaledY = WorldMapInterface::GetScaledY(vlocation->GetY(), WorldMapInterfaceType::Large);
+
+			_layout->AddLocation(scaledX + 20, scaledY + 47, vlocation->GetComputerName(), vlocation->GetIp(), false);
+
+			_zoom = oldZoom;
+			_scrollX = oldScrollX;
+			_scrollY = oldScrolly;
+		}
+	}
+
+	UpdateAccessLevel();
+}
+
+int WorldMapInterface::GetLargeMapWidth()
+{
+	return app->GetOptions().GetOptionValue("graphics_screenwidth") - 46;
+}
+
+int WorldMapInterface::GetLargeMapHeight()
+{
+	return GetLargeMapWidth() / 595.0 * 316.0;
+}
+
+WorldMapRect WorldMapInterface::GetLargeMapRect()
+{
+	return { 23, 50, GetLargeMapWidth(), GetLargeMapHeight() };
+}
+
+WorldMapInterfaceObject::WorldMapInterfaceObject()
+{
+	_type = 0;
+	_x = 0;
+	_y = 0;
+	_baseX = 0;
+	_baseY = 0;
+	_ip = nullptr;
+	_playerHasLink = false;
+	_colored = false;
+}
+
+WorldMapInterfaceObject::~WorldMapInterfaceObject()
+{
+	if (_ip != nullptr)
+		delete[] _ip;
+}
+
+WorldMapInterfaceType WorldMapInterface::IsVisibleWorldMapInterface()
+{
+	if (EclGetButton("worldmap_smallmap") != nullptr)
+		return WorldMapInterfaceType::Small;
+
+	if (EclGetButton("worldmap_largemap") != nullptr)
+		return WorldMapInterfaceType::Large;
+
+	return WorldMapInterfaceType::None;
+}
+
+void WorldMapInterface::CloseWorldMapInterface_Large()
+{
+	if (WorldMapInterface::IsVisibleWorldMapInterface() != WorldMapInterfaceType::Large)
+		return;
+
+	WorldMapInterface::CreateWorldMapInterface(WorldMapInterfaceType::Small);
+}
+
+void WorldMapInterface::CreateWorldMapInterface_Small()
+{
+	const auto screenWidth = app->GetOptions().GetOptionValue("graphics_screenwidth");
+	app->GetOptions().GetOptionValue("graphics_screenheight");
+	auto width = screenWidth * 0.29;
+	auto height = width / 188.0 * 100.0;
+	EclRegisterButton(screenWidth - width - 3, 3, width, height, "", "Global Communications", "worldmap_smallmap");
+	if (game->GetWorldMapType() == 1)
+		button_assignbitmap("worldmap_smallmap", "worldmapsmall_defcon.tif");
+	else
+		button_assignbitmap("worldmap_smallmap", "worldmapsmall.tif");
+
+	EclGetButton("worldmap_smallmap")->ImageNormal->Scale(width, height);
+	// EclRegisterButtonCallbacks("worldmap_smallmap", DrawWorldMapSmall, FullScreenClick, button_click, button_highlight);
+	EclRegisterButton(screenWidth - width - 3, height + 4, width, 15, "", "", "worldmap_connect");
+	// EclRegisterButtonCallbacks("worldmap_connect", ConnectDraw, ConnectClick, ConnectMouseDown, ConnectMouseMove);
+	EclRegisterButton(screenWidth - 3, 0, 3, 3, "", "Global Communications", "worldmap_toprightclick");
+	// EclRegisterButtonCallbacks("worldmap_toprightclick", nullptr, FullScreenClick, button_click, button_highlight);
+
+	puts("TODO: implement WorldMapInterface::CreateWorldMapInterface_Small()");
+}
+
+void WorldMapInterface::CreateWorldMapInterface_Large()
+{
+	puts("TODO: implement WorldMapInterface::CreateWorldMapInterface_Large()");
+}
+
+void WorldMapInterface::CreateWorldMapInterface(WorldMapInterfaceType type)
+{
+	if (IsVisibleWorldMapInterface() != type)
+	{
+		RemoveWorldMapInterface();
+
+		if (type == WorldMapInterfaceType::Small)
+		{
+			CreateWorldMapInterface_Small();
+			return;
+		}
+
+		if (type == WorldMapInterfaceType::Large)
+		{
+			CreateWorldMapInterface_Large();
+			return;
+		}
+	}
+}
+
+WorldMapObjectiveFunction::WorldMapObjectiveFunction(const WorldMapRect& rect)
+{
+	_width = rect.Width;
+	_height = rect.Height;
+	_rect = rect;
+	_array = new int[_width * _height];
+}
+
+WorldMapObjectiveFunction::~WorldMapObjectiveFunction()
+{
+	delete[] _array;
+}
+
+void WorldMapObjectiveFunction::Reset()
+{
+	memset(_array, 0, _width * _height * sizeof(_array[0]));
+	_cost = 0;
+}
+
+WorldMapLayout::WorldMapLayout(const WorldMapRect& rect) : _objectiveFunction(rect)
+{
+	_rect = rect;
+}
+
+WorldMapLayout::~WorldMapLayout()
+{
+	DeleteLocations();
+}
+
+void WorldMapLayout::Reset()
+{
+	ResetLayoutParameters();
+	DeleteLocations();
+	_layoutComplete = true;
+}
+
+void WorldMapLayout::ResetLayoutParameters()
+{
+	_field_15 = false;
+	_field_8 = 0;
+	_field_4 = 0;
+	_field_0 = 0;
+	_field_c = 0.0f;
+	_field_10 = -1.0f;
+	_objectiveFunction.Reset();
+}
+
+void WorldMapLayout::AddLocation(int x, int y, const char* name, const char* ip, bool arg6)
+{
+	puts("TODO: implement WorldMapLayout::AddLocation()");
+}
+
+void WorldMapLayout::DeleteLocations()
+{
+	for (auto i = 0; i < _labels.Size(); i++)
+		delete _labels[i];
+
+	for (auto i = 0; i < _objects.Size(); i++)
+		delete _objects[i];
+
+	_labels.Empty();
+	_objects.Empty();
+}
+
+void WorldMapInterface::RemoveTempConnectionButton()
+{
+
+	for (auto i = 0; true; i++)
+	{
+		char buf[0x80];
+		UplinkSnprintf(buf, 0x80, "worldmaptempcon %d", i);
+
+		if (EclGetButton(buf) == nullptr)
+			break;
+
+		EclRemoveButton(buf);
+	}
+}
+
+void WorldMapInterface::RemoveWorldMapInterface()
+{
+	auto visibleInterface = WorldMapInterface::IsVisibleWorldMapInterface();
+
+	if (visibleInterface == WorldMapInterfaceType::None)
+		return;
+
+	if (visibleInterface == WorldMapInterfaceType::Small)
+	{
+		EclRemoveButton("worldmap_smallmap");
+		EclRemoveButton("worldmap_connect");
+		EclRemoveButton("worldmap_toprightclick");
+		return;
+	}
+
+	if (visibleInterface == WorldMapInterfaceType::Large)
+	{
+		EclRemoveButton("worldmap_largemap");
+		EclRemoveButton("worldmap_saveconnection");
+		EclRemoveButton("worldmap_loadconnection");
+		EclRemoveButton("worldmap_zoomout");
+		EclRemoveButton("worldmap_zoom");
+		EclRemoveButton("worldmap_zoomin");
+		EclRemoveButton("worldmap_connect");
+		EclRemoveButton("worldmap_cancel");
+		EclRemoveButton("worldmap_close");
+		EclRemoveButton("worldmap_scrollleft");
+		EclRemoveButton("worldmap_scrollright");
+		EclRemoveButton("worldmap_scrollup");
+		EclRemoveButton("worldmap_scrolldown");
+		const auto links = &game->GetWorld().GetPlayer().GetLinks();
+		;
+
+		for (auto i = 0; i < links->Size(); i++)
+		{
+			char* ip = links->GetData(i);
+			char str[0x80];
+			UplinkSnprintf(str, 0x80, "worldmap %s", game->GetWorld().GetVLocation(ip)->GetIp());
+			EclRemoveButton(str);
+		}
+		RemoveTempConnectionButton();
+		EclRemoveButton("worldmap_texthelp");
+		EclRemoveButton("worldmap 127.0.0.1");
+	}
+}
+
+void WorldMapInterface::UpdateAccessLevel()
+{
+	puts("TODO: implement WorldMapInterface::UpdateAccessLevel()");
+}
+
+int WorldMapInterface::GetScaledX(int x, WorldMapInterfaceType worldmapInterfaceType)
+{
+	UplinkAssert(x >= 0 && x < VirtualWidth);
+
+	if (worldmapInterfaceType == WorldMapInterfaceType::Small)
+		return x * EclGetButton("worldmap_smallmap")->Width / VirtualWidth;
+
+	if (worldmapInterfaceType == WorldMapInterfaceType::Large)
+		return _zoom * x * WorldMapInterface::GetLargeMapWidth() / VirtualWidth - _zoom * WorldMapInterface::GetLargeMapWidth() * _scrollX;
+
+	return -1;
+}
+
+int WorldMapInterface::GetScaledY(int y, WorldMapInterfaceType worldmapInterfaceType)
+{
+	UplinkAssert(y >= 0 && y < VirtualHeight);
+
+	if (worldmapInterfaceType == WorldMapInterfaceType::Small)
+		return y * EclGetButton("worldmap_smallmap")->Height / VirtualHeight;
+
+	if (worldmapInterfaceType == WorldMapInterfaceType::Large)
+		return _zoom * y * WorldMapInterface::GetLargeMapHeight() / VirtualHeight - _zoom * WorldMapInterface::GetLargeMapHeight() * _scrollY;
+
+	return -1;
+}
+
+void WorldMapInterface::DrawLocation(Button* button, bool highlighted, bool clicked)
+{
+	puts("TODO: implement WorldMapInterface::DrawLocation()");
+}
+void WorldMapInterface::LocationClick(Button* button)
+{
+	puts("TODO: implement WorldMapInterface::LocationClick()");
 }
 
 void SWInterface::Update()
@@ -310,7 +743,7 @@ void HUDInterface::Create()
 		return;
 
 	const auto screenHeight = app->GetOptions().GetOptionValue("graphics_screenheight");
-	worldMapInterface.Create(1);
+	worldMapInterface.Create(WorldMapInterfaceType::Small);
 	EclRegisterButton(3, screenHeight - 70, 53, 53, "", "Run a software application", "hud_software");
 	button_assignbitmaps("hud_software", "hud/software.tif", "hud/software_h.tif", "hud/software_c.tif");
 	EclRegisterButtonCallback("hud_software", SoftwareClick);

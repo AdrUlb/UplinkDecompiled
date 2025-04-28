@@ -100,8 +100,8 @@ void VLocation::SetIp(const char* ip)
 
 void VLocation::SetPLocation(int x, int y)
 {
-	UplinkAssert(x <= 593);
-	UplinkAssert(y <= 314);
+	UplinkAssert(x < VirtualWidth);
+	UplinkAssert(y < VirtualHeight);
 
 	_x = x;
 	_y = y;

@@ -96,7 +96,7 @@ void LocalInterface::RunScreen(int code, int index)
 		_screen = nullptr;
 	}
 
-	if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+	if (WorldMapInterface::IsVisibleWorldMapInterface() == WorldMapInterfaceType::Large)
 		WorldMapInterface::CloseWorldMapInterface_Large();
 
 	_screenCode = code;
@@ -105,8 +105,6 @@ void LocalInterface::RunScreen(int code, int index)
 	UplinkAssert(_hud != nullptr);
 
 	HUDInterface::MoveSelecter(_screenCode, _screenIndex);
-
-	struct LocalInterfaceScreen* rbx_1;
 
 	switch (_screenCode)
 	{

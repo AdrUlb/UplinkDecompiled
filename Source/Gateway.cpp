@@ -1,4 +1,5 @@
 #include <Gateway.hpp>
+#include <Globals.hpp>
 
 Gateway::~Gateway()
 {

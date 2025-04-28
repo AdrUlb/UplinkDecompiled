@@ -9,5 +9,4 @@ public:
 	void Remove() override;
 	bool IsVisible() override;
 	MainMenuScreenCode ScreenID() override;
-	bool ReturnKeyPressed() override;
 };
