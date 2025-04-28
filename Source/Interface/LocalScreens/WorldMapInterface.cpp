@@ -5,59 +5,53 @@
 #include <Globals.hpp>
 #include <Opengl.hpp>
 
-static float zoom;
-static float scrollX;
-static float scrollY;
-
 static uint32_t stipplepattern;
 static float revelationColour;
 
-static int GetLargeMapWidth()
+int WorldMapInterface::GetLargeMapWidth()
 {
 	return app->GetOptions().GetOptionValue("graphics_screenwidth") - 46;
 }
 
-static int GetLargeMapHeight()
+int WorldMapInterface::GetLargeMapHeight()
 {
 	return GetLargeMapWidth() / 595.0 * 316.0;
 }
 
-static WorldMapRect GetLargeMapRect()
+WorldMapRect WorldMapInterface::GetLargeMapRect()
 {
-	return {23, 50, GetLargeMapWidth(), GetLargeMapHeight()};
+	return { 23, 50, GetLargeMapWidth(), GetLargeMapHeight() };
 }
 
-static int GetScaledX(const int value, const int arg2)
+int WorldMapInterface::GetScaledX(int x, WorldMapInterfaceType worldmapInterfaceType)
 {
-	UplinkAssert(value >= 0 && value < 594);
+	UplinkAssert(x >= 0 && x < VirtualWidth);
 
-	if (arg2 == 1)
-		return static_cast<int>(static_cast<float>(value) / 594.0f * static_cast<float>(EclGetButton("worldmap_smallmap")->Width));
+	if (worldmapInterfaceType == WorldMapInterfaceType::Small)
+		return x * EclGetButton("worldmap_smallmap")->Width / VirtualWidth;
 
-	if (arg2 == 2)
-		return static_cast<int>(static_cast<float>(value) / 594.0f * static_cast<float>(GetLargeMapWidth()) * zoom -
-								static_cast<float>(GetLargeMapWidth()) * scrollX * zoom);
+	if (worldmapInterfaceType == WorldMapInterfaceType::Large)
+		return _zoom * x * WorldMapInterface::GetLargeMapWidth() / VirtualWidth - _zoom * WorldMapInterface::GetLargeMapWidth() * _scrollX;
 
 	return -1;
 }
 
-static int GetScaledY(const int value, const int arg2)
+int WorldMapInterface::GetScaledY(int y, WorldMapInterfaceType worldmapInterfaceType)
 {
-	UplinkAssert(value >= 0 && value < 315);
+	UplinkAssert(y >= 0 && y < VirtualHeight);
 
-	if (arg2 == 1)
-		return static_cast<int32_t>(static_cast<float>(value) / 315.0f * static_cast<float>(EclGetButton("worldmap_smallmap")->Height));
+	if (worldmapInterfaceType == WorldMapInterfaceType::Small)
+		return y * EclGetButton("worldmap_smallmap")->Height / VirtualHeight;
 
-	if (arg2 == 2)
-		return static_cast<int32_t>(static_cast<float>(value) / 315.0f * static_cast<float>(GetLargeMapHeight()) * zoom -
-									static_cast<float>(GetLargeMapHeight()) * scrollY * zoom);
+	if (worldmapInterfaceType == WorldMapInterfaceType::Large)
+		return _zoom * y * WorldMapInterface::GetLargeMapHeight() / VirtualHeight - _zoom * WorldMapInterface::GetLargeMapHeight() * _scrollY;
 
 	return -1;
 }
 
 static void ConnectDraw(Button* button, bool highlighted, bool clicked)
 {
-	if (!game->GetWorld().GetPlayer().IsConnected() && WorldMapInterface::IsVisibleWorldMapInterface() != 2)
+	if (!game->GetWorld().GetPlayer().IsConnected() && WorldMapInterface::IsVisibleWorldMapInterface() != WorldMapInterfaceType::Large)
 	{
 		clear_draw(button->X, button->Y, button->Width, button->Height);
 		return;
@@ -69,116 +63,6 @@ static void ConnectDraw(Button* button, bool highlighted, bool clicked)
 		button->SetCaption("Connect");
 
 	button_draw(button, highlighted, clicked);
-}
-
-static void DrawWorldMapSmall(Button* button, bool highlighted, bool clicked)
-{
-	imagebutton_draw(button, highlighted, clicked);
-
-	if (game->GetWorld().GetPlayer().IsConnected())
-	{
-		auto& connection = game->GetWorld().GetPlayer().GetConnection();
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		glLineWidth(2.0f);
-		glLineStipple(1, stipplepattern);
-		glEnable(GL_LINE_STIPPLE);
-		glBegin(GL_LINE_STRIP);
-
-		for (auto i = 0; i < connection.GetVLocations().Size(); i++)
-		{
-			const auto ip = connection.GetVLocations().GetData(i);
-			const auto vloc = game->GetWorld().GetVLocation(ip);
-
-			UplinkAssert(vloc != nullptr);
-
-			glVertex2i(GetScaledX(vloc->GetX(), 1) + button->X, GetScaledY(vloc->GetY(), 1) + button->Y);
-
-			if (connection.TraceInProgress() != 0 && (connection.GetTraceProgress() == connection.GetVLocations().Size() - i - 1 &&
-													  game->GetWorld().GetPlayer().GetGateway().HasHUDUpgrade(1) != 0))
-			{
-				glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-				glVertex2i(GetScaledX(vloc->GetX(), 1) + button->X, GetScaledY(vloc->GetY(), 1) + button->Y);
-			}
-		}
-
-		glEnd();
-
-		glLineWidth(1.0f);
-		glDisable(GL_LINE_STIPPLE);
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		glBegin(GL_QUADS);
-
-		for (auto i = 0; i < connection.GetVLocations().Size(); i++)
-		{
-			const auto ip = connection.GetVLocations().GetData(i);
-			const auto vloc = game->GetWorld().GetVLocation(ip);
-
-			UplinkAssert(vloc != nullptr);
-
-			const auto x = GetScaledX(vloc->GetX(), 1) + button->X;
-			const auto y = GetScaledY(vloc->GetY(), 1) + button->Y;
-
-			glVertex2i(x - 1, y - 1);
-			glVertex2i(x + 2, y - 1);
-			glVertex2i(x + 2, y + 2);
-			glVertex2i(x - 1, y + 2);
-
-			if (connection.GetTraceProgress() == connection.GetVLocations().Size() - i - 1 &&
-				game->GetWorld().GetPlayer().GetGateway().HasHUDUpgrade(1))
-				glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-		}
-
-		glEnd();
-	}
-	else
-	{
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-		const auto x = GetScaledX(game->GetWorld().GetPlayer().GetLocalHost()->GetX(), 1) + button->X;
-		const auto y = GetScaledY(game->GetWorld().GetPlayer().GetLocalHost()->GetY(), 1) + button->Y;
-
-		glBegin(GL_QUADS);
-		glVertex2i(x - 1, y - 1);
-		glVertex2i(x + 2, y - 1);
-		glVertex2i(x + 2, y + 2);
-		glVertex2i(x - 1, y + 2);
-		glEnd();
-	}
-
-	int32_t i_2 = 0;
-	glBegin(7);
-
-	for (; i_2 < game->GetWorld().GetPlotGenerator().GetRevelationInfected().Size(); i_2 += 1)
-	{
-		const auto ip = game->GetWorld().GetPlotGenerator().GetRevelationInfected().GetData(i_2);
-		UplinkAssert(ip != nullptr);
-
-		const auto vloc = game->GetWorld().GetVLocation(ip);
-		UplinkAssert(vloc != nullptr);
-
-		const auto x = GetScaledX(vloc->GetX(), 1) + button->X;
-		const auto y = GetScaledY(vloc->GetY(), 1) + button->Y;
-
-		glColor4f(revelationColour, 0.0f, 0.0f, 1.0f);
-		glVertex2i(x - 3, y - 3);
-		glVertex2i(x + 4, y - 3);
-		glVertex2i(x + 4, y + 4);
-		glVertex2i(x - 3, y + 4);
-
-		revelationColour -= 0.09f;
-
-		if (revelationColour < 0.0f)
-			revelationColour = 1.0f;
-	}
-
-	glEnd();
-
-	if (highlighted || clicked)
-		glColor4f(0.4f, 0.4f, 0.8f, 1.0f);
-	else
-		glColor3ub(81, 138, 215);
-
-	border_draw(button);
 }
 
 static void FullScreenClick(Button* button)
@@ -194,9 +78,9 @@ static void ConnectClick(Button* button)
 
 	if (!game->GetWorld().GetPlayer().IsConnected())
 	{
-		if (WorldMapInterface::IsVisibleWorldMapInterface() == 2)
+		if (WorldMapInterface::IsVisibleWorldMapInterface() == WorldMapInterfaceType::Large)
 		{
-			WorldMapInterface::CreateWorldMapInterface(1);
+			WorldMapInterface::CreateWorldMapInterface(WorldMapInterfaceType::Small);
 			const auto dialler = new PhoneDialler();
 			dialler->DialNumber(0x64, 0x64, game->GetWorld().GetPlayer().GetConnection().GetTarget(), PhoneDiallerNextScene::WorldMap, nullptr);
 		}
@@ -210,10 +94,10 @@ static void ConnectClick(Button* button)
 		game->GetInterface().GetRemoteInterface().RunNewLocation();
 		game->GetInterface().GetRemoteInterface().RunScreen(1, nullptr);
 
-		if (worldMapInterface == 2)
+		if (worldMapInterface == WorldMapInterfaceType::Large)
 		{
 			WorldMapInterface::RemoveWorldMapInterface();
-			WorldMapInterface::CreateWorldMapInterface(2);
+			WorldMapInterface::CreateWorldMapInterface(WorldMapInterfaceType::Large);
 		}
 	}
 }
@@ -226,28 +110,28 @@ static void ConnectMouseDown(Button* button)
 
 static void ConnectMouseMove(Button* button)
 {
-	if (!game->GetWorld().GetPlayer().IsConnected() && WorldMapInterface::IsVisibleWorldMapInterface() != 2)
+	if (!game->GetWorld().GetPlayer().IsConnected() && WorldMapInterface::IsVisibleWorldMapInterface() != WorldMapInterfaceType::Large)
 		return;
 
 	if (game->GetWorld().GetPlayer().IsConnected())
 	{
-		button->SetTooltip("Break the connection to your cur…");
+		button->SetTooltip("Break the connection to your current remote host");
 		button_highlight(button);
 		return;
 	}
 
-	button->SetTooltip("Establish the connection to your…");
+	button->SetTooltip("Establish the connection to your current remote host");
 	button_highlight(button);
 }
 
 WorldMapRect::WorldMapRect(const int x, const int y, const int width, const int height) : X(x), Y(y), Width(width), Height(height) {}
 
-WorldMapRect::WorldMapRect(const WorldMapRect* rect) : X(rect->X), Y(rect->Y), Width(rect->Width), Height(rect->Height) {}
+WorldMapRect::WorldMapRect(const WorldMapRect& rect) : X(rect.X), Y(rect.Y), Width(rect.Width), Height(rect.Height) {}
 
-WorldMapObjectiveFunction::WorldMapObjectiveFunction(const WorldMapRect* rect) : _rect(rect)
+WorldMapObjectiveFunction::WorldMapObjectiveFunction(const WorldMapRect& rect) : _rect(rect)
 {
-	_width = rect->Width;
-	_height = rect->Height;
+	_width = rect.Width;
+	_height = rect.Height;
 	_array = new int[_width * _height];
 	Reset();
 }
@@ -259,13 +143,18 @@ WorldMapObjectiveFunction::~WorldMapObjectiveFunction()
 
 void WorldMapObjectiveFunction::Reset()
 {
-	memset(_array, 0, _width * _height * sizeof(int));
+	memset(_array, 0, _width * _height * sizeof(_array[0]));
 	_cost = 0;
 }
 
-WorldMapLayout::WorldMapLayout(const WorldMapRect* rect) : _rect(rect), _objectiveFunction(rect)
+WorldMapLayout::WorldMapLayout(const WorldMapRect& rect) : _rect(rect), _objectiveFunction(rect)
 {
 	Reset();
+}
+
+WorldMapLayout::~WorldMapLayout()
+{
+	DeleteLocations();
 }
 
 void WorldMapLayout::Reset()
@@ -286,22 +175,42 @@ void WorldMapLayout::ResetLayoutParameters()
 	_objectiveFunction.Reset();
 }
 
+void WorldMapLayout::AddLocation(int x, int y, const char* computerName, const char* ip, bool isUnknown)
+{
+	(void)x;
+	(void)y;
+	(void)computerName;
+	(void)ip;
+	(void)isUnknown;
+	puts("TODO: implement WorldMapLayout::AddLocation()");
+}
+
 void WorldMapLayout::DeleteLocations()
 {
 	for (auto i = 0; i < _labels.Size(); i++)
-		delete _labels.GetData(i);
+		delete _labels[i];
 
 	for (auto i = 0; i < _objects.Size(); i++)
-		delete _objects.GetData(i);
+		delete _objects[i];
 
 	_labels.Empty();
 	_objects.Empty();
 }
 
-void WorldMapLayout::AddLocation(int x, int y, const char* computerName, const char* ip, bool isUnknown)
+WorldMapInterfaceObject::~WorldMapInterfaceObject()
 {
-	puts("TODO: implement WorldMapLayout::AddLocation()");
+	if (_ip != nullptr)
+		delete[] _ip;
 }
+
+WorldMapRect WorldMapInterfaceObject::GetExtent()
+{
+	return WorldMapRect(_x, _y, 7, 7);
+}
+
+float WorldMapInterface::_zoom;
+float WorldMapInterface::_scrollX;
+float WorldMapInterface::_scrollY;
 
 WorldMapInterface::~WorldMapInterface()
 {
@@ -347,7 +256,7 @@ const char* WorldMapInterface::GetID()
 
 void WorldMapInterface::Create()
 {
-	Create(2);
+	Create(WorldMapInterfaceType::Large);
 }
 
 void WorldMapInterface::Remove()
@@ -357,7 +266,7 @@ void WorldMapInterface::Remove()
 
 bool WorldMapInterface::IsVisible()
 {
-	return IsVisibleWorldMapInterface() != 0;
+	return IsVisibleWorldMapInterface() != WorldMapInterfaceType::None;
 }
 
 int WorldMapInterface::ScreenID()
@@ -365,122 +274,126 @@ int WorldMapInterface::ScreenID()
 	return 4;
 }
 
-void WorldMapInterface::Create(int id)
+void WorldMapInterface::Create(const WorldMapInterfaceType type)
 {
-	const auto rect = GetLargeMapRect();
-	_layout = new WorldMapLayout(&rect);
+	const auto& mapRect = GetLargeMapRect();
+	_layout = new WorldMapLayout(mapRect);
 	ProgramLayoutEngine();
-	CreateWorldMapInterface(id);
-	printf("TODO: implement WorldMapInterface::Create(%d)\n", id);
+	CreateWorldMapInterface(type);
 }
 
 void WorldMapInterface::ProgramLayoutEngine()
 {
 	_layout->Reset();
+
 	RemoveTempConnectionButton();
+
 	auto& player = game->GetWorld().GetPlayer();
-	const auto visibleMapInterface = IsVisibleWorldMapInterface();
-	auto tempconCount = 0;
 
-	auto& vlocs = player.GetConnection().GetVLocations();
+	const auto isVisibleWorldMapInterface = IsVisibleWorldMapInterface();
 
-	for (auto i = 0; i < vlocs.Size(); i++)
+	auto buttonIndex = 0;
+
+	for (auto i = 0; i < player.GetConnection().GetVLocations().Size(); i += 1)
 	{
-		const auto ip = vlocs.GetData(i);
-		const auto vloc = game->GetWorld().GetVLocation(ip);
+		const auto ip = player.GetConnection().GetVLocations()[i];
+		struct VLocation* vloc = game->GetWorld().GetVLocation(ip);
 
 		UplinkAssert(vloc != nullptr);
 
-		const auto oldZoom = zoom;
-		const auto oldScrollX = scrollX;
-		const auto oldScrollY = scrollY;
-		zoom = 1.0f;
-		scrollX = 0.0f;
-		scrollY = 0.0f;
+		const auto oldZoom = _zoom;
+		const auto oldScrollX = _scrollX;
+		const auto oldScrollY = _scrollY;
 
-		const auto isUnknown = i != 0 && (!vloc->GetDisplayed() || !player.HasLink(vloc->GetIp()));
+		_zoom = 1;
+		_scrollX = 0;
+		_scrollY = 0;
 
-		const auto scaledX = GetScaledX(vloc->GetX(), 2);
-		const auto scaledY = GetScaledY(vloc->GetY(), 2);
-		_layout->AddLocation(scaledX + 20, scaledY + 47, vloc->GetComputerName(), vloc->GetIp(), isUnknown);
+		bool var_1e5_1;
 
-		zoom = oldZoom;
-		scrollX = oldScrollX;
-		scrollY = oldScrollY;
+		const auto vlocHidden = !vloc->GetDisplayed() || !player.HasLink(vloc->GetIp());
 
-		if (isUnknown)
+		var_1e5_1 = i != 0 && vlocHidden;
+
+		int32_t rax_5 = GetScaledY(vloc->GetY(), WorldMapInterfaceType::Large);
+		int32_t rax_6 = GetScaledX(vloc->GetX(), WorldMapInterfaceType::Large);
+		_layout->AddLocation(rax_6 + 20, rax_5 + 47, vloc->GetComputerName(), vloc->GetIp(), var_1e5_1);
+
+		_zoom = oldZoom;
+		_scrollX = oldScrollX;
+		_scrollY = oldScrollY;
+
+		if (var_1e5_1)
 		{
-			if (visibleMapInterface == 2)
+			if (isVisibleWorldMapInterface == WorldMapInterfaceType::Large)
 			{
-				const auto rect = GetLargeMapRect();
-
-				const auto x = rect.X;
-				const auto y = rect.Y;
-
-				char buttonName[0x80];
-				UplinkSnprintf(buttonName, 0x80, "worldmaptempcon %d", tempconCount);
-
+				const auto largeMapRect = GetLargeMapRect();
+				char name[0x80];
 				char caption[0x80];
-				UplinkStrncpy(caption, vloc->GetIp(), 0x80);
-
 				char tooltip[0x80];
-				UplinkSnprintf(tooltip, 0x80, "Connect to IP address %s", vloc->GetIp()) > 0x7f;
 
-				EclRegisterButton(x + GetScaledX(vloc->GetX(), 2) - 3, y + GetScaledY(vloc->GetY(), 2) - 3, 7, 7, caption, tooltip, buttonName);
-				// TODO: EclRegisterButtonCallbacks(buttonName, DrawLocation, LocationClick, button_click, button_highlight);
+				UplinkSnprintf(name, 0x80, "worldmaptempcon %d", (uint64_t)buttonIndex);
+				UplinkStrncpy(caption, vloc->GetIp(), 0x80);
+				UplinkSnprintf(tooltip, 0x80, "Connect to IP address %s", vloc->GetIp());
+
+				EclRegisterButton(largeMapRect.X + WorldMapInterface::GetScaledX(vloc->GetX(), WorldMapInterfaceType::Large) - 3,
+					largeMapRect.Y + WorldMapInterface::GetScaledY(vloc->GetY(), WorldMapInterfaceType::Large) - 3, 7, 7, caption, tooltip, name);
+
+				EclRegisterButtonCallbacks(name, DrawLocation, LocationClick, button_click, button_highlight);
 			}
-			tempconCount++;
+
+			buttonIndex++;
 		}
 	}
 
-	auto& links = player.GetLinks();
-	for (auto i = 0; i < links.Size(); i += 1)
+	for (auto i = 0; i < player.GetLinks().Size(); i++)
 	{
-		const auto ip = links.GetData(i);
-		const auto vloc = game->GetWorld().GetVLocation(ip);
+		const auto ip = player.GetLinks()[i];
+		const auto vlocation = game->GetWorld().GetVLocation(ip);
 
-		UplinkAssert(vloc != nullptr);
+		UplinkAssert(vlocation != nullptr);
 
-		if (!player.GetConnection().LocationIncluded(vloc->GetIp()) && vloc->GetDisplayed())
+		if (!player.GetConnection().LocationIncluded(vlocation->GetIp()) && vlocation->GetDisplayed())
 		{
-			const auto oldZoom = zoom;
-			const auto oldScrollX = scrollX;
-			const auto oldScrollY = scrollY;
+			const auto oldZoom = _zoom;
+			const auto oldScrollX = _scrollX;
+			const auto oldScrolly = _scrollY;
 
-			zoom = 1.0f;
-			scrollX = 0.0f;
-			scrollY = 0.0f;
+			_zoom = 1;
+			_scrollX = 0;
+			_scrollY = 0;
 
-			_layout->AddLocation(GetScaledX(vloc->GetX(), 2) + 20, GetScaledY(vloc->GetY(), 2) + 47, vloc->GetComputerName(), vloc->GetIp(), false);
+			const auto scaledX = WorldMapInterface::GetScaledX(vlocation->GetX(), WorldMapInterfaceType::Large);
+			const auto scaledY = WorldMapInterface::GetScaledY(vlocation->GetY(), WorldMapInterfaceType::Large);
 
-			zoom = oldZoom;
-			scrollX = oldScrollX;
-			scrollY = oldScrollY;
+			_layout->AddLocation(scaledX + 20, scaledY + 47, vlocation->GetComputerName(), vlocation->GetIp(), false);
+
+			_zoom = oldZoom;
+			_scrollX = oldScrollX;
+			_scrollY = oldScrolly;
 		}
 	}
 
-	// TODO: WorldMapInterface::UpdateAccessLevel();
-
-	puts("TODO: implement WorldMapInterface::ProgramLayoutEngine()");
+	UpdateAccessLevel();
 }
 
-int WorldMapInterface::IsVisibleWorldMapInterface()
+WorldMapInterfaceType WorldMapInterface::IsVisibleWorldMapInterface()
 {
 	if (EclGetButton("worldmap_smallmap") != nullptr)
-		return 1;
+		return WorldMapInterfaceType::Small;
 
 	if (EclGetButton("worldmap_largemap") != nullptr)
-		return 2;
+		return WorldMapInterfaceType::Large;
 
-	return 0;
+	return WorldMapInterfaceType::None;
 }
 
 void WorldMapInterface::CloseWorldMapInterface_Large()
 {
-	if (IsVisibleWorldMapInterface() != 2)
+	if (WorldMapInterface::IsVisibleWorldMapInterface() != WorldMapInterfaceType::Large)
 		return;
 
-	CreateWorldMapInterface(1);
+	WorldMapInterface::CreateWorldMapInterface(WorldMapInterfaceType::Small);
 }
 
 void WorldMapInterface::CreateWorldMapInterface_Small()
@@ -510,23 +423,23 @@ void WorldMapInterface::CreateWorldMapInterface_Large()
 	puts("TODO: implement WorldMapInterface::CreateWorldMapInterface_Large()");
 }
 
-void WorldMapInterface::CreateWorldMapInterface(const int type)
+void WorldMapInterface::CreateWorldMapInterface(WorldMapInterfaceType type)
 {
-	if (IsVisibleWorldMapInterface() == type)
+	if (type == IsVisibleWorldMapInterface())
 		return;
 
 	RemoveWorldMapInterface();
 
-	switch (type)
+	if (type == WorldMapInterfaceType::Small)
 	{
-		case 1:
-			CreateWorldMapInterface_Small();
-			break;
-		case 2:
-			CreateWorldMapInterface_Large();
-			break;
-		default:
-			break;
+		CreateWorldMapInterface_Small();
+		return;
+	}
+
+	if (type == WorldMapInterfaceType::Large)
+	{
+		CreateWorldMapInterface_Large();
+		return;
 	}
 }
 
@@ -548,10 +461,10 @@ void WorldMapInterface::RemoveWorldMapInterface()
 {
 	const auto visibleInterface = IsVisibleWorldMapInterface();
 
-	if (visibleInterface == 0)
+	if (visibleInterface == WorldMapInterfaceType::None)
 		return;
 
-	if (visibleInterface == 1)
+	if (visibleInterface == WorldMapInterfaceType::Small)
 	{
 		EclRemoveButton("worldmap_smallmap");
 		EclRemoveButton("worldmap_connect");
@@ -559,7 +472,7 @@ void WorldMapInterface::RemoveWorldMapInterface()
 		return;
 	}
 
-	if (visibleInterface == 2)
+	if (visibleInterface == WorldMapInterfaceType::Large)
 	{
 		EclRemoveButton("worldmap_largemap");
 		EclRemoveButton("worldmap_saveconnection");
@@ -587,4 +500,131 @@ void WorldMapInterface::RemoveWorldMapInterface()
 		EclRemoveButton("worldmap_texthelp");
 		EclRemoveButton("worldmap 127.0.0.1");
 	}
+}
+
+void WorldMapInterface::UpdateAccessLevel()
+{
+	puts("TODO: implement WorldMapInterface::UpdateAccessLevel()");
+}
+
+void WorldMapInterface::DrawWorldMapSmall(Button* button, bool highlighted, bool clicked)
+{
+	imagebutton_draw(button, highlighted, clicked);
+
+	if (game->GetWorld().GetPlayer().IsConnected())
+	{
+		auto& connection = game->GetWorld().GetPlayer().GetConnection();
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glLineWidth(2.0f);
+		glLineStipple(1, stipplepattern);
+		glEnable(GL_LINE_STIPPLE);
+		glBegin(GL_LINE_STRIP);
+
+		for (auto i = 0; i < connection.GetVLocations().Size(); i++)
+		{
+			const auto ip = connection.GetVLocations().GetData(i);
+			const auto vloc = game->GetWorld().GetVLocation(ip);
+
+			UplinkAssert(vloc != nullptr);
+
+			glVertex2i(GetScaledX(vloc->GetX(), WorldMapInterfaceType::Small) + button->X, GetScaledY(vloc->GetY(), WorldMapInterfaceType::Small) + button->Y);
+
+			if (connection.TraceInProgress() != 0 &&
+				(connection.GetTraceProgress() == connection.GetVLocations().Size() - i - 1 && game->GetWorld().GetPlayer().GetGateway().HasHUDUpgrade(1) != 0))
+			{
+				glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+				glVertex2i(
+					GetScaledX(vloc->GetX(), WorldMapInterfaceType::Small) + button->X, GetScaledY(vloc->GetY(), WorldMapInterfaceType::Small) + button->Y);
+			}
+		}
+
+		glEnd();
+
+		glLineWidth(1.0f);
+		glDisable(GL_LINE_STIPPLE);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glBegin(GL_QUADS);
+
+		for (auto i = 0; i < connection.GetVLocations().Size(); i++)
+		{
+			const auto ip = connection.GetVLocations().GetData(i);
+			const auto vloc = game->GetWorld().GetVLocation(ip);
+
+			UplinkAssert(vloc != nullptr);
+
+			const auto x = GetScaledX(vloc->GetX(), WorldMapInterfaceType::Small) + button->X;
+			const auto y = GetScaledY(vloc->GetY(), WorldMapInterfaceType::Small) + button->Y;
+
+			glVertex2i(x - 1, y - 1);
+			glVertex2i(x + 2, y - 1);
+			glVertex2i(x + 2, y + 2);
+			glVertex2i(x - 1, y + 2);
+
+			if (connection.GetTraceProgress() == connection.GetVLocations().Size() - i - 1 && game->GetWorld().GetPlayer().GetGateway().HasHUDUpgrade(1))
+				glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		}
+
+		glEnd();
+	}
+	else
+	{
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+		const auto x = GetScaledX(game->GetWorld().GetPlayer().GetLocalHost()->GetX(), WorldMapInterfaceType::Small) + button->X;
+		const auto y = GetScaledY(game->GetWorld().GetPlayer().GetLocalHost()->GetY(), WorldMapInterfaceType::Small) + button->Y;
+
+		glBegin(GL_QUADS);
+		glVertex2i(x - 1, y - 1);
+		glVertex2i(x + 2, y - 1);
+		glVertex2i(x + 2, y + 2);
+		glVertex2i(x - 1, y + 2);
+		glEnd();
+	}
+
+	glBegin(GL_QUADS);
+
+	for (auto i = 0; i < game->GetWorld().GetPlotGenerator().GetRevelationInfected().Size(); i++)
+	{
+		const auto ip = game->GetWorld().GetPlotGenerator().GetRevelationInfected().GetData(i);
+		UplinkAssert(ip != nullptr);
+
+		const auto vloc = game->GetWorld().GetVLocation(ip);
+		UplinkAssert(vloc != nullptr);
+
+		const auto x = GetScaledX(vloc->GetX(), WorldMapInterfaceType::Small) + button->X;
+		const auto y = GetScaledY(vloc->GetY(), WorldMapInterfaceType::Small) + button->Y;
+
+		glColor4f(revelationColour, 0.0f, 0.0f, 1.0f);
+		glVertex2i(x - 3, y - 3);
+		glVertex2i(x + 4, y - 3);
+		glVertex2i(x + 4, y + 4);
+		glVertex2i(x - 3, y + 4);
+
+		revelationColour -= 0.09f;
+
+		if (revelationColour < 0.0f)
+			revelationColour = 1.0f;
+	}
+
+	glEnd();
+
+	if (highlighted || clicked)
+		glColor4f(0.4f, 0.4f, 0.8f, 1.0f);
+	else
+		glColor3ub(81, 138, 215);
+
+	border_draw(button);
+}
+
+void WorldMapInterface::DrawLocation(Button* button, bool highlighted, bool clicked)
+{
+	(void)button;
+	(void)highlighted;
+	(void)clicked;
+	puts("TODO: implement WorldMapInterface::DrawLocation()");
+}
+void WorldMapInterface::LocationClick(Button* button)
+{
+	(void)button;
+	puts("TODO: implement WorldMapInterface::LocationClick()");
 }

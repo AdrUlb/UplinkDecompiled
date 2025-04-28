@@ -51,6 +51,7 @@ static void PasswordClick(Button* button)
 
 static void AccessCodeClick(Button* button)
 {
+	(void)button;
 	puts("TODO: implement PasswordClick()");
 }
 
