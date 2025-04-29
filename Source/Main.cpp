@@ -102,7 +102,7 @@ static bool VerifyLegitAndCodeCardCheck()
 	{
 		const auto worldDatFilePathLength = strlen(worldDatFilePath);
 		auto i = worldDatFilePathLength - 1;
-		for (; i >= 0 && worldDatFilePath[i] != '\\' && worldDatFilePath[i] != '/'; i--)
+		for (; (i + 1) != 0 && worldDatFilePath[i] != '\\' && worldDatFilePath[i] != '/'; i--)
 			;
 
 		if (i >= 4)
@@ -121,9 +121,9 @@ static bool VerifyLegitAndCodeCardCheck()
 		}
 	}
 
-	static constexpr char magic1[9]{ (char)0xE7, (char)0x6B, (char)0x7E, (char)0x6B, (char)0x4C, (char)0x4F, (char)0x57, (char)0x7D, (char)0x00 };
-	static constexpr char magic2[9]{ (char)0xAA, (char)0xAB, (char)0x15, (char)0xDD, (char)0xDD, (char)0xEE, (char)0xE9, (char)0x2D, (char)0x00 };
-	static constexpr char magic3[9]{ (char)0xC1, (char)0xEC, (char)0xD6, (char)0x8B, (char)0x02, (char)0x07, (char)0x28, (char)0xE8, (char)0x00 };
+	static constexpr unsigned char magic1[9]{ 0xE7, 0x6B, 0x7E, 0x6B, 0x4C, 0x4F, 0x57, 0x7D, 0x00 };
+	static constexpr unsigned char magic2[9]{ 0xAA, 0xAB, 0x15, 0xDD, 0xDD, 0xEE, 0xE9, 0x2D, 0x00 };
+	static constexpr unsigned char magic3[9]{ 0xC1, 0xEC, 0xD6, 0x8B, 0x02, 0x07, 0x28, 0xE8, 0x00 };
 
 	char magicReadBuf[9];
 	const auto file = fopen(worldDatFilePath, "rb");
@@ -137,7 +137,7 @@ static bool VerifyLegitAndCodeCardCheck()
 
 	struct stat worldDatStat;
 
-	if (strcmp(magicReadBuf, magic1) != 0)
+	if (strcmp(magicReadBuf, reinterpret_cast<const char*>(magic1)) != 0)
 		goto returnError;
 
 	stat(worldDatFilePath, &worldDatStat);
@@ -148,14 +148,14 @@ static bool VerifyLegitAndCodeCardCheck()
 	fread(magicReadBuf, 8, 1, file);
 	magicReadBuf[8] = 0;
 
-	if (strcmp(magicReadBuf, magic2) == 0)
+	if (strcmp(magicReadBuf, reinterpret_cast<const char*>(magic2)) == 0)
 		goto returnError;
 
 	fseek(file, 0x240, 0);
 	fread(magicReadBuf, 8, 1, file);
 	magicReadBuf[8] = 0;
 
-	if (strcmp(magicReadBuf, magic3) == 0)
+	if (strcmp(magicReadBuf, reinterpret_cast<const char*>(magic3)) == 0)
 		app->SetCheckCodeCard(false);
 
 	return true;
