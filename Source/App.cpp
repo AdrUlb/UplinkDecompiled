@@ -184,6 +184,11 @@ bool App::GetCheckCodeCard()
 	return _checkCodecard;
 }
 
+void App::SetCheckCodeCard(bool checkCodeCard)
+{
+	_checkCodecard = checkCodeCard;
+}
+
 void App::Initialise()
 {
 	_options = new Options();
@@ -351,7 +356,7 @@ void App::RetireGame(const char* name)
 	UplinkAbort("TODO: implement App::RetireGame()");
 }
 
-void App::SaveGame(char const* name)
+void App::SaveGame(const char* name)
 {
 	if (strcmp(name, "NEWAGENT") == 0)
 		return;
@@ -427,7 +432,7 @@ void App::Set(const char* newPath, const char* newVersion, const char* newType, 
 	}
 }
 
-void App::SetNextLoadGame(char const* name)
+void App::SetNextLoadGame(const char* name)
 {
 	UplinkAssert(name != nullptr);
 

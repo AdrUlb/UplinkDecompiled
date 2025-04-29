@@ -58,6 +58,7 @@ public:
 	Network& GetNetwork();
 	Options& GetOptions();
 	bool GetCheckCodeCard();
+	void SetCheckCodeCard(bool checkCodeCard);
 	void RegisterPhoneDialler(PhoneDialler* phoneDiallerScreen);
 	void UnRegisterPhoneDialler(PhoneDialler* phoneDiallerScreen);
 

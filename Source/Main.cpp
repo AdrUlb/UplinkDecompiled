@@ -8,6 +8,7 @@
 #include <ScriptLibrary.hpp>
 #include <Sg.hpp>
 #include <signal.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include FT_DRIVER_H
 #include FT_MODULE_H
@@ -94,8 +95,83 @@ static char* vmg57670648335164_br_find_exe(unsigned int* error)
 
 static bool VerifyLegitAndCodeCardCheck()
 {
-	puts("TODO: implement VerifyLegitAndCodeCardCheck()");
+	char worldDatFilePath[0x100];
+	UplinkSnprintf(worldDatFilePath, 0x100, "%sworld.dat", app->Path);
+
+	if (!DoesFileExist(worldDatFilePath))
+	{
+		const auto worldDatFilePathLength = strlen(worldDatFilePath);
+		auto i = worldDatFilePathLength - 1;
+		for (; i >= 0 && worldDatFilePath[i] != '\\' && worldDatFilePath[i] != '/'; i--)
+			;
+
+		if (i >= 4)
+		{
+			const auto c0 = worldDatFilePath[i - 4];
+			const auto c1 = worldDatFilePath[i - 3];
+			const auto c2 = worldDatFilePath[i - 2];
+			const auto c3 = worldDatFilePath[i - 1];
+			const auto c4 = worldDatFilePath[i];
+
+			if ((c0 == '\\' || c0 == '/') && (c1 == 'l' || c1 == 'L') && (c2 == 'i' || c2 == 'I') && (c3 == 'b' || c3 == 'B') && (c4 == '\\' || c4 == '/'))
+			{
+				for (auto j = i + 1; j <= worldDatFilePathLength; j++)
+					worldDatFilePath[j - 4] = worldDatFilePath[j];
+			}
+		}
+	}
+
+	static constexpr char magic1[9]{ (char)0xE7, (char)0x6B, (char)0x7E, (char)0x6B, (char)0x4C, (char)0x4F, (char)0x57, (char)0x7D, (char)0x00 };
+	static constexpr char magic2[9]{ (char)0xAA, (char)0xAB, (char)0x15, (char)0xDD, (char)0xDD, (char)0xEE, (char)0xE9, (char)0x2D, (char)0x00 };
+	static constexpr char magic3[9]{ (char)0xC1, (char)0xEC, (char)0xD6, (char)0x8B, (char)0x02, (char)0x07, (char)0x28, (char)0xE8, (char)0x00 };
+
+	char magicReadBuf[9];
+	const auto file = fopen(worldDatFilePath, "rb");
+
+	if (file == nullptr)
+		goto returnError;
+
+	fseek(file, 0x80, 0);
+	fread(magicReadBuf, 8, 1, file);
+	magicReadBuf[8] = 0;
+
+	struct stat worldDatStat;
+
+	if (strcmp(magicReadBuf, magic1) != 0)
+		goto returnError;
+
+	stat(worldDatFilePath, &worldDatStat);
+	if (worldDatStat.st_size != 14400792)
+		goto returnError;
+
+	fseek(file, 0x100, 0);
+	fread(magicReadBuf, 8, 1, file);
+	magicReadBuf[8] = 0;
+
+	if (strcmp(magicReadBuf, magic2) == 0)
+		goto returnError;
+
+	fseek(file, 0x240, 0);
+	fread(magicReadBuf, 8, 1, file);
+	magicReadBuf[8] = 0;
+
+	if (strcmp(magicReadBuf, magic3) == 0)
+		app->SetCheckCodeCard(false);
+
 	return true;
+
+returnError:
+	fclose(file);
+
+	puts("\nAn error occured in Uplink");
+	puts("Files integrity is not verified");
+
+	if (!file_stdout)
+		return false;
+
+	puts("\nAn Uplink Error has occured");
+	puts("Files integrity is not verified");
+	return false;
 }
 
 static void Init_App(const char* exePath)
