@@ -25,4 +25,4 @@ target_include_directories(UplinkDecompiled PRIVATE Include ${SDL_INCLUDE_DIRS} 
 target_compile_options(UplinkDecompiled PRIVATE -Wall -Wextra)
 target_link_libraries(UplinkDecompiled ftgl tcp4u ${SDL_LIBRARIES} ${SDL_MIXER_LIBRARIES} ${OPENGL_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY} ${FREETYPE_LIBRARIES} ${TIFF_LIBRARIES})
 
-add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> -game_firsttime -graphics_fullscreen +graphics_fasterbuttonanimations !graphics_screenwidth 800 !graphics_screenheight 600)
+add_custom_target(run COMMAND $<TARGET_FILE:UplinkDecompiled> -game_firsttime +graphics_fullscreen +graphics_fasterbuttonanimations !graphics_screenwidth 640 !graphics_screenheight 480)
